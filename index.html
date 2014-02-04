@@ -1,41 +1,112 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>stm by bstewart</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="stm : An R Package for the Structural Topic Model" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>stm</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>stm</h1>
-        <p>An R Package for the Structural Topic Model</p>
 
-        <p class="view"><a href="https://github.com/bstewart/stm">View the Project on GitHub <small>bstewart/stm</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/bstewart/stm">View on GitHub</a>
 
+          <h1 id="project_title">stm</h1>
+          <h2 id="project_tagline">An R Package for the Structural Topic Model</h2>
 
-        <ul>
-          <li><a href="https://github.com/bstewart/stm/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/bstewart/stm/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/bstewart/stm">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <p>Instructions and Files Coming Soon.</p>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/bstewart/stm/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/bstewart/stm/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a name="stm-an-r-package-for-the-structural-topic-model" class="anchor" href="#stm-an-r-package-for-the-structural-topic-model"><span class="octicon octicon-link"></span></a>stm: An R Package for the Structural Topic Model</h2>
+
+<p>Website: <a href="http://bstewart.github.com/stm">http://bstewart.github.com/stm</a></p>
+
+<p>Vignette: <a href="https://github.com/bstewart/stm/blob/master/vignettes/stmVignette.pdf">Here</a></p>
+
+<p>Authors: <a href="http://scholar.harvard.edu/mroberts">Molly Roberts</a>, <a href="http://scholar.harvard.edu/bstewart">Brandon Stewart</a> and <a href="http://scholar.harvard.edu/dtingley">Dustin Tingley</a></p>
+
+<p>Please email all comments/questions to bstewart [AT] fas.harvard.edu</p>
+
+<h3>
+<a name="summary" class="anchor" href="#summary"><span class="octicon octicon-link"></span></a>Summary</h3>
+
+<p>This repository contains an early release for the stm package for R.  It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). Future releases will be available on CRAN but we are using the repository here to provide a soft release.</p>
+
+<p>The package currently includes functionality to:</p>
+
+<ul>
+<li>ingest and manipulate text data</li>
+<li>estimate Structural Topic Models</li>
+<li>calculate covariate effects on latent topics with uncertainty</li>
+<li>estimate a graph of topic correlations</li>
+<li>create all the plots used in our various papers</li>
+</ul><h3>
+<a name="other-resources" class="anchor" href="#other-resources"><span class="octicon octicon-link"></span></a>Other Resources</h3>
+
+<p>Have a large text corpus or need a language we don't provide support for?  See our sister project <a href="https://textorg.org">txtorg</a></p>
+
+<p>Papers on the Structural Topic Model:</p>
+
+<ul>
+<li>Roberts, Stewart, Tingley, and Airoldi. ``The Structural Topic Model and Applied Social Science.'' <em>Advances in Neural Information Processing Systems Workshop on Topic Models: Computation, Application, and Evaluation</em>. 2013. Copy available <a href="http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf">here</a>
+</li>
+<li>Roberts, Stewart, Tingley, Lucas, Leder-Luis, Gadarian, Albertson, and Rand. ``Structural topic models for open-ended survey responses.'' <em>American Journal of Political Science</em>. Forthcoming. Copy available <a href="http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf">here</a>
+</li>
+<li>Lucas, Nielsen, Roberts, Stewart, Storer, and Tingley. ``Computer assisted text analysis for comparative politics.'' Copy available <a href="http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf">here</a>
+</li>
+</ul><h3>
+<a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation Instructions</h3>
+
+<p>Assuming you already have R installed (if not see <a href="http://www.r-project.org/">http://www.r-project.org/</a>), the easiest
+approach is to use the devtools package to install directly from github.  First you have 
+to install devtools using the following code.  Note that you only have to do this once</p>
+
+<pre><code>if(!require(devtools)) install.packages("devtools")
+</code></pre>
+
+<p>Then you can load the package and use the function <code>install_github</code></p>
+
+<pre><code>library(devtools)
+install_github("bstewart/stm",dependencies=TRUE)
+</code></pre>
+
+<p>Note that this will install all the packages suggested and required to run our package.  It may take a few minutes the first time, but this only needs to be done on the first use.  In the future you can update to the most recent development version using the same code. </p>
+
+<p>You can also grab the binaries or source files for the latest release here: (<a href="https://github.com/bstewart/stm/releases">https://github.com/bstewart/stm/releases</a>).  Then use <code>install.packages</code> with <code>repos=NULL</code> so that</p>
+
+<pre><code>install.packages(filepath, repos = NULL)
+</code></pre>
+
+<h3>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h3>
+
+<p>See the vignette for several example analyses.  The main function to estimate the model is <code>stm()</code> but there are a host of other useful functions.  If you have your documents already converted to term-document matrices you can ingest them using <code>readCorpus()</code>.  If you just have raw texts you will want to start with <code>textProcessor()</code>.</p>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/bstewart">bstewart</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">stm maintained by <a href="https://github.com/bstewart">bstewart</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -46,6 +117,7 @@
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
