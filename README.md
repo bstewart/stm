@@ -21,7 +21,7 @@ The package currently includes functionality to:
 
 ###Other Resources
 
-Have a large text corpus or need a language we don't provide support for?  See our sister project [txtorg](https://textorg.org)
+Have a large text corpus or need a language we don't provide support for?  See our sister project [txtorg](http://txtorg.org)
 
 Papers on the Structural Topic Model:
 * Roberts, Stewart, Tingley, and Airoldi. ``The Structural Topic Model and Applied Social Science.'' *Advances in Neural Information Processing Systems Workshop on Topic Models: Computation, Application, and Evaluation*. 2013. Copy available [here](http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf)
