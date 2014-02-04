@@ -1,6 +1,6 @@
 ##stm: An R Package for the Structural Topic Model
 
-Website: http://bstewart.github.com/stm
+Website: http://bstewart.github.io/stm/
 
 Vignette: [Here](https://github.com/bstewart/stm/blob/master/vignettes/stmVignette.pdf)
 
