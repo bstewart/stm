@@ -1,0 +1,79 @@
+\name{textProcessor}
+\alias{textProcessor}
+\title{
+Process a vector of raw texts
+}
+\description{
+Function that takes in a vector of raw texts (in a variety of languages) and performs basic operations.  This function is essentially a wrapper \code{tm} package where various user specified options can be selected.
+}
+\usage{
+textProcessor(documents, metadata=NULL, 
+              lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, 
+              removepunctuation=TRUE, stem=TRUE, 
+              sparselevel=.99, language="en", 
+              verbose=TRUE) 
+}
+
+\arguments{
+   \item{documents}{
+   The documents to be processed.  A character vector where each entry is the full text of a document.  The \code{tm} package has a variety of extra readers for ingesting other file formats (\code{.doc, .pdf, .txt, .xml}).
+  }
+  \item{metadata}{
+Additional data about the documents.  Specifically a \code{data.frame} or \code{matrix} object with number of rows equal to the number of documents and one column per meta-data type. The column names are used to label the metadata.  The metadata do not affect the text processing, but providing the metadata object insures that if documents are dropped the corresponding metadata rows are dropped as well.
+}
+  \item{lowercase}{
+Whether all words should be converted to lower case. Defaults to TRUE.
+}
+  \item{removestopwords}{
+Whether stop words should be removed using the SMART stopword list (in English) or the snowball stopword lists (for all other languages). Defaults to TRUE.
+}
+  \item{removenumbers}{
+Whether numbers should be removed. Defaults to TRUE.
+}
+ \item{removepunctuation}{
+ whether punctuation should be removed.  Defaults to TRUE.
+ }
+   \item{stem}{
+Whether or not to stem words. Defaults to TRUE}
+  \item{sparselevel}{
+  removes terms where at least sparselevel proportion of the entries are 0. 
+}
+  \item{language}{
+Language used for processing. Defaults to English. \code{tm} uses the \code{SnowballC} stemmer which as of version 0.5 supports "danish dutch english finnish french german hungarian italian norwegian portuguese romanian russian spanish swedish turkish".  These can be specified as any on of the above strings or by the three-letter ISO-639 codes.  You can also set language to "na" if you want to leave it deliberately unspecified (see documentation in \code{tm})}
+\item{verbose}{
+If true prints information as it processes.
+}
+}
+\details{
+This function is designed to provide a convenient and quick way to process a relatively small volume texts for analysis with the package. It is designed to quickly ingest data in a simple form like a spreadsheet where each document sits in a single cell.  Once the text has been processed by \code{tm} the document term matrix is converted to the \code{stm} format using \code{\link{readCorpus}}.
+
+The processor always strips extra white space but all other processing options are optional.  Stemming uses the snowball stemmers and supports a wide variety of languages.  Words in the vocabulary can be dropped due to sparsity and stop word removal.  If a document no longer contains any words it is dropped from the output.  Specifying meta-data is a convenient way to make sure the appropriate rows are dropped from the corresponding metadata file.
+
+We emphasize that this function is a convenience wrapper around the excellent \code{tm} package functionality without which it wouldn't be possible.
+}
+\value{
+\item{documents}{A list containing the documents in the stm format.}
+\item{vocab }{Character vector of vocabulary.}
+\item{meta}{Data frame or matrix containing the user-supplied metadata for the retained documents.}
+}
+\references{
+  Ingo Feinerer and Kurt Hornik (2013). tm: Text Mining Package. R package version 0.5-9.1.
+
+  Ingo Feinerer, Kurt Hornik, and David Meyer (2008). Text Mining Infrastructure in R. \emph{Journal of Statistical
+  Software} 25(5): 1-54.
+}
+\seealso{
+\code{\link{readCorpus}}
+}
+\examples{
+head(gadarian)
+#Process the data for analysis.
+temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+meta<-temp$meta
+vocab<-temp$vocab
+docs<-temp$documents
+out <- prepDocuments(docs, vocab, meta)
+docs<-out$documents
+vocab<-out$vocab
+meta <-out$meta
+} 

@@ -1,0 +1,22 @@
+importFrom(matrixStats, logSumExp, rowLogSumExps, colLogSumExps)
+importFrom(slam, tcrossprod_simple_triplet_matrix, simple_triplet_matrix, as.simple_triplet_matrix)
+importFrom(splines, ns,bs)
+importFrom(lda, lda.collapsed.gibbs.sampler)
+importFrom(textir, mnlm)
+importFrom(stringr,str_wrap, str_split)
+
+export(stm, summary.STM, print.STM, plot.STM,
+       estimateEffect, plot.estimateEffect, 
+       topicCorr, plot.topicCorr,
+       labelTopics, print.labelTopics,
+       findThoughts, plotQuote,
+       manyTopics, selectModel, plotModels, plotTopicLoess, 
+       prepDocuments, readCorpus, textProcessor,
+       s)
+
+S3method(summary, STM)
+S3method(print, STM)
+S3method(plot, STM)
+S3method(print, labelTopics)
+S3method(plot, topicCorr)
+S3method(plot, estimateEffect)

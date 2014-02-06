@@ -1,0 +1,12 @@
+Package: stm
+Type: Package
+Title: Estimation of Structural Topic Model
+Version: 0.05.01
+Date: 2014-02-05
+Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
+Maintainer: Brandon Stewart <bstewart@fas.harvard.edu>
+Imports: matrixStats, splines, slam, lda, textir (>= 2.0-1),stringr
+Suggests: gamlr, igraph, SnowballC, tm, huge
+LazyData: yes
+Description: Estimation of the Structural Topic Model and other meta-data models.
+License: MIT
