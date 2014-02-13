@@ -2,7 +2,7 @@
 
 Website: www.structuraltopicmodel.com
 
-Vignette: [Here](https://github.com/bstewart/stm/raw/master/vignettes/stmVignette.pdf)
+Vignette: [Here](https://github.com/bstewart/stm/blob/master/vignettes/stmVignette.pdf?raw=true)
 
 Authors: [Molly Roberts](http://scholar.harvard.edu/mroberts), [Brandon Stewart](http://scholar.harvard.edu/bstewart) and [Dustin Tingley](http://scholar.harvard.edu/dtingley)
 
