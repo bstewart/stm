@@ -9,10 +9,11 @@ This package implements the Structural Topic Model and eventually other
 meta-data models.  The packages is still in beta so small details of the
 function syntax may change.  \code{\link{stm}} is the main function of the package that estimates the
 Structural Topic Model.  Data import can be done via the read functions
-or if from raw texts the textProcessor function.  prepDocuments covers
+or if from raw texts the textProcessor function.  \code{\link{prepDocuments}} covers
 some basic format conversions and will do other sorts of data
-manipulation.  labelTopics will show the topics fitted by the model.
-estimateEffect, plot.estimateEffect will show relationships between
+manipulation.  \code{\link{labelTopics}} will show the topics fitted by the model.
+\code{\link{estimateEffect}}, \code{\link{plot.estimateEffect}}
+will show relationships between
 topics and covariates within the model.   Various other plotting
 functions are included that allow the user to plot prevalence of topics,
 correlations between topics, and other types of summaries of the model.
@@ -21,8 +22,8 @@ correlations between topics, and other types of summaries of the model.
 \tabular{ll}{
 Package: \tab stm\cr
 Type: \tab Package\cr
-Version: \tab 0.05.01\cr
-Date: \tab 2014-02-05\cr
+Version: \tab 0.05.03\cr
+Date: \tab 2014-02-13\cr
 License: \tab MIT \cr
 }
 }

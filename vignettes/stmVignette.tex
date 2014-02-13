@@ -1,3 +1,4 @@
+%\VignetteIndexEntry{Using stm}
 %\documentclass{article}
 \documentclass[nojss]{jss}
 
@@ -123,7 +124,7 @@ This vignette demonstrates how to use the Structural Topic Model, \pkg{stm}, \te
 
 In this vignette we demonstrate how to use the Structural Topic Model, \pkg{stm}, \texttt{R} package.\footnote{We thank Jetson Leder-Luis, Christopher Lucas, and Alex Storer for various assistance in the construction of this package.} Building off of the tradition of generative topic models, such as the Latent Dirichlet Allocation \citep{blei2003latent} and Correlated Topic Model \citep{blei2007correlated}, the Structural Topic Model's key innovation is that it permits users to incorporate \emph{metadata}, defined as information about each document, into the topic model.
 
-The goal of the Structural Topic Model is to enable the discovery of topics and the estimation of their relationship to document metadata. Outputs of the model can be used to conduct hypothesis testing about these relationships. Previous uses of the model span from the analysis of newspaper articles and their relationship to time and open ended responses in survey data. This vignette illustrates use of the various components of the package. The design of the package is such that users have a broad array of options to analyze the data and present findings utilizing a range of plotting tools.\footnote{Some of the functionalities are illustrated as examples sourced via \code{demo(STMbasics)} and \code{demo(STMoptions)} and all functions come with rich help files.}
+The goal of the Structural Topic Model is to enable the discovery of topics and the estimation of their relationship to document metadata. Outputs of the model can be used to conduct hypothesis testing about these relationships. Previous uses of the model span from the analysis of newspaper articles and their relationship to time and open ended responses in survey data. This vignette illustrates use of the various components of the package. The design of the package is such that users have a broad array of options to analyze the data and present findings utilizing a range of plotting tools.
 
 \section{Estimation}
 Like other topic models the STM is a generative model. That means we define a data generating process for each document and then use the data to find the most likely values for the parameters within the model.  The generative process for each document (indexed by $d$) can be summarized as:
@@ -150,7 +151,7 @@ Regularizing prior distributions are used for $\gamma, \kappa$ and $\Sigma$ whic
 In this section we demonstrate the basics of using the package. Use of the STM typically proceeds in three key steps:
 \begin{enumerate}
 \item Tools for reading in and processing text data \\
-(\code{textProcessor, readCorpus, prepDocuments}\\
+(\code{textProcessor, readCorpus, prepDocuments})\\
 \item Fitting the Structural Topic Model
 (\code{stm, selectModel, manyTopics})
 \item Plotting and inspecting results
@@ -197,7 +198,7 @@ After reading in the data we suggest using the utility function \code{prepDocume
 \subsubsection{Reading in data from other text processing programs}
 
 The \code{readCorpus} function is helpful for reading in data produced in other text processing/analysis programs. The structure of these data sets are not the simple ``spreadsheet'' format like in the previous example.
-For example, a program that is helpful for setting up and processing textual data, alongside document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. When using \pkg{txtorg}, three separate files are generated. A metadata file, a vocabulary file, and a file with the original documents. The function \code{readCorpus()} function can be called to help import this type of data, in order to import the vocabulary file from \texttt{textorg} and set it up for analysis by the \texttt{stm} model. Please see the help file for this function for more details and additional options such as reading in data in Blei's LDA-C format.
+For example, a program that is helpful for setting up and processing textual data, alongside document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. When using \pkg{txtorg}, three separate files are generated. A metadata file, a vocabulary file, and a file with the original documents. The function \code{readCorpus()} function can be called to help import this type of data, in order to import the vocabulary file from \texttt{txtorg} and set it up for analysis by the \texttt{stm} model. Please see the help file for this function for more details and additional options such as reading in data in Blei's LDA-C format.
 
 Another way to load in data is to use data structured for use in other packages, like the popular \href{http://cran.r-project.org/web/packages/lda/}{LDA} package.
 
@@ -211,7 +212,7 @@ Here we load the political Blog Corpus from the LDA Package.
 >                          # conservative or liberal
 \end{Sinput}
 \end{Schunk}
-This is a subset of the CMU Poliblog corpus by Ahmed and Xing. cite
+This is a subset of the CMU Poliblog corpus by \cite{poliblog}.
 
 The LDA package uses a slightly different format for the vocabulary. Specifically it indexes words from 0 using the convention in C. We can convert this over to a more R-like 1-index using \code{prepDocuments()}, as well as perform other recoding options of metadata. Once again, the next step is to reassign the documents object from the output of \code{prepDocuments()} to its own object.
 

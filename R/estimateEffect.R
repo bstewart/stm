@@ -4,6 +4,7 @@ estimateEffect <- function(formula,
                      nsims=100) {
   origcall <- match.call()
   thetatype <- match.arg(uncertainty)
+  if(thetatype=="None") nsims <- 1 #override nsims for no uncertaintys
   ##
   #Step 1: Extract the formula and do some error checking
   ##
@@ -48,15 +49,18 @@ estimateEffect <- function(formula,
   # expensive components in advance.
   qx <- qr(xmat)
   
-    
+  ##  
   #Step 3: Calculate Coefficients
   ##
+
   storage <- vector(mode="list", length=length(K))
   for(i in 1:nsims) {
     # 3a) simulate theta
-    thetasims <- thetaPosterior(stmobj, nsims=1, type=thetatype, documents=documents)
-    thetasims <- do.call(rbind, thetasims)
-    
+    if(thetatype=="None") thetasims <- stmobj$theta
+    else {
+      thetasims <- thetaPosterior(stmobj, nsims=1, type=thetatype, documents=documents)
+      thetasims <- do.call(rbind, thetasims)
+    }
     # 3b) calculate model
     for(k in K) {
       #lm.mod <- lm(thetasims[,k]~ xmat -1)

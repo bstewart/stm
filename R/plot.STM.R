@@ -26,7 +26,7 @@ plot.STM <- function(x,
       lab <- lab[[labeltype]]
     }
     lab <- apply(lab, 1, commas)
-    lab <- sprintf("Topic %i: %s", topics, lab)
+    if(type=="summary") lab <- sprintf("Topic %i: %s", topics, lab)
   }
   
   # Summary Plot

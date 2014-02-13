@@ -1,4 +1,4 @@
-plotQuote <- function(sentences, width=30) {
+plotQuote <- function(sentences, width=30, main=NULL) {
   xaxt <- yaxt <-"n"
   xlab <- ylab <- ""
   xlim <- c(0,5)
@@ -11,7 +11,7 @@ plotQuote <- function(sentences, width=30) {
     numlines[j] <- length(strsplit(out[[j]], "\n")[[1]])
   }
   if(is.null(ylim)) ylim=c(0,.5*sum(numlines))
-  plot(c(0,0), col="white", xlim=xlim, ylim=ylim, xaxt=xaxt, yaxt=yaxt, xlab=xlab, ylab=ylab)
+  plot(c(0,0), col="white", xlim=xlim, ylim=ylim, xaxt=xaxt, yaxt=yaxt, xlab=xlab, ylab=ylab, main=main)
   numlines <- c(0, rev(numlines))
   out <- rev(out)
   start <- 0

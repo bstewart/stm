@@ -114,54 +114,95 @@ offset <- (1-ci.level)/2
 
 #Point estimate method
 if(method=="pointestimate"){
-
   #Estimate simulated values to plot
-  uvals <- unique(xmat[,covid])
-  if(length(uvals)>10) stop("Too many levels to use point estimate method")
-  toplot <- list()
-  for(j in 1:length(uvals)){
-    toplot[[j]] <- list()
-    for(i in 1:length(object$topics)){
-      cvector[covid] <- uvals[j]
-      if(any(parse)){
-        if(covint>0){
-          cvector[intterms+1] <- uvals[j]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+  if(length(covid)>1 & covariate%in%fnames){
+    uvals <- xmat[,covid][!duplicated(xmat[,covid]),]
+    toplot <- list()
+    for(j in 1:nrow(uvals)){
+      toplot[[j]] <- list()
+      for(i in 1:length(object$topics)){
+        cvector[covid] <- uvals[j,]
+        if(any(parse)){
+          if(covint>0){
+            cvector[intterms+1] <- uvals[j,]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+          }
+        }
+        sims <- simbetas[[i]]%*%cvector
+        toplot[[j]][[i]] <- list(mean=mean(sims), cis=quantile(sims, c(offset, 1-offset)))
+      }
+    }
+    newlabels <- list()      
+    for(i in 1:nrow(uvals)){
+        newlabels[[i]] <- vector(length=length(object$topics))
+        for(k in 1:length(object$topics)){
+          if(verbose.labels){
+            newlabels[[i]][k] <- paste(labels[k], " (Covariate Level ", colnames(xmat)[covid][as.logical(uvals[i,])], ")",sep="")
+          } else {
+            newlabels[[i]][k] <- paste(labels[k])
+          }
         }
       }
-      sims <- simbetas[[i]]%*%cvector
-      toplot[[j]][[i]] <- list(mean=mean(sims), cis=quantile(sims, c(offset, 1-offset)))
-    }
-  }
+                                        #Plot estimates
+    topicid <- rev(which(object$topics%in%topics))
+    if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
+    if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
+    if (is.null(xlim) & length(labeltype)!=1) xlim <- c(min(unlist(toplot)) - .5*abs(min(unlist(toplot))), max(unlist(toplot)))
+    if (is.null(ylim)) ylim <- c(0,length(topicid)*nrow(uvals)+1)
+    if (add==F) plot(0,0, col="white", xlim=xlim, ylim=ylim, yaxt="n", ylab=ylab, xlab=xlab, main=main,...)
+    lines(c(0,0), c(0, length(topicid)*nrow(uvals)+2), lty=2)
+    for(j in 1:length(toplot)){
+        for(i in 1:length(topicid)){
+          points(toplot[[j]][[topicid[i]]]$mean, (j-1)*length(topicid)+i, pch=16)
+          lines(c(toplot[[j]][[topicid[i]]]$cis[1], toplot[[j]][[topicid[i]]]$cis[2]), c((j-1)*length(topicid)+i,(j-1)*length(topicid)+i))
+          axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])      
+        }
+      }
+  }else{
+      uvals <- unique(xmat[,covid])
+      if(length(uvals)==length(xmat[,covid])) stop("Too many levels to use point estimate method")
+      toplot <- list()
+      for(j in 1:length(uvals)){
+        toplot[[j]] <- list()
+        for(i in 1:length(object$topics)){
+          cvector[covid] <- uvals[j]
+          if(any(parse)){
+            if(covint>0){
+              cvector[intterms+1] <- uvals[j]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+            }
+          }
+          sims <- simbetas[[i]]%*%cvector
+          toplot[[j]][[i]] <- list(mean=mean(sims), cis=quantile(sims, c(offset, 1-offset)))
+        }
+      }
+      newlabels <- list()      
+      for(i in 1:length(uvals)){
+        newlabels[[i]] <- vector(length=length(object$topics))
+        for(k in 1:length(object$topics)){
+          if(verbose.labels){
+            newlabels[[i]][k] <- paste(labels[k], " (Covariate Level ", uvals[i], ")",sep="")
+          } else {
+            newlabels[[i]][k] <- paste(labels[k])
+          }
+        }
+      }
 
-  newlabels <- list()      
-  for(i in 1:length(uvals)){
-    newlabels[[i]] <- vector(length=length(object$topics))
-    for(k in 1:length(object$topics)){
-      if(verbose.labels){
-        newlabels[[i]][k] <- paste(labels[k], " (Covariate Level ", uvals[i], ")",sep="")
-      } else {
-        newlabels[[i]][k] <- paste(labels[k])
+                                        #Plot estimates
+      topicid <- rev(which(object$topics%in%topics))
+      if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
+      if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
+      if (is.null(xlim) & length(labeltype)!=1) xlim <- c(min(unlist(toplot)) - .5*abs(min(unlist(toplot))), max(unlist(toplot)))
+      if (is.null(ylim)) ylim <- c(0,length(topicid)*length(uvals)+1)
+      if (add==F) plot(0,0, col="white", xlim=xlim, ylim=ylim, yaxt="n", ylab=ylab, xlab=xlab, main=main,...)
+      lines(c(0,0), c(0, length(topicid)*length(uvals)+2), lty=2)
+      for(j in 1:length(toplot)){
+        for(i in 1:length(topicid)){
+          points(toplot[[j]][[topicid[i]]]$mean, (j-1)*length(topicid)+i, pch=16)
+          lines(c(toplot[[j]][[topicid[i]]]$cis[1], toplot[[j]][[topicid[i]]]$cis[2]), c((j-1)*length(topicid)+i,(j-1)*length(topicid)+i))
+          axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])      
+        }
       }
     }
-  }
-
-  #Plot estimates
-  topicid <- which(object$topics%in%topics)
-  if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
-  if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
-  if (is.null(xlim) & length(labeltype)!=1) xlim <- c(min(unlist(toplot)) - .5*abs(min(unlist(toplot))), max(unlist(toplot)))
-  if (is.null(ylim)) ylim <- c(0,length(topicid)*length(uvals)+1)
-  if (add==F) plot(0,0, col="white", xlim=xlim, ylim=ylim, yaxt="n", ylab=ylab, xlab=xlab, main=main,...)
-  lines(c(0,0), c(0, length(topicid)*length(uvals)+2), lty=2)
-  for(j in 1:length(uvals)){
-    for(i in 1:length(topicid)){
-      points(toplot[[j]][[topicid[i]]]$mean, (j-1)*length(topicid)+i, pch=16)
-      lines(c(toplot[[j]][[topicid[i]]]$cis[1], toplot[[j]][[topicid[i]]]$cis[2]), c((j-1)*length(topicid)+i,(j-1)*length(topicid)+i))
-      axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])      
-    }
-  }
 }
-
 #Difference method
 if(method=="difference"){
   if(is.null(cov.value1) | is.null(cov.value2)) stop("Cov.value1 and cov.value2 must be specified for categorical variables using method of difference")
@@ -227,7 +268,7 @@ if(method=="difference"){
   }
 
   #Plot estimates
-  topicid <- which(object$topics%in%topics)
+  topicid <- rev(which(object$topics%in%topics))
   if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
   if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
   if (is.null(xlim) & length(labeltype)!=1) xlim <- c(min(unlist(toplot)) - .5*abs(min(unlist(toplot))), max(unlist(toplot)))

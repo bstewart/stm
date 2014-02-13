@@ -1,23 +1,30 @@
 selectModel <- function(documents, vocab, K,
                         prevalence, content, data=NULL,
                         max.em.its=100, verbose=TRUE, init.type = "LDA",
-                        emtol= 1e-05, seed=NULL,runs=50, frexw=.7, net.max.em.its=2, netverbose=FALSE, M=10,...){
+                        emtol= 1e-05, seed=NULL,runs=50, frexw=.7, net.max.em.its=2, netverbose=FALSE, M=10, ...){
+  if(!is.null(seed)) set.seed(seed)
+  
   if(runs<2){
     stop("Number of runs must be two or greater.")
   }
+  
+  if(runs<M){
+    stop("Number in the net must be greater or equal to the number of final models.")
+  }
+  
   seedout <- NULL
   likelihood <- NULL
   cat("Casting net \n")
   for(i in 1:runs){
     cat(paste(i, "models in net \n"))
     mod.out <- stm(documents, vocab, K,
-                   prevalence=prevalence, content=content, data=data, init.type=init.type, seed=seed,
+                   prevalence=prevalence, content=content, data=data, init.type=init.type,
                    max.em.its=net.max.em.its, emtol=emtol, verbose=netverbose,...)
     seedout[i] <- mod.out$settings$seed
     likelihood[i] <- mod.out$convergence$bound[length(mod.out$convergence$bound)]
   }
 
-  keep <- which(likelihood > quantile(likelihood, .8))
+  keep <- order(likelihood, decreasing=T)[1:M]
   keepseed <- seedout[keep]
   cat("Running select models \n")
   runout <- list()

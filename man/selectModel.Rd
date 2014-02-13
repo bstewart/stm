@@ -71,8 +71,9 @@ selectModel(documents, vocab, K,
       \item{seed}{
 	Seed for the random number generator. \code{stm} saves the seed
 	it uses on every run so that any result can be exactly
-	reproduced.  When attempting to repro\
-	duce a result with that seed, it should be specified here.
+	reproduced.  Setting the seed here simply ensures that the sequence of
+  models will be exactly the same when respecified.  Individual seeds can
+  be retrieved from the component model objects.
       }
       \item{max.em.its}{
 	  The maximum number of EM iterations.  If convergence has not
@@ -133,7 +134,12 @@ selectModel(documents, vocab, K,
 }
 \examples{
 \dontrun{
-models <- selectModel(poliblog.documents,poliblog.vocab,K=5, prevalence=~poliblog.ratings)
+library(lda)
+data(poliblog.documents)
+data(poliblog.vocab)
+out <- prepDocuments(poliblog.documents, poliblog.vocab)
+data(poliblog.ratings)
+models <- selectModel(out$documents,out$vocab,K=5, prevalence=~poliblog.ratings, runs=5)
 plotModels(models)
 }}
 % Add one or more standard keywords, see file 'KEYWORDS' in the

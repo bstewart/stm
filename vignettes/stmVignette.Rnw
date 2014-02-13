@@ -150,7 +150,7 @@ Regularizing prior distributions are used for $\gamma, \kappa$ and $\Sigma$ whic
 In this section we demonstrate the basics of using the package. Use of the STM typically proceeds in three key steps:
 \begin{enumerate}
 \item Tools for reading in and processing text data \\
-(\code{textProcessor, readCorpus, prepDocuments}\\
+(\code{textProcessor, readCorpus, prepDocuments})\\
 \item Fitting the Structural Topic Model
 (\code{stm, selectModel, manyTopics})
 \item Plotting and inspecting results
@@ -187,7 +187,7 @@ After reading in the data we suggest using the utility function \code{prepDocume
 \subsubsection{Reading in data from other text processing programs}
 
 The \code{readCorpus} function is helpful for reading in data produced in other text processing/analysis programs. The structure of these data sets are not the simple ``spreadsheet'' format like in the previous example.
-For example, a program that is helpful for setting up and processing textual data, alongside document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. When using \pkg{txtorg}, three separate files are generated. A metadata file, a vocabulary file, and a file with the original documents. The function \code{readCorpus()} function can be called to help import this type of data, in order to import the vocabulary file from \texttt{textorg} and set it up for analysis by the \texttt{stm} model. Please see the help file for this function for more details and additional options such as reading in data in Blei's LDA-C format.
+For example, a program that is helpful for setting up and processing textual data, alongside document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. When using \pkg{txtorg}, three separate files are generated. A metadata file, a vocabulary file, and a file with the original documents. The function \code{readCorpus()} function can be called to help import this type of data, in order to import the vocabulary file from \texttt{txtorg} and set it up for analysis by the \texttt{stm} model. Please see the help file for this function for more details and additional options such as reading in data in Blei's LDA-C format.
 
 Another way to load in data is to use data structured for use in other packages, like the popular \href{http://cran.r-project.org/web/packages/lda/}{LDA} package.
 
@@ -199,7 +199,7 @@ data(poliblog.vocab)     # =words in the vocabulary
 data(poliblog.ratings)   # rating of blog as
                          # conservative or liberal
 @
-This is a subset of the CMU Poliblog corpus by Ahmed and Xing. cite
+This is a subset of the CMU Poliblog corpus by \cite{poliblog}.
 
 The LDA package uses a slightly different format for the vocabulary. Specifically it indexes words from 0 using the convention in C. We can convert this over to a more R-like 1-index using \code{prepDocuments()}, as well as perform other recoding options of metadata. Once again, the next step is to reassign the documents object from the output of \code{prepDocuments()} to its own object.
 
