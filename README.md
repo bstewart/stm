@@ -24,7 +24,7 @@ The package currently includes functionality to:
 Have a large text corpus or need a language we don't provide support for?  See our sister project [txtorg](http://txtorg.org)
 
 Papers on the Structural Topic Model:
-* Roberts, Stewart and Airoldi. "Structural Topic Models"
+* Roberts, Stewart and Airoldi. "Structural Topic Models" Copy available [here](http://scholar.harvard.edu/files/bstewart/files/stm.pdf_
 * Roberts, Stewart, Tingley, and Airoldi. "The Structural Topic Model and Applied Social Science." *Advances in Neural Information Processing Systems Workshop on Topic Models: Computation, Application, and Evaluation*. 2013. Copy available [here](http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf)
 * Roberts, Stewart, Tingley, Lucas, Leder-Luis, Gadarian, Albertson, and Rand. "Structural topic models for open-ended survey responses." *American Journal of Political Science*. Forthcoming. Copy available [here](http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf)
 * Lucas, Nielsen, Roberts, Stewart, Storer, and Tingley. "Computer assisted text analysis for comparative politics." Copy available [here](http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf)
