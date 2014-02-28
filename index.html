@@ -52,7 +52,7 @@
 <h3>
 <a name="summary" class="anchor" href="#summary"><span class="octicon octicon-link"></span></a>Summary</h3>
 
-<p>This repository contains an early release for the stm package for R.  It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). Future releases will be available on CRAN but we are using the repository here to provide a soft release.</p>
+<p>This page contains information on the stm package for R.  It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm).</p>
 
 <p>The package currently includes functionality to:</p>
 
@@ -81,8 +81,12 @@
 </ul><h3>
 <a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation Instructions</h3>
 
-<p>Assuming you already have R installed (if not see <a href="http://www.r-project.org/">http://www.r-project.org/</a>), the easiest
-approach is to use the devtools package to install directly from github.  First you have 
+<p>The package has been submitted to CRAN and will soon be available by the standard installation command:</p>
+<pre><code>install.packages("stm")
+</code></pre>
+<p>You can always get the most stable development release from the Github repository. Assuming you already have R 
+installed (if not see <a href="http://www.r-project.org/">http://www.r-project.org/</a>), the easiest
+way to install from the Github repository is to use the devtools package.  First you have 
 to install devtools using the following code.  Note that you only have to do this once</p>
 
 <pre><code>if(!require(devtools)) install.packages("devtools")
@@ -94,7 +98,9 @@ to install devtools using the following code.  Note that you only have to do thi
 install_github("bstewart/stm",dependencies=TRUE)
 </code></pre>
 
-<p>Note that this will install all the packages suggested and required to run our package.  It may take a few minutes the first time, but this only needs to be done on the first use.  In the future you can update to the most recent development version using the same code. </p>
+<p>Note that this will install all the packages suggested and required to run our package.  
+It may take a few minutes the first time, but this only needs to be done on the first use.  
+In the future you can update to the most recent development version using the same code. </p>
 
 <p>You can also grab the binaries or source files for the latest release here: (<a href="https://github.com/bstewart/stm/releases">https://github.com/bstewart/stm/releases</a>).  Then use <code>install.packages</code> with <code>repos=NULL</code> so that</p>
 
