@@ -4,14 +4,14 @@
 \title{
 Plot effect of covariates on topics}
 \description{
-Plots the marginal effect of a covariate on a set of topics selected by
-the user. Before running this, the user should run a function to
+Plots the effect of a covariate on a set of topics selected by
+the user. Different effect types available depending on type of covariate. Before running this, the user should run a function to
 simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
 }
 \usage{
 \method{plot}{estimateEffect}(x, covariate, model=NULL, topics=x$topics,
                     method="pointestimate",
-                    cov.value1=NULL, cov.value2=NULL,
+                    cov.value1=NULL, cov.value2=NULL, int.value=NULL,
                     npoints=100, nsims=100, ci.level=.95,
                     xlim=NULL, ylim=NULL, ylab="",
                     main="",printlegend=TRUE, labeltype="numbers",
@@ -23,7 +23,7 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
     Output of estimateEffect, which calculates simulated betas for plotting
   }
   \item{covariate}{
-    String of the name of the main covariate of interest.  All other
+    String of the name of the main covariate of interest. Must be enclosed in quotes.  All other
     covariates within the formula specified in estimateEffect will be
     kept at their median.
     }
@@ -52,12 +52,17 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
     appear in the legend for continous covariates.
   }
   \item{cov.value1}{
-    For method "difference", the value or set of values of interest at which to set the covariate.
+    For method "difference", the value or set of values of interest at which to set the covariate. In the case of calculating a treatment/control contrast, set the treatment to cov.value1.
   }
     \item{cov.value2}{
     For method "difference", the value or set of values which will be
     set as the comparison group.  cov.value1 and cov.value2 must be
     vectors of the same length.
+  }
+  \item{int.value}{
+    For methods "pointestimate" and "difference", when two binary terms
+    are interacted and one variable in the interaction is the covariate
+    of interest, the user can specify the value of the interaction term.
     }
   \item{npoints}{
     Number of unique points to use for simulation along the support of a
@@ -110,42 +115,33 @@ Character string that is y axis title.
     Other plotting parameters
   }
 }
-
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
-library(lda)
-data(poliblog.ratings)
-poliblog.ratings <- as.factor(ifelse(poliblog.ratings==-100,
-                                     "Liberal",
-                                     "Conservative"))
-prep <- estimateEffect(1:5 ~ poliblog.ratings, poliblogPrevFit)
-plot.estimateEffect(prep, "poliblog.ratings", model=poliblogPrevFit,
+\dontrun{
+prep <- estimateEffect(1:3 ~ treatment, gadarianFit, gadarian)
+plot.estimateEffect(prep, "treatment", model=gadarianFit,
 method="pointestimate")
-plot.estimateEffect(prep, "poliblog.ratings", model=poliblogPrevFit,
-method="difference", cov.value1="Liberal", cov.value2="Conservative")
+plot.estimateEffect(prep, "treatment", model=gadarianFit,
+method="pointestimate")
+plot.estimateEffect(prep, "treatment", model=gadarianFit,
+method="difference",cov.value1=1,cov.value2=0)
+
+#If the covariate were a binary factor, the factor labels can be used to
+ specify the values of cov.value1 (e.g., cov.value1="treat"). String
+ variables must be turned to factors prior to plotting.
+
+#Example of binary times binary interaction
+gadarian$binaryvar <- sample(c(0,1), nrow(gadarian), replace=T)
+temp <- textProcessor(gadarian$open.ended.response,metadata=gadarian)
+out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
+stm1 <- stm(out$documents, out$vocab, 3, prevalence=~treatment*binaryvar,
+ data=gadarian)
+prep <- estimateEffect(c(2) ~ treatment*binaryvar, stmobj=stm1,
+metadata=gadarian)
+
+par(mfrow=c(1,2))
+plot.estimateEffect(prep, "binaryvar", method="pointestimate",
+cov.value1=1, cov.value2=0, xlim=c(-1,1), int.value=1)
+plot.estimateEffect(prep, "binaryvar", method="pointestimate",
+cov.value1=1, cov.value2=0, xlim=c(-1,1), int.value=0)
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}

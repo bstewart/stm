@@ -5,27 +5,40 @@
 Structural Topic Model
 }
 \description{
-This package implements the Structural Topic Model and eventually other
-meta-data models.  The packages is still in beta so small details of the
-function syntax may change.  \code{\link{stm}} is the main function of the package that estimates the
-Structural Topic Model.  Data import can be done via the read functions
-or if from raw texts the textProcessor function.  \code{\link{prepDocuments}} covers
-some basic format conversions and will do other sorts of data
-manipulation.  \code{\link{labelTopics}} will show the topics fitted by the model.
-\code{\link{estimateEffect}}, \code{\link{plot.estimateEffect}}
-will show relationships between
-topics and covariates within the model.   Various other plotting
-functions are included that allow the user to plot prevalence of topics,
-correlations between topics, and other types of summaries of the model.
-}
-\details{
-\tabular{ll}{
-Package: \tab stm\cr
-Type: \tab Package\cr
-Version: \tab 0.05.03\cr
-Date: \tab 2014-02-13\cr
-License: \tab MIT \cr
-}
+This package implements the Structural Topic Model, a general approach to including document-level metadata within mixed-membership topic models.
+
+Functions to ingest and manipulate documents:
+\code{\link{textProcessor}}
+\code{\link{readCorpus}}
+\code{\link{prepDocuments}}
+
+Functions to fit the model:
+\code{\link{stm}}
+\code{\link{selectModel}}
+\code{\link{manyTopics}}
+
+Functions to summarize a model:
+\code{\link{labelTopics}}
+\code{\link{summary.STM}}
+\code{\link{findThoughts}}
+
+Functions for Post-Estimation:
+\code{\link{estimateEffect}}
+\code{\link{topicCorr}}
+
+Plotting Functions
+\code{\link{plot.STM}}
+\code{\link{plot.estimateEffect}}
+\code{\link{plot.topicCorr}}
+\code{\link{plotQuote}}
+\code{\link{plotTopicLoess}}
+\code{\link{plotModels}}
+\code{\link{topicQuality}}
+
+Pre-Fit Models and Data
+\code{\link{gadarian}}
+\code{\link{gadarianFit}}
+\code{\link{poliblog5k}}
 }
 \author{
 Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
@@ -42,7 +55,6 @@ Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
 Gadarian, S., Albertson, B., Albertson, B. and Rand,
 D. (Forthcoming). "Structural topic models for open ended survey
 responses." American Journal of Political Science http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf
-
 }
 \keyword{ package }
 \seealso{

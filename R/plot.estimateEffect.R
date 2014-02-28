@@ -1,17 +1,34 @@
 plot.estimateEffect <- function(x, covariate, model=NULL, topics=x$topics,
                           method="pointestimate",
-                          cov.value1=NULL, cov.value2=NULL, npoints=100, nsims=100, ci.level=.95, 
+                          cov.value1=NULL, cov.value2=NULL,int.value=NULL, npoints=100, nsims=100, ci.level=.95, 
                                xlim=NULL, ylim=NULL, ylab="", main="",printlegend=TRUE, labeltype="numbers",n=7,frexw=.5, xlab="", add=FALSE, linecol=NULL, width=25, verbose.labels=TRUE,...){
+
+
+##################
+##Preliminaries###
+##################
 object <- x
-#Simulate betas
+
+#Grab the model matrix, number of params in the model
 xmat <- model.matrix(object$formula, data=object$data)
 nparams <- ncol(xmat)
 
+#Are there any interactions?
 terms <- attr(object$modelframe, "terms")
 factors <- attr(terms, "factors")
 fnames <- colnames(factors)
 parse <- grepl(":", fnames, fixed = TRUE)
 
+#Are there any factors?
+facts <- attr(xmat, "contrasts")
+factornames <- names(facts)
+
+#Error checking -- did they put quotes around covariate
+if(!is.character(covariate)){
+  stop("Please enter the name of the covariate of interest as a string.")
+}
+
+#Interaction error checking, find out whether the covariate of interest is in the interaction.
 if(any(parse)) {
     intterms <- which(parse)
     if(sum(parse)>1){
@@ -21,6 +38,9 @@ if(any(parse)) {
     if(length(unique(object$data[,intlabs[1]]))>2 & length(unique(object$data[,intlabs[2]]))>2){
       stop("Plot only supports interaction terms where one of the covariates has two values.")
     }
+    if(!is.numeric(object$data[,intlabs[1]]) & !is.numeric(object$data[,intlabs[2]])){
+      stop("Plot only supports interaction between two numeric variables.")
+    }
     if(covariate%in%intlabs){
       covint <- which(intlabs==covariate)
       cint <- which(intlabs!=covariate)
@@ -29,6 +49,14 @@ if(any(parse)) {
     }
   }
 
+#Find the splines
+classes <- attr(attr(object$modelframe, "terms"), "dataClasses")
+splines <- sapply(classes, function(x) grep("nmatrix", x, fixed=T, value=T))
+splinesvars <- names(unlist(splines))
+
+######################
+##Simulate the betas##
+#####################
 betas <- lapply(object$parameters, function (x) lapply(x, function (y) rmvnorm(nsims, y$est, y$vcov)))
 simbetas <- list()
 for(i in 1:length(betas)){
@@ -39,19 +67,19 @@ for(i in 1:length(betas)){
   simbetas[[i]] <- temp[-1,]
 }
 
-classes <- attr(attr(object$modelframe, "terms"), "dataClasses")
-splines <- sapply(classes, function(x) grep("nmatrix", x, fixed=T, value=T))
-splinesvars <- names(unlist(splines))
-
-#Get control vector and identify which column is the covariate of interest
+#################################
+##Calculate the control vector##
+#################################
 labels1 <- object$varlist
 term.labels <- attr(terms(object$modelframe), "term.labels")
-#this will only be right for the median, if we change to the mean, we'll have to change this.
+#NOTE: this will only be right for the median, if we change to the mean, we'll have to change this.
 cvector <- apply(xmat,2,median)
 matnames <- attr(xmat, "assign")
 
+#Identify which entry in the control vector is the covariate of interest
 covid <- which(matnames==which(labels1==covariate))
 
+#Get control vector if there are splines in the function
 if(!is.null(splinesvars)){
   for(i in 1:length(splinesvars)){
     splineid <- which(matnames==which(term.labels==splinesvars[i]))
@@ -63,12 +91,14 @@ if(!is.null(splinesvars)){
   }
 }
 
+#Get the control vector if there are interactions in the function
 if(any(parse)){
   cvector[intterms+1] <- median(xmat[,which(matnames==which(labels1==intlabs[1]))])*median(xmat[,which(matnames==which(labels1==intlabs[2]))])
 }
 
-#Determine confidence level offset
-offset <- (1-ci.level)/2
+##########
+#Labeling#
+##########
 
 #Grab the labels
   if(length(labeltype)==1){
@@ -112,10 +142,19 @@ offset <- (1-ci.level)/2
     labels=labeltype
   }
 
-#Point estimate method
+###################################
+#Determine confidence level offset#
+###################################
+offset <- (1-ci.level)/2
+
+########################
+#Point estimate method#
+######################
 if(method=="pointestimate"){
-  #Estimate simulated values to plot
-  if(length(covid)>1 & covariate%in%fnames){
+  
+  #If the covariate is a factor
+  if(length(covid)>1 & covariate%in%factornames){
+    #Estimate simulated values to plot
     uvals <- xmat[,covid][!duplicated(xmat[,covid]),]
     toplot <- list()
     for(j in 1:nrow(uvals)){
@@ -123,26 +162,35 @@ if(method=="pointestimate"){
       for(i in 1:length(object$topics)){
         cvector[covid] <- uvals[j,]
         if(any(parse)){
-          if(covint>0){
+          if(covint>0 & is.null(int.value)){
             cvector[intterms+1] <- uvals[j,]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+          }
+          if(covint>0 & !is.null(int.value)){
+            cvector[intterms+1] <- uvals[j,]*int.value
           }
         }
         sims <- simbetas[[i]]%*%cvector
         toplot[[j]][[i]] <- list(mean=mean(sims), cis=quantile(sims, c(offset, 1-offset)))
       }
     }
-    newlabels <- list()      
+
+    #Add string to labels to specify which covariate level is being plotted.
+    newlabels <- list()
+    
+    factorlevs <- contr.treatment(levels(as.factor(object$data[,covariate])))
     for(i in 1:nrow(uvals)){
         newlabels[[i]] <- vector(length=length(object$topics))
         for(k in 1:length(object$topics)){
           if(verbose.labels){
-            newlabels[[i]][k] <- paste(labels[k], " (Covariate Level ", colnames(xmat)[covid][as.logical(uvals[i,])], ")",sep="")
+            lab <- which(apply(factorlevs,1,function(x) sum(x==uvals[i,])==length(x)))
+            newlabels[[i]][k] <- paste(labels[k], " (Covariate Level: ", rownames(factorlevs)[lab], ")",sep="")
           } else {
             newlabels[[i]][k] <- paste(labels[k])
           }
         }
       }
-                                        #Plot estimates
+    
+    #Plot estimates
     topicid <- rev(which(object$topics%in%topics))
     if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
     if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
@@ -158,6 +206,8 @@ if(method=="pointestimate"){
         }
       }
   }else{
+    #If the covariate is not a factor
+    #Simulate quantities of interest
       uvals <- unique(xmat[,covid])
       if(length(uvals)==length(xmat[,covid])) stop("Too many levels to use point estimate method")
       toplot <- list()
@@ -166,27 +216,38 @@ if(method=="pointestimate"){
         for(i in 1:length(object$topics)){
           cvector[covid] <- uvals[j]
           if(any(parse)){
-            if(covint>0){
+            if(covint>0 & is.null(int.value)){
               cvector[intterms+1] <- uvals[j]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+            }
+            if(covint>0 & !is.null(int.value)){
+              cvector[intterms+1] <- uvals[j]*int.value
             }
           }
           sims <- simbetas[[i]]%*%cvector
           toplot[[j]][[i]] <- list(mean=mean(sims), cis=quantile(sims, c(offset, 1-offset)))
         }
       }
-      newlabels <- list()      
+      #Add specific covariate levels to labels
+      newlabels <- list()
+      if(covariate%in%factornames){
+        factorlevs <- contr.treatment(levels(as.factor(object$data[,covariate])))
+      }
       for(i in 1:length(uvals)){
         newlabels[[i]] <- vector(length=length(object$topics))
         for(k in 1:length(object$topics)){
           if(verbose.labels){
-            newlabels[[i]][k] <- paste(labels[k], " (Covariate Level ", uvals[i], ")",sep="")
+            if(covariate%in%factornames){
+              newlabels[[i]][k] <- paste(labels[k], " (Covariate Level: ", rownames(factorlevs)[factorlevs[,1]==uvals[i]], ")",sep="")
+            }else{
+              newlabels[[i]][k] <- paste(labels[k], " (Covariate Level: ", uvals[i], ")",sep="")
+            }
           } else {
             newlabels[[i]][k] <- paste(labels[k])
           }
         }
       }
 
-                                        #Plot estimates
+      #Plot estimates
       topicid <- rev(which(object$topics%in%topics))
       if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
       if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
@@ -203,7 +264,10 @@ if(method=="pointestimate"){
       }
     }
 }
-#Difference method
+
+###################
+#Difference method#
+###################
 if(method=="difference"){
   if(is.null(cov.value1) | is.null(cov.value2)) stop("Cov.value1 and cov.value2 must be specified for categorical variables using method of difference")
   if(length(cov.value1)!=length(cov.value2)) stop("Cov.value1 and cov.value2 must be the same length")
@@ -221,15 +285,21 @@ if(method=="difference"){
         ct <- contr.treatment(lev)
         cvector[covid] <- ct[rownames(ct)==cov.value1[j]]
         if(any(parse)){
-          if(covint>0){
+          if(covint>0 & is.null(int.value)){
             cvector[intterms+1] <- ct[rownames(ct)==cov.value1[j]]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+          }
+          if(covint>0 & !is.null(int.value)){
+            cvector[intterms+1] <- ct[rownames(ct)==cov.value1[j]]*int.value
           }
         }
         simst <- simbetas[[i]]%*%cvector
         cvector[covid] <- ct[rownames(ct)==cov.value2[j]]
         if(any(parse)){
-          if(covint>0){
+          if(covint>0 & is.null(int.value)){
             cvector[intterms+1] <- ct[rownames(ct)==cov.value2[j]]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+          }
+          if(covint>0 & !is.null(int.value)){
+            cvector[intterms+1] <- ct[rownames(ct)==cov.value2[j]]*int.value
           }
         }
         simsc <- simbetas[[i]]%*%cvector
@@ -238,14 +308,21 @@ if(method=="difference"){
         cvector[covid] <- cov.value1[j]
         simst <- simbetas[[i]]%*%cvector
         if(any(parse)){
-          if(covint>0){
+          if(covint>0 & is.null(int.value)){
             cvector[intterms+1] <- cov.value1[j]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
           }
+          if(covint>0 & !is.null(int.value)){
+            cvector[intterms+1] <- cov.value1[j]*int.value
+          }
+
         }
         cvector[covid] <- cov.value2[j]
         if(any(parse)){
-          if(covint>0){
+          if(covint>0 & is.null(int.value)){
             cvector[intterms+1] <- cov.value2[j]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+          }
+          if(covint>0 & !is.null(int.value)){
+            cvector[intterms+1] <- cov.value2[j]*int.value
           }
         }
         simsc <- simbetas[[i]]%*%cvector
@@ -283,10 +360,12 @@ if(method=="difference"){
     }
   }
 }
-
-#Continuous method, no interactions
+####################################
+#Continuous method, no interactions#
+####################################
 if((method=="continuous" | method=="spline") & !any(parse)){
   topicid <- which(object$topics%in%topics)
+  
   #Estimate simulated values to plot
   toplot <- list()
   if(method=="continuous"){
@@ -332,8 +411,13 @@ if((method=="continuous" | method=="spline") & !any(parse)){
   }
 }
 
-#Continuous method, interactions
+#################################
+#Continuous method, interactions#
+#################################
 if((method=="continuous" | method=="spline") & any(parse)){
+  if(!is.null(int.value)){
+    warning("int.value does not affect continuous interactions")
+  }
   if(length(unique(xmat[,which(matnames==which(labels1==intlabs[cint]))]))>2){
     stop("For method continuous with interaction, interacted variable must be binary.")
   }

@@ -24,8 +24,14 @@ prepDocuments <- function(documents, vocab, meta=NULL,
     if(!is.null(meta)) meta <- meta[index,] 
   }
   
+  
+  #check that there are no 0 length documents
+  len <- unlist(lapply(documents, length))
+  if(any(len==0)) stop("Some documents have 0 length.  Please check input.")
+  
   triplet <- doc.to.ijv(documents) #this also fixes the zero indexing.
   documents <- ijv.to.doc(triplet$i, triplet$j, triplet$v)
+  docs.removed <- c()
   #Detect Missing Terms
   vocablist <- sort(unique(triplet$j))
   if(length(vocablist)>length(vocab)) {
@@ -46,7 +52,6 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   toremove <- which(wordcounts <= lower.thresh | wordcounts >= upper.thresh)
   keepers <- which(wordcounts > lower.thresh & wordcounts < upper.thresh)
   droppedwords <- vocab[toremove]
-  docs.removed <- c()
   if(length(toremove)) {
     if(verbose) cat("Removing Words Due to Frequency \n")
     vocab <- vocab[-toremove]

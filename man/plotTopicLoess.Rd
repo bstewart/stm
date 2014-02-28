@@ -43,25 +43,6 @@ plotTopicLoess(model, topics, covariate, span=1.5, level=.95,
 \details{
 This function is considerably less developed than \code{\link{plot.estimateEffect}} and we recommend using that function with splines and high degrees of freedom where possible.  Computes standard errors through the method of composition as in \code{\link{estimateEffect}}.
 }
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 \code{\link{plot.estimateEffect}}}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+

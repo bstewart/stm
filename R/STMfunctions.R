@@ -116,14 +116,11 @@ lse <- function(x) {
  logSumExp(x)
 }
 
-#Note here we have simply cut the NA checks, the names element etc.
 row.lse <- function(mat) {
-  .Call("rowLogSumExps", mat, FALSE, FALSE, TRUE, PACKAGE = "matrixStats")
-  #rowLogSumExps(mat)
+  rowLogSumExps(mat)
 }
 col.lse <- function(mat) {
-  #colLogSumExps(mat)
-  .Call("rowLogSumExps", mat, FALSE, FALSE, FALSE, PACKAGE = "matrixStats")
+  colLogSumExps(mat)
 }
 
 softmax <- function(x) {

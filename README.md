@@ -10,7 +10,7 @@ Please email all comments/questions to bstewart [AT] fas.harvard.edu
 
 ###Summary
 
-This repository contains an early release for the stm package for R.  It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). Future releases will be available on CRAN but we are using the repository here to provide a soft release.
+This repository will host the development version of the package which should appear on CRAN shortly. It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). 
 
 The package currently includes functionality to:
 * ingest and manipulate text data

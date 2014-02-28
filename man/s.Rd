@@ -5,7 +5,7 @@
 Make a B-spline Basis Function
 }
 \description{
-This is a simple wrapper around the \code{bs()} function in the splines package.  It will default to a spline with 10 degrees of freedom.}
+This is a simple wrapper around the \code{\link[splines]{bs}} function in the splines package.  It will default to a spline with 10 degrees of freedom.}
 \usage{
 s(x, df, ...)
 }
@@ -18,17 +18,17 @@ the predictor value.
 degrees of freedom.  Defaults to the minimum of 10 or one minus the number of unique values in x.
 }
   \item{\dots}{
-Arguments passed to the bs() function.
+Arguments passed to the \code{\link[splines]{bs}} function.
 }
 }
 \details{
-This is a simple wrapper written as users may find it easier to simply type \code{s(x)} rather than selecting parameters for a spline.
+This is a simple wrapper written as users may find it easier to simply type \code{\link{s}} rather than selecting parameters for a spline.
 }
 \value{
 a predictor matrix of the basis functions.
 }
 \seealso{
-\pkg{splines}
-\code{\link{bs}}
+\code{\link[splines]{bs}}
+\code{\link[splines]{ns}}
 }
 

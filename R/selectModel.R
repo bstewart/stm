@@ -1,14 +1,18 @@
 selectModel <- function(documents, vocab, K,
                         prevalence, content, data=NULL,
                         max.em.its=100, verbose=TRUE, init.type = "LDA",
-                        emtol= 1e-05, seed=NULL,runs=50, frexw=.7, net.max.em.its=2, netverbose=FALSE, M=10, ...){
+                        emtol= 1e-05, seed=NULL,runs=50, frexw=.7, net.max.em.its=2, netverbose=FALSE, M=10, N=NULL,...){
   if(!is.null(seed)) set.seed(seed)
+
+  if(is.null(N)){
+    N <-  round(.2*runs)
+  }
   
   if(runs<2){
     stop("Number of runs must be two or greater.")
   }
   
-  if(runs<M){
+  if(runs<N){
     stop("Number in the net must be greater or equal to the number of final models.")
   }
   
@@ -24,7 +28,7 @@ selectModel <- function(documents, vocab, K,
     likelihood[i] <- mod.out$convergence$bound[length(mod.out$convergence$bound)]
   }
 
-  keep <- order(likelihood, decreasing=T)[1:M]
+  keep <- order(likelihood, decreasing=T)[1:N]
   keepseed <- seedout[keep]
   cat("Running select models \n")
   runout <- list()

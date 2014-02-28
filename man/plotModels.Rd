@@ -11,7 +11,8 @@ outputted from selectModel.}
   %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-plotModels(models, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:length(models$runout),...)
+plotModels(models, xlab="Semantic Coherence",
+    ylab="Exclusivity", labels=1:length(models$runout),...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,25 +49,3 @@ Character string that is y axis title. This will be exclusivity.
   semantic coherence.
 %%  ~~ If necessary, more details than the description above ~~
 }
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

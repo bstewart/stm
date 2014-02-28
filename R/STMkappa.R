@@ -17,7 +17,7 @@ estKappa <- function(beta.ss, kappa, settings) {
     KbyA <- matrix(rowSums(KbyV), ncol=1)
   } else {
     KbyV <- Reduce("+", beta.ss) #marginalize over aspects
-    KbyA <- do.call(cbind, lapply(beta.ss, rowSums)) #marginalize over the topics
+    KbyA <- do.call(cbind, lapply(beta.ss, rowSums)) #marginalize over words
   }
   
   # Step 2: Loop over the Kappa Updates
@@ -115,8 +115,6 @@ opt.kappak <- function(i, kappa, beta.ss, taumode, tautol, taumaxit, taufixedpri
   
   return(kappa)
 }
-
-#NB: Code below works and is fairly fast but has been replaced by a direct translation in C.
 
 ###
 # Optimization objectives for BFGS style Kappa

@@ -7,7 +7,10 @@ Plot a topic correlation graph}
 Uses a topic correlation graph estimated by \code{\link{topicCorr}} and the \code{igraph} package to plot a network where nodes are topics and edges indicate a positive correlation.
 }
 \usage{
-\method{plot}{topicCorr}(x, topics = NULL, vlabels = NULL, layout = layout.fruchterman.reingold, vertex.color = "green", vertex.label.cex = 0.75, vertex.label.color = "black", ...)
+\method{plot}{topicCorr}(x, topics = NULL, vlabels = NULL, 
+              layout = layout.fruchterman.reingold, 
+              vertex.color = "green", vertex.label.cex = 0.75, 
+              vertex.label.color = "black", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +40,7 @@ Additional parameters passed to \code{plot.graph.adjacency}
 }
 }
 \details{
-Essentially a thin wrapper around the plotting functionality in the \code{igraph} package.
+Essentially a thin wrapper around the plotting functionality in the \code{igraph} package. See package vignette for more details.
 }
 \references{
 Csardi G, Nepusz T: The igraph software package for complex network research, InterJournal, Complex Systems 1695. 2006. http://igraph.sf.net
@@ -46,6 +49,8 @@ Csardi G, Nepusz T: The igraph software package for complex network research, In
 \code{\link{topicCorr}}
 }
 \examples{
-cormat <- topicCorr(poliblogFit)
+#This function becomes more useful with larger numbers of topics.
+#it is demonstrated here with a small model simply to show how the syntax works.
+cormat <- topicCorr(gadarianFit)
 plot(cormat)
 }

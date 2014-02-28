@@ -15,7 +15,7 @@ selectModel(documents, vocab, K,
                         max.em.its=100, verbose=TRUE, init.type =
                         "LDA",
                         emtol= 1e-05, seed=NULL,runs=50, frexw=.7,
-                        net.max.em.its=2, netverbose=FALSE, M=10,...)
+                        net.max.em.its=2, netverbose=FALSE, M=10,N=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -101,13 +101,13 @@ selectModel(documents, vocab, K,
     Number of words used to calculate semantic coherence and
     exclusivity.  Defaults to 10.  
   }
+  \item{N}{
+    Total number of models to retain in the end. Defaults to .2 of runs. 
+  }
+
     \item{\dots}{
       Additional options described in details of stm.
     }
-}
-
-\details{
-%%  ~~ If necessary, more details than the description above ~~
 }
 \value{
 \item{runout}{List of model outputs the user has to choose from.  Take
@@ -120,29 +120,17 @@ selectModel(documents, vocab, K,
   kappas for models with a content covariate.}
 %% ...
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
 \dontrun{
-library(lda)
-data(poliblog.documents)
-data(poliblog.vocab)
-out <- prepDocuments(poliblog.documents, poliblog.vocab)
-data(poliblog.ratings)
-models <- selectModel(out$documents,out$vocab,K=5, prevalence=~poliblog.ratings, runs=5)
-plotModels(models)
+temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+meta<-temp$meta
+vocab<-temp$vocab
+docs<-temp$documents
+out <- prepDocuments(docs, vocab, meta)
+docs<-out$documents
+vocab<-out$vocab
+meta <-out$meta
+set.seed(02138)
+mod.out <- selectModel(docs, vocab, K=3, prevalence=~treatment + s(pid_rep), data=meta, runs=5)
+plotModels(mod.out)
 }}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

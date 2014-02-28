@@ -68,7 +68,7 @@ estep.LN <- function(documents, beta.index, logbeta, mu, sigma, verbose, lambdac
     lambda[[i]] <- doc.results$eta$lambda
     if(verbose && i%%ctevery==0) cat(".")
   }
-  if(verbose) cat("\n Completed Estep. \n")
+  if(verbose) cat("\n") #add a line break for the next message.
   
   #3) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)

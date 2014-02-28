@@ -1,5 +1,6 @@
 \name{labelTopics}
 \alias{labelTopics}
+\alias{print.labelTopics}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Label topics
@@ -27,25 +28,32 @@ A weight used in our approximate FREX scoring algorithm (see details).}
 \details{
 Four different types of word weightings are printed with label topics.
 
-"frequency" is the words within each topic with the highest
+Highest Prob: are the words within each topic with the highest
 probability (inferred directly from topic-word distribution parameter \eqn{\beta}).  
 
-"frex" is the words that are both frequent and
+FREX: are the words that are both frequent and
 exclusive, identifying words that distinguish topics.  This is calculated by taking
 the harmonic mean of rank by probability within the topic (frequency) and rank by distribution
 of topic given word \eqn{p(z|w=v)} (exclusivity).  In estimating exclusivity we use a 
 James-Stein type shrinkage estimator of the distribution \eqn{p(z|w=v)}.
 
-"score" and "lift" are measures provided in two other popular text mining packages. For more
-information on type "score", see the R package \code{lda}.  For more
-information on type "lift", see Taddy, "Multinomial Inverse Regression
+Score and Lift are measures provided in two other popular text mining packages. For more
+information on type Score, see the R package \code{\link{lda}}.  For more
+information on type Lift, see Taddy, "Multinomial Inverse Regression
 for Text Analysis", Journal of the American Statistical Association 108,
 2013 and the R package \code{textir}.
 }
 \value{
-Returns a labelTopics object which includes the words for each label type.}
+A labelTopics object (list)
+\item{prob }{matrix of highest probability words}
+\item{frex }{matrix of highest ranking frex words}
+\item{lift }{matrix of highest scoring words by lift}
+\item{score }{matrix of best words by score}
+\item{topicnums }{a vector of topic numbers which correspond to the rows}
+}
 \seealso{
 \code{\link{stm}}
+\code{\link{plot.STM}}
 }
 \examples{
 labelTopics(gadarianFit)

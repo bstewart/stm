@@ -8,7 +8,8 @@ Estimate topic correlation
 Estimates a graph of topic correlations using either a simple thresholding measure or more sophisticated tests from the package \code{huge}.
 }
 \usage{
-topicCorr(model, method = c("simple", "huge"), cutoff = 0.01, verbose = TRUE)
+topicCorr(model, method = c("simple", "huge"),
+       cutoff = 0.01, verbose = TRUE)
 }
 \arguments{
   \item{model}{
@@ -51,10 +52,4 @@ N. Meinshausen and P. Buhlmann. High-dimensional Graphs and Variable Selection w
 }
 \seealso{
 \code{\link{plot.topicCorr}}
-}
-\examples{
-cormat <- topicCorr(poliblogFit)
-plot(cormat)
-cormathuge <- topicCorr(poliblogFit, method="huge")
-plot(cormat)
 }

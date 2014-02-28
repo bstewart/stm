@@ -1,7 +1,7 @@
 ## Optimization for Global Parameters over Doc-Topic Proportions
 
 #main method up top, regression-implementations below.
-opt.mu <- function(lambda, mode=c("CTM","Pooled", "GL"), covar=NULL) {
+opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL) {
 
   #When there are no covariates we use the CTM method
   if(mode=="CTM") {
@@ -10,7 +10,7 @@ opt.mu <- function(lambda, mode=c("CTM","Pooled", "GL"), covar=NULL) {
   }
   
   #Variational Linear Regression with a Gamma hyperprior
-  if(mode %in% "Pooled") {
+  if(mode=="Pooled") {
     gamma <- vector(mode="list",length=ncol(lambda))
     for (i in 1:ncol(lambda)) {
       gamma[[i]] <- vb.variational.reg(Y=lambda[,i], X=covar) 
@@ -21,17 +21,11 @@ opt.mu <- function(lambda, mode=c("CTM","Pooled", "GL"), covar=NULL) {
   }
   
   #Gamma Lasso
-  if(mode %in% "GL") {
-    library(gamlr)
-    gamma <- vector(mode="list",length=ncol(lambda))
-    mu <- vector(mode="list",length=ncol(lambda))
-    for (i in 1:ncol(lambda)) {
-      mod <- gamlr(y=lambda[,i], x=covar[,-1,drop=FALSE],family="gaussian") 
-      gamma[[i]] <- as.numeric(coef(mod))
-      mu[[i]] <- as.numeric(predict(mod, covar[,-1,drop=FALSE]))
-    }
-    gamma <- do.call(cbind,gamma)
-    mu<- do.call(rbind,mu)
+  if(mode=="L1") {
+    out <- glmnet(x=covar[,-1], y=lambda, family="mgaussian", alpha=enet)
+    unpack <- unpack.glmnet(out, nobs=nrow(covar), ic.k=2)
+    gamma <- rbind(unpack$intercept, unpack$coef)
+    mu <- covar%*%gamma
     return(list(mu=mu, gamma=gamma))
   }
 }

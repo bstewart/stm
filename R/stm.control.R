@@ -15,16 +15,17 @@ stm.control <- function(documents, vocab=NULL, settings) {
     if(settings$keepHistory) {
       history[[(length(history)+1)]] <- list(model=model,suffstats=suffstats)
     }
-    
+    t1 <- proc.time()
     #Run the E-Step    
     suffstats <- estep.LN(documents, settings$covariates$betaindex, 
                           logbeta=model$beta$logbeta, 
                           mu=model$mu$mu, sigma=model$sigma, 
                           settings$verbose, lambdacurrent=suffstats$lambda) 
-
+    if(settings$verbose) cat(sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3])))
+    t1 <- proc.time()
     #M-Step
     model$mu <- opt.mu(lambda=suffstats$lambda, mode=settings$gamma$mode, 
-                       covar=settings$covariates$X)
+                       covar=settings$covariates$X, settings$gamma$enet)
 
     model$sigma <- opt.sigma(nu=suffstats$sigma, lambda=suffstats$lambda, 
                              mu=model$mu$mu, sigprior=settings$sigma$prior)
@@ -32,7 +33,17 @@ stm.control <- function(documents, vocab=NULL, settings) {
     model$beta <- opt.beta(suffstats$beta, 
                            model$beta$kappa,
                            settings)
-    if(settings$verbose) cat("Completed Mstep.\n")
+    #if verbose- write out something- it just looks silly if it took less than 2 seconds
+    #though so don't bother.
+    if(settings$verbose) {
+      timer <- floor((proc.time()-t1)[3])
+      if(timer>1) {
+        cat(sprintf("Completed M-Step (%d seconds). \n", floor((proc.time()-t1)[3])))
+      } else {
+        cat("Completed M-Step. \n")
+      }
+    }
+    
     #Convergence
     model$convergence <- convergence.check(suffstats$bound, model, settings) #assess convergence
     converged <- model$convergence$converged

@@ -6,14 +6,14 @@ Performs model selection across separate STM's that each assume different number
 \description{
 Works the same as modelSelect, except user specifies a range of numbers of topics that they want the model fitted for. For example, models with 5, 10, and 15 topics. 
 Then, for each number of topics, selectModel is run multiple times. The output is then processed through a function that takes a pareto dominant run of the model in terms of exclusivity and semantic coherence.
-If multiple runs are candidates (i.e., none weakly dominates each other), a single model run is randomly chosen.
+If multiple runs are candidates (i.e., none weakly dominates the others), a single model run is randomly chosen from the set of undominated runs.
   %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
 manyTopics(documents, vocab, K,
                         prevalence, content, data=NULL,
                         max.em.its=100, verbose=TRUE, init.type =
-                        c("LDA","Random", "User"),
+                        "LDA",
                         emtol= 1e-05, seed=NULL,runs=50, frexw=.7,
                         net.max.em.its=2, netverbose=FALSE, M=10,...)
 }
@@ -118,29 +118,24 @@ Does not work with models that have a content variable (at this point).
 %  kappas for models with a content covariate.}
 %% ...
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
-
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
 \dontrun{
-storage<-manyTopics(data,vocab,K=3:4, prevalence=~yourdata,data=meta, runs=10)
-#This chooses the output, a single run of STM that was selected, from the runs of the 3 topic model
-t<-storage$out[[1]]
-#This chooses the output, a single run of STM that was selected, from the runs of the 4 topic model
-t<-storage$out[[2]]
-}}
+temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+meta<-temp$meta
+vocab<-temp$vocab
+docs<-temp$documents
+out <- prepDocuments(docs, vocab, meta)
+docs<-out$documents
+vocab<-out$vocab
+meta <-out$meta
 
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+set.seed(02138)
+storage<-manyTopics(docs,vocab,K=3:4, prevalence=~treatment + s(pid_rep),data=meta, runs=10)
+#This chooses the output, a single run of STM that was selected,
+#from the runs of the 3 topic model
+t<-storage$out[[1]]
+#This chooses the output, a single run of STM that was selected,
+#from the runs of the 4 topic model
+t<-storage$out[[2]]
+#Please note that the way to extract a result for manyTopics is different from selectModel.
+}}

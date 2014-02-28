@@ -6,7 +6,7 @@ plot.STM <- function(x,
                      labeltype=c("prob", "frex", "lift", "score"), frexw=.5,
                      main=NULL, xlim=NULL, ylim=NULL, xlab=NULL, family="",
                      width=80, 
-                     covarlevels=NULL, plabels=NULL, 
+                     covarlevels=NULL, plabels=NULL, text.cex=1,
                      ...){
   model <- x
   type <- match.arg(type)
@@ -46,7 +46,7 @@ plot.STM <- function(x,
          ylab=ylab, xlab=xlab, ...)
     for(i in 1:length(invrank)) {
       lines(c(0,frequency[invrank[i]]), c(i, i))
-      text(frequency[invrank[i]]+.01, i , lab[invrank[i]],family=family,pos=4)
+      text(frequency[invrank[i]]+.01, i , lab[invrank[i]],family=family,pos=4, cex=text.cex)
     }
   }
   

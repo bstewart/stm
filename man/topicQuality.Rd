@@ -5,11 +5,12 @@
 Plots semantic coherence and exclusivity for each topic.}
 \description{
   Plots semantic coherence and exclusivity for each topic. 
-  Does not support models.
+  Does not support models with content covariates.
   %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-topicQuality(model, documents, xlab="Semantic Coherence",ylab="Exclusivity", labels=1:ncol(model$theta), M=10,...)
+topicQuality(model, documents, xlab="Semantic Coherence",
+ylab="Exclusivity", labels=1:ncol(model$theta), M=10,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,29 +40,20 @@ Character string that is y axis title. This should be exclusivity.
 \details{
   Each model has semantic coherence and exclusivity values associated
   with each topic.  This function plots these values and labels each with its topic number.
+}
+\examples{
+\dontrun{
+  #Semantic Coherence calculations require the original documents so we need
+  #to reconstruct them here.
+  temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+  meta<-temp$meta
+  vocab<-temp$vocab
+  docs<-temp$documents
+  out <- prepDocuments(docs, vocab, meta)
+  docs<-out$documents
+  vocab<-out$vocab
+  meta <-out$meta
+  topicQuality(model=gadarianFit, documents=docs)
+}
+}
 
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

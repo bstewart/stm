@@ -1,13 +1,17 @@
 ## Structural Topic Model
 # this is a wrapper around workhorse function stm.control() 
 # the primary purpose here is to format arguments and do some light preprocessing.
+
 stm <- function(documents, vocab, K, 
                 prevalence, content, data=NULL,
                 init.type=c("LDA", "DMR","Random"), seed=NULL, 
                 max.em.its=100, emtol=1e-5,
-                verbose=TRUE, ...) {
+                verbose=TRUE, reportevery=5, keepHistory=FALSE,  
+                LDAbeta=TRUE, interactions=TRUE,
+                gamma.prior=c("Pooled", "L1"), sigma.prior=0,
+                kappa.prior=c("Jeffreys", "L1"), control=list())  {
   
-  #Very First Argument Parses
+  #Match Arguments and save the call
   init.type <- match.arg(init.type)
   Call <- match.call()
   
@@ -15,16 +19,24 @@ stm <- function(documents, vocab, K,
   if(missing(documents)) stop("Must include documents")
   if(!is.list(documents)) stop("documents must be a list, see documentation.")
   if(!all(unlist(lapply(documents, is.matrix)))) stop("Each list element in documents must be a matrix. See documentation.")
-  N <- length(documents)
-  Vindex <- sort(unique(unlist(lapply(documents, function(x) x[1,]))))
-  V <- length(Vindex)
-  if(!posint(Vindex)) stop("Word indices are not positive integers")
-  if(!isTRUE(all.equal(Vindex,1:V))) stop("Word indices must be sequential integers starting with 1.")
   
-  #Vocab
+  N <- length(documents)
+  
+  #Extract and Check the Word indices
+  wcounts <- doc.to.ijv(documents)
+  wcounts <- aggregate(wcounts$v, by=list(wcounts$j), FUN=sum)
+  V <- length(wcounts$Group.1)  
+  if(!posint(wcounts$Group.1)) {
+    stop("Word indices are not positive integers")
+  } 
+  if(!isTRUE(all.equal(wcounts$Group.1,1:V))) {
+    stop("Word indices must be sequential integers starting with 1.")
+  } 
+  
+  #Check the Vocab vector against the observed word indices
   if(length(vocab)!=V) stop("Vocab length does not match observed word indices")
   
-  #K
+  #Check the Number of Topics
   if(missing(K)) stop("K, the number of topics, is required.")
   if(!(posint(K) && length(K)==1 && K>1)) stop("K must be a positive integer greater than 1.")
   if(K==2) warning("K=2 is equivalent to a unidimensional scaling model which you may prefer.")
@@ -33,9 +45,8 @@ stm <- function(documents, vocab, K,
   if(!(length(max.em.its)==1 & posint(max.em.its))) stop("Max EM iterations must be a single positive integer")
   if(!is.logical(verbose)) stop("verbose must be a logical.")
   
-  ####
-  # Function for processing Top-Covariates.
-  ####
+  ##
+  # A Function for processing prevalence-covariate design matrices
   makeTopMatrix <- function(x, data=NULL) {
     #is it a formula?
     if(inherits(x,"formula")) {
@@ -52,7 +63,7 @@ stm <- function(documents, vocab, K,
   }
   
   ###
-  #Now we Parse Covariates on the Top and Bottom
+  #Now we parse both sets of covariates
   ###
   if(!missing(prevalence)) {
     if(!is.matrix(prevalence) & !inherits(prevalence, "formula")) stop("Prevalence Covariates must be specified as a model matrix or as a formula")
@@ -83,6 +94,7 @@ stm <- function(documents, vocab, K,
     yvarlevels <- NULL
     betaindex <- rep(1, length(documents))
   }
+  A <- length(unique(betaindex)) #define the number of aspects
   
   #Checks for Dimension agreement
   ny <- length(betaindex)
@@ -91,142 +103,96 @@ stm <- function(documents, vocab, K,
                                   ") prevalence covariate (",
                                   nx,") and documents (",N,") are not all equal.",sep=""))
   
+  #Some additional sanity checks
+  if(!is.logical(LDAbeta)) stop("LDAbeta must be logical")
+  if(!is.logical(interactions)) stop("Interactions variable must be logical")
+  if(sigma.prior < 0 | sigma.prior > 1) stop("sigma.prior must be between 0 and 1")
+
   ###
   # Now Construct the Settings File
   ###
-  wcounts <- doc.to.ijv(documents)
-  wcounts <- aggregate(wcounts$v, by=list(wcounts$j), FUN=sum)
-  settings <- list(dim=list(K=K, A=length(unique(betaindex)), V=V, N=N, wcounts=wcounts),
+  settings <- list(dim=list(K=K, A=A, 
+                            V=V, N=N, wcounts=wcounts),
                    verbose=verbose,
-                   topicreportevery=5,
-                   keepHistory=FALSE,
+                   topicreportevery=reportevery,
+                   keepHistory=keepHistory,
                    convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol, topwords=20, topwordits=0),
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels),
-                   gamma=list(mode="Pooled", prior=NULL),
-                   sigma=list(prior=0),
-                   kappa=list(LDAbeta=FALSE, interactions=TRUE, 
-                              mstep=list(maxit=3, tol=.99)),
-                   tau=list(mode="Jeffreys", prior=NULL, maxit=20, tol=1e-5),
+                   gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1),
+                   sigma=list(prior=sigma.prior),
+                   kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
+                              fixedintercept=TRUE, mstep=list(maxit=3, tol=.99)),
+                   tau=list(mode=match.arg(kappa.prior), prior=NULL, tol=1e-5,
+                            enet=1,nlambda=500, lambda.min.ratio=.0001, ic.k=2),
                    init=list(mode=init.type, 
                              userinit=NULL), 
                    seed=seed)
+  if(settings$gamma$mode=="L1") {
+    if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")
+    if(ncol(xmat)<=2) stop("Cannot use L1 penalization in prevalence model with 2 or fewer covariates.")
+  }
+  if(settings$tau$mode=="L1") {
+    if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")    
+    settings$tau$maxit <- 1e8
+    settings$tau$tol <- 1e-6
+  }
+  
   ###
   # Fill in some implied arguments.
   ###
   
   #Is there a covariate on top?
   if(missing(prevalence)) {
-    settings$gamma$mode <- "CTM"
+    settings$gamma$mode <- "CTM" #without covariates has to be estimating the mean.
   } 
   
   #Is there a covariate on the bottom?
   if(missing(content)) {
-    settings$dim$A <- 1 #no covariate means we only have one aspect.
-    settings$kappa$LDAbeta <- TRUE #do LDA topics unless instructed otherwise
     settings$kappa$interactions <- FALSE #can't have interactions without a covariate.
-  } 
+  } else {
+    settings$kappa$LDAbeta <- FALSE #can't do LDA topics with a covariate 
+  }
   
   ###
-  # Process Extra Arguments in the Dots Expansion
+  # process arguments in control
   ###
+  
   #Full List of legal extra arguments
-  legalargs <-  c("LDAbeta", "interactions","gammamode", "sigmaprior", 
-                  "taumode", "tauprior", "taumaxit", "tautol",
-                  "kappamstepmaxit", "kappamsteptol", "reportevery", 
-                  "keepHistory", "userinit", "wordconverge.num", "wordconverge.its")
-  extraArgs <- list(...)
-  if (length(extraArgs)) {
-    indx <- pmatch(names(extraArgs), legalargs, nomatch=0L)
+  legalargs <-  c("tau.maxit", "tau.tol","kappa.mstepmaxit", "kappa.msteptol", 
+                  "wordconverge.num", "wordconverge.its", "fixedintercept",
+                  "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet")
+  if (length(control)) {
+    indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
-      stop(gettextf("Argument %s not matched", names(extraArgs)[indx==0L]),
+      stop(gettextf("Argument %s not matched", names(control)[indx==0L]),
            domain = NA)
     fullnames <- legalargs[indx]
     for(i in fullnames) {
-      if(i=="LDAbeta") {
-        LDAbeta <- extraArgs[[i]]
-        if(!is.logical(LDAbeta)) stop("LDAbeta must be logical")
-        settings$kappa$LDAbeta <- LDAbeta
-      }
-      if(i=="interactions") {
-        interactions <- extraArgs[[i]]
-        if(!is.logical(interactions)) stop("Interactions variable must be logical")
-        settings$kappa$interactions <- interactions        
-      }
-      if(i=="gammamode") {
-        gammamode <- extraArgs[[i]]
-        options <- c("Pooled", "GL")
-        userchoice <- match(gammamode, options, nomatch=0)
-        if(userchoice==0) stop("unrecognized gammamode")
-        if(userchoice==2) {
-          if(!require(gamlr)) stop("To use the gamma lasso please install gamlr")
-        }
-        else settings$gamma$mode <- options[userchoice]
-      }
-      if(i=="sigmaprior") {
-        sigmaprior <- extraArgs[[i]]
-        if(sigmaprior >= 0 & sigmaprior <= 1) settings$sigma$prior <- sigmaprior
-        else stop("sigmaprior must be between 0 and 1")
-      }
-      if(i=="taumode") {
-        taumode <- extraArgs[[i]]
-        options <- c("Pooled", "Fixed", "Jeffreys", "GL")
-        userchoice <- match(taumode, options, nomatch=0)
-        if(userchoice==0) stop("unrecognized taumode")
-        if(userchoice==4) stop("Gamma Lasso option coming soon.  
-                               textir package recently changed 
-                               their functionality and we haven't 
-                               yet updated accordingly")
-        settings$tau$mode <- options[userchoice]
-      }
-      if(i=="tauprior") {
-        settings$tau$prior <- extraArgs[[i]]
-      }
-      if(i=="taumaxit") {
-        settings$tau$maxit <- extraArgs[[i]]
-      }
-      if(i=="tautol") {
-        settings$tau$tol <- extraArgs[[i]]
-      }
-      if(i=="kappamstepmaxit") {
-        settings$kappa$mstep$maxit <- extraArgs[[i]] 
-      }
-      if(i=="kappamsteptol") {
-        settings$kappa$mstep$tol <- extraArgs[[i]] 
-      }
-      if(i=="reportevery") {
-        settings$topicreportevery  <- extraArgs[[i]]
-      }
-      if(i=="keepHistory") {
-        settings$keepHistory <- extraArgs[[i]]
-      }
-      if(i=="userinit") {
-        if(init.type=="User") {
-          if(inherits(extraArgs[[i]], "STMR")) {
-            settings$init$userinit <- extraArgs[[i]]$beta$logbeta
-          } else {
-            settings$init$userinit <- extraArgs[[i]]
-          }
-        } else{
-          warning("User Initialization provided but initialization type not set to User.  Using method specified by init.type",immediate=TRUE)
-        }
-      }
-      if(i=="wordconverge.num") {
-        settings$convergence$topwords <- wordconverge.num
-      }
-      if(i=="wordconverge.its") {
-        settings$convergence$topwordits <- wordconverge.its
-      }
+      if(i=="tau.maxit") settings$tau$maxit <- control[[i]]
+      if(i=="tau.tol") settings$tau$tol <- control[[i]]
+      if(i=="kappa.mstepmaxit") settings$kappa$mstep$maxit <- control[[i]] 
+      if(i=="kappa.msteptol") settings$kappa$mstep$tol <- control[[i]] 
+      if(i=="wordconverge.num") settings$convergence$topwords <- control[[i]]
+      if(i=="wordconverge.its") settings$convergence$topwordits <- control[[i]]
+      if(i=="fixedintercept")settings$kappa$fixedintercept <- control[[i]]
+      if(i=="kappa.enet") settings$tau$enet <- control[[i]]
+      if(i=="nlambda") settings$tau$nlambda <- control[[i]]
+      if(i=="lambda.min.ratio") settings$tau$lambda.min.ratio <- control[[i]]
+      if(i=="ic.k") settings$tau$ic.k <- control[[i]]
+      if(i=="gamma.enet") settings$gamma$enet <- control[[i]]
     }
   }
   
   ###
-  # Deal with the Seed
+  # Process the Seed
   ###
   if(is.null(settings$seed)) {
+    #if there is no seed, choose one and set it, recording for later
     seed <- floor(runif(1)*1e7) 
     set.seed(seed)
     settings$seed <- seed
   } else {
+    #otherwise just use the provided seed.
     set.seed(settings$seed)
   }
   

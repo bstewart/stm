@@ -28,7 +28,8 @@ A simple function which wraps sentences at \code{width} characters per line and 
 \code{\link{findThoughts}}
 }
 \examples{
-thoughts <- findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1), n=3)$docs[[1]]
+thoughts <- findThoughts(gadarianFit,texts=gadarian$open.ended.response,
+topics=c(1), n=3)$docs[[1]]
 plotQuote(thoughts)
 }
 

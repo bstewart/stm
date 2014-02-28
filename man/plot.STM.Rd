@@ -13,7 +13,7 @@ Produces one of three types of plots for an STM object.  The default option \cod
                    labeltype = c("prob", "frex", "lift", "score"), frexw = 0.5, 
                    main = NULL, xlim = NULL, ylim = NULL, xlab = NULL, 
                    family = "", width = 80, 
-                   covarlevels = NULL, plabels = NULL, ...)
+                   covarlevels = NULL, plabels = NULL, text.cex=1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -59,6 +59,9 @@ The Font family.  Most of the time the user will not need to specify this but if
   \item{plabels}{
   This option can be used to override the default labels in the perspective plot that appear along the x-axis.  It should be a character vector of length two which has the left hand side label first.
 }
+\item{text.cex}{
+ Controls the scaling constant on text size.
+}
   \item{\dots}{
 Additional parameters passed to ploting functions.
 }
@@ -67,8 +70,10 @@ Additional parameters passed to ploting functions.
 The function can produce three types of plots which summarize an STM object which is chosen by the argument \code{type}.  \code{summary} produces a plot which displays the topics ordered by their expected frequency across the corpus.  \code{labels} plots the top words selected according to the chosen criteria for each selected topics.  \code{perspectives} plots two topic or topic-covariate combinations.  Words are sized proportional to their use within the plotted topic-covariate combinations and oriented along the X-axis based on how much they favor one of the two configurations.  If the words cluster on top of each other the user can either set the plot size to be larger or shrink the total number of words on the plot.  The vertical configuration of the words is random and thus can be rerun to produce different results each time. 
 }
 \references{
-[ajps cite]
-}
+  Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
+  Gadarian, S., Albertson, B., Albertson, B. and Rand,
+  D. (Forthcoming). "Structural topic models for open ended survey
+  responses." American Journal of Political Science http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf}
 \seealso{
 \code{\link{plotQuote}}, \code{\link{plot.topicCorr}}
 }
@@ -77,7 +82,4 @@ The function can produce three types of plots which summarize an STM object whic
 plot(gadarianFit)
 plot(gadarianFit,type="labels")
 plot(gadarianFit, type="perspectives", topics=c(1,2))
-#Examples with the Poliblog Data
-plot(poliblogFit)
-plot(poliblogFit, type="perspectives", topics=1,n=30)
 }

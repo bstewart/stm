@@ -1,12 +1,17 @@
 Package: stm
 Type: Package
-Title: Estimation of Structural Topic Model
-Version: 0.05.03
-Date: 2014-02-13
+Title: Estimation of the Structural Topic Model
+Version: 0.6.1
+Date: 2014-02-28
 Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 Maintainer: Brandon Stewart <bstewart@fas.harvard.edu>
-Imports: matrixStats, splines, slam, lda, textir (>= 2.0-1),stringr
-Suggests: gamlr, igraph, SnowballC, tm, huge
+Depends: R (>= 2.10)
+Imports: matrixStats, splines, slam, lda, stringr 
+Suggests: igraph, SnowballC, tm, huge, glmnet, Matrix, textir
 LazyData: yes
-Description: Estimation of the Structural Topic Model and other meta-data models.
-License: MIT
+Description: The Structural Topic Model (STM) allows researchers 
+  to estimate topic models with document-level covariates. 
+  The package also includes tools for model selection, visualization,
+  and estimation of topic-covariate regressions.
+License: MIT + file LICENSE
+URL: http://structuraltopicmodel.com

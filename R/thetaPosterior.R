@@ -56,11 +56,15 @@ thetapost.local <- function(model, documents, nsims) {
     #Note to ensure positive definiteness we essentially have to do another E-step
     calc.nu <- function(init, doc.ct, doc.mu, doc.logbeta) {
       optim.out <- optim(par=init, fn=eta.likelihoodjoint, gr=eta.gradientjoint,
-                         method="L-BFGS-B",hessian=TRUE,
+                         method="L-BFGS-B",hessian=FALSE,
                          doc.ct=doc.ct, mu=doc.mu,
                          siginv=siginv, logbeta=doc.logbeta)
+	  hessian <- eta.hessianjoint(optim.out$par, 
+					     doc.ct=doc.ct, mu=doc.mu,
+					     siginv=siginv, logbeta=doc.logbeta, 
+						 Ndoc=sum(doc.ct))
       est <- optim.out$par
-      nu <- solve(optim.out$hess)
+      nu <- solve(hessian$hessian)
       return(list(est=est, nu=nu))
     }
     

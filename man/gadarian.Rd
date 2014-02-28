@@ -1,5 +1,6 @@
 \name{gadarian}
 \alias{gadarian}
+\alias{gadarianFit}
 \docType{data}
 \title{
 Gadarian and Albertson data
@@ -19,9 +20,6 @@ The experiment had those in the treatment condition write about what made them a
     \item{\code{open.ended.response}}{a character vector of the subject's open ended response}
   }
 }
-\details{
-%%  ~~ If necessary, more details than the __description__ above ~~
-}
 \source{
 %%  ~~ reference to a publication or URL from which the data were obtained ~~
 Gadarian and Albertson, forthcoming, "Anxiety, Immigration, and the Search for Information", Political Psychology
@@ -29,9 +27,6 @@ http://onlinelibrary.wiley.com/doi/10.1111/pops.12034/abstract
 
 Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., Albertson, B., Albertson, B. and Rand, D. (Forthcoming). "Structural topic models for open ended survey responses." American Journal of Political Science
 http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf
-}
-\references{
-%%  ~~ possibly secondary sources and usages ~~
 }
 \examples{
 head(gadarian)

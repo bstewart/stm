@@ -32,7 +32,7 @@ jeffreys <- function(x) {
   } else {
     x <- x^2
     prec <- 1/x
-    prec <- ifelse(prec > 1e5,1e5,prec)
+    prec[prec>1e5] <- 1e5
     return(prec)
   }
 }

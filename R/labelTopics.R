@@ -1,4 +1,4 @@
-#Topic Labeling according to a series of metrics.
+ls#Topic Labeling according to a series of metrics.
 
 labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   logbeta <- model$beta$logbeta
@@ -40,11 +40,16 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
     A <- model$settings$dim$A
     anames <- model$settings$covariates$yvarlevels
     i1 <- K + 1; i2 <- K + A; 
+    intnums <- (i2+1):nrow(labs)
     
-    out$topics <- labs[1:K,]
+    out$topics <- labs[topics,]
     out$covariate <- labs[i1:i2,]
     rownames(out$covariate) <- anames
-    out$interaction <- labs[(i2+1):nrow(labs),]
+    if(model$settings$kappa$interactions) {
+      tindx <- rep(1:K, each=A)
+      intnums <- intnums[tindx %in% topics]
+      out$interaction <- labs[intnums,]
+    }
   }
   out$topicnums <- topics
   class(out) <- "labelTopics"
@@ -54,35 +59,37 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
 print.labelTopics <- function(x,...) {  
   #test of its an aspect model or not
   if(names(x)[1]!="topics") {
-    #Standard Non-aspect models
-    K <- nrow(x$prob)  
-    for(k in x$topicnums) {
+    #Standard Non-aspect models 
+    for(i in 1:length(x$topicnums)) {
       toprint <- sprintf("Topic %i Top Words:\n \t Highest Prob: %s \n \t FREX: %s \n \t Lift: %s \n \t Score: %s \n", 
-                         k, 
-                         commas(x$prob[k,]),
-                         commas(x$frex[k,]),
-                         commas(x$lift[k,]),
-                         commas(x$score[k,]))
+                         x$topicnums[i], 
+                         commas(x$prob[i,]),
+                         commas(x$frex[i,]),
+                         commas(x$lift[i,]),
+                         commas(x$score[i,]))
       cat(toprint)
     }
   } else {
-    K <- nrow(x$topics)
     covlevels <- rownames(x$covariate)
     #Aspect Models 
     topiclabs <- c("Topic Words:\n",sprintf("Topic %i: %s \n", 
-                                            x$topicnums, apply(x$topics[x$topicnums,], 1, commas)))  
+                                            x$topicnums, apply(x$topics, 1, commas)))  
     aspects <- c("Covariate Words:\n", sprintf("Group %s: %s \n", 
                                                covlevels, 
                                                apply(x$covariate, 1, commas)))
-    #interactions are labeled along a sequence of 1:K, 1:K etc.
-    interactions <- c("Topic-Covariate Interactions:\n") 
-    intlabs <- apply(x$interaction,1,commas)
-    for(k in 1:x$topicnums) {
-      wseq <- seq(from=k, by=K, to=length(intlabs))
-      out <- sprintf("Topic %i, Group %s: %s \n", k, covlevels, intlabs[wseq])
-      interactions <- c(interactions,out,"\n")
+    if("interaction" %in% names(x)) {
+      interactions <- c("Topic-Covariate Interactions:\n") 
+      intlabs <- apply(x$interaction,1,commas)
+      topicnums <- rep(x$topicnums, times=length(covlevels))
+      
+      for(i in x$topicnums) {
+        out <- sprintf("Topic %i, Group %s: %s \n", i, covlevels, intlabs[which(topicnums==i)])
+        interactions <- c(interactions,out,"\n")
+      }
+      labels <- c(topiclabs,"\n",aspects,"\n",interactions)
+    } else {
+      labels <- c(topiclabs, "\n", aspects)
     }
-    labels <- c(topiclabs,"\n",aspects,"\n",interactions)
     cat(labels)
   }
 }
