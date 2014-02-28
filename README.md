@@ -10,7 +10,7 @@ Please email all comments/questions to bstewart [AT] fas.harvard.edu
 
 ###Summary
 
-This repository will host the development version of the package which should appear on CRAN shortly. It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). 
+This repository will host the development version of the package.  It is also available on CRAN. It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). 
 
 The package currently includes functionality to:
 * ingest and manipulate text data
@@ -30,8 +30,12 @@ Papers on the Structural Topic Model:
 * Lucas, Nielsen, Roberts, Stewart, Storer, and Tingley. "Computer assisted text analysis for comparative politics." Copy available [here](http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf)
 
 ### Installation Instructions
-Assuming you already have R installed (if not see http://www.r-project.org/), the easiest
-approach is to use the devtools package to install directly from github.  First you have 
+Assuming you already have R installed (if not see http://www.r-project.org/),
+to install the CRAN version, simply use:
+```
+install.packages("stm")
+```
+You can install the most recent development version using the devtools package.  First you have 
 to install devtools using the following code.  Note that you only have to do this once
 ```  
 if(!require(devtools)) install.packages("devtools")
