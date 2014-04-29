@@ -10,14 +10,15 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
 }
 \usage{
 \method{plot}{estimateEffect}(x, covariate, model=NULL, topics=x$topics,
-                    method="pointestimate",
-                    cov.value1=NULL, cov.value2=NULL, int.value=NULL,
-                    npoints=100, nsims=100, ci.level=.95,
-                    xlim=NULL, ylim=NULL, ylab="",
-                    main="",printlegend=TRUE, labeltype="numbers",
-                    n=7,frexw=.5, xlab="",
-                    add=FALSE, linecol=NULL, width=25, verbose.labels=TRUE,
-                    ...)}
+                          method="pointestimate",
+                          cov.value1=NULL, cov.value2=NULL,int.value=NULL, 
+                          npoints=100, nsims=100, ci.level=.95, 
+                          xlim=NULL, ylim=NULL, ylab=NULL, 
+                          main="",printlegend=TRUE, 
+                          labeltype="numbers",n=7,frexw=.5, 
+                          xlab="", add=FALSE, linecol=NULL, 
+                          width=25, verbose.labels=TRUE, 
+                          family=NULL, custom.labels=NULL,...)}
 \arguments{
   \item{x}{
     Output of estimateEffect, which calculates simulated betas for plotting
@@ -40,18 +41,7 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
      different values of the covariate (cov.value1 and cov.value2
      must be specified).  "continuous" estimates how topic proportions
      vary over the support of a continuous covariate.}
-  \item{printlegend}{
-    Whether to plot a topic legend in the case of a continuous covariate.
-  }
-  \item{labeltype}{
-    Determines the labeltype for the topics.  The default is "number"
-    which prints the topic number.  Other options are "prob", which
-    prints the highest probability words, "score", "lift", and "frex",
-    from labeltopics (see labeltopics() for more details).  The user can
-    also input a vector for labeltype with their own labels.  Labels
-    appear in the legend for continous covariates.
-  }
-  \item{cov.value1}{
+       \item{cov.value1}{
     For method "difference", the value or set of values of interest at which to set the covariate. In the case of calculating a treatment/control contrast, set the treatment to cov.value1.
   }
     \item{cov.value2}{
@@ -102,6 +92,18 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
          \item{main}{
 Character string that is plot title.
 }
+  \item{printlegend}{
+    Whether to plot a topic legend in the case of a continuous covariate.
+  }
+  \item{labeltype}{
+    Determines the labeltype for the topics.  The default is "number"
+    which prints the topic number.  Other options are "prob", which
+    prints the highest probability words, "score", "lift", and "frex",
+    from labeltopics (see labeltopics() for more details).  The user can
+    also select "custom" for custom labels, which should be inputted
+    under custom.labels. Labels
+    appear in the legend for continous covariates.
+  }
          \item{xlab}{
 Character string that is x axis title.
 }
@@ -111,6 +113,9 @@ Character string that is y axis title.
          \item{width}{
 Character string that is y axis title.
 }
+\item{custom.labels}{
+  A vector of custom.labels if labeltype is equal to "custom".
+  }
     \item{...}{
     Other plotting parameters
   }

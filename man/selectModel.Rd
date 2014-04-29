@@ -133,4 +133,5 @@ meta <-out$meta
 set.seed(02138)
 mod.out <- selectModel(docs, vocab, K=3, prevalence=~treatment + s(pid_rep), data=meta, runs=5)
 plotModels(mod.out)
+selected<-mod.out$runout[[1]]
 }}

@@ -108,7 +108,7 @@ manyTopics(documents, vocab, K,
 Does not work with models that have a content variable (at this point).
 }
 \value{
-\item{runout}{List of model outputs the user has to choose from.  Take
+\item{out}{List of model outputs the user has to choose from.  Take
   the same form as the output from a stm model.}
 \item{semcoh}{Semantic coherence values for each topic within each model
   selected for each number of topics.}

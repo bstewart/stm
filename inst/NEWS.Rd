@@ -1,5 +1,13 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 0.6.7}{
+  \itemize{
+    \item Major updates to the vignette
+    \item Minor Updates to several plotting functions
+    \item Fixed an error where labelTopics() would mislabel when passed topic numbers out of order
+          (Thanks to Jetson Leder-Luis for pointing this out)
+    \item Introduction of the termitewriter function.
+}}
 \section{Version 0.6.1}{
   \itemize{
     \item Version for submission to CRAN (2/28/2014)

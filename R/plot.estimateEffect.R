@@ -1,7 +1,13 @@
 plot.estimateEffect <- function(x, covariate, model=NULL, topics=x$topics,
                           method="pointestimate",
-                          cov.value1=NULL, cov.value2=NULL,int.value=NULL, npoints=100, nsims=100, ci.level=.95, 
-                               xlim=NULL, ylim=NULL, ylab="", main="",printlegend=TRUE, labeltype="numbers",n=7,frexw=.5, xlab="", add=FALSE, linecol=NULL, width=25, verbose.labels=TRUE,...){
+                          cov.value1=NULL, cov.value2=NULL,int.value=NULL, 
+                          npoints=100, nsims=100, ci.level=.95, 
+                          xlim=NULL, ylim=NULL, ylab=NULL, 
+                          main="",printlegend=TRUE, 
+                          labeltype="numbers",n=7,frexw=.5, 
+                          xlab="", add=FALSE, linecol=NULL, 
+                          width=25, verbose.labels=TRUE, 
+                          family=NULL, custom.labels=NULL,...){
 
 
 ##################
@@ -101,46 +107,44 @@ if(any(parse)){
 ##########
 
 #Grab the labels
-  if(length(labeltype)==1){
-    if(labeltype=="numbers"){
-    labels=paste("Topic", object$topics)
-  }
-    if(labeltype=="prob"){
-      if(is.null(model)){
-        stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
-      }
-      else{
-        labels = paste("Topic", object$topics, ":", labelTopics(model, topics=object$topics,n)$problabels[object$topics])
-      }
-    }
-    if(labeltype=="lift"){
-      if(is.null(model)){
-        stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
-      }
-      else{
-        labels = paste("Topic", object$topics, ":", labelTopics(model, topics=object$topics,n)$liftlabels[object$topics])
-      }
-    }
-    if(labeltype=="frex"){
-      if(is.null(model)){
-        stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
-      }
-      else{
-        labels = paste("Topic", object$topics, ":", labelTopics(model, topics=object$topics, n=n,frexweight=frexw)$frexlabels[object$topics])
-      }
-    }
-    if(labeltype=="score"){
-      if(is.null(model)){
-        stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
-      }
-      else{
-        labels = paste("Topic", object$topics, ":", labelTopics(model, topics=object$topics,n=n)$scorelabels[object$topics])
-      }
-    }
+if(labeltype=="numbers"){
+  labels=paste("Topic", object$topics)
+}
+if(labeltype=="prob"){
+  if(is.null(model)){
+    stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
   }
   else{
-    labels=labeltype
+    labels = paste(apply(labelTopics(model, topics=object$topics, n=n)$prob[object$topics,],1,paste, collapse=","))
   }
+}
+if(labeltype=="lift"){
+  if(is.null(model)){
+    stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
+  }
+  else{
+    labels = paste(apply(labelTopics(model, topics=object$topics, n=n)$lift[object$topics,],1,paste, collapse=","))
+  }
+}
+if(labeltype=="frex"){
+  if(is.null(model)){
+    stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
+  }
+  else{
+    labels = paste(apply(labelTopics(model, topics=object$topics, n=n,frexweight=frexw)$frex[object$topics,],1,paste, collapse=","))
+  }
+}
+if(labeltype=="score"){
+  if(is.null(model)){
+    stop("Model output is needed in order to use words as labels.  Please enter the model output for the argument 'model'.")
+  }
+  else{
+    labels = paste(apply(labelTopics(model, topics=object$topics, n=n)$score[object$topics,],1,paste, collapse=","))
+  }
+}
+if(labeltype=="custom"){
+  labels = rev(custom.labels)
+}
 
 ###################################
 #Determine confidence level offset#
@@ -196,13 +200,19 @@ if(method=="pointestimate"){
     if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
     if (is.null(xlim) & length(labeltype)!=1) xlim <- c(min(unlist(toplot)) - .5*abs(min(unlist(toplot))), max(unlist(toplot)))
     if (is.null(ylim)) ylim <- c(0,length(topicid)*nrow(uvals)+1)
+    if (is.null(ylab)) ylab <- ""
     if (add==F) plot(0,0, col="white", xlim=xlim, ylim=ylim, yaxt="n", ylab=ylab, xlab=xlab, main=main,...)
     lines(c(0,0), c(0, length(topicid)*nrow(uvals)+2), lty=2)
+    it = 1
     for(j in 1:length(toplot)){
         for(i in 1:length(topicid)){
           points(toplot[[j]][[topicid[i]]]$mean, (j-1)*length(topicid)+i, pch=16)
           lines(c(toplot[[j]][[topicid[i]]]$cis[1], toplot[[j]][[topicid[i]]]$cis[2]), c((j-1)*length(topicid)+i,(j-1)*length(topicid)+i))
-          axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])      
+          if(labeltype!="custom") axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])
+          if(labeltype=="custom"){
+            axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(labels[it],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])
+            it = it + 1
+          }
         }
       }
   }else{
@@ -249,17 +259,22 @@ if(method=="pointestimate"){
 
       #Plot estimates
       topicid <- rev(which(object$topics%in%topics))
-      if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
-      if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
-      if (is.null(xlim) & length(labeltype)!=1) xlim <- c(min(unlist(toplot)) - .5*abs(min(unlist(toplot))), max(unlist(toplot)))
+      if (is.null(xlim)) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
+      if (is.null(xlim)) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
       if (is.null(ylim)) ylim <- c(0,length(topicid)*length(uvals)+1)
+      if (is.null(ylab)) ylab <- ""
       if (add==F) plot(0,0, col="white", xlim=xlim, ylim=ylim, yaxt="n", ylab=ylab, xlab=xlab, main=main,...)
       lines(c(0,0), c(0, length(topicid)*length(uvals)+2), lty=2)
+      it = 1
       for(j in 1:length(toplot)){
         for(i in 1:length(topicid)){
           points(toplot[[j]][[topicid[i]]]$mean, (j-1)*length(topicid)+i, pch=16)
           lines(c(toplot[[j]][[topicid[i]]]$cis[1], toplot[[j]][[topicid[i]]]$cis[2]), c((j-1)*length(topicid)+i,(j-1)*length(topicid)+i))
-          axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])      
+          if(labeltype!="custom") axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])
+          if(labeltype=="custom"){
+            axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(labels[it],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])
+            it = it + 1
+          }
         }
       }
     }
@@ -346,17 +361,23 @@ if(method=="difference"){
 
   #Plot estimates
   topicid <- rev(which(object$topics%in%topics))
-  if (is.null(xlim) & length(labeltype)==1) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
-  if (is.null(xlim) & length(labeltype)==1) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
-  if (is.null(xlim) & length(labeltype)!=1) xlim <- c(min(unlist(toplot)) - .5*abs(min(unlist(toplot))), max(unlist(toplot)))
+  if (is.null(xlim)) if(labeltype!="numbers") xlim <- c(min(unlist(toplot)) - 1.5*abs(min(unlist(toplot))), max(unlist(toplot)))
+  if (is.null(xlim)) if(labeltype=="numbers") xlim <- c(min(unlist(toplot)) - .2*abs(min(unlist(toplot))), max(unlist(toplot)))
   if (is.null(ylim)) ylim <- c(0,length(topicid)*length(cov.value1)+1)
-  if (add==F) plot(0,0, col="white", xlim=xlim, ylim=ylim, yaxt="n", ylab=ylab, xlab=xlab, main=main,...)
+  if (is.null(ylab)) ylab <- ""
+  if (add==F) plot(0,0, col="white", xlim=xlim, ylim=ylim, yaxt="n", ylab=ylab, xlab=xlab, main=main, family=family,...)
   lines(c(0,0), c(0, length(topicid)*length(cov.value1)+2), lty=2)
+  it = 1
   for(j in 1:length(cov.value1)){
     for(i in 1:length(topicid)){
       points(toplot[[j]][[topicid[i]]]$diff,(j-1)*length(topicid)+i, pch=16)
       lines(c(toplot[[j]][[topicid[i]]]$cis[1], toplot[[j]][[topicid[i]]]$cis[2]), c((j-1)*length(topicid)+i,(j-1)*length(topicid)+i))
-      axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1])      
+      #text(toplot[[j]][[topicid[i]]]$cis[1],(j-1)*length(topicid)+i, str_wrap(newlabels[[j]][topicid[i]],width=width), cex=1, family=family)      
+      if(labeltype!="custom") axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(newlabels[[j]][topicid[i]],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1], family=family)
+      if(labeltype=="custom"){
+        axis(2, at=(j-1)*length(topicid)+i, labels=str_wrap(labels[it],width=width), las=1, cex=.25, tick=F, pos=toplot[[j]][[topicid[i]]]$cis[1], family=family)
+        it = it + 1
+      }
     }
   }
 }
@@ -398,6 +419,7 @@ if((method=="continuous" | method=="spline") & !any(parse)){
   #Plot estimates
   if (is.null(xlim)) xlim <- c(min(uvals), max(uvals))
   if (is.null(ylim)) ylim <- c(min(unlist(toplot), na.rm=T), max(unlist(toplot), na.rm=T))
+  if (is.null(ylab)) ylab <- "Expected Topic Proportion"
   if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main, xlab=xlab, ylab=ylab,  ...)
   if (is.null(linecol)) cols = rainbow(length(topicid))
   if (!is.null(linecol)) cols=linecol
@@ -407,7 +429,8 @@ if((method=="continuous" | method=="spline") & !any(parse)){
     lines(uvals, toplot[[topicid[i]]]$cis[,2], col=cols[i],lty=2)
   }
   if(printlegend){
-    legend(xlim[1], ylim[2], labels[topicid], cols)
+    if(labeltype!="custom") legend(xlim[1], ylim[2], labels[topicid], cols)
+    if(labeltype=="custom") legend(xlim[1], ylim[2], labels, cols)
   }
 }
 
@@ -478,6 +501,7 @@ if((method=="continuous" | method=="spline") & any(parse)){
   #Plot estimates
   if (is.null(xlim)) xlim <- c(min(uvals), max(uvals))
   if (is.null(ylim)) ylim <- c(min(c(min(unlist(toplot), na.rm=T),min(unlist(toplot2), na.rm=T))), max(c(max(unlist(toplot), na.rm=T),max(unlist(toplot2), na.rm=T))))
+  if (is.null(ylab)) ylab <- "Expected Topic Proportion"
   if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main, xlab=xlab, ylab=ylab,  ...)
   if (is.null(linecol)) cols = rainbow(2)
   if (!is.null(linecol)) cols=linecol
@@ -490,10 +514,10 @@ if((method=="continuous" | method=="spline") & any(parse)){
     lines(uvals, toplot2[[topicid[i]]]$cis[,2], col=cols[2],lty=2)
   }
   if(printlegend){
-    legend(xlim[1], ylim[2], c(paste(labels[topicid], intlabs[cint], "=", interactlevels[1]),paste(labels[topicid], intlabs[cint], "=", interactlevels[2])) , cols)
+    if(labeltype!="custom")   legend(xlim[1], ylim[2], c(paste(labels[topicid], intlabs[cint], "=", interactlevels[1]),paste(labels[topicid], intlabs[cint], "=", interactlevels[2])) , cols)
+    if(labeltype=="custom") legend(xlim[1], ylim[2], labels, cols)
   }
 }
-
 }
 
 

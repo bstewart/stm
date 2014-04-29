@@ -63,10 +63,10 @@ print.labelTopics <- function(x,...) {
     for(i in 1:length(x$topicnums)) {
       toprint <- sprintf("Topic %i Top Words:\n \t Highest Prob: %s \n \t FREX: %s \n \t Lift: %s \n \t Score: %s \n", 
                          x$topicnums[i], 
-                         commas(x$prob[i,]),
-                         commas(x$frex[i,]),
-                         commas(x$lift[i,]),
-                         commas(x$score[i,]))
+                         commas(x$prob[x$topicnums[i],]),
+                         commas(x$frex[x$topicnums[i],]),
+                         commas(x$lift[x$topicnums[i],]),
+                         commas(x$score[x$topicnums[i],]))
       cat(toprint)
     }
   } else {

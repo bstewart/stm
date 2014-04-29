@@ -49,3 +49,15 @@ Character string that is y axis title. This will be exclusivity.
   semantic coherence.
 %%  ~~ If necessary, more details than the description above ~~
 }
+
+\examples{
+
+
+\dontrun{
+#storage is an object created by selectModel
+plotModels(storage)
+#this selects the first model from selectModel
+selected<-storage$runout[[1]]
+}
+ 
+}

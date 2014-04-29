@@ -58,7 +58,7 @@ manyTopics <- function(documents, vocab, K, prevalence, content,
     j<-NULL
   }
   
-  toreturn<-list(out=out,exclusivity=exclusivity)
+  toreturn<-list(out=out,exclusivity=exclusivity,semcoh=semcoh)
   return(toreturn)
 }
 

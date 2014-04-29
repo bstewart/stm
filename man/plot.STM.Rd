@@ -10,10 +10,10 @@ Produces one of three types of plots for an STM object.  The default option \cod
 \usage{
 \method{plot}{STM}(x, type = c("summary", "labels", "perspectives"),
                    n = NULL, topics = NULL, 
-                   labeltype = c("prob", "frex", "lift", "score"), frexw = 0.5, 
+                   labeltype = "prob", frexw = 0.5, 
                    main = NULL, xlim = NULL, ylim = NULL, xlab = NULL, 
                    family = "", width = 80, 
-                   covarlevels = NULL, plabels = NULL, text.cex=1, ...)
+                   covarlevels = NULL, plabels = NULL, text.cex=1, custom.labels=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,7 +30,10 @@ Sets the desired type of plot.  See details for more information.
 Vector of topics to display.  For plot perspectives this must be a vector of length one or two. For the other two types it defaults to all topics.
 }
   \item{labeltype}{
-  Determines which option of \code{"prob", "frex", "lift", "score"} is used for choosing the most important words.  See \code{\link{labelTopics}} for more detail
+  Determines which option of \code{"prob", "frex", "lift", "score",
+    "custom"} is used for choosing the most important words.  See
+  \code{\link{labelTopics}} for more detail.  Custom allows the user to
+  input their own labels, use custom.labels argument to specify labels.
 }
   \item{frexw}{
     If "frex" labeltype is used, this will be the frex weight.
@@ -62,6 +65,9 @@ The Font family.  Most of the time the user will not need to specify this but if
 \item{text.cex}{
  Controls the scaling constant on text size.
 }
+\item{custom.labels}{
+  A vector of custom labels if labeltype is equal to "custom".
+  }
   \item{\dots}{
 Additional parameters passed to ploting functions.
 }
