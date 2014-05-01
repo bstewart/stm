@@ -8,10 +8,10 @@ export(stm, summary.STM, print.STM, plot.STM,
        estimateEffect, plot.estimateEffect, 
        topicCorr, plot.topicCorr,
        labelTopics, print.labelTopics,
-       findThoughts, plotQuote,
+       findThoughts, print.findThoughts, plot.findThoughts, plotQuote,
        manyTopics, selectModel, plotModels, plotTopicLoess, 
        prepDocuments, readCorpus, textProcessor,
-	   topicQuality, s)
+	   topicQuality, s, termitewriter)
 
 S3method(summary, STM)
 S3method(print, STM)
@@ -19,3 +19,5 @@ S3method(plot, STM)
 S3method(print, labelTopics)
 S3method(plot, topicCorr)
 S3method(plot, estimateEffect)
+S3method(print, findThoughts)
+S3method(plot, findThoughts)

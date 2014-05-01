@@ -30,7 +30,7 @@ plot.topicCorr <- function(x, topics=NULL,
                            vertex.label.color="black", ...){
   if(!require(igraph)) stop("Install the igraph package to use this function.")
   if(is.null(topics)) topics <- 1:nrow(x$posadj)
-  x <- x$posadj
+  x <- x$posadj[topics, topics]
   
   g <- graph.adjacency(x, mode="undirected", weighted=TRUE, diag=FALSE)
   if(is.null(vlabels)) vlabels <-  paste("Topic", topics)

@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 0.6.9}{
+  \itemize{
+    \item S3 method for findThoughts and ability to threshold by theta.
+    \item Allow estimateEffect() to receive a data frame. (Thanks to Baoqiang Cao for pointing this out)
+}}
 \section{Version 0.6.7}{
   \itemize{
     \item Major updates to the vignette

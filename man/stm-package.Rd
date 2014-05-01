@@ -5,7 +5,7 @@
 Structural Topic Model
 }
 \description{
-This package implements the Structural Topic Model, a general approach to including document-level metadata within mixed-membership topic models.
+This package implements the Structural Topic Model, a general approach to including document-level metadata within mixed-membership topic models. To read the vignette use \code{vignette('stmVignette')}.
 
 Functions to ingest and manipulate documents:
 \code{\link{textProcessor}}

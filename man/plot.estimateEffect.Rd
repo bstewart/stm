@@ -11,14 +11,16 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
 \usage{
 \method{plot}{estimateEffect}(x, covariate, model=NULL, topics=x$topics,
                           method="pointestimate",
-                          cov.value1=NULL, cov.value2=NULL,int.value=NULL, 
-                          npoints=100, nsims=100, ci.level=.95, 
-                          xlim=NULL, ylim=NULL, ylab=NULL, 
-                          main="",printlegend=TRUE, 
-                          labeltype="numbers",n=7,frexw=.5, 
-                          xlab="", add=FALSE, linecol=NULL, 
-                          width=25, verbose.labels=TRUE, 
-                          family=NULL, custom.labels=NULL,...)}
+                          cov.value1=NULL,
+                          cov.value2=NULL,int.value=NULL,
+                          npoints=100, nsims=100, ci.level=.95,
+                          xlim=NULL, ylim=NULL, ylab=NULL,
+                          main="",printlegend=TRUE,
+                          labeltype="numbers",n=7,frexw=.5,
+                          xlab="", add=FALSE, linecol=NULL,
+                          width=25, verbose.labels=TRUE,
+                          family=NULL, custom.labels=NULL,...)
+}
 \arguments{
   \item{x}{
     Output of estimateEffect, which calculates simulated betas for plotting
@@ -115,6 +117,9 @@ Character string that is y axis title.
 }
 \item{custom.labels}{
   A vector of custom.labels if labeltype is equal to "custom".
+}
+\item{family}{
+  Font family. 
   }
     \item{...}{
     Other plotting parameters

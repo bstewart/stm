@@ -16,7 +16,7 @@ textProcessor(documents, metadata=NULL,
 
 \arguments{
    \item{documents}{
-   The documents to be processed.  A character vector where each entry is the full text of a document.  The \code{tm} package has a variety of extra readers for ingesting other file formats (\code{.doc, .pdf, .txt, .xml}).
+   The documents to be processed.  A character vector where each entry is the full text of a document.  If of length one it is assumed to be a filepath containing a directory where each file is a separate document. The \code{tm} package has a variety of extra readers for ingesting other file formats (\code{.doc, .pdf, .txt, .xml}).  
   }
   \item{metadata}{
 Additional data about the documents.  Specifically a \code{data.frame} or \code{matrix} object with number of rows equal to the number of documents and one column per meta-data type. The column names are used to label the metadata.  The metadata do not affect the text processing, but providing the metadata object insures that if documents are dropped the corresponding metadata rows are dropped as well.
@@ -45,7 +45,7 @@ If true prints information as it processes.
 }
 }
 \details{
-This function is designed to provide a convenient and quick way to process a relatively small volume texts for analysis with the package. It is designed to quickly ingest data in a simple form like a spreadsheet where each document sits in a single cell.  Once the text has been processed by \code{tm} the document term matrix is converted to the \code{stm} format using \code{\link{readCorpus}}.
+This function is designed to provide a convenient and quick way to process a relatively small volume texts for analysis with the package. It is designed to quickly ingest data in a simple form like a spreadsheet where each document sits in a single cell.  You can also pass the filepath of a single directory to the documents argument.  The function will then recursively read in all the files within the directory where each docuemnt is a file. Once the text has been processed by \code{tm} the document term matrix is converted to the \code{stm} format using \code{\link{readCorpus}}.
 
 The processor always strips extra white space but all other processing options are optional.  Stemming uses the snowball stemmers and supports a wide variety of languages.  Words in the vocabulary can be dropped due to sparsity and stop word removal.  If a document no longer contains any words it is dropped from the output.  Specifying meta-data is a convenient way to make sure the appropriate rows are dropped from the corresponding metadata file.
 

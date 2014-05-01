@@ -1,14 +1,20 @@
-plotQuote <- function(sentences, width=30, text.cex=1, main=NULL, xlab="", ylab="", xlim=NULL, ylim=NULL, ...) {
+plotQuote <- function(sentences, width=30, text.cex=1, maxwidth=NULL,
+                      main=NULL, xlab="", ylab="", xlim=NULL, ylim=NULL, ...) {
   xaxt <- "n"
   yaxt <- "n"
   numlines <- c()
   out <- list()
+
   for(j in 1:length(sentences)){
     sentence <- sentences[j]
+    if(!is.null(maxwidth)) {
+      sentence <- strwrap(sentence, width=maxwidth)[1]
+    }
     out[[j]] <- str_wrap(sentence, width)
     numlines[j] <- length(strsplit(out[[j]], "\n")[[1]])
   }
-  if(is.null(xlim)) xlim <- c(0,5)
+  
+  if(is.null(xlim)) xlim <- c(0, 5)
   if(is.null(ylim)) ylim<-c(0,.5*sum(numlines))
   plot(c(0,0),type="n", xlim=xlim, ylim=ylim, xaxt=xaxt, yaxt=yaxt, xlab=xlab, ylab=ylab, main=main, ...)
   numlines <- c(0, rev(numlines))

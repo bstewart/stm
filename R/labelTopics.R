@@ -34,7 +34,8 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   } else {
     labs <- lapply(model$beta$kappa$params, function(x) {
       windex <- order(x,decreasing=TRUE)[1:n]
-      ifelse(x[windex]>0, vocab[windex], "")
+      #we want to threshold by some minimal value.
+      ifelse(x[windex]>1e-3, vocab[windex], "")
     }) 
     labs <- do.call(rbind, labs)
     A <- model$settings$dim$A

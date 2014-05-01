@@ -8,7 +8,19 @@ textProcessor <- function(documents, metadata=NULL,
   if(stem) {
     if(!require(SnowballC, quietly=TRUE)) stop("Please install SnowballC to use stemming.")
   }
-  documents <- as.character(documents)
+  
+  #If there is only one item assume its a url and load it.
+  if(length(documents)==1) {
+    filelist <- list.files(path=documents, full.names=TRUE, recursive=TRUE)
+    documents <- vector(length=length(filelist))
+    if(verbose) cat(sprintf("Loading %i files from directory...\n", length(documents)))
+    for(i in 1:length(filelist)) {
+      documents[i] <- paste(readLines(filelist[i]), collapse=" ")
+    } 
+  } else {
+    documents <- as.character(documents)
+  }
+  
   if(verbose) cat("Building corpus... \n")
   txt <- Corpus(VectorSource(documents), readerControl=list(language= language))
   #Apply filters

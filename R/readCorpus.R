@@ -25,6 +25,11 @@ read.ldac <- function(filename) {
 }
 
 read.dtm <- function(dtm) {
+  #test for and adjust for mispecification
+  if("simple_triplet_matrix" %in% class(dtm)) {
+    warning("Please use the slam option.  dtm is for dense matrices.")
+    read.slam(dtm)
+  }
   #convert a standard document-term matrix to list format.
   dtm.mat <- as.matrix(dtm)
   vocab <- colnames(dtm)

@@ -1,5 +1,7 @@
 \name{findThoughts}
 \alias{findThoughts}
+\alias{print.findThoughts}
+\alias{plot.findThoughts}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Find Thoughts
@@ -8,7 +10,7 @@ Find Thoughts
   Outputs most representative documents for a particular topic. Use this in order to get a better sense of the content of actual documents with a high topical content.
 }
 \usage{
-findThoughts(model, texts=NULL, topics=NULL, n=3)
+findThoughts(model, texts=NULL, topics=NULL, n=3, thresh=0.0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,19 +24,32 @@ findThoughts(model, texts=NULL, topics=NULL, n=3)
      The topic number or vector of topic numbers for which you want to find thoughts.  Defaults to all topics.
 }
   \item{n}{
-    The number of desired documents to be displayed per topic.
+    The number of desired documents to be displayed per topic. 
+  }
+  \item{thresh}{
+   Sets a minimum threshold for the estimated topic proportion for displayed documents.  It defaults to
+   imposing no restrictions.
   }
 }
 
 \details{
-Prints to the screen the top \code{n} documents ranked by the MAP estimate of the topic's
-theta value (which captures the modal estimate of the proportion of word tokens assigned to the topic under the model). Returns document indices and top thoughts.
+Returns the top \code{n} documents ranked by the MAP estimate of the topic's
+theta value (which captures the modal estimate of the proportion of word tokens assigned to the topic under the model). Setting the \code{thresh} argument allows the user to specify a minimal value of theta for returned documents. Returns document indices and top thoughts.
+
+The \code{plot.findThoughts} function is a shortcut for the \code{plotQuote} function.
 }
 \value{
-\item{index}{Matrix with one column per requested topic and one row for
-  each requested document.  Entries are the document indices within the dataset.}
-\item{docs}{List of top thoughts in the order of topics.}
+A \code{findThoughts} object
+\item{index}{List with one entry per topic.  Each entry is a vector of document indices.}
+\item{docs}{List with one entry per topic.  Each entry is a character vector of the corresponding texts.}
 }
 \examples{
 findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1,2), n=3)
+
+#We can also use the plot command as a shorthand for the plotQuote function
+thought <- findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=1, n=3)
+plot(thought)
+}
+\seealso{
+\code{\link{plotQuote}}
 }

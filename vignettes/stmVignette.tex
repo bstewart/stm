@@ -343,6 +343,7 @@ To print example documents to a graphics device \code{plotQuote} can be used. Th
 \end{Sinput}
 \end{Schunk}
 
+%manually correcting some unicode errors
 \begin{figure}[t!]
 \begin{center}
 \begin{Schunk}
@@ -353,7 +354,7 @@ To print example documents to a graphics device \code{plotQuote} can be used. Th
 > plotQuote(thoughts10, width=40, main="Topic 10")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-011}
+\includegraphics{stmVignette-012}
 \caption{Example documents highly associated with topic 1, 7, and 10.}
 \label{fig:example}
 \end{center}
@@ -397,7 +398,7 @@ Users must also select the type of quantity that is to be plotted. When the cova
 +         custom.labels = c('Jeremiah Wright', 'Sarah Palin', 'Bush Presidency'))
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-013}
+\includegraphics{stmVignette-014}
 \caption{Graphical Display of Topical Prevalence Contrast.}
 \label{fig:difference}
 \end{center}
@@ -420,7 +421,7 @@ When users have variables that they want to treat continuously, users can choose
 > axis(1, at=as.numeric(monthseq)-min(as.numeric(monthseq)), labels=monthnames)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-014}
+\includegraphics{stmVignette-015}
 \caption{Graphical Display of Topical Content. Topic 7 prevalence is plotted as a smooth function of day, holding rating at sample median.}
 \label{fig:spline}
 \end{center}
@@ -449,7 +450,7 @@ Next, the results can be plotted using the \code{plot.STM(,type="perspectives")}
 > plot.STM(poliblogContent,type="perspectives", topics=10)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-016}
+\includegraphics{stmVignette-017}
 \caption{Graphical Display of Topical Perspectives.}
 \label{fig:perp}
 \end{center}
@@ -463,7 +464,7 @@ This function can also be used to plot the contrast in words across two topics. 
 > plot.STM(poliblogPrevFit,type="perspectives", topics=c(9, 10))
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-017}
+\includegraphics{stmVignette-018}
 \caption{Graphical Display of Topical Contrast between Topics 9 and 10.}
 \label{fig:perp2}
 \end{center}
@@ -491,7 +492,7 @@ Another modification that is possible in this framework is to allow for interact
 +         method="continuous",xlab="Days",labeltype="custom",custom.labels=c("Liberals","Conservatives"))
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-019}
+\includegraphics{stmVignette-020}
 \caption{Graphical Display of Topical Content allowing for interaction between day of blog post and liberal versus conservative interaction. Topic 1 prevalence is plotted as linear function of day, holding the rating at either 0 (Liberal) or 1 (Conservative). Were other variables included in the model, they would be held at their sample medians.}
 \label{fig:spline2}
 \end{center}
@@ -512,7 +513,7 @@ Corpus level visualization can be done in several different ways. The first rela
 > plot.STM(poliblogPrevFit,type="summary", xlim=c(0,.4))
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-020}
+\includegraphics{stmVignette-021}
 \caption{Graphical Display of Estimated Topic Proportions.}
 \label{fig:summary}
 \end{center}
@@ -533,7 +534,7 @@ Users can also plot features of the corpus as a whole. First, the Structural Top
 > plot.topicCorr(mod.out.corr)
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-022}
+\includegraphics{stmVignette-023}
 \caption{Graphical Display of Topic Correlations.}
 \label{fig:correlations}
 \end{center}
@@ -561,7 +562,7 @@ Once a model has been fit, convergence can easily be assessed by plotting the va
 +     main="Convergence")
 \end{Sinput}
 \end{Schunk}
-\includegraphics{stmVignette-023}
+\includegraphics{stmVignette-024}
 \caption{Graphical Display of Convergence.}
 \label{fig:converge}
 \end{center}

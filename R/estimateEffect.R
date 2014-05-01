@@ -9,7 +9,7 @@ estimateEffect <- function(formula,
   #Step 1: Extract the formula and do some error checking
   ##
   if(!inherits(formula,"formula")) stop("formula must be a formula object.")
-  
+  if(!is.null(metadata) & !is.data.frame(metadata)) metadata <- as.data.frame(metadata)
   termobj <- terms(formula, data=metadata)
   if(attr(termobj, "response")==1){
     #if a response is specified we have to parse it and remove it.

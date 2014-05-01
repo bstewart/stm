@@ -310,6 +310,11 @@ thoughts7 <- findThoughts(poliblogPrevFit, texts=shortdoc, n=2, topics=7)$docs[[
 thoughts10 <- findThoughts(poliblogPrevFit, texts=shortdoc, n=2, topics=10)$docs[[1]]
 @
 
+%manually correcting some unicode errors
+<<eval=TRUE, echo=FALSE>>=
+thoughts7 <- c("The Sarah Palin Digest: What We Know About McCain's Running Mate   Very little was known nationally about Alaska Gov. Sarah Palin (R) until Sen. John McCain (R-AZ) selected her as his running mate on Aug. 29. Tonight, Palin will be speaking in", "Here it is: The bio video of Sarah Palin that was supposed to air at the Republican convention last night before her speech.  You should watch it. The video, which was leaked (surprisingly) to Fox News, gives us a glimpse into how the Republicans were")
+thoughts10 <- c("Karl Rove orchestrating the Bush Legacy project. President Bush's interview with ABC's Charlie Gibson this week was the first of several planned exit interviews. According to White House press secretary Dana Perino, Bush", "Flashback: Seven years ago today, Bush received Bin Laden Determined to Strike in U.S. memo.  Today marks seven years since the day President Bush received a President's Daily Brief entitled Bin Laden Determined to Strike in U.S.")
+@
 \begin{figure}[t!]
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
