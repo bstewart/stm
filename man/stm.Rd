@@ -121,14 +121,14 @@ An object of class STM
   structural topic model and applied social science." In Advances in
   Neural Information Processing Systems Workshop on Topic Models:
   Computation, Application, and
-  Evaluation. http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf
+  Evaluation. http://goo.gl/uHkXAQ
 
   Roberts M., Stewart, B. and Airoldi, E. (2014) "Structural Topic Models" 
   
   Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
   Gadarian, S., Albertson, B., Albertson, B. and Rand,
   D. (Forthcoming). "Structural topic models for open ended survey
-  responses." American Journal of Political Science http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf
+  responses." American Journal of Political Science http://goo.gl/0x0tHJ
 }
 
 \seealso{

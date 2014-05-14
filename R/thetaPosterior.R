@@ -79,7 +79,7 @@ thetapost.local <- function(model, documents, nsims) {
       }
       doc <- documents[[i]]
       doc.logbeta <- logbeta[[betaindex[i]]][,doc[1,],drop=FALSE]
-      doc.ct <- doc[2,drop=FALSE]
+      doc.ct <- doc[2,]
       params <- calc.nu(init, doc.ct, doc.mu, doc.logbeta)
       mat <- rmvnorm(nsims, params$est,params$nu)
       mat <- cbind(mat,0)

@@ -26,9 +26,10 @@ findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=0.0){
   
   if(is.null(texts)) return(out)
   
+  out$docs <- lapply(out$docs, unlist)
   if(is.factor(texts)){
     warning("texts are of type 'factor.'  Converting to character vectors.  Use 'as.character' to avoid this warning in the future.")
-    texts <- as.character(texts)  
+    out$docs <- lapply(out$docs, as.character)  
   }
 
   return(out)

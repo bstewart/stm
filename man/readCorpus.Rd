@@ -51,9 +51,10 @@ Finally the object \code{txtorgvocab} allows the user to easily read in a vocab 
 \code{\link{textProcessor}}, \code{\link{prepDocuments}}
 }
 \examples{
+\dontrun{
 library(textir)
 data(congress109)
 out <- readCorpus(congress109Counts, type="Matrix")
 documents <- out$documents
 vocab <- out$vocab
-}
+}}

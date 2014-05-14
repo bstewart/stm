@@ -153,7 +153,8 @@ Regularizing prior distributions are used for $\gamma, \kappa$ and (optionally) 
 
 \section{Using the Structural Topic Model}
 
-In this section we demonstrate the basics of using the package. Use of the STM typically proceeds in three key steps:
+In this section we demonstrate the basics of using the package.\footnote{The stm package depends on a variety of other packages, including \pkg{MatrixStats} \citep{MatrixStats}, \pkg{slam} \citep{slam}, \pkg{lda} \citep{lda}, \pkg{stringr} \citep{stringr}, \pkg{SnowballC} \citep{SnowballC}, \pkg{tm} \citep{meyer2008text}, \pkg{igraph} \citep{igraph}, \pkg{huge} \citep{huge}, and \pkg{glmnet} \citep{friedman2010regularization}.} Use of the STM typically proceeds in three key steps:
+
 \begin{enumerate}
 \item Tools for reading in and processing text data \\
 (\code{textProcessor, readCorpus, prepDocuments})
@@ -196,7 +197,7 @@ After reading in the data we suggest using the utility function \code{prepDocume
 
 \subsubsection{Reading in data from other text processing programs}
 
-Sometimes researchers will encounter data that is not in a spreadsheet format. The \code{readCorpus} function includes functionality for loading data from a wide variety of formats.  Readers are included for standard R matrix class along with the sparse matrices from the packages \pkg{slam} and \pkg{Matrix}.  Document term matrices created by the popular package \pkg{tm} are inherit from the \pkg{slam} sparse matrix format and thus are included as a special case.    
+Sometimes researchers will encounter data that is not in a spreadsheet format. The \code{readCorpus} function includes functionality for loading data from a wide variety of formats.  Readers are included for standard R matrix class along with the sparse matrices from the packages \pkg{slam} and \pkg{Matrix}.  Document term matrices created by the popular package \pkg{tm} are inherit from the \pkg{slam} sparse matrix format and thus are included as a special case.
 
 A program that is helpful for setting up and processing textual data, alongside document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. When using \pkg{txtorg}, three separate files are generated. A metadata file, a vocabulary file, and a file with the original documents. The default export format for \pkg{txtorg} is the \texttt{ldac} sparse matrix format popularized by David Blei's implementation of LDA.  The \code{readCorpus()} function can read in data of this type using the "ldac" option.
 
@@ -206,7 +207,7 @@ Once data is properly imported there will be documents, vocabulary and metadata 
 
 \subsubsection{Ways to use metadata}
 
-The key innovation of the STM is a general approach to incorporating metadata into the topic modeling framework.  We consider two way that metadata can enter the topic model: topical prevalence and topical content.  Metadata covariates for \emph{topical prevalence} allow the observed metadata to affect the frequency with which a topic is discussed.  Covariates in \emph{topical content} allow the observed metadata to affect the word rate use within a given topic, that is, how a particular topic is discussed. Estimation for both topical prevalence and content proceeds via the workhorse \code{stm} function. 
+The key innovation of the STM is a general approach to incorporating metadata into the topic modeling framework.  We consider two way that metadata can enter the topic model: topical prevalence and topical content.  Metadata covariates for \emph{topical prevalence} allow the observed metadata to affect the frequency with which a topic is discussed.  Covariates in \emph{topical content} allow the observed metadata to affect the word rate use within a given topic, that is, how a particular topic is discussed. Estimation for both topical prevalence and content proceeds via the workhorse \code{stm} function.
 
 \subsubsection{Estimation with topical prevalence parameter}
 
@@ -541,7 +542,11 @@ Users can also plot features of the corpus as a whole. First, the Structural Top
 \end{figure}
 
 
-
+\subsection{Post-estimation Permutation Checks}
+Any statistical procedure can be abused and the structural topic model is no different. One concern that we have heard is that users will simply search out covariate topic relationships that are the strongest. A related concern is the concern that by combining the measurement model with the estimation of an effect, the user is `baking in' the conclusion. In the appendix of \cite{ajps} we address this concern using a permutation test approach.  We have built in a function for conducting tests of this type using binary prevalence covariates.\footnote{Future work could extend this to other types of covariates.} The \code{permutationTest} function takes a formula containing a single binary covariate (and optionally other controls) and runs a permutation test where, rather than using the true assignment, the covariate is randomly drawn with probability equal to its empirical probability in the data.
+After each shuffle of the covariate the same STM model is estimated at different starting values using the same initialization procedure as the original model, and the effect of the covariate across topics is calculated.
+Next the function records two quantities of interest across this set of ``runs" of the model. The first records the absolute maximum effect of the permuted covariate across all topics.
+The second records the effect of the (permuted) covariate on the topic in each additional stm run which is estimated to be the topic closest to the topic of interest. The object returned from \code{permutationTest} can then be passed to \code{plot.STMpermute} for plotting. 
 
 
 \section{Changing Basic Estimation Defaults}

@@ -9,10 +9,10 @@ paretosingle <- function(z) {
     
     m[i,1]<-as.numeric(mean(unlist(z$semcoh[i])))
     
-    if(!is.null(z$sparsity[1])){
+    if(!z$exclusivity[[1]][1]=="Exclusivity not calculated for models with content covariates"){
       m[i,2]<-as.numeric(mean(unlist(z$exclusivity[i])))
     } else {
-      stop("Function not yet designed for models with content variable.") 
+      stop("manyTopics function not yet designed for models with content variable.") 
     }
   }
  

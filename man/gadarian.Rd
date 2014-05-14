@@ -26,7 +26,7 @@ Gadarian and Albertson, forthcoming, "Anxiety, Immigration, and the Search for I
 http://onlinelibrary.wiley.com/doi/10.1111/pops.12034/abstract
 
 Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., Albertson, B., Albertson, B. and Rand, D. (Forthcoming). "Structural topic models for open ended survey responses." American Journal of Political Science
-http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf
+http://goo.gl/0x0tHJ
 }
 \examples{
 head(gadarian)

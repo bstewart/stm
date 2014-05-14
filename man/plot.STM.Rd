@@ -13,7 +13,8 @@ Produces one of three types of plots for an STM object.  The default option \cod
                    labeltype = "prob", frexw = 0.5, 
                    main = NULL, xlim = NULL, ylim = NULL, xlab = NULL, 
                    family = "", width = 80, 
-                   covarlevels = NULL, plabels = NULL, text.cex=1, custom.labels=NULL,...)
+                   covarlevels = NULL, plabels = NULL, text.cex=1, 
+                   custom.labels=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -79,7 +80,7 @@ The function can produce three types of plots which summarize an STM object whic
   Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
   Gadarian, S., Albertson, B., Albertson, B. and Rand,
   D. (Forthcoming). "Structural topic models for open ended survey
-  responses." American Journal of Political Science http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf}
+  responses." American Journal of Political Science http://goo.gl/0x0tHJ}
 \seealso{
 \code{\link{plotQuote}}, \code{\link{plot.topicCorr}}
 }
