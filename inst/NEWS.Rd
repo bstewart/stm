@@ -1,5 +1,16 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 0.6.16}{
+  \itemize{
+    \item Very minor change with textProcessor() to accomodate API change in tm version 0.6
+    \item New option for plot.STM() which plots the distribution of theta values.  Thanks
+          to Antonio Coppola for coauthoring this component.
+    \item Deprecated option "custom" in "labeltype" of plot.STM().  Now you can simply specify the
+          labels.  Added additional functionality to specify custom topic names rather than the
+          default "Topic #:"
+    \item Bug fixes to various portions of plot.STM() that would cause labels to not print.
+    \item Added numerous error messages.
+}}
 \section{Version 0.6.12}{
   \itemize{
     \item Added permutationTest() function and associated plot capabilities

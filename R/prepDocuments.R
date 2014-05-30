@@ -17,6 +17,10 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   if((is.null(documents)|is.null(vocab))){
     stop("One of your file inputs has no data")
   }
+  if(class(documents)!="list") {
+    stop("documents must be a list in stm() format.  See ?stm() for format.  
+          See ?readCorpus() for tools for converting from popular formats")
+  }
   
   if(!is.null(subsample)) {
     index <- sample(1:length(documents), subsample)
@@ -27,11 +31,15 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   
   #check that there are no 0 length documents
   len <- unlist(lapply(documents, length))
-  if(any(len==0)) stop("Some documents have 0 length.  Please check input.")
-  
+  if(any(len==0)) {
+    stop("Some documents have 0 length.  Please check input. 
+          See ?prepDocuments() for more info.")
+  } 
+   
   triplet <- doc.to.ijv(documents) #this also fixes the zero indexing.
   documents <- ijv.to.doc(triplet$i, triplet$j, triplet$v)
   docs.removed <- c()
+  
   #Detect Missing Terms
   vocablist <- sort(unique(triplet$j))
   if(length(vocablist)>length(vocab)) {

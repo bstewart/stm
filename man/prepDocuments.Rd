@@ -38,7 +38,10 @@ A logical indicating whether or not ot print details to the screen.}
 \details{
 The default setting \code{dropthresh=1} means that words which appear in only one document will be dropped.  This is often advantageous as there is little information about these words but the added cost of including them in the model can be quite large.  In many cases it will be helpful to set this threshold considerably higher.  If the vocabulary is in excess of 5000 entries inference can slow quite a bit.
 
-If words are removed, the function returns a vector of the original indices for the dropped items.  If it removed documents it returns a vector of doc indices removed. Users with accompanying metadata or texts may want to drop those rows from the corresponding objects.}
+If words are removed, the function returns a vector of the original indices for the dropped items.  If it removed documents it returns a vector of doc indices removed. Users with accompanying metadata or texts may want to drop those rows from the corresponding objects.
+
+If you have any documents which are of length 0 in your original object the function will throw an error. These should be removed before running the function although please be sure to remove the corresponding rows in the meta data file if you have one.  You can quickly identify the documents using the code: \code{which(unlist(lapply(documents, length))==0)}.
+}
 \value{
 A list containing a new documents and vocab object.
 \item{documents}{The new documents object for use with \code{stm}}

@@ -22,13 +22,19 @@ textProcessor <- function(documents, metadata=NULL,
   }
   
   if(verbose) cat("Building corpus... \n")
-  txt <- Corpus(VectorSource(documents), readerControl=list(language= language))
+  txt <- VCorpus(VectorSource(documents), readerControl=list(language= language))
   #Apply filters
   txt <- tm_map(txt, stripWhitespace)
   
   if(lowercase){
     if(verbose) cat("Converting to Lower Case... \n")
-    txt <- tm_map(txt, tolower) #Convert to Lower case
+    #Convert to Lower case
+    #(Note that this is slightly more complicated due to API change in tm)
+    if(packageVersion("tm") >= "0.6") {
+      txt <- tm_map(txt, content_transformer(tolower)) 
+    } else {
+      txt <- tm_map(txt, tolower)
+    }
   }
   if(removestopwords){
     if(verbose) cat("Removing stopwords... \n")

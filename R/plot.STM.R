@@ -1,25 +1,30 @@
 #Functions for plotting STM objects
 
 plot.STM <- function(x, 
-                     type=c("summary", "labels", "perspectives"),
+                     type=c("summary", "labels", "perspectives", "hist"),
                      n=NULL, topics=NULL,
-                     labeltype="prob", frexw=.5,
+                     labeltype=c("prob", "frex", "lift", "score"), 
+                     frexw=.5,
                      main=NULL, xlim=NULL, ylim=NULL, xlab=NULL, family="",
                      width=80, 
                      covarlevels=NULL, plabels=NULL, text.cex=1, custom.labels=NULL,
+                     topic.names=NULL,
                      ...){
   model <- x
   type <- match.arg(type)
+  labeltype <- match.arg(labeltype)
+  if(!is.null(custom.labels)) labeltype <- "custom"
   if(is.null(n)) n <- switch(type, 
                              summary=3, 
                              labels=20,
-                             perspectives=25)
+                             perspectives=25,
+                             hist=3)
   contentcov <- length(model$beta$logbeta)!=1
   
+  if(type!="perspectives" & is.null(topics)) topics <- 1:model$settings$dim$K
+  
   if(labeltype!="custom"){
-    if(type %in% c("summary", "labels")) {
-      if(is.null(topics)) topics <- 1:model$settings$dim$K
-                                        #compute the labels
+    if(type != "perspectives") {
       lab <- labelTopics(model, topics=topics, n = n, frexweight=frexw)
       if(contentcov) {
         lab <- lab$topics
@@ -27,21 +32,26 @@ plot.STM <- function(x,
         lab <- lab[[labeltype]]
       }    
     }
-  }
-  
-  if(labeltype=="custom"){
+  } else {
     lab <- custom.labels
+    if(length(lab)!=length(topics)) lab <- rep_len(lab, length.out=length(topics))
   }
   
+  if(!is.null(topic.names))  topic.names <- rep_len(topic.names, length.out=length(topics))
+  
+  ##############
   # Summary Plot
-  # note at one point there was a threshold metric for choosing the number of words but
-  # it was specific to highest frequency words so I opted to just remove it.
+  ##############
   if(type=="summary") {
     if(labeltype!="custom"){
       lab <- apply(lab, 1, commas)
-      lab <- sprintf("Topic %i: %s", 1:length(lab), lab)
       lab <- lab[topics]
     }
+    if(is.null(topic.names)) {
+      topic.names <- sprintf("Topic %i:", topics)
+    }   
+    lab <- sprintf("%s %s", topic.names, lab)
+    
     frequency <- colMeans(model$theta[,topics])
     invrank <- order(frequency, decreasing=FALSE)
     if(is.null(xlim)) xlim <- c(0,min(2*max(frequency), 1))
@@ -55,27 +65,41 @@ plot.STM <- function(x,
          ylab=ylab, xlab=xlab, ...)
     for(i in 1:length(invrank)) {
       lines(c(0,frequency[invrank[i]]), c(i, i))
-      text(frequency[invrank[i]]+.05, i , lab[invrank[i]],family=family,pos=4, cex=text.cex)
+      text(frequency[invrank[i]]+.01, i , lab[invrank[i]],family=family,pos=4, cex=text.cex)
     }
   }
   
-  # Labels Plot
+  ##############
+  # Labels
+  ##############
   if(type=="labels") {
     if(contentcov) stop("labels plot not yet implemented with content covariates.  See labelTopics for labels.")
     plot(c(0,0), type="n", main=main,
-         ylim=c(1,length(topics)+.9), 
+         ylim=c((length(topics)+.9),1), #note- this flips the coordinate system
          xlim=c(1,n+1), 
          xaxt="n", yaxt="n", xlab="", ylab="",...)
-    if(labeltype!="custom") lab <- apply(lab, 1, commas)
+    
+    if(labeltype!="custom") {
+      lab <- apply(lab, 1, commas)
+      lab <- lab[topics]
+    }
+    if(is.null(topic.names)) {
+      topic.names <- sprintf("Topic %i:", topics)
+    }
+    lab <- lapply(lab, strwrap, width=width)
+
+    
     for(i in 1:length(topics)){
       if(i!=length(topics)) lines(c(-1,n+3), c(i+1,i+1), lty=2)
-      string <- paste0(strwrap(lab[rev(topics)[i]], width=width),collapse="\n")
-      text(n/2, i + .5, 
-           paste("Topic", rev(topics)[i], ":  \n", string), family=family, cex=text.cex)
+      string <- paste0(lab[[i]],collapse="\n")
+      string <- sprintf("%s \n %s", topic.names[i], string)
+      text(n/2, (i + .5), string, family=family, cex=text.cex)
     }
   }
   
-  # Perspectives 
+  ##############
+  # Perspectives
+  ##############
   if(type=="perspectives") {
     if(!contentcov) covarlevels <- c(1,1)
     
@@ -145,7 +169,7 @@ plot.STM <- function(x,
     diff <- exp(left[words]) - exp(right[words])
     diff <- diff/max(abs(diff))
     #Create the plot
-    plot(c(0,0), xlim=c(min(diff) - .1, max(diff)+.1), ylim=c(-2*length(diff),6*length(diff)), type="n", 
+    plot(c(0,0), xlim=c(max(diff)+.1,min(diff) - .1), ylim=c(-2*length(diff),6*length(diff)), type="n", 
          xaxt="n", xlab="", main=main, yaxt="n", ylab="", bty="n",...)
     segments(0,0, 0, -2*length(diff),lty=2)
     rand <- sample(seq(1, 6*length(diff),by=2), length(diff), replace=F)
@@ -154,7 +178,7 @@ plot.STM <- function(x,
     posdiff <- diff*(diff>thresh)
     middiff <- diff*(diff <thresh & diff > -thresh)
     colors <- rgb(posdiff+.75, .75, -negdiff+.75, maxColorValue=2)
-    text(diff, rand, model$vocab[words], cex=scale, col=colors, family=family)
+    text(diff, rand, model$vocab[words], cex=text.cex*scale, col=colors, family=family)
     
     #X-axis
     text(.75*min(diff), -length(diff), as.character(plabels[2]), 
@@ -162,6 +186,47 @@ plot.STM <- function(x,
     text(.75*max(diff), -length(diff), as.character(plabels[1]), 
          col=rgb(1.6,.5,.5,2,maxColorValue=2), cex=2, pos=1)
     segments(min(diff),-.5*length(diff),max(diff),-.5*length(diff))
+  }
+  
+  ###############
+  # Theta Histogram plots
+  ###############
+  if(type=="hist") {
+    #setup components of the plot size.
+    N <- length(topics)
+    root <- ceiling(sqrt(N))
+    oldpar <- par(no.readonly=TRUE)
+    par(mfrow=c(root,root), oma=c(0,.5,1.5,0), mar=c(2,2,4,1))
+    
+    if(labeltype!="custom"){
+      lab <- apply(lab, 1, commas)
+      lab <- lab[topics]
+    }
+    if(is.null(topic.names)) {
+      topic.names <- sprintf("Topic %i:", topics)
+    }
+    lab <- sprintf("%s %s", topic.names, lab)
+    
+    for(i in 1:length(topics)){
+      theta_median <- median(model$theta[,topics[i]])
+      if(is.null(xlab)) xlab <- ""
+      #Now call the histogram.  Note this is a bit kludgey but the default for xlim keeps us
+      #  from being able to pass the NULL value.  Because it references something internally
+      #  it would be difficult to make it one call.  So instead we just split on condition.
+      if(is.null(xlim)) {
+        hist(model$theta[,i], main=lab[i], xlab = xlab, ylab = "", ylim=ylim,...)
+      } else {
+        hist(model$theta[,i], main=lab[i], xlab = xlab, ylab = "", xlim=xlim, ylim=ylim,...)
+      }
+      abline(v = theta_median, col = "red", lwd = 1,lty=2)
+    }
+    
+    if(is.null(main)) {
+      title("Distribution of MAP Estimates of Document-Topic Proportions", outer=TRUE)
+    } else {
+      title(main, outer=TRUE)
+    }
+    par(oldpar)
   }
 }
 

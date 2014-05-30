@@ -5,16 +5,18 @@
 Plot summary of an STM object
 }
 \description{
-Produces one of three types of plots for an STM object.  The default option \code{"summary"} prints topic words with their corpus frequency.  \code{"labels"} is for easy printing of tables of indicative words for each topic.  \code{"perspectives"} depicts differences between two topics, content covariates or combinations. 
+Produces one of four types of plots for an STM object.  The default option \code{"summary"} prints topic words with their corpus frequency.  \code{"labels"} is for easy printing of tables of indicative words for each topic.  \code{"perspectives"} depicts differences between two topics, content covariates or combinations. \code{"hist"} creates a histogram of the expected distribution of topic proportions across the documents.
 }
 \usage{
-\method{plot}{STM}(x, type = c("summary", "labels", "perspectives"),
+\method{plot}{STM}(x, type = c("summary", "labels", "perspectives", "hist"),
                    n = NULL, topics = NULL, 
-                   labeltype = "prob", frexw = 0.5, 
+                   labeltype=c("prob", "frex", "lift", "score"), 
+                   frexw = 0.5, 
                    main = NULL, xlim = NULL, ylim = NULL, xlab = NULL, 
                    family = "", width = 80, 
                    covarlevels = NULL, plabels = NULL, text.cex=1, 
-                   custom.labels=NULL,...)
+                   custom.labels=NULL,
+                   topic.names=NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,10 +33,10 @@ Sets the desired type of plot.  See details for more information.
 Vector of topics to display.  For plot perspectives this must be a vector of length one or two. For the other two types it defaults to all topics.
 }
   \item{labeltype}{
-  Determines which option of \code{"prob", "frex", "lift", "score",
-    "custom"} is used for choosing the most important words.  See
-  \code{\link{labelTopics}} for more detail.  Custom allows the user to
-  input their own labels, use custom.labels argument to specify labels.
+  Determines which option of \code{"prob", "frex", "lift", "score"} 
+  is used for choosing the most important words.  See
+  \code{\link{labelTopics}} for more detail.  Passing an argument to
+  \code{custom.labels} will overide this.
 }
   \item{frexw}{
     If "frex" labeltype is used, this will be the frex weight.
@@ -69,12 +71,15 @@ The Font family.  Most of the time the user will not need to specify this but if
 \item{custom.labels}{
   A vector of custom labels if labeltype is equal to "custom".
   }
+  \item{topic.names}{
+  A vector of custom topic names.  Defaults to "Topic #: ".
+  }
   \item{\dots}{
 Additional parameters passed to ploting functions.
 }
 }
 \details{
-The function can produce three types of plots which summarize an STM object which is chosen by the argument \code{type}.  \code{summary} produces a plot which displays the topics ordered by their expected frequency across the corpus.  \code{labels} plots the top words selected according to the chosen criteria for each selected topics.  \code{perspectives} plots two topic or topic-covariate combinations.  Words are sized proportional to their use within the plotted topic-covariate combinations and oriented along the X-axis based on how much they favor one of the two configurations.  If the words cluster on top of each other the user can either set the plot size to be larger or shrink the total number of words on the plot.  The vertical configuration of the words is random and thus can be rerun to produce different results each time. 
+The function can produce three types of plots which summarize an STM object which is chosen by the argument \code{type}.  \code{summary} produces a plot which displays the topics ordered by their expected frequency across the corpus.  \code{labels} plots the top words selected according to the chosen criteria for each selected topics.  \code{perspectives} plots two topic or topic-covariate combinations.  Words are sized proportional to their use within the plotted topic-covariate combinations and oriented along the X-axis based on how much they favor one of the two configurations.  If the words cluster on top of each other the user can either set the plot size to be larger or shrink the total number of words on the plot.  The vertical configuration of the words is random and thus can be rerun to produce different results each time. \code{hist} plots a histogram of the MAP estimates of the document-topic loadings across all documents.  The median is also denoted by a dashed red line. 
 }
 \references{
   Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
@@ -89,4 +94,6 @@ The function can produce three types of plots which summarize an STM object whic
 plot(gadarianFit)
 plot(gadarianFit,type="labels")
 plot(gadarianFit, type="perspectives", topics=c(1,2))
+plot(gadarianFit,type="hist")
+
 }
