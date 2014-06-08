@@ -47,8 +47,5 @@ read.slam <- function(corpus) {
 }
 
 read.txtorg.vocab <- function(filename) {
-  vocab <- readLines(filename, encoding="UTF-8",warn=FALSE)
-  vocab <- do.call(rbind, strsplit(vocab,split=","))
-  vocab <- vocab[-1,]
-  return(vocab[,2])
+  return(readLines(filename, encoding="UTF-8",warn=FALSE))
 }

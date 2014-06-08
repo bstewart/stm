@@ -3,19 +3,27 @@
 #model is either the model output itself 
 #meta is the metadata itself 
 #DocID is the optional name of docID within meta
+#samplenum -- number of documents to sample
 
-termitewriter <- function(app.path, model, meta, DocID=NULL){
+termitewriter <- function(app.path, model, meta, DocID=NULL, samplenum=8000){
 
   if(!require(jsonlite)) stop("Install the jsonlite package to use this function")
+
+  if(samplenum>8000) warning("Interactive visualization may not be able to handle more than 8000 documents")
   
   if(!is.null(DocID)){
     docIDs = meta[,c(DocID)]
   }else{
     docIDs = 1:nrow(meta)
   }
+  
+  if(nrow(meta) > samplenum){
+    samp <- sample(1:nrow(meta), samplenum, replace=F)
+  }else{
+    samp <- 1:nrow(meta)
+  }
 
-
-  data.DocTopicMatrix = model$theta
+  data.DocTopicMatrix = model$theta[samp,]
   data.TermTopicMatrix = exp( t( model$beta$logbeta[[1]] ) )
 
     
@@ -27,10 +35,10 @@ termitewriter <- function(app.path, model, meta, DocID=NULL){
   app.path.TopicIndex = paste(app.path, "/", "topic-index.json", sep="")
 
 # Document Index
-  temp.DocCount <- nrow(model$theta)
-  temp.DocIDs <- paste( "Document #", 1:temp.DocCount, sep = "" )
+  temp.DocCount <- nrow(model$theta[samp,])
+  temp.DocIDs <- paste( "Document #", docIDs[samp], sep = "" )
   temp.DocIndex <- 1:temp.DocCount
-  temp.DocIndexValues <- cbind( temp.DocIndex, docIDs )
+  temp.DocIndexValues <- cbind( temp.DocIndex, docIDs[samp] )
   temp.DocIndexHeader <- c( "index", "docID" )
   colnames( temp.DocIndexValues ) <- temp.DocIndexHeader
   data.DocIndexJSON <- toJSON( as.data.frame( temp.DocIndexValues ), pretty = TRUE, digits = 10 )

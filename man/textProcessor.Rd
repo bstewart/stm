@@ -10,7 +10,7 @@ Function that takes in a vector of raw texts (in a variety of languages) and per
 textProcessor(documents, metadata=NULL, 
               lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, 
               removepunctuation=TRUE, stem=TRUE, 
-              sparselevel=.99, language="en", 
+              sparselevel=1, language="en", 
               verbose=TRUE) 
 }
 
@@ -36,7 +36,7 @@ Whether numbers should be removed. Defaults to TRUE.
    \item{stem}{
 Whether or not to stem words. Defaults to TRUE}
   \item{sparselevel}{
-  removes terms where at least sparselevel proportion of the entries are 0. 
+  removes terms where at least sparselevel proportion of the entries are 0. Defaults to 1 which effectively turns the feature off.  This is a change from versions 0.6.16 and earlier.
 }
   \item{language}{
 Language used for processing. Defaults to English. \code{tm} uses the \code{SnowballC} stemmer which as of version 0.5 supports "danish dutch english finnish french german hungarian italian norwegian portuguese romanian russian spanish swedish turkish".  These can be specified as any on of the above strings or by the three-letter ISO-639 codes.  You can also set language to "na" if you want to leave it deliberately unspecified (see documentation in \code{tm})}

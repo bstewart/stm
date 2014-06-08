@@ -61,7 +61,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   keepers <- which(wordcounts > lower.thresh & wordcounts < upper.thresh)
   droppedwords <- vocab[toremove]
   if(length(toremove)) {
-    if(verbose) cat("Removing Words Due to Frequency \n")
+    if(verbose) cat(sprintf("Removing %i Words Due to Frequency \n", length(toremove)))
     vocab <- vocab[-toremove]
     remap <- 1:length(keepers)
     for(i in 1:length(documents)) {
@@ -73,7 +73,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
       if(ncol(doc)==0) docs.removed <- c(docs.removed,i)
     }
     if(length(docs.removed)) {
-      if(verbose) cat("Removing Documents with No Words \n")
+      if(verbose) cat(sprintf("Removing %i Documents with No Words \n", length(docs.removed)))
       documents <- documents[-docs.removed]
     }
     toprint <- sprintf("Your corpus now has %i documents and %i words.", length(documents), length(vocab))

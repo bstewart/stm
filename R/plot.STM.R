@@ -45,7 +45,7 @@ plot.STM <- function(x,
   if(type=="summary") {
     if(labeltype!="custom"){
       lab <- apply(lab, 1, commas)
-      lab <- lab[topics]
+      if(!contentcov) lab <- lab[topics]
     }
     if(is.null(topic.names)) {
       topic.names <- sprintf("Topic %i:", topics)
@@ -200,7 +200,7 @@ plot.STM <- function(x,
     
     if(labeltype!="custom"){
       lab <- apply(lab, 1, commas)
-      lab <- lab[topics]
+      if(!contentcov) lab <- lab[topics]
     }
     if(is.null(topic.names)) {
       topic.names <- sprintf("Topic %i:", topics)

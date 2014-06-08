@@ -2,7 +2,7 @@
 #Basis function generator
 ##
 s <- function(x, df, ...) {
-  
+  if(class(x)=="Date") x <- as.numeric(x)
   nval <- length(unique(x))
   if(nval==1) stop("Smooth requested on covariate with only one value.")
   if(nval==2) {

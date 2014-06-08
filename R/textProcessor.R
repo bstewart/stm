@@ -2,7 +2,7 @@
 #Takes a character vector with one entry per document and its metadata
 textProcessor <- function(documents, metadata=NULL, 
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, removepunctuation=TRUE, stem=TRUE, 
-                          sparselevel=.99, language="en",
+                          sparselevel=1, language="en",
                           verbose=TRUE) {
   if(!require(tm,quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
   if(stem) {
@@ -62,8 +62,15 @@ textProcessor <- function(documents, metadata=NULL,
   #Make a matrix
   if(verbose) cat("Creating Output... \n")
   dtm <- DocumentTermMatrix(txt)
-  dtm <- removeSparseTerms(dtm, sparselevel) #remove terms that are sparse
-  
+  if(sparselevel!=1) {
+    V <- ncol(dtm)
+    dtm <- removeSparseTerms(dtm, sparselevel) #remove terms that are sparse
+    if(ncol(dtm) < V & verbose) {
+      message <- sprintf("Removed %i of %i words due to sparselevel of %s \n", 
+                       V-ncol(dtm), V, sparselevel)
+      cat(message)
+    }
+  }
   #If there is metadata we need to remove some documents
   if(!is.null(metadata)) {
     docindex <- unique(dtm$i)

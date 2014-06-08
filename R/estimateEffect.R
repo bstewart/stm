@@ -47,8 +47,10 @@ estimateEffect <- function(formula,
   # all the models here are essentially just OLS regressions
   # becuase we will run them many times we want to cache the 
   # expensive components in advance.
-  qx <- qr(xmat)
   
+  qx <- qr(xmat)
+  if(qx$rank < ncol(xmat)) stop("Covariate matrix is singular.  See the details of ?estimateEffect() for some common causes.")
+
   ##  
   #Step 3: Calculate Coefficients
   ##

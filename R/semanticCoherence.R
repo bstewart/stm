@@ -4,7 +4,7 @@ semanticCoherence <- function(model.out, documents, M){
     for(i in 1:length(model.out$beta$logbeta)){
       subset <- which(model.out$settings$covariates$betaindex==i)
       triplet <- doc.to.ijv(documents[subset])
-      mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v)
+      mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model.out$settings$dim$V)
       result = result + semCoh1beta(mat, M, beta=model.out$beta$logbeta[[i]])*length(subset)
     }
     return(result/length(documents))
