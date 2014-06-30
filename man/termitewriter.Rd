@@ -5,9 +5,9 @@
 Termite writer
 }
 \description{
-Writes output necessary to use the termite d3 visualization.}
+Writes output necessary to use the termite d3 visualization.  A work in progress and subject to change.}
 \usage{
-termitewriter(app.path, model, meta, DocID=NULL)
+termitewriter(app.path, model, meta, DocID=NULL, samplenum=8000)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +24,9 @@ termitewriter(app.path, model, meta, DocID=NULL)
      If the user wants to associate each document with a particular
      docID, they can input that here.  By default, the program will
      create a sequential document ID.
+     }
+     \item{samplenum}{
+     How many documents to subsample.
      }
 }
 \examples{

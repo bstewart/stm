@@ -1,0 +1,118 @@
+\begin{thebibliography}{18}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Bengtsson(2014)}]{MatrixStats}
+Bengtsson H (2014).
+\newblock \emph{matrixStats: Methods that apply to rows and columns of a
+  matrix}.
+\newblock R package version 0.8.14,
+  \urlprefix\url{http://CRAN.R-project.org/package=matrixStats}.
+
+\bibitem[{Blei and Lafferty(2007)}]{blei2007correlated}
+Blei DM, Lafferty JD (2007).
+\newblock \enquote{A correlated topic model of science.}
+\newblock \emph{The Annals of Applied Statistics}, pp. 17--35.
+
+\bibitem[{Blei \emph{et~al.}(2003)Blei, Ng, and Jordan}]{blei2003latent}
+Blei DM, Ng A, Jordan M (2003).
+\newblock \enquote{Latent Dirichlet allocation.}
+\newblock \emph{Journal of Machine Learning Research}, \textbf{3}, 993--1022.
+
+\bibitem[{Bouchet-Valat(2013)}]{SnowballC}
+Bouchet-Valat M (2013).
+\newblock \emph{SnowballC: Snowball stemmers based on the C libstemmer UTF-8
+  library}.
+\newblock R package version 0.5,
+  \urlprefix\url{http://CRAN.R-project.org/package=SnowballC}.
+
+\bibitem[{Chang(2012)}]{lda}
+Chang J (2012).
+\newblock \emph{lda: Collapsed Gibbs sampling methods for topic models.}
+\newblock R package version 1.3.2,
+  \urlprefix\url{http://CRAN.R-project.org/package=lda}.
+
+\bibitem[{Csardi and Nepusz(2006)}]{igraph}
+Csardi G, Nepusz T (2006).
+\newblock \enquote{The igraph software package for complex network research.}
+\newblock \emph{InterJournal}, \textbf{Complex Systems}, 1695.
+\newblock \urlprefix\url{http://igraph.org}.
+
+\bibitem[{Eisenstein \emph{et~al.}(2011)Eisenstein, Ahmed, and
+  Xing}]{eisenstein2011sparse}
+Eisenstein J, Ahmed A, Xing E (2011).
+\newblock \enquote{Sparse additive generative models of text.}
+\newblock In \emph{Proceedings of ICML}, pp. 1041--1048.
+
+\bibitem[{Eisenstein and Xing(2010)}]{poliblog}
+Eisenstein J, Xing E (2010).
+\newblock \enquote{The CMU 2008 Political Blog Corpus.}
+
+\bibitem[{Friedman \emph{et~al.}(2010)Friedman, Hastie, and
+  Tibshirani}]{friedman2010regularization}
+Friedman J, Hastie T, Tibshirani R (2010).
+\newblock \enquote{Regularization paths for generalized linear models via
+  coordinate descent.}
+\newblock \emph{Journal of statistical software}, \textbf{33}(1), 1.
+
+\bibitem[{Hornik \emph{et~al.}(2014)Hornik, Meyer, and Buchta}]{slam}
+Hornik K, Meyer D, Buchta C (2014).
+\newblock \emph{slam: Sparse Lightweight Arrays and Matrices}.
+\newblock R package version 0.1-31,
+  \urlprefix\url{http://CRAN.R-project.org/package=slam}.
+
+\bibitem[{Lucas \emph{et~al.}(2013)Lucas, Nielsen, Roberts, Stewart, Storer,
+  and Tingley}]{TextComparative}
+Lucas C, Nielsen R, Roberts M, Stewart B, Storer A, Tingley D (2013).
+\newblock \enquote{Computer assisted text analysis for comparative politics.}
+\newblock \emph{Working Paper}.
+
+\bibitem[{Meyer \emph{et~al.}(2008)Meyer, Hornik, and Feinerer}]{meyer2008text}
+Meyer D, Hornik K, Feinerer I (2008).
+\newblock \enquote{Text mining infrastructure in R.}
+\newblock \emph{Journal of Statistical Software}, \textbf{25}(5), 1--54.
+
+\bibitem[{Roberts \emph{et~al.}(2014{\natexlab{a}})Roberts, Stewart, and
+  Airoldi}]{STMEdo}
+Roberts ME, Stewart BM, Airoldi EM (2014{\natexlab{a}}).
+\newblock \enquote{Structural Topic Models.}
+
+\bibitem[{Roberts \emph{et~al.}(2013)Roberts, Stewart, Tingley, and
+  Airoldi}]{nips2013}
+Roberts ME, Stewart BM, Tingley D, Airoldi EM (2013).
+\newblock \enquote{The Structural Topic Model and Applied Social Science.}
+
+\bibitem[{Roberts \emph{et~al.}(2014{\natexlab{b}})Roberts, Stewart, Tingley,
+  Lucas, Leder-Luis, Gadarian, Albertson, and Rand}]{ajps}
+Roberts ME, Stewart BM, Tingley D, Lucas C, Leder-Luis J, Gadarian S, Albertson
+  B, Rand D (2014{\natexlab{b}}).
+\newblock \enquote{Structural topic models for open-ended survey responses.}
+\newblock \emph{American Journal of Political Science}.
+
+\bibitem[{Taddy(2013)}]{taddy2012multinomial}
+Taddy M (2013).
+\newblock \enquote{Multinomial inverse regression for text analysis.}
+\newblock \emph{Journal of the American Statistical Association},
+  \textbf{108}(503), 755--770.
+
+\bibitem[{Wickham(2012)}]{stringr}
+Wickham H (2012).
+\newblock \emph{stringr: Make it easier to work with strings.}
+\newblock R package version 0.6.2,
+  \urlprefix\url{http://CRAN.R-project.org/package=stringr}.
+
+\bibitem[{Zhao \emph{et~al.}(2013)Zhao, Liu, Roeder, Lafferty, and
+  Wasserman}]{huge}
+Zhao T, Liu H, Roeder K, Lafferty J, Wasserman L (2013).
+\newblock \emph{huge: High-dimensional Undirected Graph Estimation}.
+\newblock R package version 1.2.5,
+  \urlprefix\url{http://CRAN.R-project.org/package=huge}.
+
+\end{thebibliography}

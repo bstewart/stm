@@ -228,7 +228,7 @@ poliblogPrevFit <- stm(out$documents,out$vocab,K=20,
 The model is set to run for a maximum of 75 EM iterations (\code{max.em.its()}) using a seed we selected (\code{seed}).  Typically, convergence of the model will be monitored by the change in the approximate bound between EM iterations.  Once the bound has a small enough change between iterations, the model is considered converged. To reduce compiling time, in this vignette we do not run the models and instead load a workspace with the models already estimated.
 
 <<eval=TRUE>>=
- load(url("http://goo.gl/7hyflA"))
+ load(url("http://goo.gl/91KbfS"))
 @
 
 \subsection{Model Selection and Search}

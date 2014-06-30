@@ -11,8 +11,8 @@ export(stm, summary.STM, print.STM, plot.STM,
        findThoughts, print.findThoughts, plot.findThoughts, plotQuote,
        manyTopics, selectModel, plotModels, plotTopicLoess, 
        prepDocuments, readCorpus, textProcessor,
-	   topicQuality, s, termitewriter,
-      permutationTest, plot.STMpermute)
+	topicQuality, s, termitewriter,
+      permutationTest, plot.STMpermute, cloud, factorCheck)
 
 S3method(summary, STM)
 S3method(print, STM)

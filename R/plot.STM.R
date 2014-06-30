@@ -73,7 +73,18 @@ plot.STM <- function(x,
   # Labels
   ##############
   if(type=="labels") {
-    if(contentcov) stop("labels plot not yet implemented with content covariates.  See labelTopics for labels.")
+    if(contentcov) {
+      #we want to marginalize over the aspects here
+      weights <- model$settings$covariates$betaindex
+      tab <- table(weights)
+      weights <- tab/sum(tab)
+      #marginalize
+      beta <- exp(model$beta$logbeta[[1]])*weights[1]
+      for(i in 2:length(model$beta$logbeta)) {
+        beta <- beta + exp(model$beta$logbeta[[i]])*weights[i]
+      }
+      lab <- t(apply(beta, 1, function(x) model$vocab[order(x, decreasing=TRUE)[1:n]]))
+    }
     plot(c(0,0), type="n", main=main,
          ylim=c((length(topics)+.9),1), #note- this flips the coordinate system
          xlim=c(1,n+1), 
