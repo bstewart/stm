@@ -3,7 +3,8 @@
 textProcessor <- function(documents, metadata=NULL, 
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, removepunctuation=TRUE, stem=TRUE, 
                           sparselevel=1, language="en",
-                          verbose=TRUE) {
+                          verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
+                          customstopwords=NULL) {
   if(!require(tm,quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
   if(stem) {
     if(!require(SnowballC, quietly=TRUE)) stop("Please install SnowballC to use stemming.")
@@ -19,6 +20,13 @@ textProcessor <- function(documents, metadata=NULL,
     } 
   } else {
     documents <- as.character(documents)
+  }
+  
+  if(striphtml){
+  documents <- gsub('<.+?>', ' ', documents)
+  }
+  if(onlycharacter){
+  documents <- gsub("[^[:alnum:]///' ]", " ", documents)
   }
   
   if(verbose) cat("Building corpus... \n")
@@ -39,6 +47,10 @@ textProcessor <- function(documents, metadata=NULL,
   if(removestopwords){
     if(verbose) cat("Removing stopwords... \n")
     txt <- tm_map(txt, removeWords, stopwords(language)) #Remove stopwords
+  }
+  if(!is.null(customstopwords)) {
+    if(verbose) cat("Remove Custom Stopwords...\n")
+    txt <- tm_map(txt, removeWords, customstopwords)
   }
   if(removenumbers){
     if(verbose) cat("Removing numbers... \n")
@@ -63,11 +75,14 @@ textProcessor <- function(documents, metadata=NULL,
   if(verbose) cat("Creating Output... \n")
   dtm <- DocumentTermMatrix(txt)
   if(sparselevel!=1) {
+    ntokens <- sum(dtm$v)
     V <- ncol(dtm)
     dtm <- removeSparseTerms(dtm, sparselevel) #remove terms that are sparse
     if(ncol(dtm) < V & verbose) {
-      message <- sprintf("Removed %i of %i words due to sparselevel of %s \n", 
-                       V-ncol(dtm), V, sparselevel)
+      message <- sprintf("Removed %i of %i terms (%i of %i tokens) due to sparselevel of %s \n", 
+                       V-ncol(dtm), V,
+                       ntokens-sum(dtm$v), ntokens,
+                       sparselevel)
       cat(message)
     }
   }

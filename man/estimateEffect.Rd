@@ -10,7 +10,7 @@ Estimates a regression where documents are the units, the outcome is the proport
 \usage{
 estimateEffect(formula, stmobj, metadata = NULL, 
                uncertainty = c("Global", "Local", "None"), 
-               documents = NULL, nsims = 100)
+               documents = NULL, nsims = 25)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -30,7 +30,7 @@ Which procedure should be used to approximate the measurement uncertainty in the
 If uncertainty is set to \code{Local}, the user needs to provide the documents object (see \code{\link{stm}} for format).
 }
   \item{nsims}{
-  The number of simulated draws from the variational posterior.  Defaults to 100.
+  The number of simulated draws from the variational posterior.  Defaults to 25.  This can often go even lower without affecting the results too dramatically.
 }
 }
 \details{

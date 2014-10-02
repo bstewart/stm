@@ -15,7 +15,7 @@ semanticCoherence <- function(model.out, documents, M){
     top.words <- apply(beta, 1, order, decreasing=TRUE)[1:M,]
     wordlist <- unique(as.vector(top.words))
     triplet <- doc.to.ijv(documents)
-    mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v)
+    mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model.out$settings$dim$V)
     result = semCoh1beta(mat, M, beta=beta)
   return(result)
   }

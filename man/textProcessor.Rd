@@ -11,7 +11,8 @@ textProcessor(documents, metadata=NULL,
               lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, 
               removepunctuation=TRUE, stem=TRUE, 
               sparselevel=1, language="en", 
-              verbose=TRUE) 
+              verbose=TRUE, onlycharacter= FALSE, striphtml=FALSE,
+              customstopwords=NULL) 
 }
 
 \arguments{
@@ -36,18 +37,30 @@ Whether numbers should be removed. Defaults to TRUE.
    \item{stem}{
 Whether or not to stem words. Defaults to TRUE}
   \item{sparselevel}{
-  removes terms where at least sparselevel proportion of the entries are 0. Defaults to 1 which effectively turns the feature off.  This is a change from versions 0.6.16 and earlier.
+  Removes terms where at least sparselevel proportion of the entries are 0. Defaults to 1 which effectively turns the feature off.
 }
   \item{language}{
 Language used for processing. Defaults to English. \code{tm} uses the \code{SnowballC} stemmer which as of version 0.5 supports "danish dutch english finnish french german hungarian italian norwegian portuguese romanian russian spanish swedish turkish".  These can be specified as any on of the above strings or by the three-letter ISO-639 codes.  You can also set language to "na" if you want to leave it deliberately unspecified (see documentation in \code{tm})}
 \item{verbose}{
 If true prints information as it processes.
 }
+\item{onlycharacter}{
+  When TRUE, runs a regular expression substitution to replace all non-alphanumeric characters. These characters can crash textProcessor for some operating systems.  May remove foreign characters depending on encoding. Defaults to FALSE.  Defaults to FALSE. Runs before call to tm package. 
+}
+\item{striphtml}{
+  When TRUE, runs a regular expression substitution to strip html contained within <>.  Defaults to FALSE. Runs before call to tm package.
+}
+\item{customstopwords}{
+  A character vector containing words to be removed.  Defaults to NULL which does not remove any additional words.  This function is primarily for easy removal of application specific stopwords.  Note that as with standard stopwords these are removed after converting everything to lower case but before removing numbers, punctuation or stemming.  Thus words to be removed should be all lower case but otherwise complete.
+}
+
 }
 \details{
-This function is designed to provide a convenient and quick way to process a relatively small volume texts for analysis with the package. It is designed to quickly ingest data in a simple form like a spreadsheet where each document sits in a single cell.  You can also pass the filepath of a single directory to the documents argument.  The function will then recursively read in all the files within the directory where each docuemnt is a file. Once the text has been processed by \code{tm} the document term matrix is converted to the \code{stm} format using \code{\link{readCorpus}}.
+This function is designed to provide a convenient and quick way to process a relatively small volume texts for analysis with the package. It is designed to quickly ingest data in a simple form like a spreadsheet where each document sits in a single cell.  You can also pass the filepath of a single directory to the documents argument.  The function will then recursively read in all the files within the directory where each document is a file. Once the text has been processed by \code{tm} the document term matrix is converted to the \code{stm} format using \code{\link{readCorpus}}.
 
 The processor always strips extra white space but all other processing options are optional.  Stemming uses the snowball stemmers and supports a wide variety of languages.  Words in the vocabulary can be dropped due to sparsity and stop word removal.  If a document no longer contains any words it is dropped from the output.  Specifying meta-data is a convenient way to make sure the appropriate rows are dropped from the corresponding metadata file.
+
+When the option \code{sparseLevel} is set to a number other than 1, infrequently appearing words are removed.  When a term is removed from the vocabulary a message will print to the screen (as long as \code{verbose} has not been set to \code{FALSE}).  The message indicates the number of terms removed (that is, the number of vocabulary entries) as well as the number of tokens removed (appearences of individual words).  The function \code{\link{prepDocuments}} provides additional methods to prune infrequent words.  In general the functionality there should be preferred.
 
 We emphasize that this function is a convenience wrapper around the excellent \code{tm} package functionality without which it wouldn't be possible.
 }

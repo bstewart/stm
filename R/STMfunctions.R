@@ -45,6 +45,11 @@ calcfrex <- function(logbeta, w=.5, wordcounts=NULL) {
 #A James-Stein Estimator Shrinking to a Uniform Distribution
 #This draws from the Hausser and Strimmer (2009) JMLR piece.
 js.estimate <- function(prob, ct) {
+  if(ct<1) {
+    #basically if we only observe a count of 1
+    #the variance goes to infinity and we get the uniform distribution.
+    return(1/prob)
+  }
   # MLE of prob estimate
   mlvar <- prob*(1-prob)/(ct-1)
   unif <- 1/length(prob) 
@@ -56,6 +61,9 @@ js.estimate <- function(prob, ct) {
   if(deviation==0) return(prob)
   
   lambda <- sum(mlvar)/deviation
+  #if despite  our best efforts we ended up with an NaN number-just return the uniform distribution.
+  if(is.nan(lambda)) return(unif)
+  
   #truncate
   if(lambda>1) lambda <- 1
   if(lambda<0) lambda <- 0
@@ -133,3 +141,34 @@ safelog <- function(x) {
   out
 }
 
+########
+# Some functions for working with glmnet
+########
+#this is a small utility function to process glmnet results
+#it will:
+# 1) select the tuning parameter based on the information criterion weighted by k
+#    (not in the sense of number of topics, in the sense of AIC k=2, BIC k=log n)
+# 2) extract the coefficients.
+# note that this would be straightforward with the coef() option but methods dispatch
+# is way too slow with the S4 class.  This is particularly a problem for kappa with 
+# large V
+unpack.glmnet <- function(mod, nobs, ic.k) {
+  dev <- (1-mod$dev.ratio)*mod$nulldev
+  df <- colSums(mod$dfmat)
+  ic <- dev + ic.k*df
+  lambda <- which.min(ic)
+  
+  #methods dispatch here is crazy, so define out own function
+  subM <- function(x, p) {
+    ind <- (x@p[p]+1):x@p[p+1]
+    rn <- x@i[ind]+1
+    y <- x@x[ind]
+    out <- rep(0, length=nrow(x))
+    out[rn] <- y
+    out
+  }
+  coef <- lapply(mod$beta, subM, lambda) #grab non-zero coefs
+  coef <- do.call(cbind,coef)
+  intercept <- mod$a0[,lambda]
+  return(list(coef=coef, intercept=intercept))
+}

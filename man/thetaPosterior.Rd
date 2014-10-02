@@ -1,0 +1,49 @@
+\name{thetaPosterior}
+\alias{thetaPosterior}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Draw from Theta Posterior
+}
+\description{
+Take random draws from the variational posterior for the document-topic proportions. This is underlying methodology for \code{\link{estimateEffect}}
+}
+\usage{
+thetaPosterior(model, nsims = 100, 
+               type = c("Global", "Local"), 
+               documents = NULL)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{model}{
+An \code{STM} object created by \code{\link{stm}}
+}
+  \item{nsims}{
+The number of draws from the variational posterior.  See details below.
+}
+  \item{type}{
+A choice of two methods for constructing the covariance approximation the \code{"Global"} approximation and the \code{"Local"} approximation.  See details below.
+}
+  \item{documents}{
+If \code{type="Local"}, the documents object used in the original \code{\link{stm}} call should be passed here.
+}
+}
+\details{
+This function allows the user to draw samples from the variational posterior distribution over the normalized document-topic proportions, theta. The function \code{\link{estimateEffect}} provides a user-friendly interface for running regressions using samples from the posterior distribution.  When the user wants to do something not covered by that function, the code here provides easy access to uncertainty in the model.
+
+In order to simulate from the variational posterior for theta we take draws from the variational distribution for eta (the unnormalized topic proportions) and then map them to the simplex.  Each document in the corpus has its own mean vector (eta) and covariance matrix (nu).  Because the covariance matrices can be large we do not store them in the model objects.  We offer two approximations to the covariance matrix: Global and Local.  The Global method constructs a single approximate covariance matrix which is then shared by all documents.  This approach is very fast and does not require access to the original documents.  For highly aggregated quantities of interest this often produces similar results to the Local method.
+
+The Local method steps through each document in sequence and calculates the covariance matrix.  If the model has not converged, this matrix can be undefined and so we perform document level inference until the estimate stabilizes.  This means that under the Local method both the covariance and the mean of the variational distribution are recalculated.  It also means that calling this option with Local specified will take approximately as long as a standard E-step of \code{\link{stm}} for the same data and possibly longer.  Because the memory requirements would be extreme for large K, we calculate one document at a time, discarding the covariance matrix before proceeding to the next document.  Thus, if your computer has sufficient memory it is dramatically more computationally efficient to draw all the samples you may require at once rather than taking one sample at a time.
+
+The output for both methods is a list with number of elements equal to the number of documents. Each element is a matrix with nsims rows and K columns.  Be careful to ensure that you have sufficient memory before attempting this with a large number of simulations, documents or topics.
+
+}
+
+\seealso{
+\code{\link{estimateEffect}}
+}
+\examples{
+\dontrun{
+  #global approximation
+  draws <- thetaPosterior(gadarianFit, nsims = 100)
+}
+}

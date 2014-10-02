@@ -2,7 +2,7 @@
 %\documentclass{article}
 \documentclass[nojss]{jss}
 
-\author{\hspace{1.1in}Margaret E. Roberts\\\hspace{1.1in}Harvard \And
+\author{\hspace{1.1in}Margaret E. Roberts\\\hspace{1.1in}UCSD \And
   \hspace{1.5in}Brandon M. Stewart\\\hspace{1.5in}Harvard \And
   \hspace{1.5in}Dustin Tingley\\\hspace{1.5in}Harvard \And
 }
@@ -21,11 +21,12 @@ This vignette demonstrates how to use the Structural Topic Model, \pkg{stm}, \te
 
 \Address{
   Margaret E. Roberts\\
-  Department of Government\\
-  Harvard University\\
-  1737 Cambridge St, Cambridge, MA, USA\\
-  E-mail: \email{roberts8@fas.harvard.edu}\\
-  URL: \url{http://scholar.harvard.edu/mroberts}\\
+  Department of Political Science\\
+  University of California, San Diego\\
+  Social Sciences Building 301\\
+  9500 Gillman Drive, 0521, La Jolla, CA, 92093-0521 \\
+  E-mail: \email{meroberts@ucsd.edu}\\
+  URL: \url{http://www.margaretroberts.net}\\
   \\
   Brandon M. Stewart\\
   Department of Government\\
@@ -121,12 +122,18 @@ This vignette demonstrates how to use the Structural Topic Model, \pkg{stm}, \te
 \section{Introduction}
 \subsection{Method Overview}
 
-In this vignette we demonstrate how to use the Structural Topic Model, \pkg{stm}, \texttt{R} package.\footnote{We thank Jetson Leder-Luis, Christopher Lucas, and Alex Storer for various assistance in the construction of this package.  Additional details and development version at structuraltopicmodel.com} Building off of the tradition of generative topic models, such as the Latent Dirichlet Allocation \citep{blei2003latent} and Correlated Topic Model \citep{blei2007correlated}, the Structural Topic Model's key innovation is that it permits users to incorporate \emph{metadata}, defined as information about each document, into the topic model.
+In this vignette we demonstrate how to use the Structural Topic Model (STM), \pkg{stm}, \texttt{R} package.\footnote{We thank Antonio Coppola, Jetson Leder-Luis, Christopher Lucas, and Alex Storer for various assistance in the construction of this package.  Additional details and development version at \url{structuraltopicmodel.com}} Building off of the tradition of generative topic models, such as the Latent Dirichlet Allocation (LDA) \citep{blei2003latent} and Correlated Topic Model (CTM) \citep{blei2007correlated}, the Structural Topic Model's key innovation is that it permits users to incorporate \emph{metadata}, defined as information about each document, into the topic model.
 
-The goal of the Structural Topic Model is to enable the discovery of topics and the estimation of their relationship to document metadata. Outputs of the model can be used to conduct hypothesis testing about these relationships. This vignette illustrates use of the various components of the package. The design of the package is such that users have a broad array of options to analyze the data and present findings utilizing a range of plotting tools.
+The analysis of political data often relies on the quantification of text data. Text data is ubiquitious in social science research: traditional media, social media, survey data, and innumerable other sources contribute to the massive quantity of text in the modern information age.  The Structural Topic Model provides users a tool for machine-assisted reading of large text corpora.  With the STM, users can model anything from the American National Election Study results \citep{ajps} to Chinese newspaper articles \citep{robertsstewartchina} to online class forums \cite{StudentText} to Twitter feeds \citep{TextComparative}.
 
-\section{Estimation}
-Like other topic models the STM is a generative model. That means we define a data generating process for each document and then use the data to find the most likely values for the parameters within the model.  The generative process for each document (indexed by $d$) can be summarized as:
+The goal of the Structural Topic Model is to enable the discovery of topics and the estimation of their relationship to document metadata. Outputs of the model can be used to conduct hypothesis testing about these relationships. This vignette illustrates use of the various components of the package. The design of the package is such that users have a broad array of options to process raw text data, explore and analyze the data and present findings utilizing a range of plotting tools.
+
+The outline of this paper is as follows. In Section~\ref{sec:est} we introduce the technical aspects of the STM, including the data generating process and an overview of estimation.  In Section \ref{sec:use} we provide examples of how to use the model and the package \texttt{stm}, including implementing the model and plots to visualize model output.
+
+\section{Model}
+\label{sec:est}
+
+We begin by providing a technical overview of the STM model. Later in the paper we discuss additional technical details. Like other topic models the STM is a generative model. That means we define a data generating process for each document and then use the data to find the most likely values for the parameters within the model.  The generative process for each document (indexed by $d$) can be summarized as:
 
 \begin{enumerate}
 \item Draw the document-level attention to each topic from a logistic-normal GLM based on document covariates $X_d$. \\
@@ -138,7 +145,7 @@ $\beta_{d,k} \propto $ exp$(m + \kappa_{k} + \kappa_{g_d} + \kappa_{i=(kg_d)})$
 \item Draw word's topic assignment based on the document-specific distribution over topics.\\
  $z_{d,n} | \vec{\theta}_d \sim $ Multinomial$(\vec{\theta})$
 \item Conditional on the topic chosen, draw an observed word from that topic.\\
-$ w_{d,n} | z_{d,n}, \beta{d,k=z} \sim $ Multinomial$(\beta_{d,k=z})$
+$ w_{d,n} | z_{d,n}, \beta_{d,k=z} \sim $ Multinomial$(\beta_{d,k=z})$
 \end{itemize}
 \end{enumerate}
 
@@ -151,11 +158,12 @@ Regularizing prior distributions are used for $\gamma, \kappa$ and (optionally) 
 \end{figure}
 
 \section{Using the Structural Topic Model}
+\label{sec:use}
 
 In this section we demonstrate the basics of using the package.\footnote{The stm package depends on a variety of other packages, including \pkg{MatrixStats} \citep{MatrixStats}, \pkg{slam} \citep{slam}, \pkg{lda} \citep{lda}, \pkg{stringr} \citep{stringr}, \pkg{SnowballC} \citep{SnowballC}, \pkg{tm} \citep{meyer2008text}, \pkg{igraph} \citep{igraph}, \pkg{huge} \citep{huge}, and \pkg{glmnet} \citep{friedman2010regularization}.} Use of the STM typically proceeds in three key steps:
 
 \begin{enumerate}
-\item Tools for reading in and processing text data \\
+\item Reading in and processing text data \\
 (\code{textProcessor, readCorpus, prepDocuments})
 \item Fitting the Structural Topic Model
 (\code{stm, selectModel, manyTopics})
@@ -167,7 +175,7 @@ Next we walk through each of these steps to show users how to use the above func
 
 \subsection{Reading in textual data}
 
-The first step is to load data into \texttt{R}. The \pkg{stm} package represents a text corpus in three parts: a \code{documents} list containing word indices and their associated counts\footnote{A full description of the sparse list format can be found in the help file for \code{stm}.}, a \code{vocab} character vector containing the words associated with the word indices and a \code{metadata} matrix containing document covariates. In this section, we describe utility functions for reading text data into \texttt{R} or converting from a variety of common formats. Note that particular care must be taken to ensure that documents and their vocabularies are properly aligned with the metadata.
+The first step is to load data into \texttt{R}. The \pkg{stm} package represents a text corpus in three parts: a \code{documents} list containing word indices and their associated counts,\footnote{A full description of the sparse list format can be found in the help file for \code{stm}.} a \code{vocab} character vector containing the words associated with the word indices and a \code{metadata} matrix containing document covariates. In this section, we describe utility functions for reading text data into \texttt{R} or converting from a variety of common formats. Note that particular care must be taken to ensure that documents and their vocabularies are properly aligned with the metadata.
 
 <<eval=TRUE, echo=FALSE>>=
 library(stm)
@@ -191,16 +199,37 @@ out <- prepDocuments(processed$documents, processed$vocab, processed$meta)
 docs <- out$documents
 vocab <- out$vocab
 meta  <-out$meta
-
 @
 
-After reading in the data we suggest using the utility function \code{prepDocuments()} to process the loaded data to make sure it is in the right format. In particular, the \code{prepDocuments()} function properly associates metadata with textual data, re-indexes this relationship when textual data fields are blank, or become blank following pre-processing (such as with stop word removal). Please see the help file for this function for more details. It also removes infrequent terms, or too frequent terms, depending on user-set parameters. Importantly, \code{prepDocuments()} also will re-index all metadata/document relationships if any changes occur due to processing. After reading in and processing the textual data, it is important to inspect features of the documents and the associated vocabulary list. If users encounter problems with estimation, they should always inspect features such as these, and if using metadata, make sure the metadata has the same number of rows as there are documents. Furthermore, the model does not permit estimation when there are variables used in the model that have missing values. From here, researchers would be ready to estimate a structural topic model.
+After reading in the data we suggest using the utility function \code{prepDocuments()} to process the loaded data to make sure it is in the right format. In particular, the \code{prepDocuments()} function properly associates metadata with textual data, re-indexes this relationship when textual data fields are blank, or become blank following pre-processing (such as with stop word removal). Please see the help file for this function for more details.
+
+\code{prepDocuments()} also removes infrequent terms depending on user-set parameter \code{lower.thresh}. The utility function \code{plotRemoved()} will plot the number of words and documents removed for different thresholds. For example,the user can use:
+
+<<eval=FALSE>>=
+plotRemoved(processed$documents, processed$vocab, processed$meta,
+lower.thresh=seq(1,200, by=100))
+@
+
+to evaluate how many words and documents would be removed from the dataset at word threshold, which is the minimum number of documents a word needs to appear in in order for the word to be kept within the vocabulary.  
+%The above code creates the plots below.
+
+
+%\begin{figure}[h!]
+%  \centering
+%  \includegraphics[scale=.45]{plotRemoved_poliblogs.pdf}
+%  \caption{Documents and words removed at different word thresholds.}
+%\end{figure}
+
+
+Importantly, \code{prepDocuments()} also will re-index all metadata/document relationships if any changes occur due to processing. After reading in and processing the textual data, it is important to inspect features of the documents and the associated vocabulary list. If users encounter problems with estimation, they should always inspect features such as these, and if using metadata, make sure the metadata has the same number of rows as there are documents. Furthermore, the model does not permit estimation when there are variables used in the model that have missing values.
+
+From here, researchers would be ready to estimate a structural topic model.
 
 \subsubsection{Reading in data from other text processing programs}
 
-Sometimes researchers will encounter data that is not in a spreadsheet format. The \code{readCorpus} function includes functionality for loading data from a wide variety of formats.  Readers are included for standard R matrix class along with the sparse matrices from the packages \pkg{slam} and \pkg{Matrix}.  Document term matrices created by the popular package \pkg{tm} are inherit from the \pkg{slam} sparse matrix format and thus are included as a special case.
+Sometimes researchers will encounter data that is not in a spreadsheet format. The \code{readCorpus} function includes functionality for loading data from a wide variety of formats, includomg tje standard R matrix class along with the sparse matrices from the packages \pkg{slam} and \pkg{Matrix}.  Document term matrices created by the popular package \pkg{tm} are inherited from the \pkg{slam} sparse matrix format and thus are included as a special case.
 
-A program that is helpful for setting up and processing textual data, alongside document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. When using \pkg{txtorg}, three separate files are generated. A metadata file, a vocabulary file, and a file with the original documents. The default export format for \pkg{txtorg} is the \texttt{ldac} sparse matrix format popularized by David Blei's implementation of LDA.  The \code{readCorpus()} function can read in data of this type using the "ldac" option.
+A program that is helpful for setting up and processing textual data, alongside document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. When using \pkg{txtorg}, three separate files are generated. A metadata file, a vocabulary file, and a file with the original documents. The default export format for \pkg{txtorg} is the \texttt{ldac} sparse matrix format popularized by David Blei's implementation of LDA.  The \code{readCorpus()} function can read in data of this type using the ``ldac'' option.
 
 \subsection{Estimating the STM}
 
@@ -214,7 +243,7 @@ The key innovation of the STM is a general approach to incorporating metadata in
 
 In this example, we use the ratings variable (blog ideology) as a covariate in the topic \emph{prevalence} portion of the model with the CMU Poliblog data described above. Each document is modeled as a mixture of multiple topics. Topical prevalence captures how much each topic contributes to a document. Because different documents come from different sources, it is natural then to want to allow this prevalence to vary with metadata that we have about document sources.
 
-In this example we simply let prevalence be a function of the ``ratings'' variable, which is coded as either ``Liberal'' or ``Conservative'' and the variable ``day'' which is a integer measure of days running from the first to the last day of 2008. Here a five topic STM is estimated. The output from the model, \code{poliblogPrevFit}, could then be passed through the various functions we discuss below (e.g., \code{plot.STM}) for inspecting the results.
+In this example we simply let prevalence be a function of the ``ratings'' variable, which is coded as either ``Liberal'' or ``Conservative'' and the variable ``day'' which is a integer measure of days running from the first to the last day of 2008. Here a 20 topic STM is estimated. The output from the model, \code{poliblogPrevFit}, could then be passed through the various functions we discuss below (e.g., \code{plot.STM}) for inspecting the results.
 
 If a user wishes to specify additional prevalence covariates, she would do so using the standard formula notation common in \code{R} which we discuss at greater length below. A feature of the \code{stm()} function is that ``prevalence'' can be expressed as a formula which can include multiple covariates and factorial or continuous covariates.  For example, by using the formula setup we can enter other covariates additively. Additionally users can include more flexible functional forms of continuous covariates, including standard transforms like \code{log()} etc., as well as \code{ns()} or \code{bs()} from the \pkg{splines} package. The \pkg{stm} package also includes a convenience function \code{s()} which selects a fairly flexible b-spline basis. In the current example we allow for the variable ``date'' to be estimated with a spline. As we show later in the vignette, interactions between covariates can also be added using the standard notation for \texttt{R} formulas. In summary, for the below example, we enter in the variables additively, but allowing for the day variable, an integer variable measuring which day the blog was posted, to have a non-linear relationship in the topic estimation stage.
 
@@ -222,7 +251,6 @@ If a user wishes to specify additional prevalence covariates, she would do so us
 poliblogPrevFit <- stm(out$documents,out$vocab,K=20,
             prevalence =~ rating+ s(day), max.em.its=75,
             data=out$meta,seed=5926696)
-
 @
 
 The model is set to run for a maximum of 75 EM iterations (\code{max.em.its()}) using a seed we selected (\code{seed}).  Typically, convergence of the model will be monitored by the change in the approximate bound between EM iterations.  Once the bound has a small enough change between iterations, the model is considered converged. To reduce compiling time, in this vignette we do not run the models and instead load a workspace with the models already estimated.
@@ -236,13 +264,12 @@ The model is set to run for a maximum of 75 EM iterations (\code{max.em.its()}) 
 \subsubsection{Model selection for a fixed number of number of topics}
 As with all mixed-membership topic models the posterior is intractable and non-convex, resulting in a multimodal estimation problem which can be sensitive to initialization. Hence users may wish to estimate a many models, each from randomly generated starting values, and then evaluate each model according to some separate standard. The function \code{selectModel} automates this process to facilitate finding a model with good properties.
 
-Users specify the number of ``runs'', which in the example below is set to 10. \code{selectModel} first first casts a net where ``run'' (below 10) models are run for two EM steps, and then models with low likelihoods are discarded. Next the default returns the 20\% of models with the highest likelihoods which are then run until convergence or the EM iteration maximum is reached. Notice how that options for the \code{stm()} function can be passed, such as \code{max.em.its}. If users would like to select a larger number of models to be run completely, this can also be set with an option specified in the help file for this function.
+Users specify the number of ``runs'', which in the example below is set to 20. \code{selectModel} first casts a net where ``run'' (below 10) models are run for two EM steps, and then models with low likelihoods are discarded. Next the default returns the 20\% of models with the highest likelihoods which are then run until convergence or the EM iteration maximum is reached. Notice how that options for the \code{stm()} function can be passed to \code{selectModels}, such as \code{max.em.its}. If users would like to select a larger number of models to be run completely, this can also be set with an option specified in the help file for this function.
 
 <<eval=FALSE>>=
 poliblogSelect <- selectModel(out$documents,out$vocab,K=20,
         prevalence =~ rating+s(day), max.em.its=75,
         data=meta,runs=20,seed=8458159)
-
 @
 
 In order to select a model for further investigation, users must choose from one of the candidate models output from \code{selectModel()}. To do this \code{plotModel()} can be used to plot the average \emph{semantic coherence} and \emph{exclusivity} scores for each model (represented by topic numbers) as well as the semantic coherence and exclusivity for each topic.\footnote{See \citet{STMEdo,ajps} for a discussion of these criteria.} Each of these criteria are calculated for each topic within a model run. The \code{plotModel()} function calculates the average across all topics for each run of the model and plots these by labeling the model run with a numeral. Often times users will select a model with desirable properties in both dimensions (i.e., models with average scores towards the upper right side of the plot). As shown in Figure~\ref{fig:select}, the \code{plotModel()} function also plots each topic's values which helps give a sense of the variation in these parameters.\footnote{For a given model, the user can plot the semantic coherence and exclusivity scores with the \code{topicQuality} function.}
@@ -266,7 +293,7 @@ poliblogPrevFit<-poliblogSelect$runout[[3]] #choose the third model
 
 \subsubsection{Model search across numbers of topics}
 
-STM assumes a fixed user-specified numebr of topics.  A data driven approach to selecting the number of topics can be achieved by estimating using \code{stm} or the \code{selectModel} tool across multiple different numbers of topics. For example, estimating a STM model for 7 and 10 topics. The utility function \code{manyTopics()} allows the user to specify a range of topic numbers that they would like to run \code{selectModel} on. \code{manyTopics()} will then iterate and run \code{selectModel} for each different number of topics. Unlike \code{selectModel()}, this function automatically selects one run of the model. To do this, it discards runs that are strictly dominated by other model runs on both exclusivity and semantic coherence. For all remain Please consult the help file for information on this function. Especially note that the process of extracting results differs from \code{selectModel} because results are stored in a list environment.
+STM assumes a fixed user-specified numebr of topics.  A data driven approach to selecting the number of topics can be achieved by estimating using \code{stm} or the \code{selectModel} tool across multiple different numbers of topics. For example, one could estimate a STM model for 7 and 10 topics. The utility function \code{manyTopics()} allows the user to specify a range of topic numbers on which she would like to run \code{selectModel()}. \code{manyTopics()} will then iterate and run \code{selectModel()} for each different number of topics. Unlike \code{selectModel()}, this function automatically selects one run of the model. To do this, it discards runs that are strictly dominated by other model runs on both exclusivity and semantic coherence. Note that the process of extracting results differs from \code{selectModel()} because results are stored in a list environment.
 
 <<eval=FALSE>>=
 storage<-manyTopics(out$documents,out$vocab,K=c(7,10),
@@ -284,7 +311,7 @@ t<-storage$out[[2]]
 After choosing a model based on ex-ante criteria, the task of interpretation comes next which is especially crucial for any unsupervised procedure. There are many ways to investigate the output, ranging from inspecting the words associated with topics to the relationship between metadata and topics. To investigate the output of the model the \pkg{stm} package provides a number of options.
 
 \begin{enumerate}
-\item Displaying words associated with topics (\code{labelTopics},\code{plot.STM(,type="labels")}, ,\code{plot.STM(,type="perspectives")}) or documents highly associated with particular topics (\code{findThoughts},\code{plotQuote})
+\item Displaying words associated with topics (\code{labelTopics},\code{plot.STM(,type="labels")}, \code{sageLabels},\code{plot.STM(,type="perspectives")}) or documents highly associated with particular topics (\code{findThoughts},\code{plotQuote})
 \item Plotting relationships between metadata and topics/topical content (\code{estimateEffect}, \code{plot.estimateEffect})
 \item Corpus level summaries (\code{plot.topicCorr},\code{plot.STM(,type="summary")})
 \end{enumerate}
@@ -293,7 +320,7 @@ After choosing a model based on ex-ante criteria, the task of interpretation com
 
 We next describe two ways that users can explore the topics that have been estimated. The first way is to look at collections of words that are associated with topics. The second way is to read actual documents that are estimated to be highly associated with each topic. Both of these ways should be used.
 
-To explore the words associated with each topic we can use the \code{labelTopics()} function. This will print to the monitor words associated with each topic. The function by default prints several different types of word profiles, including highest probability words and FREX words.\footnote{For more information on FREX and high probability rankings, see \citet{nips2013,STMEdo,ajps,TextComparative}. For more information on score, see the LDA R package, \url{http://cran.r-project.org/web/packages/lda/lda.pdf}. For more information on lift, see \citet{taddy2012multinomial}.}  In order to translate these results to a format that can easily be used within a paper, the \code{plot.stm(,type="labels")} function will print topic words to a graphic device. Notice that in this case, the labels option is specified as the \code{plot.STM} function has several functionalities that we describe below (the options for "perspectives" and "summary").
+To explore the words associated with each topic we can use the \code{labelTopics()} function.  For models where a content covariate is included \code{sageLabels()} can also be used. Both these functions will print to the monitor words associated with each topic. The function by default prints several different types of word profiles, including highest probability words and FREX words.\footnote{For more information on FREX and high probability rankings, see \citet{nips2013,STMEdo,ajps,TextComparative}. For more information on score, see the LDA R package, \url{http://cran.r-project.org/web/packages/lda/lda.pdf}. For more information on lift, see \citet{taddy2012multinomial}.}  In order to translate these results to a format that can easily be used within a paper, the \code{plot.stm(,type="labels")} function will print topic words to a graphic device. Notice that in this case, the labels option is specified as the \code{plot.STM} function has several functionalities that we describe below (the options for "perspectives" and "summary").
 
 <<eval=TRUE>>=
 labelTopics(poliblogPrevFit, c(1, 7, 10))
@@ -336,7 +363,7 @@ We also provide a rich suite of plotting functions that lets users explore the r
 
 \paragraph{Estimation}
 
-Before plotting, we have to run \code{estimateEffect} in order to simulate a set of parameters which can then be plotted. These parameters include the expected proportion of a document that belongs to a topic as a function of a covariate, or a first difference type estimate, where topic prevalence for a particular topic is contrasted for two groups (e.g., liberal versus conservative). \code{estimateEffect} uses the method of composition to calculate uncertainty in the parameters fitted by the linear model of the topic proportions on the covariates.  In the below example this is run on topics 1 and 2. \code{estimateEffect} should be run and saved before plotting because it can be time intensive to calculate uncertainty estimates and/or because users might wish to plot different quantities of interest using the same simulated parameters.\footnote{The help file for this function describes several different ways for uncertainty estimate calculation, some of which are much faster than others.} The output can then be plotted. In this example we use a string variable and it is required that for this function we that we first convert it into a factor variable.
+Before plotting, we have to run \code{estimateEffect} in order to simulate a set of parameters which can then be plotted. These parameters include the expected proportion of a document that belongs to a topic as a function of a covariate, or a first difference type estimate, where topic prevalence for a particular topic is contrasted for two groups (e.g., liberal versus conservative). \code{estimateEffect} uses the method of composition to calculate uncertainty in the parameters fitted by the linear model of the topic proportions on the covariates.  In the below example this is run on topics 1 and 2. \code{estimateEffect} should be run and saved before plotting because it can be time intensive to calculate uncertainty estimates and/or because users might wish to plot different quantities of interest using the same simulated parameters.\footnote{The help file for this function describes several different ways for uncertainty estimate calculation, some of which are much faster than others.} The output can then be plotted. In this example we use a string variable and it is required that for this function that we first convert it into a factor variable.
 
 <<eval=TRUE>>=
 meta$rating<-as.factor(meta$rating)
@@ -344,12 +371,12 @@ prep <- estimateEffect(1:20 ~ rating+s(day),poliblogPrevFit,
          meta=meta, uncertainty = "Global")
 @
 
-The syntax of the \code{estimateEffect} function is designed so users specify the set of topics they wish for estimation to be done on, and then a formula for metadata of interest. After the necessary method of composition simulations are done particular estimate strategies and standard plot design features can be used by calling the \code{plot.estimateEffect} function. First, users must specify the variable that they wish to use for calculating an effect. If there were multiple variables specified in \code{estimateEffect}, then all other variables are held at their sample median. Second users must specify the type of uncertainty calculation. The default is ``global'', which will incorporate estimation uncertainty of the topic proportions into the uncertainty estimates using the method of composition. If users do not propagate the full amount of uncertainty, e.g., to  speed up computational time, they can choose \code{uncertainty="None"} which will result in narrower confidence intervals because it will not include the additional estimation uncertainty.
+The syntax of the \code{estimateEffect} function is designed so users specify the set of topics they wish to use for estimation, and then a formula for metadata of interest. After the necessary method of composition simulations are done particular estimate strategies and standard plot design features can be used by calling the \code{plot.estimateEffect} function. First, users must specify the variable that they wish to use for calculating an effect. If there were multiple variables specified in \code{estimateEffect}, then all other variables are held at their sample median. Second users must specify the type of uncertainty calculation. The default is ``global'', which will incorporate estimation uncertainty of the topic proportions into the uncertainty estimates using the method of composition. If users do not propagate the full amount of uncertainty, e.g., to  speed up computational time, they can choose \code{uncertainty="None"} which will result in narrower confidence intervals because it will not include the additional estimation uncertainty.
 
 
 \paragraph{Plotting}
 
-Users must also select the type of quantity that is to be plotted. When the covariate of interest is binary, or users are interested in a particular contrast, the method="difference" option will plot the change in topic proportion shifting from one value to the other. Figure~\ref{fig:difference} gives an example. For factor variables, users may which to plot the marginal topic proportion for each of the levels ("pointestimate").
+Users must also select the type of quantity that is to be plotted. When the covariate of interest is binary, or users are interested in a particular contrast, the method="difference" option will plot the change in topic proportion shifting from one specific value to another. Figure~\ref{fig:difference} gives an example. For factor variables, users may wish to plot the marginal topic proportion for each of the levels ("pointestimate").
 
 
 \begin{figure}[t!]
@@ -396,7 +423,6 @@ We can also plot the influence of covariates included in topical content. A topi
 poliblogContent <- stm(out$documents,out$vocab,K=20,
         prevalence =~ rating+ s(day), content=~rating,
         max.em.its=75, data=out$meta,seed=5593453)
-
 @
 
 Next, the results can be plotted using the \code{plot.STM(,type="perspectives")} function.  This functions shows which words within a topic are more associated with one covariate value versus another. In Figure~\ref{fig:perp}, vocabulary differences by ratings is plotted for topic 10. Topic 10 is related to Guantanamo. Its top words were ``guantanamo, techniqu, interrog, cia, detaine, tortur, detent.'' However, Figure~\ref{fig:perp} lets us see how liberals and conservatives talk about this topic differently. In particular, liberals emphasized ``torture'' whereas conservatives emphasized how the detainees were ``terrorists.''\footnote{At this point you can only
@@ -412,7 +438,8 @@ plot.STM(poliblogContent,type="perspectives", topics=10)
 \end{center}
 \end{figure}
 
-This function can also be used to plot the contrast in words across two topics. To show this we go back to our original model that did not include a content covariate and we contrast topic 9 (Iraq war) and 10 (Bush presidency). We plot the results in Figure~\ref{fig:perp2}.
+This function can also be used to plot the contrast in words across two topics.\footnote{This plot calculates the difference in probability of a word for the two topics, normalized by the maximum difference in probability of any word between the two topics.} To show this we go back to our original model that did not include a content covariate and we contrast topic 9 (Iraq war) and 10 (Bush presidency). We plot the results in Figure~\ref{fig:perp2}.
+
 \begin{figure}[t!]
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
@@ -420,6 +447,18 @@ plot.STM(poliblogPrevFit,type="perspectives", topics=c(9, 10))
 @
 \caption{Graphical Display of Topical Contrast between Topics 9 and 10.}
 \label{fig:perp2}
+\end{center}
+\end{figure}
+
+The cloud function can also be used to visualize topics.  For example, Figure \ref{fig:cloud} displays a word cloud of the most probable words in a topic related to the vice presidential candidates in the 2008 election.
+
+\begin{figure}[t!]
+\begin{center}
+<<eval=TRUE,fig=TRUE>>=
+cloud(poliblogPrevFit, topic=7)
+@
+\caption{WordCloud Display of Topics.}
+\label{fig:cloud}
 \end{center}
 \end{figure}
 
@@ -440,7 +479,8 @@ prep <- estimateEffect(c(1) ~ rating*day, poliblogInteraction,
         metadata=meta, uncertainty="None")
 
 plot.estimateEffect(prep, covariate="day", model=poliblogInteraction,
-        method="continuous",xlab="Days",labeltype="custom",custom.labels=c("Liberals","Conservatives"))
+        method="continuous",xlab="Days",labeltype="custom",
+        custom.labels=c("Liberals","Conservatives"))
 @
 \caption{Graphical Display of Topical Content allowing for interaction between day of blog post and liberal versus conservative interaction. Topic 1 prevalence is plotted as linear function of day, holding the rating at either 0 (Liberal) or 1 (Conservative). Were other variables included in the model, they would be held at their sample medians.}
 \label{fig:spline2}
@@ -482,22 +522,61 @@ plot.topicCorr(mod.out.corr)
 \end{figure}
 
 
-\subsection{Post-estimation Permutation Checks}
-Any statistical procedure can be abused and the structural topic model is no different. One concern that we have heard is that users will simply search out covariate topic relationships that are the strongest. A related concern is the concern that by combining the measurement model with the estimation of an effect, the user is `baking in' the conclusion. In the appendix of \cite{ajps} we address this concern using a permutation test approach.  We have built in a function for conducting tests of this type using binary prevalence covariates.\footnote{Future work could extend this to other types of covariates.} The \code{permutationTest} function takes a formula containing a single binary covariate (and optionally other controls) and runs a permutation test where, rather than using the true assignment, the covariate is randomly drawn with probability equal to its empirical probability in the data.
+\subsection{Diagnostic Tests}
+Topic estimation is fundamentally imprecise, as estimation in topic model space requires both an a priori number of topics input by the user, and furthermore an optimization in a space with multiple solutions. Due to the intractability underlying the computation of topic models, we rely on external analytics of our model to understand its unique tradeoffs between competing parameters.  The STM package contains a variety of tools that can be used to evaluate the quality of the model as well as the user's choice of number of topics and of metadata selected for inclusion.
+ 
+
+\subsubsection{1. Post-estimation Permutation Checks}
+Any statistical procedure can be abused and STM is no different. One concern that we have heard is that users will simply search out covariate topic relationships that are the strongest. A related concern is the concern that by combining the measurement model with the estimation of an effect, the user is `baking in' the conclusion. In the appendix of \cite{ajps} we address this concern using both a simulation and also  a permutation test approach.  We have built in a function for conducting permuation tests using binary prevalence covariates.\footnote{Future work could extend this to other types of covariates.} The \code{permutationTest} function takes a formula containing a single binary covariate (and optionally other controls) and runs a permutation test where, rather than using the true assignment, the covariate is randomly assigned to a document with probability equal to its empirical probability in the data.
 After each shuffle of the covariate the same STM model is estimated at different starting values using the same initialization procedure as the original model, and the effect of the covariate across topics is calculated.
 Next the function records two quantities of interest across this set of ``runs" of the model. The first records the absolute maximum effect of the permuted covariate across all topics.
-The second records the effect of the (permuted) covariate on the topic in each additional stm run which is estimated to be the topic closest to the topic of interest. The object returned from \code{permutationTest} can then be passed to \code{plot.STMpermute} for plotting. 
+The second records the effect of the (permuted) covariate on the topic in each additional stm run which is estimated to be the topic closest to the topic of interest. The object returned from \code{permutationTest} can then be passed to \code{plot.STMpermute} for plotting.
+
+\subsubsection{2. Checks for Multi-modality}
+Another diagnostic that should be completed while running the STM is checking to see how multi-modal the model of interest is.  We provide a suite of methods to assess multi-modality, and we refer the reader to \citet{robertsnavigating} for an explanation of all of them.  For purposes of example, we check how robust the covariate effects we explore earlier are to multimodality within the four original models that we ran.  The function \code{multiSTM} aligns topics across models.  The function \code{plot.MultimodDiagnostic} plots the effects across topics and models.  As you can see in Figure \ref{fig:multi_poliblog}, we find that only some of topics  in our first STM model are robust across models.  If the topic of interest is not robust across models, we suggest looking more closely at the topic's most probable words to try to understand where these differences orginate.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=.45]{multimod.png}
+  \caption{Plot of Liberal-Conservative differences effect across four runs.}\label{fig:multi_poliblog}
+\end{figure}
+
+\subsubsection{3. Held-out likelihood estimation}
+Sometimes users will want to compare model specifications to see how well the model does predicting words within the document.  The \texttt{stm} package contains two different functions to aid with held-out likelihood estimation.  Held-out likelihood estimation is the estimation of the probability of words appearing within a document when those words have been removed from the document in the estimation step \citep{blei2003latent}.  Similar to cross-validation, when some of the data is removed from estimation and then later used for validation, the held-out likelihood helps the user assess the model's prediction performance.
+
+We provide two different functions for the user to complete heldout likelihood estimation.  The first,  \code{make.heldout} produces a document set where some of the words within the documents have been removed.  The user can then run a STM model on the documents that have the missing words.  The second, \code{eval.heldout}, evaluates the heldout likeihood for missing words based on the model run on the heldout documents.
+
+\subsubsection{4. Residuals Checks}
+Users can also test the assumptions of the model within the package through the function \code{residuals}.  This function implements residual checks described in Section 4.2 of \citet{taddyestimation}, testing for overdispersion of the variance of the multinomial within the data generating process of STM.  As described in \citet{taddyestimation}, if the residuals are overdispered, it could be that more topics are needed to soak up some of the extra variance.  While no fool-proof method has been developed to choose the number of topics, both the residual checks and held-out likelihood estimation can be useful for indications of the number of topics to choose.
+
+In addition to these functions one can also explore if there words that are extremely highly associated with a single topic via the \code{checkBeta} function.
+
+
 
 
 \section{Changing Basic Estimation Defaults}
-In this section we overview how to change details of estimation that may be of interest to advanced users.
+In this section we overview how to change basic defaults in estimation.  We start by discussing how to chose among different methods for intializing model parametes.  We then discuss how to set and evaluate convergence criteria.  Next we overview a method for accelerating convergence in document sets with many documents. Finally we discuss some variations on content covariate models which allow the user to control model complexity.
+
+\subsection{Initialization}
+As with most topic models, the objective function maximized by STM is multimodal.  This means that the way we choose the starting values for the variational EM algorithm can affect our final solution.  We provide three methods of initialization accessed using the argument \code{init.type}, Latent Dirichlet Allocation via collapsed Gibbs sampling (\code{init.type="LDA"}), a Spectral algorithm for Latent Dirichlet Allocation (\code{init.type="Spectral"}), and random starting values (\code{init.type="Random"}).  
+
+LDA is the default option and uses a few passes of collapsed Gibbs sampling to initialize the algorithm. The exact parameters for this initialization can be set using the argument \code{control}.The Spectral option initializes using a moment based estimator for LDA due to \citet{arora2012practical}. In contrast to the LDA and random initializations this approach is deterministic.  It performs extremely well particularly for larger document sets.  Because the spectral algorithm needs to form a square matrix with dimensions of the lenght of the vocabulary, it is best used in settings where the vocabulary is under 5000 terms.  Finally the random algorithm draws the initial state from a Dirichlet distribution.  This is included primarily for completeness and in general th other two strategies should be preferred.  \citet{robertsnavigating} provides details on these initialization methods and provides a study of their performance.  In general Spectral outperforms LDA which in turn outperforms Random initialization.
+
+Each time the model is run the random seed is saved in the output object under \code{settings$seed}.  This can be passed to the \code{seed} argument of \code{stm} to replicate the same starting values.
+
 
 \subsection{Convergence Criteria}
-Estimation in the STM proceeds by variational EM.  Convergence is controlled by relative change in the variational objective.  Denoting by $\ell_t$ the approximate variational object at time $t$, convergence is declared when the quantity $\ell_t - \ell_{t-1}/$abs($\ell_{t-1}$) drops below tolerance.  The default tolerance is 1e-5 by default and can be changed using the \code{emtol} argument.
+Estimation in the STM proceeds by variational EM.  Convergence is controlled by relative change in the variational objective.  Denoting by $\ell_t$ the approximate variational object at time $t$, convergence is declared when the quantity $\ell_t - \ell_{t-1}/$abs($\ell_{t-1}$) drops below tolerance.  The default tolerance is 1e-5 and can be changed using the \code{emtol} argument.
 
-The argument \code{max.em.its} sets the maximum number of iterations.  If this threshold is reached before convergence is assessed a message will be printed to the screen.  The default of 100 iterations is simply a general guideline.
+The argument \code{max.em.its} sets the maximum number of iterations.  If this threshold is reached before convergence is assessed a message will be printed to the screen.  The default of 500 iterations is simply a general guideline.  A model which fails to converged can be restarted using the \code{model} argument in \code{stm}.  See the documentation for \code{stm} for more information.
 
-Once a model has been fit, convergence can easily be assessed by plotting the variational bound as in Figure \ref{fig:converge}.
+The default is to have the status of iterations print to the screen. The \code{verbose} option turns printing to the screen on and off.
+
+During the E-step the algorithm prints one dot for every $1\%$ of the corpus it completes and announces completion along with timing information.  Printing for the M-Step depends on the algorithm being used.  For models without content covariates M-step estimation should be nearly instantaneous.  For models with content covariates and the algorithm prints dots to indicate progress.  The exact interpretation of the dots differs with the choice of model (see the help file for more details).
+
+By default every 5th iteration will print a report of top topic and covariate words.  The \code{reportevery} option sets how often these reports are printed.
+
+Once a model has been fit, convergence can easily be assessed by plotting the variational bound as in Figure \ref{fig:converge}. 
 
 \begin{figure}[t!]
 \begin{center}
@@ -510,21 +589,10 @@ plot(poliblogPrevFit$convergence$bound,type="l", ylab="Approximate Objective",
 \end{center}
 \end{figure}
 
-Additionally convergence can be specified in terms of the number of iterations without change in the most probable words.  See the documentation for \code{stm} for more information.
+\subsection{Accelarating Convergence}
+When the number of documents is large convergence in topic models can be slow.  This is because each iteration requires a complete pass over all the documents before updating the global parameters.  To accelerate convergence we can split the documents into several equal sized blocks and update the global parameters after each block.  The option \code{ngroups} specifies the number of blocks, and setting it equal to an integer greater than one turns on this functionality. 
 
-\subsection{Initialization}
-
-As with any EM based estimation strategy, starting values are required. In order to change how starting values are chosen, the argument \code{init.type} has several different options including \code{LDA}, \code{DMR} (Dirichlet Multinomial Regression Topic Model), and \code{Random}).
-\code{LDA} is the default and uses a few passes of collapsed Gibbs sampling for the standard LDA model as an initializer.  This tends to provide a fairly good starting region.  Random initializations often start with a dramatic lower value of the objective function but also recover quite quickly.
-
-\subsection{Reporting}
-The default is to have the status of iterations print to the screen. The \code{verbose} option turns printing to the screen on and off.
-
-During the E-step the algorithm prints one dot for every $1\%$ of the corpus it completes and announces completion along with timing information.  Printing for the M-Step depends on the algorithm being used.  For models without content covariates M-step estimation should be nearly instantaneous.  For models with content covariates and the Jeffreys prior, the algorithm prints one dot for each parameter vector update (thus for K=10 topics, and a 2-level covariate with interactions you will see 32 dots per M-step pass).
-
-By default every 5th iteration will print a report of top topic and covariate words.  The \code{reportevery} option sets how often these reports are printed.
-
-Finally the \code{keepHistory} option can be used to save the entire parameter history at each EM iteration.  This can be useful for diagnostic purposes but note that when the number of words in the vocabulary, the number of documents or the number of topics is large, the history can quickly overwhelm available active memory. Thus we recommend leaving the default of \code{FALSE} in most cases.
+Note that setting the \code{ngroups} value to a large number can dramatically increase the memory requirements of the function.  Thus as the number of blocks is increased we are trading off memory for computational efficiency.  
 
 \subsection{SAGE}
 The Sparse Additive Generative (SAGE) model conceptualizes topics as sparse deviations from a corpus-wide baseline \citep{eisenstein2011sparse}.  While computationally more expensive this can sometimes produce higher quality topics .  Whereas LDA will tend to assign rare words exclusively to one topic, the regularization of the SAGE model ensures that words only load onto topics when they have sufficient counts to overwhelm the prior.  In general this means that SAGE topics will tend to have fewer words that distinguish them from other topics, but those words are more likely to be meaningful.  Importantly for our purposes the SAGE framework makes it straightforward to add covariate effects into the content portion of the model.
@@ -538,26 +606,22 @@ By default when a content covariate is included in the model, we also include co
 Users can turn off interactions by specifying the option \code{interactions=FALSE}.  This can be helpful in settings where there isn't sufficient data to make reasonably inferences about all the interaction parameters.  It also reduces the computational intensity of the model.
 
 \section{Alternate Priors}
-In this section we overview options for altering the prior structure in the \code{stm}  function.  We highlight the major alternatives and refer interested users to the documentation for additional details.
+In this section we overview options for altering the prior structure in the \code{stm}  function.  We highlight the alternatives and provide intuition for the properties of each option. We have chosen the default settings to represent the choices that we expect will perform  the best in the majority of cases and thus changing these settings should only be necessary if the defaults are not performing well.
 
 \subsection{Changing Estimation of Prevalence Covariate coefficients}
+The user can choose between two options: "Pooled" and "L1".   The difference between these two is that the "L1" option can induce sparsity in the coefficients (i.e. many are set exactly to zero) while the "Pooled" esitmator is computationally more efficient.  In practice we recommend the default "Pooled" estimator unless the prevalence covariates are very high dimensional (such as a factor with hundreds of categories).
 
-The user can choose between two options: "Pooled" is the default and estimates a model where the coefficients on topic prevalence have a zero-mean Normal prior with variance given a broad
- inverse-gamma hyperprior.
+"Pooled" is the default option and estimates a model where the coefficients on topic prevalence have a zero-mean Normal prior with variance given a broad inverse-gamma hyperprior.  This provides moderate shrinkage towards zero but does not induce sparsity.
 
 You can also choose \code{gamma.prior="L1"} which uses the \code{glmnet} package \citep{friedman2010regularization} to allow for grouped penalties between the L1 and L2 norm. In these settings we estimate a regularization path and then select the optimal shrinkage parameter using a user-tunable information criterion. By default selecting the L1 option will apply the L1 penalty selecting the optimal shrinkage parameter using AIC. The defaults have been specifically tuned for the STM but almost all the relevant arguments can be changed through the \code{control} argument. Changing the \code{gamma.enet} parameter by specifying \code{control=list(gamma.enet=.5)} allows the user to choose a mix between the L1 and L2 norms. When set to 1 (as by default) this is the lasso penalty, when set to 0 its the ridge penalty. Any value in between is a mixture called the elastic net.
-
-Because the penalties are grouped, covariates will tend to influence all topics or none.  Thus this option is best employed in settings where the analyst has a large number of covariates but expects most of them to have no effect.
 
 \subsection{Changing Covariance Matrix Prior}
 The \code{sigma.prior} argument is a value between 0 and 1 defaulting to 0.  The update for the covariance matrix is formed by taking the convex combination of the diagonalized covariance and the MLE with weight given by the prior.  Thus by default we are simply maximizing the likelihood.  When \code{sigma.prior=1} this amounts to setting a diagonal covariance matrix.  This argument can be useful in settings where topics are at risk of becoming too highly correlated.  However, in extensive testing we have come across very few cases where this was needed.
 
 \subsection{Changing the Content Covariate Prior}
-The \code{kappa.prior} option provides two sparsity promoting priors for the content covariates.  The default is \code{kappa.prior="Jeffreys"} and uses a scale mixture of Normals where the precisions $\tau$ are given improper Jeffreys priors $1/\tau$.
+The \code{kappa.prior} option provides two sparsity promoting priors for the content covariates.  The default is \code{kappa.prior="L1"} and uses \code{glmnet} and the distributed multinomial formulation of \citet{taddy2013distributed}.  The core idea is to decouple the update into a sequence of independent L1-regularized poisson models with plugin estimators for the document level shared effects.  See \citet{STMEdo} for more details on the estimation procedure. The regularization parameter is set automatically as detailed in the \code{stm} help file.
 
-Specifying the option \code{kappa.prior="L1"} uses \code{glmnet} to impose a penalty between the L1 and L2 norm (as controlled by the \code{control} parameter \code{kappa.enet}).  In general we strongly recommend keeping close to the L1 norm as sparsity is important for estimation.
-
-When choosing the \code{L1} option, the user can also choose whether to fix the word probability intercept to the empirical log probability or estimate it freely.  It is fixed by default but can be changed by setting the control option \code{control=list(fixedintercept=FALSE)}.
+To maintain backwards compatability we also provide estimation using a scale mixture of Normals where the precisions $\tau$ are given improper Jeffreys priors $1/\tau$. This option can be accessed by setting \code{kappa.prior="Jeffreys"}.  We caution that this can be much slower than the default option.
 
 There are over a dozen additional options documented in \code{stm} for altering additional components of the prior, most of them focusing on the content covariate model.
 
@@ -565,11 +629,14 @@ There are over a dozen additional options documented in \code{stm} for altering 
 
 The  \pkg{stm} package provides a flexible integration of document metadata and topic modeling. This vignette provides an overview of use and features. We encourage users to consult the extensive help files for more details, as well as read the companion papers that illustrate the application of this method.
 
+The development of the structural topic model is ongoing, and future research promises a variety of tools for better models and more user-friendly results.  Software for the visualization of the STM is ongoing, with development of a web browser-based visualization tool underway. Such interactive visualizations will allow for further exploration of topics and the interactions between topics and covariates.
+
+Furthermore, in performing these intensive machine learning computations, there are always gains in efficiency to be had, both in theoretical optimality and in applied programming practice.  The STM is undergoing constant streamlining and revision towards faster, more optimal computation.  As corpus sizes increase, the STM will also increase in capacity to handle more documents and more varied metadata.
+
 \clearpage
 \pdfbookmark[1]{References}{References}
 \bibliography{vignetteBib}
 
 
 \end{document}
-
 

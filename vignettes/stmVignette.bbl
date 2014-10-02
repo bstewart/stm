@@ -1,4 +1,4 @@
-\begin{thebibliography}{18}
+\begin{thebibliography}{24}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -8,6 +8,13 @@
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
 \providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Arora \emph{et~al.}(2012)Arora, Ge, Halpern, Mimno, Moitra, Sontag,
+  Wu, and Zhu}]{arora2012practical}
+Arora S, Ge R, Halpern Y, Mimno D, Moitra A, Sontag D, Wu Y, Zhu M (2012).
+\newblock \enquote{A practical algorithm for topic modeling with provable
+  guarantees.}
+\newblock \emph{arXiv preprint arXiv:1212.4777}.
 
 \bibitem[{Bengtsson(2014)}]{MatrixStats}
 Bengtsson H (2014).
@@ -79,28 +86,58 @@ Meyer D, Hornik K, Feinerer I (2008).
 \newblock \enquote{Text mining infrastructure in R.}
 \newblock \emph{Journal of Statistical Software}, \textbf{25}(5), 1--54.
 
+\bibitem[{Reich \emph{et~al.}(2014)Reich, Tingley, Leder-Luis, Roberts, and
+  Stewart}]{StudentText}
+Reich J, Tingley D, Leder-Luis J, Roberts ME, Stewart BM (2014).
+\newblock \enquote{Computer Assisted Reading and Discovery for Student
+  Generated Text.}
+\newblock \emph{Working Paper}.
+
+\bibitem[{Roberts and Stewart(2014)}]{robertsstewartchina}
+Roberts ME, Stewart BM (2014).
+\newblock \enquote{What the Big Picture Reveals About Governments: Scalable
+  Text Analysis of Millions of Newspapers in China.}
+\newblock \emph{Working paper}.
+
 \bibitem[{Roberts \emph{et~al.}(2014{\natexlab{a}})Roberts, Stewart, and
   Airoldi}]{STMEdo}
 Roberts ME, Stewart BM, Airoldi EM (2014{\natexlab{a}}).
 \newblock \enquote{Structural Topic Models.}
+
+\bibitem[{Roberts \emph{et~al.}(2014{\natexlab{b}})Roberts, Stewart, and
+  Tingley}]{robertsnavigating}
+Roberts ME, Stewart BM, Tingley D (2014{\natexlab{b}}).
+\newblock \enquote{Navigating the Local Modes of Big Data: The Case of Topic
+  Models.}
+\newblock \emph{Technical report}, Working Paper. Export BibTex Tagged XML.
 
 \bibitem[{Roberts \emph{et~al.}(2013)Roberts, Stewart, Tingley, and
   Airoldi}]{nips2013}
 Roberts ME, Stewart BM, Tingley D, Airoldi EM (2013).
 \newblock \enquote{The Structural Topic Model and Applied Social Science.}
 
-\bibitem[{Roberts \emph{et~al.}(2014{\natexlab{b}})Roberts, Stewart, Tingley,
+\bibitem[{Roberts \emph{et~al.}(2014{\natexlab{c}})Roberts, Stewart, Tingley,
   Lucas, Leder-Luis, Gadarian, Albertson, and Rand}]{ajps}
 Roberts ME, Stewart BM, Tingley D, Lucas C, Leder-Luis J, Gadarian S, Albertson
-  B, Rand D (2014{\natexlab{b}}).
+  B, Rand D (2014{\natexlab{c}}).
 \newblock \enquote{Structural topic models for open-ended survey responses.}
 \newblock \emph{American Journal of Political Science}.
 
-\bibitem[{Taddy(2013)}]{taddy2012multinomial}
-Taddy M (2013).
+\bibitem[{Taddy(2013{\natexlab{a}})}]{taddy2013distributed}
+Taddy M (2013{\natexlab{a}}).
+\newblock \enquote{Distributed Multinomial Regression.}
+\newblock \emph{arXiv preprint arXiv:1311.6139}.
+
+\bibitem[{Taddy(2013{\natexlab{b}})}]{taddy2012multinomial}
+Taddy M (2013{\natexlab{b}}).
 \newblock \enquote{Multinomial inverse regression for text analysis.}
 \newblock \emph{Journal of the American Statistical Association},
   \textbf{108}(503), 755--770.
+
+\bibitem[{Taddy(2012)}]{taddyestimation}
+Taddy MA (2012).
+\newblock \enquote{On Estimation and Selection for Topic Models.}
+\newblock \emph{Journal of Machine Learning Research}.
 
 \bibitem[{Wickham(2012)}]{stringr}
 Wickham H (2012).

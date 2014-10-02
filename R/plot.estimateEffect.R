@@ -44,9 +44,9 @@ if(any(parse)) {
     if(length(unique(object$data[,intlabs[1]]))>2 & length(unique(object$data[,intlabs[2]]))>2){
       stop("Plot only supports interaction terms where one of the covariates has two values.")
     }
-    if(!is.numeric(object$data[,intlabs[1]]) & !is.numeric(object$data[,intlabs[2]])){
-      stop("Plot only supports interaction between two numeric variables.")
-    }
+    #if(!is.numeric(object$data[,intlabs[1]]) & !is.numeric(object$data[,intlabs[2]])){
+    #  stop("Plot only supports interaction between two numeric variables.")
+    #}
     if(covariate%in%intlabs){
       covint <- which(intlabs==covariate)
       cint <- which(intlabs!=covariate)
@@ -155,7 +155,6 @@ offset <- (1-ci.level)/2
 #Point estimate method#
 ######################
 if(method=="pointestimate"){
-  
   #If the covariate is a factor
   if(length(covid)>1 & covariate%in%factornames){
     #Estimate simulated values to plot
@@ -166,13 +165,21 @@ if(method=="pointestimate"){
       for(i in 1:length(object$topics)){
         cvector[covid] <- uvals[j,]
         if(any(parse)){
+              #Interaction terms in xmat
+          intterms2 <- str_detect(colnames(xmat), ":")
+                                        #Interaction levels
+          interactlevels <- unique(xmat[,which(matnames==which(labels1==intlabs[cint]))])  
+
           if(covint>0 & is.null(int.value)){
-            cvector[intterms+1] <- uvals[j,]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+            cvector[which(matnames==which(labels1==intlabs[cint]))] <- median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
+            cvector[intterms2] <- uvals[j,]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
           }
           if(covint>0 & !is.null(int.value)){
-            cvector[intterms+1] <- uvals[j,]*int.value
+            cvector[which(matnames==which(labels1==intlabs[cint]))] <- int.value
+            cvector[intterms2] <- uvals[j,]*int.value
           }
         }
+        print(cvector)
         sims <- simbetas[[i]]%*%cvector
         toplot[[j]][[i]] <- list(mean=mean(sims), cis=quantile(sims, c(offset, 1-offset)))
       }
@@ -226,10 +233,12 @@ if(method=="pointestimate"){
         for(i in 1:length(object$topics)){
           cvector[covid] <- uvals[j]
           if(any(parse)){
+            intcontrol <- which(colnames(xmat)==intlabs[cint])
             if(covint>0 & is.null(int.value)){
               cvector[intterms+1] <- uvals[j]*median(xmat[,which(matnames==which(labels1==intlabs[cint]))])
             }
             if(covint>0 & !is.null(int.value)){
+              cvector[intcontrol] <- int.value
               cvector[intterms+1] <- uvals[j]*int.value
             }
           }

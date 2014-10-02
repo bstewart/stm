@@ -52,7 +52,7 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
     vectors of the same length.
   }
   \item{int.value}{
-    For methods "pointestimate" and "difference", when two binary terms
+    For methods "pointestimate" and "difference", when two terms
     are interacted and one variable in the interaction is the covariate
     of interest, the user can specify the value of the interaction term.
     }
@@ -135,9 +135,13 @@ method="pointestimate")
 plot.estimateEffect(prep, "treatment", model=gadarianFit,
 method="difference",cov.value1=1,cov.value2=0)
 
-#If the covariate were a binary factor, the factor labels can be used to
- specify the values of cov.value1 (e.g., cov.value1="treat"). String
- variables must be turned to factors prior to plotting.
+#If the covariate were a binary factor, 
+#the factor labels can be used to  
+#specify the values of cov.value1 (e.g., cov.value1="treat"). 
+
+# String variables must be turned to factors prior to plotting. 
+#If you see this error, Error in rep.int(c(1, numeric(n)), n - 1L) : 
+# invalid 'times' value, then you likely have not done this.
 
 #Example of binary times binary interaction
 gadarian$binaryvar <- sample(c(0,1), nrow(gadarian), replace=T)

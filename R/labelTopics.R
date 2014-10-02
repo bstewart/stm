@@ -1,4 +1,4 @@
-ls#Topic Labeling according to a series of metrics.
+#Topic Labeling according to a series of metrics.
 
 labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   logbeta <- model$beta$logbeta

@@ -1,4 +1,6 @@
-#Local Logistic-Normal Inference Using Standard Batch Scheduling
+#E-Step for a Document Block
+#[a relatively straightforward rewrite of previous
+# code with a focus on avoiding unnecessary computation.]
 
 #Input: Documents and Key Global Parameters
 #Output: Sufficient Statistics
@@ -11,19 +13,19 @@
 #  (3) update global sufficient statistics
 # Then the sufficient statistics are returned.
 
-estep.LN <- function(documents, beta.index, logbeta, mu, sigma, verbose, lambdacurrent=NULL) {
+#Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
+estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
+                       beta, lambda.old, mu, sigma, 
+                       verbose) {
+  
   #quickly define useful constants
-  V <- ncol(logbeta[[1]])
-  K <- nrow(logbeta[[1]])
-  A <- length(unique(beta.index))
+  V <- ncol(beta[[1]])
+  K <- nrow(beta[[1]])
   N <- length(documents)
-  if(verbose) {
-    if(N>100) {
-      ctevery <- floor(N/100)
-    } else {
-      ctevery <- 1
-    }
-  }
+  A <- length(beta)
+  ctevery <- ifelse(N>100, floor(N/100), 1)
+  if(!update.mu) mu.i <- as.numeric(mu)
+  
   # 1) Initialize Sufficient Statistics 
   sigma.ss <- diag(0, nrow=(K-1))
   beta.ss <- vector(mode="list", length=A)
@@ -32,36 +34,29 @@ estep.LN <- function(documents, beta.index, logbeta, mu, sigma, verbose, lambdac
   }
   bound <- vector(length=N)
   lambda <- vector("list", length=N)
-    
-  priors <- list(mu=NULL,
-                 sigmaentropy=(.5*determinant(sigma, logarithm=TRUE)$modulus[1]),
-                 siginv=solve(sigma), 
-                 logbeta=NULL)
-  if(ncol(mu)==1) {
-    updateMu <- FALSE
-    priors$mu <- as.vector(mu) #converting to a vector here and below solves dimensionality issues in matrix mult.
-  } else {
-    updateMu <- TRUE
-  }
   
-  # 2) Document Scheduling
+  # 2) Precalculate common components
+  sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
+  siginv <- solve(sigma)
+    
+  # 3) Document Scheduling
+  # For right now we are just doing everything in serial.
+  # the challenge with multicore is efficient scheduling while
+  # maintaining a small dimension for the sufficient statistics.
   for(i in 1:N) {
-    # a) bundle parameters
+    #update components
     doc <- documents[[i]]
     words <- doc[1,]
     aspect <- beta.index[i]
-    if(updateMu) priors$mu <- as.vector(mu[,i])
-    priors$logbeta <- logbeta[[aspect]][,words,drop=FALSE]
+    init <- lambda.old[i,]
+    if(update.mu) mu.i <- mu[,i]
+    beta.i <- beta[[aspect]][,words,drop=FALSE]
     
-    if(is.null(lambdacurrent)) {
-      init <- priors$mu
-    } else {
-      init <- lambdacurrent[i,]
-    }
-    # b) infer local latent variables 
-    doc.results <- inferdoc.logisticnormal(doc,priors,init)
+    #infer the document
+    doc.results <- logisticnormal(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
+                                  doc=doc, sigmaentropy=sigmaentropy)
     
-    # c) update sufficient statistics 
+    # update sufficient statistics 
     sigma.ss <- sigma.ss + doc.results$eta$nu
     beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     bound[i] <- doc.results$bound
@@ -70,7 +65,7 @@ estep.LN <- function(documents, beta.index, logbeta, mu, sigma, verbose, lambdac
   }
   if(verbose) cat("\n") #add a line break for the next message.
   
-  #3) Combine and Return Sufficient Statistics
+  #4) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)
   return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda))
 }

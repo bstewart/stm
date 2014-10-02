@@ -1,7 +1,7 @@
 estimateEffect <- function(formula,
                      stmobj, metadata=NULL,
                      uncertainty=c("Global", "Local", "None"), documents=NULL,
-                     nsims=100) {
+                     nsims=25) {
   origcall <- match.call()
   thetatype <- match.arg(uncertainty)
   if(thetatype=="None") nsims <- 1 #override nsims for no uncertaintys

@@ -1,15 +1,15 @@
 ## Structural Topic Model
-# this is a wrapper around workhorse function stm.control() 
-# the primary purpose here is to format arguments and do some light preprocessing.
+# wrapper for the stm.control function.  
 
 stm <- function(documents, vocab, K, 
                 prevalence, content, data=NULL,
-                init.type=c("LDA", "DMR","Random"), seed=NULL, 
-                max.em.its=100, emtol=1e-5,
-                verbose=TRUE, reportevery=5, keepHistory=FALSE,  
-                LDAbeta=TRUE, interactions=TRUE,
+                init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
+                max.em.its=500, emtol=1e-5,
+                verbose=TRUE, reportevery=5,   
+                LDAbeta=TRUE, interactions=TRUE, 
+                ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("Jeffreys", "L1"), control=list())  {
+                kappa.prior=c("L1", "Jeffreys"), control=list())  {
   
   #Match Arguments and save the call
   init.type <- match.arg(init.type)
@@ -23,8 +23,9 @@ stm <- function(documents, vocab, K,
   N <- length(documents)
   
   #Extract and Check the Word indices
-  wcounts <- doc.to.ijv(documents)
-  wcounts <- aggregate(wcounts$v, by=list(wcounts$j), FUN=sum)
+  wcountvec <- unlist(lapply(documents, function(x) rep(x[1,], times=x[2,])),use.names=FALSE)
+  #to make this backward compatible we reformulate to old structure.
+  wcounts <- list(Group.1=sort(unique(wcountvec)))
   V <- length(wcounts$Group.1)  
   if(!posint(wcounts$Group.1)) {
     stop("Word indices are not positive integers")
@@ -32,6 +33,9 @@ stm <- function(documents, vocab, K,
   if(!isTRUE(all.equal(wcounts$Group.1,1:V))) {
     stop("Word indices must be sequential integers starting with 1.")
   } 
+  #note we only do the tabulation after making sure it will actually work.
+  wcounts$x <- tabulate(wcountvec)
+  rm(wcountvec)
   
   #Check the Vocab vector against the observed word indices
   if(length(vocab)!=V) stop("Vocab length does not match observed word indices")
@@ -115,28 +119,23 @@ stm <- function(documents, vocab, K,
                             V=V, N=N, wcounts=wcounts),
                    verbose=verbose,
                    topicreportevery=reportevery,
-                   keepHistory=keepHistory,
-                   convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol, topwords=20, topwordits=0),
+                   convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol),
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels),
                    gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1),
                    sigma=list(prior=sigma.prior),
                    kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
-                              fixedintercept=TRUE, mstep=list(maxit=3, tol=.99)),
-                   tau=list(mode=match.arg(kappa.prior), prior=NULL, tol=1e-5,
-                            enet=1,nlambda=500, lambda.min.ratio=.0001, ic.k=2),
-                   init=list(mode=init.type, 
-                             userinit=NULL), 
-                   seed=seed)
+                              fixedintercept=TRUE, mstep=list(tol=.001, maxit=3)),
+                   tau=list(mode=match.arg(kappa.prior), tol=1e-5,
+                            enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
+                            maxit=1e4),
+                   init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01), 
+                   seed=seed,
+                   ngroups=ngroups)
   if(settings$gamma$mode=="L1") {
-    if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")
+    #if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")
     if(ncol(xmat)<=2) stop("Cannot use L1 penalization in prevalence model with 2 or fewer covariates.")
   }
-  if(settings$tau$mode=="L1") {
-    if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")    
-    settings$tau$maxit <- 1e8
-    settings$tau$tol <- 1e-6
-  }
-  
+
   ###
   # Fill in some implied arguments.
   ###
@@ -158,9 +157,10 @@ stm <- function(documents, vocab, K,
   ###
   
   #Full List of legal extra arguments
-  legalargs <-  c("tau.maxit", "tau.tol","kappa.mstepmaxit", "kappa.msteptol", 
-                  "wordconverge.num", "wordconverge.its", "fixedintercept",
-                  "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet")
+  legalargs <-  c("tau.maxit", "tau.tol", 
+                  "fixedintercept","kappa.mstepmaxit", "kappa.msteptol", 
+                  "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
+                  "nits", "burnin", "alpha", "eta")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -170,16 +170,18 @@ stm <- function(documents, vocab, K,
     for(i in fullnames) {
       if(i=="tau.maxit") settings$tau$maxit <- control[[i]]
       if(i=="tau.tol") settings$tau$tol <- control[[i]]
-      if(i=="kappa.mstepmaxit") settings$kappa$mstep$maxit <- control[[i]] 
-      if(i=="kappa.msteptol") settings$kappa$mstep$tol <- control[[i]] 
-      if(i=="wordconverge.num") settings$convergence$topwords <- control[[i]]
-      if(i=="wordconverge.its") settings$convergence$topwordits <- control[[i]]
       if(i=="fixedintercept")settings$kappa$fixedintercept <- control[[i]]
       if(i=="kappa.enet") settings$tau$enet <- control[[i]]
+      if(i=="kappa.mstepmaxit") settings$kappa$mstep$maxit <- control[[i]] 
+      if(i=="kappa.msteptol") settings$kappa$mstep$tol <- control[[i]] 
       if(i=="nlambda") settings$tau$nlambda <- control[[i]]
       if(i=="lambda.min.ratio") settings$tau$lambda.min.ratio <- control[[i]]
       if(i=="ic.k") settings$tau$ic.k <- control[[i]]
       if(i=="gamma.enet") settings$gamma$enet <- control[[i]]
+      if(i=="nits") settings$init$nits <- control[[i]]
+      if(i=="burnin") settings$init$burnin <- control[[i]]
+      if(i=="alpha") settings$init$alpha <- control[[i]]
+      if(i=="eta") settings$init$eta <- control[[i]]
     }
   }
   
@@ -200,5 +202,5 @@ stm <- function(documents, vocab, K,
   ###
   # Finally run the actual model
   ###
-  return(stm.control(documents, vocab, settings))
+  return(stm.control(documents, vocab, settings,model))
 }

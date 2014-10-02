@@ -36,7 +36,7 @@ Words which do not appear in a number of documents greater than lower.thresh wil
 A logical indicating whether or not ot print details to the screen.}
 }
 \details{
-The default setting \code{dropthresh=1} means that words which appear in only one document will be dropped.  This is often advantageous as there is little information about these words but the added cost of including them in the model can be quite large.  In many cases it will be helpful to set this threshold considerably higher.  If the vocabulary is in excess of 5000 entries inference can slow quite a bit.
+The default setting \code{lower.thresh=1} means that words which appear in only one document will be dropped.  This is often advantageous as there is little information about these words but the added cost of including them in the model can be quite large.  In many cases it will be helpful to set this threshold considerably higher.  If the vocabulary is in excess of 5000 entries inference can slow quite a bit.
 
 If words are removed, the function returns a vector of the original indices for the dropped items.  If it removed documents it returns a vector of doc indices removed. Users with accompanying metadata or texts may want to drop those rows from the corresponding objects.
 
@@ -49,6 +49,7 @@ A list containing a new documents and vocab object.
 \item{meta}{The new meta data object for use with \code{stm}. Will be the same if no documents are removed.}
 \item{words.removed}{A set of indices corresponding to the positions in the original vocab object of words which have been removed.}
 \item{docs.removed}{A set of indices corresponding to the positions in the original documents object of documents which no longer contained any words after dropping terms from the vocab.}
+\item{tokens.removed}{An integer corresponding to the number of unique tokens removed from the corpus.}
 \item{wordcounts}{A table giving the the number of documents that each word is found in of the original document set, prior to any removal. This can be passed through a histogram for visual inspection.}
 }
 

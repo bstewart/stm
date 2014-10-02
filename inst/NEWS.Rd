@@ -1,5 +1,16 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.0.0}{
+  \itemize{
+    \item Large changes many of which are not backwards compatible.
+    \item Numerous speed improvements to the core algorithm.
+    \item Introduction of several new options for the core stm function including spectral initalization, memoized inference, and model restarts.
+    \item Content covariate models are now estimated using the distributed multinomial formulation which is dramatically faster. Default prior also changed to L1.
+    \item Handling of document level convergence was changed to ensure positive definiteness in the document-level covariance matrices
+    \item Fixed bug in binary/binary interactions.
+    \item Numerous new diagnostic and summary functions
+    \item Expanding the console printing of many of the preprocessing functions
+    }}
 \section{Version 0.6.24}{
   \itemize{
     \item Fix an error with vignettes building on linux machines
