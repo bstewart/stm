@@ -5,9 +5,9 @@ textProcessor <- function(documents, metadata=NULL,
                           sparselevel=1, language="en",
                           verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
                           customstopwords=NULL) {
-  if(!require(tm,quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
+  if(!requireNamespace("tm",quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
   if(stem) {
-    if(!require(SnowballC, quietly=TRUE)) stop("Please install SnowballC to use stemming.")
+    if(!requireNamespace("SnowballC", quietly=TRUE)) stop("Please install SnowballC to use stemming.")
   }
   
   #If there is only one item assume its a url and load it.
@@ -30,54 +30,58 @@ textProcessor <- function(documents, metadata=NULL,
   }
   
   if(verbose) cat("Building corpus... \n")
-  txt <- VCorpus(VectorSource(documents), readerControl=list(language= language))
+  txt <- tm::VCorpus(tm::VectorSource(documents), readerControl=list(language= language))
   #Apply filters
-  txt <- tm_map(txt, stripWhitespace)
+  txt <- tm::tm_map(txt, tm::stripWhitespace)
   
   if(lowercase){
     if(verbose) cat("Converting to Lower Case... \n")
     #Convert to Lower case
     #(Note that this is slightly more complicated due to API change in tm)
     if(packageVersion("tm") >= "0.6") {
-      txt <- tm_map(txt, content_transformer(tolower)) 
+      txt <- tm::tm_map(txt, tm::content_transformer(tolower)) 
     } else {
-      txt <- tm_map(txt, tolower)
+      txt <- tm::tm_map(txt, tolower)
     }
   }
   if(removestopwords){
     if(verbose) cat("Removing stopwords... \n")
-    txt <- tm_map(txt, removeWords, stopwords(language)) #Remove stopwords
+    txt <- tm::tm_map(txt, tm::removeWords, tm::stopwords(language)) #Remove stopwords
   }
   if(!is.null(customstopwords)) {
     if(verbose) cat("Remove Custom Stopwords...\n")
-    txt <- tm_map(txt, removeWords, customstopwords)
+    txt <- tm::tm_map(txt, tm::removeWords, customstopwords)
   }
   if(removenumbers){
     if(verbose) cat("Removing numbers... \n")
-    txt <- tm_map(txt, removeNumbers) #Remove numbers
+    txt <- tm::tm_map(txt, tm::removeNumbers) #Remove numbers
   }
   if(removepunctuation){
     if(verbose) cat("Removing punctuation... \n")
-    txt <- tm_map(txt, removePunctuation) #Remove punctuation
+    txt <- tm::tm_map(txt, tm::removePunctuation) #Remove punctuation
   }
   if(stem){
     if(verbose) cat("Stemming... \n")
-    txt <- tm_map(txt, stemDocument, language=language)
+    txt <- tm::tm_map(txt, tm::stemDocument, language=language)
   }
   
   if(!is.null(metadata)) {
     for(i in 1:ncol(metadata)) {
-      meta(txt, colnames(metadata)[i]) <- metadata[,i]
+     if(packageVersion("tm") >= "0.6") {   
+       NLP::meta(txt, colnames(metadata)[i]) <- metadata[,i]
+     } else {
+       tm::meta(txt, colnames(metadata)[i]) <- metadata[,i]
+     }
     }
   }
   
   #Make a matrix
   if(verbose) cat("Creating Output... \n")
-  dtm <- DocumentTermMatrix(txt)
+  dtm <- tm::DocumentTermMatrix(txt)
   if(sparselevel!=1) {
     ntokens <- sum(dtm$v)
     V <- ncol(dtm)
-    dtm <- removeSparseTerms(dtm, sparselevel) #remove terms that are sparse
+    dtm <- tm::removeSparseTerms(dtm, sparselevel) #remove terms that are sparse
     if(ncol(dtm) < V & verbose) {
       message <- sprintf("Removed %i of %i terms (%i of %i tokens) due to sparselevel of %s \n", 
                        V-ncol(dtm), V,
@@ -89,7 +93,11 @@ textProcessor <- function(documents, metadata=NULL,
   #If there is metadata we need to remove some documents
   if(!is.null(metadata)) {
     docindex <- unique(dtm$i)
-    metadata <- meta(txt)[docindex,]
+    if(packageVersion("tm") >= "0.6") {
+      metadata <- NLP::meta(txt)[docindex,]
+    } else {
+      metadata <- tm::meta(txt)[docindex,]
+    }
   }
   out <- read.slam(dtm) #using the read.slam() function in stm to convert
   vocab <- as.character(out$vocab)

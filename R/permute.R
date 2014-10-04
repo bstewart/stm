@@ -3,7 +3,7 @@ permutationTest <- function(formula, stmobj, treatment,
                          nruns=100, 
                          documents, vocab, data, seed=NULL,
                          stmverbose=TRUE,uncertainty="Global") {
-  if(!require(clue)) stop("Install the clue package to use this function")
+  if(!requireNamespace("clue", quietly=TRUE)) stop("Install the clue package to use this function")
   
   settings <- stmobj$settings
   
@@ -59,7 +59,7 @@ permutationTest <- function(formula, stmobj, treatment,
     par <- qeffects(formula, mod, data, uncertainty)
     
     betamod <- exp(mod$beta$logbeta[[1]])
-    align <- solve_LSAP(betaref%*%t(betamod), maximum=TRUE) 
+    align <- clue::solve_LSAP(betaref%*%t(betamod), maximum=TRUE) 
     tosave[[i]] <- par[align]
   }
   out <- list(ref=ref.effect, permute=tosave, variable=treatment, seed=seed)

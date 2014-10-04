@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.0.1}{
+\itemize{
+\item A minor patch to deal with textProcessor() in older versions of R.
+}
+}
 \section{Version 1.0.0}{
   \itemize{
     \item Large changes many of which are not backwards compatible.

@@ -8,7 +8,7 @@ Uses a topic correlation graph estimated by \code{\link{topicCorr}} and the \cod
 }
 \usage{
 \method{plot}{topicCorr}(x, topics = NULL, vlabels = NULL, 
-              layout = layout.fruchterman.reingold, 
+              layout = NULL, 
               vertex.color = "green", vertex.label.cex = 0.75, 
               vertex.label.color = "black", ...)
 }
@@ -24,7 +24,7 @@ A vector of topics to include in the plot, defaults to all.
 A character vector of labels for the vertices.  Defaults to "Topic #"
 }
   \item{layout}{
-The layout algorithm passed to the \code{igraph} package.
+The layout algorithm passed to the \code{igraph} package.  It will choose \code{layout.fruchterman.reingold} by default.  Note that to pass an alternate algorithm you should load the \code{igraph} package first.
 }
   \item{vertex.color}{
 Color of the vertices.
