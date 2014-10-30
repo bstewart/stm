@@ -52,7 +52,9 @@
 <h3>
 <a name="summary" class="anchor" href="#summary"><span class="octicon octicon-link"></span></a>Summary</h3>
 
-<p>This page contains information on the stm package for R.  It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm).</p>
+<p>
+The Structural Topic Model is a general framework for topic modeling with document-level covariate information.  The covariates can improve inference and qualitative interpretability and are allowed to affect topical prevalence, topical content or both.
+The software package implements the estimation algorithms for the model and also includes tools for every stage of a standard workflow from reading in and processing raw text through making publication quality figures.</p>
 
 <p>The package currently includes functionality to:</p>
 
@@ -61,22 +63,23 @@
 <li>estimate Structural Topic Models</li>
 <li>calculate covariate effects on latent topics with uncertainty</li>
 <li>estimate a graph of topic correlations</li>
+<li>compute model diagnostics and summary measures</li>
 <li>create all the plots used in our various papers</li>
 </ul><h3>
-<a name="other-resources" class="anchor" href="#other-resources"><span class="octicon octicon-link"></span></a>Other Resources</h3>
 
 <p>Have a large text corpus or need a language we don't provide support for?  See our sister project <a href="http://txtorg.org">txtorg</a></p>
 
-<p>Papers on the Structural Topic Model:</p>
+<a name="Papers" class="anchor" href="#Papers"><span class="octicon octicon-link"></span></a>Papers</h3>
 
 <ul>
-<li>Roberts, Stewart and Tingley. `` Navigating the Local Modes of Big Data: The Case of Topic Models'' Copy available <a href='http://scholar.harvard.edu/files/dtingley/files/multimod.pdf'>here</a>
+<li>Roberts, Stewart and Tingley. ``stm: R Package for Structural Topic Models" Copy available <a href="https://github.com/bstewart/stm/blob/master/vignettes/stmVignette.pdf?raw=true"> here </a></li>
+<li>Roberts, Stewart and Tingley. `` Navigating the Local Modes of Big Data: The Case of Topic Models''  In <em>Data Analytics in Social Science, Government, and Industry</em>. New York: Cambridge University Press. Forthcoming. Copy available <a href='http://scholar.harvard.edu/files/dtingley/files/multimod.pdf'>here</a>
 </li>
 <li>Roberts, Stewart, Tingley, and Airoldi. ``The Structural Topic Model and Applied Social Science.'' <em>Advances in Neural Information Processing Systems Workshop on Topic Models: Computation, Application, and Evaluation</em>. 2013. Copy available <a href="http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf">here</a>
 </li>
-<li>Roberts, Stewart, Tingley, Lucas, Leder-Luis, Gadarian, Albertson, and Rand. ``Structural topic models for open-ended survey responses.'' <em>American Journal of Political Science</em>. Forthcoming. Copy available <a href="http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf">here</a>
+<li>Roberts, Stewart, Tingley, Lucas, Leder-Luis, Gadarian, Albertson, and Rand. ``Structural topic models for open-ended survey responses.'' <em>American Journal of Political Science</em>. 2014. Copy available <a href="http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf">here</a>
 </li>
-<li>Lucas, Nielsen, Roberts, Stewart, Storer, and Tingley. ``Computer assisted text analysis for comparative politics.'' Copy available <a href="http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf">here</a>
+<li>Lucas, Nielsen, Roberts, Stewart, Storer, and Tingley. ``Computer assisted text analysis for comparative politics.'' <em>Political Analysis</em>/  Forthcoming. Copy available <a href="http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf">here</a>
 </li>
 <li> Roberts, Stewart and Airoldi. "Structural Topic Models" Copy available <a href="http://scholar.harvard.edu/files/bstewart/files/stm.pdf">here</a>
 </li>
@@ -84,6 +87,7 @@
     Copy available <a href="http://scholar.harvard.edu/files/dtingley/files/educationwriteup.pdf">here</a>
 </li>
 </ul><h3>
+
 <a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation Instructions</h3>
 
 <p>The package is available on CRAN and can be installed using:</p>
