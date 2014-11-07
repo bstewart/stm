@@ -10,20 +10,21 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
 }
 \usage{
 \method{plot}{estimateEffect}(x, covariate, model=NULL, topics=x$topics,
-                          method="pointestimate",
-                          cov.value1=NULL,
-                          cov.value2=NULL,int.value=NULL,
-                          npoints=100, nsims=100, ci.level=.95,
-                          xlim=NULL, ylim=NULL, ylab=NULL,
-                          main="",printlegend=TRUE,
-                          labeltype="numbers",n=7,frexw=.5,
-                          xlab="", add=FALSE, linecol=NULL,
-                          width=25, verbose.labels=TRUE,
-                          family=NULL, custom.labels=NULL,...)
+                                method="pointestimate",
+                                cov.value1=NULL, cov.value2=NULL,
+                                moderator=NULL, moderator.value=NULL,
+                                npoints=100, nsims=100, ci.level=.95,
+                                xlim=NULL, ylim=NULL, xlab="",ylab=NULL,
+                                main="", printlegend=T,
+                                labeltype="numbers", n=7, frexw=.5,
+                                add=F, linecol=NULL, width=25,
+                                verbose.labels=T, family=NULL,
+                                custom.labels=NULL,...)
 }
 \arguments{
   \item{x}{
-    Output of estimateEffect, which calculates simulated betas for plotting
+    Output of estimateEffect, which calculates simulated betas for
+    plotting.  
   }
   \item{covariate}{
     String of the name of the main covariate of interest. Must be enclosed in quotes.  All other
@@ -32,7 +33,8 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
     }
   \item{model}{
     Model output, only necessary if labeltype is "prob", "frex",
-    "score", or "lift".
+    "score", or "lift".  Models with more than one spline cannot be used
+    for plot.estimateEffect.
     }
   \item{topics}{
     Topics to plot.}
@@ -51,9 +53,14 @@ simulate the necessary confidence intervals.  See \code{\link{estimateEffect}}.
     set as the comparison group.  cov.value1 and cov.value2 must be
     vectors of the same length.
   }
-  \item{int.value}{
-    For methods "pointestimate" and "difference", when two terms
-    are interacted and one variable in the interaction is the covariate
+  \item{moderator}{
+    When two terms are interacted and one variable in the interaction is the covariate
+    of interest, the user can specify the value of the interaction with
+    moderator.value, and the name of the moderator with moderator.
+  }
+
+  \item{moderator.value}{
+    When two terms are interacted and one variable in the interaction is the covariate
     of interest, the user can specify the value of the interaction term.
     }
   \item{npoints}{
@@ -125,11 +132,34 @@ Character string that is y axis title.
     Other plotting parameters
   }
 }
+\value{
+  Values returned invisibly will depend on the method. \\
+  For pointestimate:
+  \item{uvals }{Values of the covariate at which means and ci's were evaluated.}
+  \item{topics }{Topics for which means and ci's were evaluated.}
+  \item{means }{For each topic, means for each unique value.}
+  \item{cis }{For each topic, confidence intervals for each unique value.}
+  \item{labels }{Labels for each topic and unique value.}
+
+For difference:
+  \item{topics }{Topics for which difference in means and ci's were evaluated}
+  \item{means }{For each topic, difference in means.}
+  \item{cis }{For each topic, confidence intervals for difference in means.}
+  \item{labels }{Labels for each topic.}
+
+  
+  For continuous:
+  \item{x }{Individual values of the covariate at which means and ci's
+  were evaluated.}
+  \item{topics }{Topics for which means and ci's were evaluated}
+  \item{means }{For each topic and each x,  means.}
+  \item{cis }{For each topic and each x, confidence intervals for difference in means.}
+  \item{labels }{Labels for each topic.}
+
+  }
 \examples{
 \dontrun{
 prep <- estimateEffect(1:3 ~ treatment, gadarianFit, gadarian)
-plot.estimateEffect(prep, "treatment", model=gadarianFit,
-method="pointestimate")
 plot.estimateEffect(prep, "treatment", model=gadarianFit,
 method="pointestimate")
 plot.estimateEffect(prep, "treatment", model=gadarianFit,
@@ -153,9 +183,10 @@ prep <- estimateEffect(c(2) ~ treatment*binaryvar, stmobj=stm1,
 metadata=gadarian)
 
 par(mfrow=c(1,2))
-plot.estimateEffect(prep, "binaryvar", method="pointestimate",
-cov.value1=1, cov.value2=0, xlim=c(-1,1), int.value=1)
-plot.estimateEffect(prep, "binaryvar", method="pointestimate",
-cov.value1=1, cov.value2=0, xlim=c(-1,1), int.value=0)
+plot.estimateEffect(prep, "treatment", method="pointestimate",
+cov.value1=1, cov.value2=0, xlim=c(-1,1), moderator="binaryvar", moderator.value=1)
+plot.estimateEffect(prep, "treatment", method="pointestimate",
+cov.value1=1, cov.value2=0, xlim=c(-1,1), moderator="binaryvar",
+moderator.value=0)
 }
 }

@@ -1,5 +1,4 @@
 %\VignetteIndexEntry{Using stm}
-%\documentclass{article}
 \documentclass[nojss]{jss}
 
 \author{\hspace{1.1in}Margaret E. Roberts\\\hspace{1.1in}UCSD \And
@@ -49,70 +48,17 @@ This vignette demonstrates how to use the Structural Topic Model, \pkg{stm}, \te
 \usepackage{natbib}
 
 % == Other Packages
-\usepackage{amsmath, amsfonts, amssymb, url, bm}
-\usepackage{rotating}
-\usepackage{latexsym}
-\usepackage{graphicx}
-\usepackage{ulem}
-
-\usepackage{comment}
+\usepackage{amsmath, amsfonts, amssymb}
+%, url, bm}
+%\usepackage{rotating}
+%\usepackage{latexsym}
+%\usepackage{graphicx}
+%\usepackage{ulem}
 
 
 % == New Commands
 % = For general typesetting
 \newcommand\spacingset[1]{\renewcommand{\baselinestretch}{#1}\small\normalsize}
-\renewcommand\r{\right}
-\renewcommand\l{\left}
-
-% = For bibtex
-\def\citepos#1{\citeauthor{#1}'s (\citeyear{#1})}
-\newcommand\citea{\citeauthor}
-
-% = For general math
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{proposition}{Proposition}
-\newtheorem{assumption}{Assumption}
-\newcommand{\qed}{\hfill \ensuremath{\Box}}
-\DeclareMathOperator*\argmax{argmax}
-\DeclareMathOperator*\argmin{argmin}
-
-% = For stats & econometrics
-\renewcommand{\epsilon}{\varepsilon}
-\newcommand\ud{\mathrm{d}}
-\newcommand\dist{\buildrel\rm d\over\sim}
-\newcommand\ind{\stackrel{\rm indep.}{\sim}}
-\newcommand\iid{\stackrel{\rm i.i.d.}{\sim}}
-\newcommand\logit{{\rm logit}}
-\newcommand\cA{\mathcal{A}}
-\newcommand\cN{\mathcal{N}}
-\renewcommand\E{\mathbb{E}}
-\newcommand\V{\mathbb{V}}
-\newcommand\Cov{\textrm{Cov}}
-\newcommand\Corr{\textrm{Corr}}
-\newcommand\cJ{\mathcal{J}}
-\newcommand\cT{\mathcal{T}}
-\newcommand\y{{\bm y}}
-\newcommand\X{{\bm X}}
-\newcommand\x{{\bm x}}
-\newcommand\eps{{\bm\varepsilon}}
-\newcommand\zero{{\bm 0}}
-\newcommand\be{{\bm\beta}}
-\renewcommand\b{{\bm b}}
-\newcommand\C{{\bm C}}
-\newcommand\D{{\bm D}}
-\newcommand\I{{\bm I}}
-\newcommand\Z{{\bm Z}}
-\newcommand\eeta{{\bm \eta}}
-\DeclareMathOperator*\plim{plim}
-\DeclareMathOperator\rank{rank}
-\newcommand{\indep}{\mbox{$\perp\!\!\!\perp$}}
-\DeclareMathOperator{\sgn}{sgn}
-\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
-
-
-
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
@@ -151,7 +97,7 @@ $ w_{d,n} | z_{d,n}, \beta_{d,k=z} \sim $ Multinomial$(\beta_{d,k=z})$
 
 Regularizing prior distributions are used for $\gamma, \kappa$ and (optionally) $\Sigma$ which help enhance interpretation and prevent overfitting.  To fit the model, we use a semi-collapsed variational Expectation-Maximization algorithm.  Figure~\ref{fig:stmoverview} provides a graphical representation of the model. Further details are provided in additional manuscripts \citep{nips2013,STMEdo,ajps,TextComparative}.\footnote{Available \href{http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf}{here}, \href{http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf}{here}, and \href{http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf}{here}.} In this vignette, we provide only brief interpretations of results, and instead direct readers to the companion papers for complete applications.
 
-\begin{figure}[h!]
+\begin{figure}
   \centering
   \includegraphics[scale=.45]{STMdiagram.pdf}
   \caption{Heuristic description of generative process and estimation of STM.}\label{fig:stmoverview}
@@ -178,7 +124,7 @@ Next we walk through each of these steps to show users how to use the above func
 The first step is to load data into \texttt{R}. The \pkg{stm} package represents a text corpus in three parts: a \code{documents} list containing word indices and their associated counts,\footnote{A full description of the sparse list format can be found in the help file for \code{stm}.} a \code{vocab} character vector containing the words associated with the word indices and a \code{metadata} matrix containing document covariates. In this section, we describe utility functions for reading text data into \texttt{R} or converting from a variety of common formats. Note that particular care must be taken to ensure that documents and their vocabularies are properly aligned with the metadata.
 
 <<eval=TRUE, echo=FALSE>>=
-library(stm)
+library("stm")
 set.seed(02138)
 @
 
@@ -206,15 +152,14 @@ After reading in the data we suggest using the utility function \code{prepDocume
 \code{prepDocuments()} also removes infrequent terms depending on user-set parameter \code{lower.thresh}. The utility function \code{plotRemoved()} will plot the number of words and documents removed for different thresholds. For example,the user can use:
 
 <<eval=FALSE>>=
-plotRemoved(processed$documents, processed$vocab, processed$meta,
-lower.thresh=seq(1,200, by=100))
+plotRemoved(processed$documents, lower.thresh=seq(1,200, by=100))
 @
 
 to evaluate how many words and documents would be removed from the dataset at word threshold, which is the minimum number of documents a word needs to appear in in order for the word to be kept within the vocabulary.  
 %The above code creates the plots below.
 
 
-%\begin{figure}[h!]
+%\begin{figure}
 %  \centering
 %  \includegraphics[scale=.45]{plotRemoved_poliblogs.pdf}
 %  \caption{Documents and words removed at different word thresholds.}
@@ -275,7 +220,7 @@ poliblogSelect <- selectModel(out$documents,out$vocab,K=20,
 In order to select a model for further investigation, users must choose from one of the candidate models output from \code{selectModel()}. To do this \code{plotModel()} can be used to plot the average \emph{semantic coherence} and \emph{exclusivity} scores for each model (represented by topic numbers) as well as the semantic coherence and exclusivity for each topic.\footnote{See \citet{STMEdo,ajps} for a discussion of these criteria.} Each of these criteria are calculated for each topic within a model run. The \code{plotModel()} function calculates the average across all topics for each run of the model and plots these by labeling the model run with a numeral. Often times users will select a model with desirable properties in both dimensions (i.e., models with average scores towards the upper right side of the plot). As shown in Figure~\ref{fig:select}, the \code{plotModel()} function also plots each topic's values which helps give a sense of the variation in these parameters.\footnote{For a given model, the user can plot the semantic coherence and exclusivity scores with the \code{topicQuality} function.}
 
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 plotModels(poliblogSelect)
@@ -333,9 +278,12 @@ In this example, for expositional purposes, we restrict the length of the docume
 To print example documents to a graphics device \code{plotQuote} can be used. The results are displayed in Figure~\ref{fig:example}).
 
 <<eval=TRUE,results=hide>>=
-thoughts1<-findThoughts(poliblogPrevFit, texts=shortdoc, n=2, topics=1)$docs[[1]]
-thoughts7 <- findThoughts(poliblogPrevFit, texts=shortdoc, n=2, topics=7)$docs[[1]]
-thoughts10 <- findThoughts(poliblogPrevFit, texts=shortdoc, n=2, topics=10)$docs[[1]]
+thoughts1<-findThoughts(poliblogPrevFit, texts=shortdoc, 
+                        n=2, topics=1)$docs[[1]]
+thoughts7 <- findThoughts(poliblogPrevFit, texts=shortdoc, 
+                          n=2, topics=7)$docs[[1]]
+thoughts10 <- findThoughts(poliblogPrevFit, texts=shortdoc, 
+                           n=2, topics=10)$docs[[1]]
 @
 
 %manually correcting some unicode errors
@@ -343,7 +291,7 @@ thoughts10 <- findThoughts(poliblogPrevFit, texts=shortdoc, n=2, topics=10)$docs
 thoughts7 <- c("The Sarah Palin Digest: What We Know About McCain's Running Mate   Very little was known nationally about Alaska Gov. Sarah Palin (R) until Sen. John McCain (R-AZ) selected her as his running mate on Aug. 29. Tonight, Palin will be speaking in", "Here it is: The bio video of Sarah Palin that was supposed to air at the Republican convention last night before her speech.  You should watch it. The video, which was leaked (surprisingly) to Fox News, gives us a glimpse into how the Republicans were")
 thoughts10 <- c("Karl Rove orchestrating the Bush Legacy project. President Bush's interview with ABC's Charlie Gibson this week was the first of several planned exit interviews. According to White House press secretary Dana Perino, Bush", "Flashback: Seven years ago today, Bush received Bin Laden Determined to Strike in U.S. memo.  Today marks seven years since the day President Bush received a President's Daily Brief entitled Bin Laden Determined to Strike in U.S.")
 @
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 par(mfrow = c(2, 2),mar=c(.5,.5,1,.5))
@@ -379,7 +327,7 @@ The syntax of the \code{estimateEffect} function is designed so users specify th
 Users must also select the type of quantity that is to be plotted. When the covariate of interest is binary, or users are interested in a particular contrast, the method="difference" option will plot the change in topic proportion shifting from one specific value to another. Figure~\ref{fig:difference} gives an example. For factor variables, users may wish to plot the marginal topic proportion for each of the levels ("pointestimate").
 
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 plot.estimateEffect(prep, covariate = "rating", topics = c(1, 7, 10),
@@ -388,7 +336,8 @@ plot.estimateEffect(prep, covariate = "rating", topics = c(1, 7, 10),
         xlab="More Conservative ... More Liberal",
         main="Effect of Liberal vs. Conservative",
         xlim=c(-.1,.1), labeltype = "custom",
-        custom.labels = c('Jeremiah Wright', 'Sarah Palin', 'Bush Presidency'))
+        custom.labels = c('Jeremiah Wright', 'Sarah Palin', 
+                          'Bush Presidency'))
 @
 \caption{Graphical Display of Topical Prevalence Contrast.}
 \label{fig:difference}
@@ -401,16 +350,19 @@ Notice how the function makes use of standard labeling options available in the 
 
 When users have variables that they want to treat continuously, users can choose between assuming a linear fit or using splines. In the previous example, we allowed for the day variable to have a non-linear relationship in the topic estimation stage. We can then plot its effect on topics. In Figure~\ref{fig:spline}, we plot the relationship between time and the vice presidential topic, topic 7.  The topic peaks when Sarah Palin became John McCain's running mate at the end of August in 2008.
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 plot.estimateEffect(prep, "day", method="continuous", topics=7, model=z,
 printlegend=FALSE, xaxt="n", xlab="Time (2008)")
-monthseq <- seq(from=as.Date("2008-01-01"), to=as.Date("2008-12-01"), by="month")
+monthseq <- seq(from=as.Date("2008-01-01"), 
+                to=as.Date("2008-12-01"), by="month")
 monthnames <- months(monthseq)
-axis(1, at=as.numeric(monthseq)-min(as.numeric(monthseq)), labels=monthnames)
+axis(1, 
+     at=as.numeric(monthseq)-min(as.numeric(monthseq)), 
+     labels=monthnames)
 @
-\caption{Graphical Display of Topical Content. Topic 7 prevalence is plotted as a smooth function of day, holding rating at sample median.}
+\caption{Graphical Display of Topic Prevalence. Topic 7 prevalence is plotted as a smooth function of day, holding rating at sample median.}
 \label{fig:spline}
 \end{center}
 \end{figure}
@@ -428,7 +380,7 @@ poliblogContent <- stm(out$documents,out$vocab,K=20,
 Next, the results can be plotted using the \code{plot.STM(,type="perspectives")} function.  This functions shows which words within a topic are more associated with one covariate value versus another. In Figure~\ref{fig:perp}, vocabulary differences by ratings is plotted for topic 10. Topic 10 is related to Guantanamo. Its top words were ``guantanamo, techniqu, interrog, cia, detaine, tortur, detent.'' However, Figure~\ref{fig:perp} lets us see how liberals and conservatives talk about this topic differently. In particular, liberals emphasized ``torture'' whereas conservatives emphasized how the detainees were ``terrorists.''\footnote{At this point you can only
  have a single variable as a content covariate, although that variable can have any number of groups. It cannot be continuous. Note that the computational cost of this type of model rises quickly with the number of groups and so it may be advisable to keep it small.}
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 plot.STM(poliblogContent,type="perspectives", topics=10)
@@ -440,7 +392,7 @@ plot.STM(poliblogContent,type="perspectives", topics=10)
 
 This function can also be used to plot the contrast in words across two topics.\footnote{This plot calculates the difference in probability of a word for the two topics, normalized by the maximum difference in probability of any word between the two topics.} To show this we go back to our original model that did not include a content covariate and we contrast topic 9 (Iraq war) and 10 (Bush presidency). We plot the results in Figure~\ref{fig:perp2}.
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 plot.STM(poliblogPrevFit,type="perspectives", topics=c(9, 10))
@@ -452,7 +404,7 @@ plot.STM(poliblogPrevFit,type="perspectives", topics=c(9, 10))
 
 The cloud function can also be used to visualize topics.  For example, Figure \ref{fig:cloud} displays a word cloud of the most probable words in a topic related to the vice presidential candidates in the 2008 election.
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 cloud(poliblogPrevFit, topic=7)
@@ -464,7 +416,7 @@ cloud(poliblogPrevFit, topic=7)
 
 \subsubsection{Covariate Interactions}
 
-Another modification that is possible in this framework is to allow for interactions between covariates. In this example, we re-estimated the STM to allow for an interaction between day (entered linearly) and ratings. Then in \code{estimateEffect()} we include the same interaction. This allows us in \code{plot.estimateEffect} to have this interaction plotted. We display the results in Figure~\ref{fig:spline2} for topic 1 (Jeremiah Wright). We observe that liberals never really talked about this topic, whereas for conservatives this was initially high and then declined.\footnote{Note that the ability to plot interactions is somewhat limited and only supports interactions with a binary effect modification covariate and does not support interactions with a spline.}
+Another modification that is possible in this framework is to allow for interactions between covariates such that we allow for one variable to ``moderate'' the effect of another variable. In this example, we re-estimated the STM to allow for an interaction between day (entered linearly) and ratings. Then in \code{estimateEffect()} we include the same interaction. This allows us in \code{plot.estimateEffect} to have this interaction plotted. We display the results in Figure~\ref{fig:spline2} for topic 1 (Jeremiah Wright). We observe that liberals never really talked about this topic, whereas for conservatives this was initially high and then declined.\footnote{Note that the ability to plot interactions is somewhat limited and only supports interactions with a binary effect modification covariate and does not support interactions with a spline.}
 
 <<eval=FALSE>>=
 poliblogInteraction <- stm(out$documents,out$vocab,K=20,
@@ -472,15 +424,23 @@ poliblogInteraction <- stm(out$documents,out$vocab,K=20,
         data=out$meta,seed=5926696)
 @
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 prep <- estimateEffect(c(1) ~ rating*day, poliblogInteraction,
         metadata=meta, uncertainty="None")
 
 plot.estimateEffect(prep, covariate="day", model=poliblogInteraction,
-        method="continuous",xlab="Days",labeltype="custom",
-        custom.labels=c("Liberals","Conservatives"))
+        method="continuous",xlab="Days", moderator="rating",
+        moderator.value="Liberal", linecol="blue", ylim=c(0,.08), 
+        printlegend=F)
+
+plot.estimateEffect(prep, covariate="day", model=poliblogInteraction,
+        method="continuous",xlab="Days", moderator="rating",
+        moderator.value="Conservative", linecol="red", add=T, 
+        printlegend=F)
+legend(0,.08, c("Liberal", "Conservative"), 
+       lwd=2, col=c("blue", "red"))
 @
 \caption{Graphical Display of Topical Content allowing for interaction between day of blog post and liberal versus conservative interaction. Topic 1 prevalence is plotted as linear function of day, holding the rating at either 0 (Liberal) or 1 (Conservative). Were other variables included in the model, they would be held at their sample medians.}
 \label{fig:spline2}
@@ -495,7 +455,7 @@ More details are available in the help file for this function.\footnote{An addit
 
 Corpus level visualization can be done in several different ways. The first relates to the expected proportion of the corpus that belongs to each topic. This can be be plotted using \code{plot.stm(,type="summary")}. An example from the political blogs data is given in Figure~\ref{fig:summary}. We see, for example, that the Sarah Palin/Vice President topic (7) is actually a relatively minor proportion of the discourse.  The most common topic, topic 3, is a general topic full of words that bloggers commonly use, and therefore is not very interpretable. The words printed are the top three words associated with the topic.
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 plot.STM(poliblogPrevFit,type="summary", xlim=c(0,.4))
@@ -511,7 +471,7 @@ Users can also plot features of the corpus as a whole. First, the Structural Top
 mod.out.corr<-topicCorr(poliblogPrevFit)
 @
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
 plot.topicCorr(mod.out.corr)
@@ -535,7 +495,7 @@ The second records the effect of the (permuted) covariate on the topic in each a
 \subsubsection{2. Checks for Multi-modality}
 Another diagnostic that should be completed while running the STM is checking to see how multi-modal the model of interest is.  We provide a suite of methods to assess multi-modality, and we refer the reader to \citet{robertsnavigating} for an explanation of all of them.  For purposes of example, we check how robust the covariate effects we explore earlier are to multimodality within the four original models that we ran.  The function \code{multiSTM} aligns topics across models.  The function \code{plot.MultimodDiagnostic} plots the effects across topics and models.  As you can see in Figure \ref{fig:multi_poliblog}, we find that only some of topics  in our first STM model are robust across models.  If the topic of interest is not robust across models, we suggest looking more closely at the topic's most probable words to try to understand where these differences orginate.
 
-\begin{figure}[h!]
+\begin{figure}
   \centering
   \includegraphics[scale=.45]{multimod.png}
   \caption{Plot of Liberal-Conservative differences effect across four runs.}\label{fig:multi_poliblog}
@@ -578,11 +538,12 @@ By default every 5th iteration will print a report of top topic and covariate wo
 
 Once a model has been fit, convergence can easily be assessed by plotting the variational bound as in Figure \ref{fig:converge}. 
 
-\begin{figure}[t!]
+\begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE>>=
-plot(poliblogPrevFit$convergence$bound,type="l", ylab="Approximate Objective",
-    main="Convergence")
+plot(poliblogPrevFit$convergence$bound,type="l", 
+     ylab="Approximate Objective",
+     main="Convergence")
 @
 \caption{Graphical Display of Convergence.}
 \label{fig:converge}

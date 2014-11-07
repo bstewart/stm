@@ -12,10 +12,10 @@ models with high likelihood values.
 \usage{
 selectModel(documents, vocab, K,
                         prevalence, content, data=NULL,
-                        max.em.its=100, verbose=TRUE, init.type =
-                        "LDA",
+                        max.em.its=100, verbose=TRUE, init.type ="LDA",
                         emtol= 1e-05, seed=NULL,runs=50, frexw=.7,
-                        net.max.em.its=2, netverbose=FALSE, M=10,N=NULL,...)
+                        net.max.em.its=2, netverbose=FALSE, M=10, N=NULL,
+                        to.disk=F, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -104,6 +104,10 @@ selectModel(documents, vocab, K,
   \item{N}{
     Total number of models to retain in the end. Defaults to .2 of runs. 
   }
+  \item{to.disk}{
+    Boolean. If TRUE, each model is saved to disk at the current directory in a separate RData file.
+    This is most useful if one needs to run \code{multiSTM()} on a large number of output models.
+  }
 
     \item{\dots}{
       Additional options described in details of stm.
@@ -122,7 +126,7 @@ selectModel(documents, vocab, K,
 }
 \examples{
 \dontrun{
-temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+temp<-textProcessor(documents=gadarian$open.ended.response, metadata=gadarian)
 meta<-temp$meta
 vocab<-temp$vocab
 docs<-temp$documents

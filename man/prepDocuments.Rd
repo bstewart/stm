@@ -52,7 +52,9 @@ A list containing a new documents and vocab object.
 \item{tokens.removed}{An integer corresponding to the number of unique tokens removed from the corpus.}
 \item{wordcounts}{A table giving the the number of documents that each word is found in of the original document set, prior to any removal. This can be passed through a histogram for visual inspection.}
 }
-
+\seealso{
+\code{\link{plotRemoved}}
+}
 \examples{
 head(gadarian)
 #Process the data for analysis.

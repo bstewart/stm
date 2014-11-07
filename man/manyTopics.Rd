@@ -4,7 +4,7 @@
 \title{
 Performs model selection across separate STM's that each assume different numbers of topics.}
 \description{
-Works the same as modelSelect, except user specifies a range of numbers of topics that they want the model fitted for. For example, models with 5, 10, and 15 topics. 
+Works the same as selectModel, except user specifies a range of numbers of topics that they want the model fitted for. For example, models with 5, 10, and 15 topics. 
 Then, for each number of topics, selectModel is run multiple times. The output is then processed through a function that takes a pareto dominant run of the model in terms of exclusivity and semantic coherence.
 If multiple runs are candidates (i.e., none weakly dominates the others), a single model run is randomly chosen from the set of undominated runs.
   %%  ~~ A concise (1-5 lines) description of what the function does. ~~

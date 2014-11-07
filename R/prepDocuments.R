@@ -42,6 +42,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   #Detect Missing Terms
   miss.vocab <- NULL
   vocablist <- sort(unique(triplet$j))
+  wordcounts <- tabulate(triplet$j)
   if(length(vocablist)>length(vocab)) {
     stop("Your documents object has more unique features than your vocabulary file has entries.")
   } 
@@ -54,10 +55,10 @@ prepDocuments <- function(documents, vocab, meta=NULL,
       d[1,] <- new.map[match(d[1,], new.map[,1]),2]
       return(d)
     })
+    wordcounts <- wordcounts[vocablist]
   }
   
   #Remove Words Appearing Only n Times
-  wordcounts <- tabulate(triplet$j)
   toremove <- which(wordcounts <= lower.thresh | wordcounts >= upper.thresh)
   keepers <- which(wordcounts > lower.thresh & wordcounts < upper.thresh)
   droppedwords <- c(miss.vocab,vocab[toremove])

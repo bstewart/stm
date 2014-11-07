@@ -40,6 +40,8 @@ The formula specifies the nature of the linear model.  On the left hand-side we 
 
 The function allows the user to specify any variables in the model.  However, we caution that for the assumptions of the method of composition to be the most plausible the topic model should contain at least all the covariates contained in the \code{estimateEffect} regression.  However the inverse need not be true.  The function will automatically check whether the covariate matrix is singular which generally results from linearly dependent columns.  Some common causes include a factor variable with an unobserved level, a spline with degrees of freedom that are too high, or a spline with a continuous variable where a gap in the support of the variable results in several empty basis functions.
 
+The function can handle factors and numeric variables.  Dates should be converted to numeric variables before analysis.  
+
 We offer several different methods of incorporating uncertainty.  Ideally we would want to use the covariance matrix that governs the variational posterior for each document (\eqn{\nu}).  The updates for the global parameters rely only on the sum of these matrices and so we do not store copies for each individual document.  The default uncertainty method \code{Global} uses an approximation to the average covariance matrix formed using the global parameters.  The uncertainty method \code{Local} steps through each document and updates the parameters calculating and then saving the local covariance matrix.  The option \code{None} simply uses the map estimates for \eqn{\theta} and does not incorporate any uncertainty.  We strongly recommend the \code{Global} approximation as it provides the best tradeoff of accuracy and computational tractability.
 }
 \value{

@@ -45,14 +45,14 @@ calcfrex <- function(logbeta, w=.5, wordcounts=NULL) {
 #A James-Stein Estimator Shrinking to a Uniform Distribution
 #This draws from the Hausser and Strimmer (2009) JMLR piece.
 js.estimate <- function(prob, ct) {
-  if(ct<1) {
+  if(ct<=1) {
     #basically if we only observe a count of 1
     #the variance goes to infinity and we get the uniform distribution.
-    return(1/prob)
+    return(rep(1/length(prob), length(prob)))
   }
   # MLE of prob estimate
   mlvar <- prob*(1-prob)/(ct-1)
-  unif <- 1/length(prob) 
+  unif <- rep(1/length(prob), length(prob)) 
   
   # Deviation from uniform
   deviation <- sum((prob-unif)^2)

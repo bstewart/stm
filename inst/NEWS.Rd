@@ -1,5 +1,16 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+
+\section{Version 1.0.8}{
+\itemize{
+\item Fixed a minor bug in prepDocuments which arises in cases where there are vocab elements which do not appear in the data.
+\item Fixed a minor bug in frex calculation that caused some models not to label.
+\item Fixed a minor bug in searchK that caused heldout results to report incorrectly.
+\item Rewrite of plot.estimateEffect() which fixed a bug in some interaction models.  Also returns results invisibly for creating custom plots.
+\item Increased the stability of the spectral methods for stm initialization.
+\item Complete rewrite of plotRemoved() which makes it much faster for larger datasets.
+}
+}
 \section{Version 1.0.1}{
 \itemize{
 \item A minor patch to deal with textProcessor() in older versions of R.

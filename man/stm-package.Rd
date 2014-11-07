@@ -27,7 +27,7 @@ Functions for Post-Estimation:
 \code{\link{topicCorr}}
 \code{\link{permutationTest}}
 
-Plotting Functions
+Plotting Functions:
 \code{\link{plot.STM}}
 \code{\link{plot.estimateEffect}}
 \code{\link{plot.topicCorr}}
@@ -37,7 +37,7 @@ Plotting Functions
 \code{\link{plotModels}}
 \code{\link{topicQuality}}
 
-Pre-Fit Models and Data
+Pre-Fit Models and Data:
 \code{\link{gadarian}}
 \code{\link{gadarianFit}}
 \code{\link{poliblog5k}}

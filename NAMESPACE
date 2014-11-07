@@ -2,7 +2,7 @@ importFrom(matrixStats, logSumExp, rowLogSumExps, colLogSumExps)
 importFrom(slam, tcrossprod_simple_triplet_matrix, simple_triplet_matrix, as.simple_triplet_matrix)
 importFrom(splines, ns,bs)
 importFrom(lda, lda.collapsed.gibbs.sampler)
-importFrom(stringr,str_wrap, str_split, str_detect)
+importFrom(stringr,str_wrap, str_split, str_detect, str_replace)
 importFrom(Matrix, nearPD, sparseMatrix, colSums, crossprod, rowSums)
 importFrom(glmnet, glmnet)
 

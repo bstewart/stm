@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2011.8.17)  28 SEP 2014 15:58
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2011.8.17)  7 NOV 2014 13:20
 entering extended mode
 **stmVignette.tex
 (C:\Users\Brandon\Documents\Github\stmdev\rcode\stm\vignettes\stmVignette.tex
@@ -389,55 +389,12 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\amssymb.sty"
 Package: amssymb 2009/06/22 v3.00
 )
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\tools\bm.sty"
-Package: bm 2004/02/26 v1.1c Bold Symbol Support (DPC/FMi)
-\symboldoperators=\mathgroup6
-\symboldletters=\mathgroup7
-\symboldsymbols=\mathgroup8
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 138.
-LaTeX Info: Redefining \bm on input line 204.
-)
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\rotating\rotating.sty"
-Package: rotating 2009/03/28 v2.16a rotated objects in LaTeX
+(C:/PROGRA~1/R/R-31~1.1/share/texmf/tex/latex\Sweave.sty
+Package: Sweave 
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ifthen.sty"
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
-\c@r@tfl@t=\count114
-\rotFPtop=\skip56
-\rotFPbot=\skip57
-\rot@float@box=\box29
-\rot@mess@toks=\toks20
-)
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\latexsym.sty"
-Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
-\symlasy=\mathgroup9
-LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
-(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
-)
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ulem\ulem.sty"
-\UL@box=\box30
-\UL@hyphenbox=\box31
-\UL@skip=\skip58
-\UL@hook=\toks21
-\UL@height=\dimen117
-\UL@pe=\count115
-\UL@pixel=\dimen118
-\ULC@box=\box32
-Package: ulem 2011/03/18
-\ULdepth=\dimen119
-)
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\comment\comment.sty"
-\CommentStream=\write4
-
-Excluding comment 'comment')
-\c@theorem=\count116
-\c@proposition=\count117
-\c@assumption=\count118
-
-(C:/PROGRA~1/R/R-31~1.1/share/texmf/tex/latex\Sweave.sty
-Package: Sweave 
-
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\fontenc.sty"
 Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
 
@@ -447,83 +404,75 @@ LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
 ))
 Environment Schunk is already defined, stay with former definition)
 (C:\Users\Brandon\Documents\Github\stmdev\rcode\stm\vignettes\stmVignette.aux)
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 118.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 118.
-
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 65.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 65.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
 File: ts1cmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 118.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 118.
-LaTeX Font Info:    ... okay on input line 118.
+LaTeX Font Info:    ... okay on input line 65.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 65.
+LaTeX Font Info:    ... okay on input line 65.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count119
-\scratchdimen=\dimen120
-\scratchbox=\box33
-\nofMPsegments=\count120
-\nofMParguments=\count121
-\everyMPshowfont=\toks22
-\MPscratchCnt=\count122
-\MPscratchDim=\dimen121
-\MPnumerator=\count123
-\makeMPintoPDFobject=\count124
-\everyMPtoPDFconversion=\toks23
+\scratchcounter=\count114
+\scratchdimen=\dimen117
+\scratchbox=\box29
+\nofMPsegments=\count115
+\nofMParguments=\count116
+\everyMPshowfont=\toks20
+\MPscratchCnt=\count117
+\MPscratchDim=\dimen118
+\MPnumerator=\count118
+\makeMPintoPDFobject=\count119
+\everyMPtoPDFconversion=\toks21
 )
-\AtBeginShipoutBox=\box34
-Package hyperref Info: Link coloring ON on input line 118.
+\AtBeginShipoutBox=\box30
+Package hyperref Info: Link coloring ON on input line 65.
  ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2010/04/30 v2.40 Cross-referencing by name of section
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count125
+\c@section@level=\count120
 )
-LaTeX Info: Redefining \ref on input line 118.
-LaTeX Info: Redefining \pageref on input line 118.
-LaTeX Info: Redefining \nameref on input line 118.
+LaTeX Info: Redefining \ref on input line 65.
+LaTeX Info: Redefining \pageref on input line 65.
+LaTeX Info: Redefining \nameref on input line 65.
 
 (C:\Users\Brandon\Documents\Github\stmdev\rcode\stm\vignettes\stmVignette.out)
 (C:\Users\Brandon\Documents\Github\stmdev\rcode\stm\vignettes\stmVignette.out)
-\@outlinefile=\write5
-LaTeX Font Info:    Try loading font information for T1+aess on input line 118.
-
+\@outlinefile=\write4
+LaTeX Font Info:    Try loading font information for T1+aess on input line 65.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ae\t1aess.fd"
 File: t1aess.fd 1997/11/16 Font definitions for T1/aess.
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 118.
+LaTeX Font Info:    Try loading font information for U+msa on input line 65.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 118.
+LaTeX Font Info:    Try loading font information for U+msb on input line 65.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+lasy on input line 118.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ulasy.fd"
-File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
-)
-LaTeX Font Info:    Try loading font information for T1+aett on input line 118.
-
+LaTeX Font Info:    Try loading font information for T1+aett on input line 65.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ae\t1aett.fd"
 File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
@@ -532,14 +481,13 @@ File: t1aett.fd 1997/11/16 Font definitions for T1/aett.
 rdance.tex) [1
 
 {C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
-LaTeX Font Info:    Try loading font information for TS1+aer on input line 146.
-
+LaTeX Font Info:    Try loading font information for TS1+aer on input line 93.
 
 (C:/PROGRA~1/R/R-31~1.1/share/texmf/tex/latex\ts1aer.fd
 File: ts1aer.fd 
 )
 LaTeX Font Info:    Font shape `TS1/aer/m/n' in size <10.95> not available
-(Font)              Font shape `TS1/cmr/m/n' tried instead on input line 146.
+(Font)              Font shape `TS1/cmr/m/n' tried instead on input line 93.
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 2 []
@@ -548,21 +496,14 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [2] <STMdiagram.pdf, id=220, 587.19376pt x 727.71875pt>
 File: STMdiagram.pdf Graphic file (type pdf)
  <use STMdiagram.pdf>
-Package pdftex.def Info: STMdiagram.pdf used on input line 157.
+Package pdftex.def Info: STMdiagram.pdf used on input line 104.
 (pdftex.def)             Requested size: 264.23474pt x 327.47041pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 3
  []
 
 [3]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 4 []
  []
@@ -574,14 +515,14 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
  []
 
 [5]
-Overfull \hbox (14.48169pt too wide) in paragraph at lines 205--206
+Overfull \hbox (14.48169pt too wide) in paragraph at lines 152--153
 []\T1/aett/m/n/10.95 prepDocuments() \T1/aer/m/n/10.95 also re-moves in-fre-que
 nt terms de-pend-ing on user-set pa-ram-e-ter \T1/aett/m/n/10.95 lower.thresh\T
 1/aer/m/n/10.95 .
  []
 
 
-Overfull \hbox (3.49794pt too wide) in paragraph at lines 231--232
+Overfull \hbox (3.49794pt too wide) in paragraph at lines 177--178
 []\T1/aer/m/n/10.95 Sometimes re-searchers will en-counter data that is not in 
 a spread-sheet for-mat. The \T1/aett/m/n/10.95 readCorpus
  []
@@ -601,11 +542,11 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 8 []
  []
 
-[8] <stmVignette-007.pdf, id=407, 433.62pt x 433.62pt>
+[8] <stmVignette-007.pdf, id=405, 433.62pt x 433.62pt>
 File: stmVignette-007.pdf Graphic file (type pdf)
 
 <use stmVignette-007.pdf>
-Package pdftex.def Info: stmVignette-007.pdf used on input line 292.
+Package pdftex.def Info: stmVignette-007.pdf used on input line 238.
 (pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
 
 Overfull \hbox (5.47499pt too wide) has occurred while \output is active
@@ -613,9 +554,6 @@ Overfull \hbox (5.47499pt too wide) has occurred while \output is active
  []
 
 [9]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 10 []
  []
@@ -631,11 +569,11 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 12 []
  []
 
-[12] <stmVignette-013.pdf, id=454, 433.62pt x 433.62pt>
+[12] <stmVignette-013.pdf, id=455, 433.62pt x 433.62pt>
 File: stmVignette-013.pdf Graphic file (type pdf)
 
 <use stmVignette-013.pdf>
-Package pdftex.def Info: stmVignette-013.pdf used on input line 387.
+Package pdftex.def Info: stmVignette-013.pdf used on input line 336.
 (pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -643,218 +581,195 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [13]
-Underfull \vbox (badness 6332) has occurred while \output is active []
-
-
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 14 []
  []
 
 [14 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
 13.pdf>]
-Overfull \hbox (2.38405pt too wide) in paragraph at lines 415--416
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+[] \T1/aer/m/n/10.95 15
+ []
+
+[15]
+Overfull \hbox (2.38405pt too wide) in paragraph at lines 364--365
 \T1/aer/m/n/10.95 ate of in-ter-est is bi-nary, or users are in-ter-ested in a 
 par-tic-u-lar con-trast, the method="difference"
  []
 
-LaTeX Font Info:    Try loading font information for TS1+aett on input line 428
+LaTeX Font Info:    Try loading font information for TS1+aett on input line 377
 .
 (C:/PROGRA~1/R/R-31~1.1/share/texmf/tex/latex\ts1aett.fd
 File: ts1aett.fd 
 )
-LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 428
+LaTeX Font Info:    Try loading font information for TS1+cmtt on input line 377
 .
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ts1cmtt.fd"
 File: ts1cmtt.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `TS1/aett/m/sl' in size <10.95> not available
-(Font)              Font shape `TS1/cmtt/m/sl' tried instead on input line 428.
+(Font)              Font shape `TS1/cmtt/m/sl' tried instead on input line 377.
 
 
-<stmVignette-015.pdf, id=477, 433.62pt x 433.62pt>
+<stmVignette-015.pdf, id=482, 433.62pt x 433.62pt>
 File: stmVignette-015.pdf Graphic file (type pdf)
  <use stmVignette-015.pdf>
-Package pdftex.def Info: stmVignette-015.pdf used on input line 431.
+Package pdftex.def Info: stmVignette-015.pdf used on input line 381.
 (pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
 
-Overfull \hbox (10.94998pt too wide) has occurred while \output is active
-[] \T1/aer/m/n/10.95 15
- []
-
-[15] <stmVignette-016.pdf, id=486, 433.62pt x 433.62pt>
+<stmVignette-016.pdf, id=485, 433.62pt x 433.62pt>
 File: stmVignette-016.pdf Graphic file (type pdf)
-
-<use stmVignette-016.pdf>
-Package pdftex.def Info: stmVignette-016.pdf used on input line 454.
+ <use stmVignette-016.pdf>
+Package pdftex.def Info: stmVignette-016.pdf used on input line 407.
 (pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 16 []
  []
 
-[16 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-15.pdf>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
+[16]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 17
  []
 
 [17 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-16.pdf>] <stmVignette-018.pdf, id=512, 433.62pt x 433.62pt>
-File: stmVignette-018.pdf Graphic file (type pdf)
-
-<use stmVignette-018.pdf>
-Package pdftex.def Info: stmVignette-018.pdf used on input line 482.
-(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
- <stmVignette-019.pdf, id=515, 433.62pt x 433.62pt>
-File: stmVignette-019.pdf Graphic file (type pdf)
-
-<use stmVignette-019.pdf>
-Package pdftex.def Info: stmVignette-019.pdf used on input line 497.
-(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
- <stmVignette-020.pdf, id=517, 433.62pt x 433.62pt>
-File: stmVignette-020.pdf Graphic file (type pdf)
-
-<use stmVignette-020.pdf>
-Package pdftex.def Info: stmVignette-020.pdf used on input line 512.
-(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
-
+15.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 18 []
  []
 
-[18] <stmVignette-022.pdf, id=530, 433.62pt x 433.62pt>
-File: stmVignette-022.pdf Graphic file (type pdf)
+[18 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
+16.pdf>] <stmVignette-018.pdf, id=517, 433.62pt x 433.62pt>
+File: stmVignette-018.pdf Graphic file (type pdf)
 
-<use stmVignette-022.pdf>
-Package pdftex.def Info: stmVignette-022.pdf used on input line 541.
+<use stmVignette-018.pdf>
+Package pdftex.def Info: stmVignette-018.pdf used on input line 435.
+(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
+ <stmVignette-019.pdf, id=520, 433.62pt x 433.62pt>
+File: stmVignette-019.pdf Graphic file (type pdf)
+
+<use stmVignette-019.pdf>
+Package pdftex.def Info: stmVignette-019.pdf used on input line 450.
+(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
+ <stmVignette-020.pdf, id=522, 433.62pt x 433.62pt>
+File: stmVignette-020.pdf Graphic file (type pdf)
+
+<use stmVignette-020.pdf>
+Package pdftex.def Info: stmVignette-020.pdf used on input line 465.
 (pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 19
  []
 
-[19 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-18.pdf>] <stmVignette-023.pdf, id=546, 433.62pt x 433.62pt>
-File: stmVignette-023.pdf Graphic file (type pdf)
-
-<use stmVignette-023.pdf>
-Package pdftex.def Info: stmVignette-023.pdf used on input line 562.
-(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
-
+[19]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 20 []
  []
 
 [20 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-19.pdf>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
+18.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 21
  []
 
 [21 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-20.pdf>] <stmVignette-025.pdf, id=567, 433.62pt x 433.62pt>
-File: stmVignette-025.pdf Graphic file (type pdf)
-
-<use stmVignette-025.pdf>
-Package pdftex.def Info: stmVignette-025.pdf used on input line 583.
-(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
+19.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 22 []
  []
 
 [22 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-22.pdf>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
+20.pdf>] <stmVignette-022.pdf, id=564, 433.62pt x 433.62pt>
+File: stmVignette-022.pdf Graphic file (type pdf)
 
+<use stmVignette-022.pdf>
+Package pdftex.def Info: stmVignette-022.pdf used on input line 501.
+(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
+
+
+LaTeX Warning: Float too large for page by 69.77582pt on input line 505.
+
+<stmVignette-023.pdf, id=567, 433.62pt x 433.62pt>
+File: stmVignette-023.pdf Graphic file (type pdf)
+ <use stmVignette-023.pdf>
+Package pdftex.def Info: stmVignette-023.pdf used on input line 522.
+(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
+
+<stmVignette-025.pdf, id=568, 433.62pt x 433.62pt>
+File: stmVignette-025.pdf Graphic file (type pdf)
+ <use stmVignette-025.pdf>
+Package pdftex.def Info: stmVignette-025.pdf used on input line 543.
+(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 23
  []
 
-[23 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-23.pdf>]
+[23]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 24 []
  []
 
 [24 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-25.pdf>] <multimod.png, id=606, 1257.19687pt x 651.93562pt>
-File: multimod.png Graphic file (type png)
- <use multimod.png>
-Package pdftex.def Info: multimod.png used on input line 605.
-(pdftex.def)             Requested size: 565.73337pt x 293.36832pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-Underfull \vbox (badness 2689) has occurred while \output is active []
-
-
+22.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 25
  []
 
-[25]
+[25 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
+23.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 26 []
  []
 
-[26 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/multimod.png>
-]
-Overfull \hbox (4.93231pt too wide) in paragraph at lines 630--631
-[]\T1/aer/m/n/10.95 Each time the model is run the ran-dom seed is saved in the
- out-put ob-ject un-der \T1/aett/m/n/10.95 settings$seed\T1/aer/m/n/10.95 .
- []
-
-
+[26 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
+25.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 27
  []
 
-[27] <stmVignette-026.pdf, id=644, 433.62pt x 433.62pt>
-File: stmVignette-026.pdf Graphic file (type pdf)
+[27] <multimod.png, id=621, 1257.19687pt x 651.93562pt>
+File: multimod.png Graphic file (type png)
+ <use multimod.png>
+Package pdftex.def Info: multimod.png used on input line 565.
+(pdftex.def)             Requested size: 565.73337pt x 293.36832pt.
 
-<use stmVignette-026.pdf>
-Package pdftex.def Info: stmVignette-026.pdf used on input line 654.
-(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 6808) has occurred while \output is active []
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 28 []
  []
 
-[28]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
+[28 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/multimod.png>
+]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 29
  []
 
-[29 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
-26.pdf>]
+[29]
+Overfull \hbox (4.93231pt too wide) in paragraph at lines 590--591
+[]\T1/aer/m/n/10.95 Each time the model is run the ran-dom seed is saved in the
+ out-put ob-ject un-der \T1/aett/m/n/10.95 settings$seed\T1/aer/m/n/10.95 .
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 30 []
  []
 
-[30]
+[30] <stmVignette-026.pdf, id=657, 433.62pt x 433.62pt>
+File: stmVignette-026.pdf Graphic file (type pdf)
+
+<use stmVignette-026.pdf>
+Package pdftex.def Info: stmVignette-026.pdf used on input line 615.
+(pdftex.def)             Requested size: 354.12434pt x 354.14154pt.
+
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 31
  []
@@ -864,32 +779,14 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 \T1/aer/m/n/10.95 32 []
  []
 
-[32]
-(C:\Users\Brandon\Documents\Github\stmdev\rcode\stm\vignettes\stmVignette.bbl
+[32 <C:/Users/Brandon/Documents/Github/stmdev/rcode/stm/vignettes/stmVignette-0
+26.pdf>]
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
 [] \T1/aer/m/n/10.95 33
  []
 
-[33
-
-])
-Underfull \hbox (badness 10000) in paragraph at lines 709--709
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 709--709
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 709--709
-
- []
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 709.
-
-Underfull \vbox (badness 1917) has occurred while \output is active []
+[33]
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
 Overfull \hbox (10.94998pt too wide) has occurred while \output is active
@@ -902,22 +799,59 @@ Overfull \hbox (10.94998pt too wide) has occurred while \output is active
  []
 
 [35]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 709.
+(C:\Users\Brandon\Documents\Github\stmdev\rcode\stm\vignettes\stmVignette.bbl
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+\T1/aer/m/n/10.95 36 []
+ []
+
+[36
+
+])
+Underfull \hbox (badness 10000) in paragraph at lines 670--670
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 670--670
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 670--670
+
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 670.
+
+Underfull \vbox (badness 1917) has occurred while \output is active []
+
+
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+[] \T1/aer/m/n/10.95 37
+ []
+
+[37]
+Overfull \hbox (10.94998pt too wide) has occurred while \output is active
+\T1/aer/m/n/10.95 38 []
+ []
+
+[38]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 670.
 
 (C:\Users\Brandon\Documents\Github\stmdev\rcode\stm\vignettes\stmVignette.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 709.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 709.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 670.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 670.
 Package rerunfilecheck Info: File `stmVignette.out' has not changed.
 (rerunfilecheck)             Checksum: 96C7315651022C69548DCDC103C87692;4682.
  ) 
 Here is how much of TeX's memory you used:
- 8248 strings out of 494045
- 120179 string characters out of 3145963
- 202593 words of memory out of 3000000
- 11129 multiletter control sequences out of 15000+200000
- 66513 words of font info for 142 fonts, out of 3000000 for 9000
+ 7895 strings out of 494045
+ 115805 string characters out of 3145963
+ 189918 words of memory out of 3000000
+ 10809 multiletter control sequences out of 15000+200000
+ 64780 words of font info for 128 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 36i,9n,34p,1253b,468s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,9n,34p,1253b,476s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/cm-super/cm-super-ts1.enc}
 <C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmb10.pfb><C:
 /Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/P
@@ -940,13 +874,14 @@ pe1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type
 1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/p
 ublic/amsfonts/cm/cmti10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pub
 lic/amsfonts/cm/cmti12.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publi
-c/amsfonts/cm/cmtt10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/
-amsfonts/cm/cmtt9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/cm-
-super/sfrm1095.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/cm-sup
-er/sfst1095.pfb>
-Output written on stmVignette.pdf (35 pages, 663641 bytes).
+c/amsfonts/cm/cmti9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/a
+msfonts/cm/cmtt10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/ams
+fonts/cm/cmtt9.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/cm-sup
+er/sfrm1095.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/cm-super/
+sfst1095.pfb>
+Output written on stmVignette.pdf (38 pages, 681455 bytes).
 PDF statistics:
- 825 PDF objects out of 1000 (max. 8388607)
- 171 named destinations out of 1000 (max. 500000)
+ 844 PDF objects out of 1000 (max. 8388607)
+ 174 named destinations out of 1000 (max. 500000)
  350 words of extra memory for PDF output out of 10000 (max. 10000000)
 
