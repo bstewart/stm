@@ -100,6 +100,10 @@ textProcessor <- function(documents, metadata=NULL,
     }
   }
   out <- read.slam(dtm) #using the read.slam() function in stm to convert
+  ## It's possible that the processing has caused some documents to be
+  ## dropped. These will be removed in the conversion from dtm to
+  ## internal representation.  Better keep a record
+  kept <- (1:length(documents) %in% unique(dtm$i))
   vocab <- as.character(out$vocab)
-  return(list(documents=out$documents, vocab=vocab, meta=metadata))
+  return(list(documents=out$documents, vocab=vocab, meta=metadata, docs.removed=which(!kept)))
 }
