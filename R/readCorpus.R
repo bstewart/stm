@@ -43,7 +43,7 @@ read.slam <- function(corpus) {
   if(!inherits(corpus, "simple_triplet_matrix")) stop("corpus is not a simple triplet matrix")
   if ("TermDocumentMatrix" %in% class(corpus)) {
     non_empty_docs <- which(slam::col_sums(corpus) != 0)
-    documents <- ijv.to.doc(corpus[,non_empty_docs]$j, corpus[,non_empty_docs]$j, corpus[,non_empty_docs]$v) 
+    documents <- ijv.to.doc(corpus[,non_empty_docs]$j, corpus[,non_empty_docs]$i, corpus[,non_empty_docs]$v) 
     names(documents) <- corpus[,non_empty_docs]$dimnames$Docs
   } else {
     non_empty_docs <- which(slam::row_sums(corpus) != 0)
