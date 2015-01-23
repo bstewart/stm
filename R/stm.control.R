@@ -167,10 +167,20 @@ stm.control <- function(documents, vocab, settings, model) {
   }
   beta$beta <- NULL
   lambda <- cbind(lambda,0)
+  colnames(mu$mu) <- names(documents)
+  names(beta$kappa$m) <- vocab
+  for (i in 1:length(beta$logbeta)) {
+    colnames(beta$logbeta[[i]]) <- vocab
+  }
+  for (i in 1:length(settings$wcounts)) names(settings$wcounts[[i]]) <- vocab
+  eta <- lambda[,-ncol(lambda), drop=FALSE]
+  rownames(eta) <- names(documents)
+  theta <- exp(lambda - row.lse(lambda))
+  rownames(theta) <- names(documents)
   model <- list(mu=mu, sigma=sigma, beta=beta, settings=settings,
                 vocab=vocab, convergence=convergence, 
-                theta=exp(lambda - row.lse(lambda)), 
-                eta=lambda[,-ncol(lambda), drop=FALSE],
+                theta=theta, 
+                eta=eta,
                 invsigma=solve(sigma), time=time)
   class(model) <- "STM"  
   return(model)
