@@ -172,7 +172,6 @@ stm.control <- function(documents, vocab, settings, model) {
   for (i in 1:length(beta$logbeta)) {
     colnames(beta$logbeta[[i]]) <- vocab
   }
-#  for (i in 1:length(settings$wcounts)) names(settings$dim$wcounts[[i]]) <- vocab
   eta <- lambda[,-ncol(lambda), drop=FALSE]
   rownames(eta) <- names(documents)
   theta <- exp(lambda - row.lse(lambda))
