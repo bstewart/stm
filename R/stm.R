@@ -73,6 +73,7 @@ stm <- function(documents, vocab, K,
     if(!is.matrix(prevalence) & !inherits(prevalence, "formula")) stop("Prevalence Covariates must be specified as a model matrix or as a formula")
     xmat <- makeTopMatrix(prevalence,data)
     if(nrow(na.omit(xmat)) != length(documents)) stop("Complete cases in prevalence covariate does not match the number of documents.")
+    rownames(xmat) <- names(documents)
   } else {
     xmat <- NULL
   }
@@ -99,6 +100,7 @@ stm <- function(documents, vocab, K,
     betaindex <- rep(1, length(documents))
   }
   A <- length(unique(betaindex)) #define the number of aspects
+  names(betaindex) <- names(documents)
   
   #Checks for Dimension agreement
   ny <- length(betaindex)
