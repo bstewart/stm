@@ -39,7 +39,7 @@ stm(documents, vocab, K,
   \item{data}{
 an optional data frame containing the prevalence and/or content covariates.  If unspecified the variables are taken from the active environment.}
   \item{init.type}{
-The method of initialization.  Must be either Latent Dirichlet Allocation ("LDA"), "Random" or "Spectral".  See details for more info. If you want to replicate a previous result, see the argument \code{seed}.  
+The method of initialization.  Must be either Latent Dirichlet Allocation ("LDA"), "Random" or "Spectral".  Defaults to "Spectral" if \cote{vocab} has fewer than 5000 terms, otherwise defaults to \code{LDA}.  See details for more info. If you want to replicate a previous result, see the argument \code{seed}.  
 }
   \item{seed}{
 Seed for the random number generator. \code{stm} saves the seed it uses on every run so that any result can be exactly reproduced.  When attempting to reproduce a result with that seed, it should be specified here.
