@@ -167,15 +167,15 @@ stm.control <- function(documents, vocab, settings, model) {
   }
   beta$beta <- NULL
   lambda <- cbind(lambda,0)
-  colnames(mu$mu) <- names(documents)
-  names(beta$kappa$m) <- vocab
+  if (! is.null(mu$mu)) colnames(mu$mu) <- names(documents)
+  if (! is.null(beta$kappa$m)) names(beta$kappa$m) <- vocab
   for (i in 1:length(beta$logbeta)) {
     colnames(beta$logbeta[[i]]) <- vocab
   }
   eta <- lambda[,-ncol(lambda), drop=FALSE]
-  rownames(eta) <- names(documents)
+  if (! is.null(eta)) rownames(eta) <- names(documents)
   theta <- exp(lambda - row.lse(lambda))
-  rownames(theta) <- names(documents)
+  if (! is.null(theta)) rownames(theta) <- names(documents)
   model <- list(mu=mu, sigma=sigma, beta=beta, settings=settings,
                 vocab=vocab, convergence=convergence, 
                 theta=theta, 
