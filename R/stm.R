@@ -12,7 +12,11 @@ stm <- function(documents, vocab, K,
                 kappa.prior=c("L1", "Jeffreys"), control=list())  {
   
   #Match Arguments and save the call
-  init.type <- match.arg(init.type)
+  #Default to Spectral initialization if vocabulary is smaller than 5000 terms
+  if (missing(init.type)) {
+    if (length(vocab) < 5000) {init.type <- "Spectral"}
+    else {init.type <- match.arg(init.type)}
+  }
   Call <- match.call()
   
   #Documents
