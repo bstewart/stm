@@ -171,7 +171,7 @@ stm.control <- function(documents, vocab, settings, model) {
                 vocab=vocab, convergence=convergence, 
                 theta=exp(lambda - row.lse(lambda)), 
                 eta=lambda[,-ncol(lambda), drop=FALSE],
-                invsigma=solve(sigma), time=time)
+                invsigma=solve(sigma), time=time, version=utils::packageDescription("stm")$Version)
   class(model) <- "STM"  
   return(model)
 }

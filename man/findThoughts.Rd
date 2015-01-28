@@ -46,9 +46,19 @@ A \code{findThoughts} object
 \examples{
 findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1,2), n=3)
 
-#We can also use the plot command as a shorthand for the plotQuote function
+#We can plot findThoughts objects using plot() or plotQuote
 thought <- findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=1, n=3)
+
+#plotQuote takes a set of sentences
+plotQuote(thought$docs[[1]])
+
+#we can use the generic plot as a shorthand which will make one plot per topic
 plot(thought)
+
+#we can select a subset of examples as well using either approach
+plot(thought,2:3)
+plotQuote(thought$docs[[1]][2:3])
+
 }
 \seealso{
 \code{\link{plotQuote}}

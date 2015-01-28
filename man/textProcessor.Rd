@@ -9,7 +9,7 @@ Function that takes in a vector of raw texts (in a variety of languages) and per
 \usage{
 textProcessor(documents, metadata=NULL, 
               lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, 
-              removepunctuation=TRUE, stem=TRUE, 
+              removepunctuation=TRUE, stem=TRUE, wordLengths=c(3,Inf), 
               sparselevel=1, language="en", 
               verbose=TRUE, onlycharacter= FALSE, striphtml=FALSE,
               customstopwords=NULL) 
@@ -36,6 +36,9 @@ Whether numbers should be removed. Defaults to TRUE.
  }
    \item{stem}{
 Whether or not to stem words. Defaults to TRUE}
+\item{wordLengths}{
+From the \pkg{tm} package. An integer vector of length 2. Words shorter than the minimum word length \code{wordLengths[1]} or longer than the maximum word length \code{wordLengths[2]} are discarded. Defaults to \code{c(3, Inf)}, i.e., a minimum word length of 3 characters.
+}
   \item{sparselevel}{
   Removes terms where at least sparselevel proportion of the entries are 0. Defaults to 1 which effectively turns the feature off.
 }

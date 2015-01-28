@@ -36,7 +36,9 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   } 
    
   triplet <- doc.to.ijv(documents) #this also fixes the zero indexing.
+  nms <- names(documents) 
   documents <- ijv.to.doc(triplet$i, triplet$j, triplet$v)
+  names(documents) <- nms
   docs.removed <- c()
   
   #Detect Missing Terms
@@ -52,7 +54,9 @@ prepDocuments <- function(documents, vocab, meta=NULL,
     vocab <- vocab[vocablist]
     new.map <- cbind(vocablist, 1:length(vocablist))
     documents <- lapply(documents, function(d) {
+      nm <- names(d)
       d[1,] <- new.map[match(d[1,], new.map[,1]),2]
+      names(d) <- nm
       return(d)
     })
     wordcounts <- wordcounts[vocablist]

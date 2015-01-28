@@ -2,7 +2,7 @@
 #Takes a character vector with one entry per document and its metadata
 textProcessor <- function(documents, metadata=NULL, 
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, removepunctuation=TRUE, stem=TRUE, 
-                          sparselevel=1, language="en",
+                          wordLengths=c(3,Inf),sparselevel=1, language="en",
                           verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
                           customstopwords=NULL) {
   if(!requireNamespace("tm",quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
@@ -77,7 +77,7 @@ textProcessor <- function(documents, metadata=NULL,
   
   #Make a matrix
   if(verbose) cat("Creating Output... \n")
-  dtm <- tm::DocumentTermMatrix(txt)
+  dtm <- tm::DocumentTermMatrix(txt, control=list(wordLengths=wordLengths))
   if(sparselevel!=1) {
     ntokens <- sum(dtm$v)
     V <- ncol(dtm)
@@ -100,6 +100,11 @@ textProcessor <- function(documents, metadata=NULL,
     }
   }
   out <- read.slam(dtm) #using the read.slam() function in stm to convert
+  
+  ## It's possible that the processing has caused some documents to be
+  ## dropped. These will be removed in the conversion from dtm to
+  ## internal representation.  Better keep a record
+  kept <- (1:length(documents) %in% unique(dtm$i))
   vocab <- as.character(out$vocab)
-  return(list(documents=out$documents, vocab=vocab, meta=metadata))
+  return(list(documents=out$documents, vocab=vocab, meta=metadata, docs.removed=which(!kept)))
 }

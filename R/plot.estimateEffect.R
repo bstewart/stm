@@ -79,6 +79,8 @@ plot.estimateEffect <- function(x, covariate, model=NULL,
     return(invisible(toreturn))
   }
   if(method=="difference"){
+    if(missing(cov.value1)) stop("Missing a value for cov.value1. See documentation.")
+    if(missing(cov.value2)) stop("Missing a value for cov.value2. See documentation.")
     toreturn <- plotDifference(prep=x,covariate=covariate,topics=topics, cdata=cdata, cmat=cmat, simbetas=simbetas,
                    offset=offset,xlab=xlab, ylab=ylab, main=main,
                    xlim=xlim, ylim=ylim, linecol=linecol, add=add,

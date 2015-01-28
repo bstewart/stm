@@ -44,9 +44,10 @@ print.findThoughts <- function(x,...) {
   cat(toprint)
 }
 
-plot.findThoughts <- function(x, ...) {
+plot.findThoughts <- function(x, sentences=NULL, ...) {
   for(i in 1:length(x$docs)) {
-    plotQuote(x$docs[[i]],...)
+    if(is.null(sentences)) sentences <- 1:length(x$docs[[i]])
+    plotQuote(x$docs[[i]][sentences],...)
   }
 }
 

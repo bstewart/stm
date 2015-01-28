@@ -1,7 +1,7 @@
 estimateEffect <- function(formula,
                      stmobj, metadata=NULL,
                      uncertainty=c("Global", "Local", "None"), documents=NULL,
-                     nsims=25) {
+                     nsims=25, prior=NULL) {
   origcall <- match.call()
   thetatype <- match.arg(uncertainty)
   if(thetatype=="None") nsims <- 1 #override nsims for no uncertaintys
@@ -47,10 +47,23 @@ estimateEffect <- function(formula,
   # all the models here are essentially just OLS regressions
   # becuase we will run them many times we want to cache the 
   # expensive components in advance.
-  
+  if(!is.null(prior)) {
+    if(!is.matrix(prior)) {
+      prior <- diag(prior, nrow=ncol(xmat))
+    } 
+    if(ncol(prior)!=ncol(xmat)) stop("number of columns in prior does not match columns in design matrix")
+    prior.pseudo <- chol(prior)
+    xmat <- rbind(xmat,prior.pseudo)
+  }
   qx <- qr(xmat)
-  if(qx$rank < ncol(xmat)) stop("Covariate matrix is singular.  See the details of ?estimateEffect() for some common causes.")
-
+  if(qx$rank < ncol(xmat)) {
+    prior <- diag(1e-5, nrow=ncol(xmat))
+    prior.pseudo <- chol(prior)
+    xmat <- rbind(xmat,prior.pseudo)
+    qx <- qr(xmat)
+    warning("Covariate matrix is singular.  See the details of ?estimateEffect() for some common causes.
+             Adding a small prior 1e-5 for numerical stability.")
+  }
   ##  
   #Step 3: Calculate Coefficients
   ##
@@ -89,6 +102,12 @@ estimateEffect <- function(formula,
 # this should be lighter weight than lm().  Works with summary.qr.lm() to give
 # vcov calculations etc.
 qr.lm <- function(y, qx) {
+  if(length(y)!=nrow(qx$qr)) {
+    #probably don't match because of a prior
+    if(length(y)!=(nrow(qx$qr)-ncol(qx$qr))) stop("number of covariate observations does not match number of docs")
+    #if it passes this check its the prior. thus
+    y <- c(y,rep(0, ncol(qx$qr)))
+  }
   beta <- solve.qr(qx, y)
   residuals <- qr.resid(qx,y)
   fitted.values <- qr.fitted(qx,y)

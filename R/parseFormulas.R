@@ -16,19 +16,19 @@ parseFormulas <- function(prep, cdata){
   if(!is.null(special$s)){
     if(length(special$s)>1) stop("Only one spline supported")
     newform <- str_replace(as.character(newform)[2], "s\\(", "s2\\(")
-    s2 <- function(x) predict(prep$modelframe[[elements[special$s]]],x)
+    s2 <- function(x,...) predict(prep$modelframe[[elements[special$s]]],x)
   }
   if(!is.null(special$bs)){
     if(length(special$bs)>1) stop("Only one spline supported")
     newform <- str_replace(as.character(newform)[2], "bs\\(",
                            "bs2\\(")
-    bs2 <- function(x) predict(prep$modelframe[[elements[special$bs]]],x)
+    bs2 <- function(x,...) predict(prep$modelframe[[elements[special$bs]]],x)
   }
   if(!is.null(special$ns)){
     if(length(special$ns)>1) stop("Only one spline supported")
     newform <- str_replace(as.character(newform)[2], "ns\\(",
                            "ns2\\(")
-    ns2 <- function(x) predict(prep$modelframe[[elements[special$ns]]],x)
+    ns2 <- function(x,...) predict(prep$modelframe[[elements[special$ns]]],x)
   }
   if(is.null(special$ns) & is.null(special$s) & is.null(special$bs)){
     newform <- as.character(newform[2])

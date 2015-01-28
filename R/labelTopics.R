@@ -13,22 +13,34 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
     logbeta <- logbeta[[1]]
     wordcounts <- model$settings$dim$wcounts$x
     #Calculate FREX Score
-    frexlabels <- calcfrex(logbeta, frexweight, wordcounts)
-    
+    frexlabels <- try(calcfrex(logbeta, frexweight, wordcounts),silent=TRUE)
+
     #Calculate Lift (Taddys thing this is beta_k,v divided by the empirical term probability)
-    liftlabels <- calclift(logbeta, wordcounts)
+    liftlabels <- try(calclift(logbeta, wordcounts), silent=TRUE)
 
     #Calculate score (Chang in LDA package etc.)
-    scorelabels <- calcscore(logbeta)
+    scorelabels <- try(calcscore(logbeta), silent=TRUE)
     
     #standard labels
     problabels <- apply(logbeta, 1, order, decreasing=TRUE)
     
     for(k in 1:K) {
       out$prob[[k]] <- vocab[problabels[1:n,k]]
-      out$frex[[k]] <- vocab[frexlabels[1:n,k]]
-      out$lift[[k]] <- vocab[liftlabels[1:n,k]]
-      out$score[[k]] <- vocab[scorelabels[1:n,k]]
+      if(class(frexlabels)=="try-error") {
+        out$frex[[k]] <- "FREX encountered an error and failed to run"
+      } else {
+        out$frex[[k]] <- vocab[frexlabels[1:n,k]]        
+      }
+      if(class(liftlabels)=="try-error") {
+        out$lift[[k]] <- "Lift encountered an error and failed to run"
+      } else {
+        out$lift[[k]] <- vocab[liftlabels[1:n,k]]        
+      }  
+      if(class(scorelabels)=="try-error") {
+        out$lift[[k]] <- "Score encountered an error and failed to run"
+      } else {
+        out$score[[k]] <- vocab[scorelabels[1:n,k]]        
+      }  
     }
     out <- lapply(out, do.call, what=rbind)
   } else {
@@ -43,13 +55,13 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
     i1 <- K + 1; i2 <- K + A; 
     intnums <- (i2+1):nrow(labs)
     
-    out$topics <- labs[topics,]
-    out$covariate <- labs[i1:i2,]
+    out$topics <- labs[topics,,drop=FALSE]
+    out$covariate <- labs[i1:i2,,drop=FALSE]
     rownames(out$covariate) <- anames
     if(model$settings$kappa$interactions) {
       tindx <- rep(1:K, each=A)
       intnums <- intnums[tindx %in% topics]
-      out$interaction <- labs[intnums,]
+      out$interaction <- labs[intnums,,drop=FALSE]
     }
   }
   out$topicnums <- topics

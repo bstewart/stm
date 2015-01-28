@@ -120,7 +120,8 @@ Character string that is x axis title.
 Character string that is y axis title.
 }
          \item{width}{
-Character string that is y axis title.
+Number that specifies width of the character string.  Smaller numbers
+    will have smaller-width labels.  Default is 25.
 }
 \item{custom.labels}{
   A vector of custom.labels if labeltype is equal to "custom".

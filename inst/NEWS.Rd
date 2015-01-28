@@ -1,6 +1,13 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
-
+\section{Version 1.0.10}{
+\itemize{
+\item Prevalence covariates can now use sparse matrices which will result in better performance for large factors.
+\item textProcessor() and prepDocuments() now do a better job of preserving labels and keeping track of dropped elements.  Special thanks to Github users gtuckerkellog and elbamos for pull requests.
+\item Fixed an edge case in init.type="Spectral" where words appearing only in documents by themselves would throw an error.  The error was correct but hard to address in certain cases, so now it temporarily removes the words and then reintroduces them before starting inference spreading a tiny bit of mass evenly across the topics.  Hat tip to Nathan Sanders for brining this to our attention.  
+\item New function findTopic() which helps locate topics containing particular words or phrases.
+\item New function topicLasso() helps build predictive models with topics.
+}}
 \section{Version 1.0.8}{
 \itemize{
 \item Fixed a minor bug in prepDocuments which arises in cases where there are vocab elements which do not appear in the data.

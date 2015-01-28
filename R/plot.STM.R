@@ -12,6 +12,10 @@ plot.STM <- function(x,
                      ...){
   model <- x
   type <- match.arg(type)
+  
+  contentcov <- length(model$beta$logbeta)!=1
+  if(contentcov & !missing(labeltype)) stop("Cannot specify label type for content covariate models.")
+  
   labeltype <- match.arg(labeltype)
   if(!is.null(custom.labels)) labeltype <- "custom"
   if(is.null(n)) n <- switch(type, 
@@ -19,7 +23,6 @@ plot.STM <- function(x,
                              labels=20,
                              perspectives=25,
                              hist=3)
-  contentcov <- length(model$beta$logbeta)!=1
   
   if(type!="perspectives" & is.null(topics)) topics <- 1:model$settings$dim$K
   

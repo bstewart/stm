@@ -60,19 +60,37 @@ stm.init <- function(documents, settings) {
     wprob <- wprob/sum(wprob)
     Q <- gram(mat)
     #verify that there are no zeroes
+    keep <- NULL
     Qsums <- rowSums(Q)
-    if(any(Qsums==0)) stop("Failure in spectral initialization. 
-                           A row of the co-occurence is exactly zero indicating 
-                           that a certain word appears only in documents alone. 
-                           Remove infrequent words or change initialization type.")
+    if(any(Qsums==0)) {
+      #if there are zeroes, we want to remove them for just the anchor word procedure.
+      temp.remove <- which(Qsums==0)
+      keep <- which(Qsums!=0)
+      Q <- Q[-temp.remove,-temp.remove]
+      Qsums <- Qsums[-temp.remove]
+      wprob <- wprob[-temp.remove]
+    }
+    Qbar <- Q/Qsums
+    
     # (2) anchor words
     if(verbose) cat("\t Finding anchor words...\n \t")
-    Qbar <- Q/Qsums
     anchor <- fastAnchor(Qbar, K=K, verbose=verbose)
-  
+
     # (3) recoverKL
     if(verbose) cat("\n\t Recovering initialization...\n \t")
     beta <- recoverL2(Q, anchor, wprob, verbose=verbose)$A
+    
+    if(!is.null(keep)) {
+      #if there were zeroes, reintroduce them
+      #assign missing compoinents the machine double epsilon
+      #and renormalize just in case.
+      beta.new <- matrix(0, nrow=K, ncol=V)
+      beta.new[,keep] <- beta
+      beta.new[,temp.remove] <- .Machine$double.eps 
+      beta <- beta.new/rowSums(beta.new)  
+      rm(beta.new)
+    }
+    
     # (4) generate other parameters
     mu <- matrix(0, nrow=(K-1),ncol=1)
     sigma <- diag(20, nrow=(K-1))

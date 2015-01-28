@@ -1,10 +1,10 @@
+import(Matrix)
 importFrom(matrixStats, logSumExp, rowLogSumExps, colLogSumExps)
 importFrom(slam, tcrossprod_simple_triplet_matrix, simple_triplet_matrix, as.simple_triplet_matrix)
 importFrom(splines, ns,bs)
 importFrom(lda, lda.collapsed.gibbs.sampler)
 importFrom(stringr,str_wrap, str_split, str_detect, str_replace)
-importFrom(Matrix, nearPD, sparseMatrix, colSums, crossprod, rowSums)
-importFrom(glmnet, glmnet)
+importFrom(glmnet, glmnet, cv.glmnet)
 
 export(stm, summary.STM, print.STM, plot.STM,
        estimateEffect, plot.estimateEffect, 
@@ -17,7 +17,7 @@ export(stm, summary.STM, print.STM, plot.STM,
       permutationTest, plot.STMpermute, cloud, sageLabels, print.sageLabels,
       multiSTM, print.MultimodDiagnostic, plot.MultimodDiagnostic,
   checkBeta, make.heldout, eval.heldout, checkResiduals,
-  searchK, plot.searchK, plotRemoved, thetaPosterior)
+  searchK, plot.searchK, plotRemoved, thetaPosterior, topicLasso)
 
 S3method(summary, STM)
 S3method(print, STM)
