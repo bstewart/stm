@@ -10,6 +10,7 @@ logisticnormal <- function(eta, mu, siginv, beta, doc, sigmaentropy) {
   doc.ct <- doc[2,]
   Ndoc <- sum(doc.ct)
   #even at K=100, BFGS is faster than L-BFGS
+  # what we're trying to do here is find the value of eta that minimizes the lhood function.  
   optim.out <- optim(par=eta, fn=lhood, gr=grad,
                      method="BFGS", control=list(maxit=500),
                      doc.ct=doc.ct, mu=mu,
@@ -70,6 +71,7 @@ grad <- function(eta, doc.ct, mu, siginv, beta, Ndoc=sum(doc.ct)) {
 #       nearly as often.  Particularly I suspect some of the elements in the
 #       cross product could be sped up quite a bit.
 #   NB: Bound and hessian barely communicate with one another here.
+
 hpb <- function(eta, doc.ct, mu, siginv, beta, Ndoc=sum(doc.ct), sigmaentropy) {
   #basic transforms
   expeta <- c(exp(eta),1)
@@ -101,6 +103,7 @@ hpb <- function(eta, doc.ct, mu, siginv, beta, Ndoc=sum(doc.ct), sigmaentropy) {
     if(any(diag(nu)<0)) nu <- as.matrix(nearPD(nu)$mat)
   }
   diff <- eta - mu
+  if (circuit == 10) print(str(diff))
   logphinorm <- log(colSums(theta*beta))
   part1 <- sum(doc.ct*logphinorm)
   bound <- part1 + .5*determinant(nu, logarithm=TRUE)$modulus -

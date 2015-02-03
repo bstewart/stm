@@ -24,6 +24,29 @@ stm.control <- function(documents, vocab, settings, model) {
     #discard the old object
     rm(model)
   } else {
+    # need to test if documents and vocab are the same
+    if (verbose) cat("Checking if documents or vocabular have changed...\n")
+    if (! identical(colnames(mu$mu), names(documents))) {
+      cat("Documents not identical")
+      docsToDrop <- which(! colnames(mu$mu) %in% names(documents) )
+      # should first handle the case where documents are out of order...  Actually might be best if we did this at the beginning of the if clause
+      if (length(docsToDrop) != 0) {
+        # There were documents before that are no longer being considered.  Need to remove the appropriate components of the data structures
+      }
+      docsToAdd <- which()
+    } else {
+      cat("Documents identical")
+    }
+    if (! identical(colnames(mu$mu), names(documents))) {
+      cat("Documents not identical")
+    } else {
+      cat("Documents identical")
+    } 
+    if (! identical(vocab, model$vocab)) {
+      cat("Vocabulary not identical")
+    } else {
+      cat("Vocabulary identical")
+    }
     if(verbose) cat("Restarting Model...\n")
     #extract from a standard STM object so we can simply continue.
     mu <- model$mu
