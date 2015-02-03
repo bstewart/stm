@@ -89,46 +89,49 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
                        control=list(maxit=500)
     )$par
     
-    #Solve for Hessian/Phi/Bound returning the result
-      theta <- expeta/sumexpeta
-  
-   #pieces for the derivatives of the exp(eta)beta part
-       EB <- t(betaexpeta)/betaexpeta_colsums #transpose and norm by (now) the row
-  
-   #at this point EB is the phi matrix
-      phi <- EB*(doc.ct) #multiply through by word count
-      phisums <- colSums(phi)
-      phi <- t(phi) #transpose so its in the K by W format expected
-      EB <- EB*sqrt(doc.ct) #set up matrix to take the cross product
+    doc.results <- logisticnormal(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
+                                 doc=doc, sigmaentropy=sigmaentropy)
     
-    #First piece is the quotient rule portion that shows up from E[z], second piece is the part
-    # that shows up regardless as in Wang and Blei (2013) for example.  Last element is just siginv
-     hess <- -((diag(phisums) - crossprod(EB)) - 
-                 Ndoc*(diag(theta) - theta%o%theta))[1:length(eta),1:length(eta)] + siginv
-    
-    ###
-    # Bound
-    
-    nu <- try(chol2inv(chol.default(hess)), silent=TRUE)
-    if(class(nu)=="try-error") {
-      #brute force solve
-      nu <- solve(hess)
-      #only if we would produce negative variances do we bother doing nearPD
-      if(any(diag(nu)<0)) nu <- as.matrix(nearPD(nu)$mat)
-    }
-     logphinorm <- log(colSums(theta*beta.i))
-     part1 <- sum(doc.ct*logphinorm)
-
-    bound[i] <- as.numeric(part1 + .5*determinant(nu, logarithm=TRUE)$modulus -
-      .5*sum(diff*crossprod(diff,siginv)) - sigmaentropy)
-    
-    # done inferring the document
+#     #Solve for Hessian/Phi/Bound returning the result
+#       theta <- expeta/sumexpeta
+#   
+#    #pieces for the derivatives of the exp(eta)beta part
+#        EB <- t(betaexpeta)/betaexpeta_colsums #transpose and norm by (now) the row
+#   
+#    #at this point EB is the phi matrix
+#       phi <- EB*(doc.ct) #multiply through by word count
+#       phisums <- colSums(phi)
+#       phi <- t(phi) #transpose so its in the K by W format expected
+#       EB <- EB*sqrt(doc.ct) #set up matrix to take the cross product
+#     
+#     #First piece is the quotient rule portion that shows up from E[z], second piece is the part
+#     # that shows up regardless as in Wang and Blei (2013) for example.  Last element is just siginv
+#      hess <- -((diag(phisums) - crossprod(EB)) - 
+#                  Ndoc*(diag(theta) - theta%o%theta))[1:length(eta),1:length(eta)] + siginv
+#     
+#     ###
+#     # Bound
+#     
+#     nu <- try(chol2inv(chol.default(hess)), silent=TRUE)
+#     if(class(nu)=="try-error") {
+#       #brute force solve
+#       nu <- solve(hess)
+#       #only if we would produce negative variances do we bother doing nearPD
+#       if(any(diag(nu)<0)) nu <- as.matrix(nearPD(nu)$mat)
+#     }
+#      logphinorm <- log(colSums(theta*beta.i))
+#      part1 <- sum(doc.ct*logphinorm)
+# 
+#     bound[i] <- as.numeric(part1 + .5*determinant(nu, logarithm=TRUE)$modulus -
+#       .5*sum(diff*crossprod(diff,siginv)) - sigmaentropy)
+#     
+#     # done inferring the document
 
     # update sufficient statistics 
-    sigma.ss <- sigma.ss + nu
-    beta.ss[[aspect]][,words] <- phi + beta.ss[[aspect]][,words]
-
-    lambda[[i]] <- eta
+    sigma.ss <- sigma.ss + doc.results$eta$nu
+    beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    bound[i] <- doc.results$bound
+    lambda[[i]] <- doc.results$eta$lambda
 
     if(verbose && i%%ctevery==0) cat(".")
   }

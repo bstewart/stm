@@ -25,35 +25,73 @@ stm.control <- function(documents, vocab, settings, model) {
     rm(model)
   } else {
     # need to test if documents and vocab are the same
+    # What to copy:
+    #   mu - a topic * document matrix
+    #   lambda = eta  - a document * topic matrix
+    #   beta -  a data structure relating topics and terms
     if (verbose) cat("Checking if documents or vocabular have changed...\n")
     if (! identical(colnames(mu$mu), names(documents))) {
-      cat("Documents not identical")
-      docsToDrop <- which(! colnames(mu$mu) %in% names(documents) )
-      # should first handle the case where documents are out of order...  Actually might be best if we did this at the beginning of the if clause
-      if (length(docsToDrop) != 0) {
-        # There were documents before that are no longer being considered.  Need to remove the appropriate components of the data structures
+      cat("Documents not identical\n")
+      # 1. Where documents have been removed, delete the entries in mu and lambda/eta
+      mu <- model$mu[,-which(! colnames(mu$mu) %in% names(documents) )]
+      lambda <- model$eta[-which(! rownames(model$eta) %in% names(documents)),]
+      # 2. Reorder documents to match mu and lambda/eta, with new documents at the end
+      docorder <- match(names(documents), colnames(mu), nomatch = 0)
+      new_docs <- which(docorder == 0)
+      new_doc_idxs <- NULL
+      if (length(new_docs) > 0) {
+        new_doc_idxs <- seq(max(docorder):(max(docorder) + length(new_docs)))
+        docorder[new_docs] <- new_doc_idxs
+        documents <- documents[docorder]
       }
-      docsToAdd <- which()
+      # 3. Create new entries in mu and lambda/eta for the new documents
+      if (! is.null(new_doc_idxs)) {
+        mu <- cbind(mu, matrix(rep(NA,length(new_doc_idxs) * nrow(mu), 
+                                   nrow = nrow(mu))))
+        lambda <- rbind(lambda, matrix(rep(NA,length(new_doc_idxs) * ncol(lambda), 
+                                           ncol = ncol(lambda))))
+      }
+      # 4. We will have to initialize those entries using new_doc_idxs after lining up and initializing terms
     } else {
-      cat("Documents identical")
+      cat("Documents identical\n")
+      mu <- model$mu # Rows are topics, columns are documents
+      lambda <- model$eta #Rows are documents, columns are topics
     }
-    if (! identical(colnames(mu$mu), names(documents))) {
-      cat("Documents not identical")
-    } else {
-      cat("Documents identical")
-    } 
+
     if (! identical(vocab, model$vocab)) {
-      cat("Vocabulary not identical")
+      cat("Vocabulary not identical\n")
+      # beta
+      #   beta$kappa - list
+      #     beta$kappa$m -- numeric vector for terms
+      #     beta$kappa$params -- list of term vectors.  What are the list elements?  Unknown.
+      #   beta$nlambda - single number, not copied
+      #   beta$logbeta -- list of three matrices
+      #     beta$logbeta[1:3] -- each a matrix of K + 1 rows, terms are columns
+      # Here don't want to remove entries for removed terms.  Want to reorder terms in the input
+      #   to match what's in the model, make sure the new documents have 0's for missing terms,
+      #   then initialize the new terms.
+      
+      # 1. Copy the old term components
+      beta <- list(beta=lapply(model$beta$logbeta, exp))
+      if(!is.null(model$beta$kappa)) beta$kappa <- model$beta$kappa
+      # 2. Reorder inputs to match order in model, putting new terms at the end
+      # 3. Initialize new terms
     } else {
-      cat("Vocabulary identical")
+      cat("Vocabulary identical\n")
+      beta <- list(beta=lapply(model$beta$logbeta, exp))
+      if(!is.null(model$beta$kappa)) beta$kappa <- model$beta$kappa
     }
+    # If there were new documents, initialize the entries in the document matrices
+    #   now that we have updated term data.
+    
+    
     if(verbose) cat("Restarting Model...\n")
     #extract from a standard STM object so we can simply continue.
-    mu <- model$mu
-    beta <- list(beta=lapply(model$beta$logbeta, exp))
-    if(!is.null(model$beta$kappa)) beta$kappa <- model$beta$kappa
-    sigma <- model$sigma
-    lambda <- model$eta
+
+    
+    # beta relates topics to terms
+
+    sigma <- model$sigma # seems to be topic * topic matrix
     convergence <- model$convergence
     #manually declare the model not converged or it will stop after the first iteration
     convergence$stopits <- FALSE
