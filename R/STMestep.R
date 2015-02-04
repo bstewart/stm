@@ -43,7 +43,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
   # maintaining a small dimension for the sufficient statistics.
-  cat("Using the new code 5 - checking cache")
+  cat("Using the new code 6 - broader definition")
   for(i in 1:N) {
     #update components
     doc <- documents[[i]]
@@ -55,48 +55,50 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     
     #infer the document - formerly the logisticnormal function
     #even at K=100, BFGS is faster than L-BFGS
-    expeta <- 0
-    diff <- 0
+    # Cached variables
+    expeta <- NULL
+    diff <- NULL
     doc.ct <- doc[2,]
     Ndoc <- sum(doc.ct)
     cols = ncol(beta.i)
     rows = nrow(beta.i)
-    siginvdiff <- 0
-    betaexpeta_colsums <- 0
-    betaexpeta <- 0
-    sumexpeta <- 0
-    global_eta <- 0
-    eta <- optim(par=init, 
-                       fn=function(eta) {
-                         # {\sum_{v=1}^V c_v log [\sum_k beta_{k,v} exp(eta_k)] }- Wlog \sum exp(eta_k)
-                         global_eta <<- eta
-                         expeta <<- c(exp(eta),1)
-                         sumexpeta <<- sum(expeta)
-                         betaexpeta <<- beta.i * expeta
-                         betaexpeta_colsums <<- .colSums(betaexpeta, 
-                                                         rows, 
-                                                         cols)
-                         part1 <- sum(doc.ct*log(betaexpeta_colsums)) - Ndoc*log(sumexpeta)
-                         # -1/2 (eta - mu)^T Sigma (eta - mu)
-                         diff <<- eta-mu.i
-                         siginvdiff <<- siginv %*% diff
-                         part2 <- .5*sum(diff*siginvdiff)
-                         part2 - part1  
-                       },  gr=function(eta) {
-                         if (identical(eta,global_eta)) {
-                           denom <- doc.ct/betaexpeta_colsums
-                           part1 <- (betaexpeta%*%denom)[-length(expeta)] - expeta[1]*(Ndoc/sumexpeta)  
-                           as.numeric(siginvdiff - part1)
-                          } else {
-                            expeta.sh <- exp(eta) 
-                           expeta <- c(expeta.sh,1)
-                           Ez <- expeta*beta
-                           denom <- doc.ct/.colSums(Ez, nrow(Ez), ncol(Ez))
-                           part1 <- (Ez%*%denom)[-length(expeta)] - expeta.sh*(Ndoc/sum(expeta))  
-                           part2 <- siginv%*%(eta-mu) 
-                           as.numeric(part2 - part1)                           
-                         }
-                       },
+    siginvdiff <- NULL
+    betaexpeta_colsums <- NULL
+    betaexpeta <- NULL
+    sumexpeta <- NULL
+    global_eta <- NULL
+    lhood <- function(eta) {
+      # {\sum_{v=1}^V c_v log [\sum_k beta_{k,v} exp(eta_k)] }- Wlog \sum exp(eta_k)
+      global_eta <<- eta
+      expeta <<- c(exp(eta),1)
+      sumexpeta <<- sum(expeta)
+      betaexpeta <<- beta.i * expeta
+      betaexpeta_colsums <<- .colSums(betaexpeta, 
+                                      rows, 
+                                      cols)
+      part1 <- sum(doc.ct*log(betaexpeta_colsums)) - Ndoc*log(sumexpeta)
+      # -1/2 (eta - mu)^T Sigma (eta - mu)
+      diff <<- eta-mu.i
+      siginvdiff <<- siginv %*% diff
+      part2 <- .5*sum(diff*siginvdiff)
+      part2 - part1  
+    }
+    gr <- function(eta) {
+      if (identical(eta,global_eta)) {
+        denom <- doc.ct/betaexpeta_colsums
+        part1 <- (betaexpeta%*%denom)[-length(expeta)] - expeta[1]*(Ndoc/sumexpeta)  
+        as.numeric(siginvdiff - part1)
+      } else {
+        expeta.sh <- exp(eta) 
+        expeta <- c(expeta.sh,1)
+        Ez <- expeta*beta
+        denom <- doc.ct/.colSums(Ez, nrow(Ez), ncol(Ez))
+        part1 <- (Ez%*%denom)[-length(expeta)] - expeta.sh*(Ndoc/sum(expeta))  
+        part2 <- siginv%*%(eta-mu) 
+        as.numeric(part2 - part1)                           
+      }
+    }
+    eta <- optim(par=init, fn = lhood, gr = gr, 
                        method="BFGS", 
                        control=list(maxit=500)
     )$par
