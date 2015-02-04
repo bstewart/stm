@@ -47,7 +47,7 @@ stm <- function(documents, vocab, K,
   #Check the Number of Topics
   if(missing(K)) stop("K, the number of topics, is required.")
   if(!(posint(K) && length(K)==1 && K>1)) stop("K must be a positive integer greater than 1.")
-  if(K==2) warning("K=2 is equivalent to a unidimensional scaling model which you may prefer.")
+  if(K==2) warning("K=2 is equivalent to a unidimensional scaling model, which you may prefer.")
   
   #Iterations, Verbose etc.
   if(!(length(max.em.its)==1 & posint(max.em.its))) stop("Max EM iterations must be a single positive integer")
