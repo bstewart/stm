@@ -43,7 +43,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
   # maintaining a small dimension for the sufficient statistics.
-  print("Using the new code 2")
+  print("Using the new code 3 - LBFGS")
   for(i in 1:N) {
     #update components
     doc <- documents[[i]]
@@ -97,7 +97,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
 #                            as.numeric(part2 - part1)                           
 #                          }
                        },
-                       method="BFGS", 
+                       method="L-BFGS", 
                        control=list(maxit=500)
     )$par
     
