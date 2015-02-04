@@ -43,7 +43,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
   # maintaining a small dimension for the sufficient statistics.
-
+  print("Using the new code")
   for(i in 1:N) {
     #update components
     doc <- documents[[i]]
