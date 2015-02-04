@@ -43,7 +43,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
   # maintaining a small dimension for the sufficient statistics.
-  print("Using the new code")
+  print("Using the new code 2")
   for(i in 1:N) {
     #update components
     doc <- documents[[i]]
@@ -65,11 +65,11 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     betaexpeta_colsums <- 0
     betaexpeta <- 0
     sumexpeta <- 0
-    global_eta <- 0
+#    global_eta <- 0
     eta <- optim(par=init, 
                        fn=function(eta) {
                          # {\sum_{v=1}^V c_v log [\sum_k beta_{k,v} exp(eta_k)] }- Wlog \sum exp(eta_k)
-                         global_eta <<- eta
+#                         global_eta <<- eta
                          expeta <<- c(exp(eta),1)
                          sumexpeta <<- sum(expeta)
                          betaexpeta <<- beta.i * expeta
@@ -83,19 +83,19 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
                          part2 <- .5*sum(diff*siginvdiff)
                          part2 - part1  
                        },  gr=function(eta) {
-                         if (identical(eta,global_eta)) {
+#                         if (identical(eta,global_eta)) {
                            denom <- doc.ct/betaexpeta_colsums
                            part1 <- (betaexpeta%*%denom)[-length(expeta)] - expeta[1]*(Ndoc/sumexpeta)  
                            as.numeric(siginvdiff - part1)
-                         } else {
-                           expeta.sh <- exp(eta) 
-                           expeta <- c(expeta.sh,1)
-                           Ez <- expeta*beta
-                           denom <- doc.ct/.colSums(Ez, nrow(Ez), ncol(Ez))
-                           part1 <- (Ez%*%denom)[-length(expeta)] - expeta.sh*(Ndoc/sum(expeta))  
-                           part2 <- siginv%*%(eta-mu) 
-                           as.numeric(part2 - part1)                           
-                         }
+#                          } else {
+#                            expeta.sh <- exp(eta) 
+#                            expeta <- c(expeta.sh,1)
+#                            Ez <- expeta*beta
+#                            denom <- doc.ct/.colSums(Ez, nrow(Ez), ncol(Ez))
+#                            part1 <- (Ez%*%denom)[-length(expeta)] - expeta.sh*(Ndoc/sum(expeta))  
+#                            part2 <- siginv%*%(eta-mu) 
+#                            as.numeric(part2 - part1)                           
+#                          }
                        },
                        method="BFGS", 
                        control=list(maxit=500)
