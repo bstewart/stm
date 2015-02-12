@@ -3,7 +3,7 @@ topicLasso <- function(formula, data, stmobj=NULL, subset=NULL,
                       family="gaussian", main="Topic Effects on Outcome",
                       xlab=expression("Lower Outcome                  Higher Outcome"),
                       labeltype=c("prob", "frex", "lift", "score"),seed=02138,
-                      xlim=c(-4,4), standardize=FALSE) {
+                      xlim=c(-4,4), standardize=FALSE, nfolds=20, ...) {
 
   X <- model.matrix(formula, data)
   pvarnames <- colnames(X)
@@ -40,7 +40,7 @@ topicLasso <- function(formula, data, stmobj=NULL, subset=NULL,
   
   varnames <- c(pvarnames, topiclabs)
   
-  linmod <- cv.glmnet(x=X,y=y, family=family, standardize=standardize, nfolds=20)
+  linmod <- cv.glmnet(x=X,y=y, family=family, standardize=standardize, nfolds=nfolds, ...)
   loadings <- coef(linmod)[-1]
   
   posind <- which(loadings>0)

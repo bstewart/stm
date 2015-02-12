@@ -13,7 +13,7 @@ topicLasso(formula, data, stmobj=NULL, subset=NULL,
                       family="gaussian",  main="Topic Effects on Outcome",
                       xlab=expression("Lower Outcome                  Higher Outcome"),
                       labeltype=c("prob", "frex", "lift", "score"),seed=02138,
-                      xlim=c(-4,4), standardize=FALSE) 
+                      xlim=c(-4,4), standardize=FALSE, nfolds=20, ...) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -52,6 +52,12 @@ Width of the x-axis.
 }
 \item{standardize}{
 Whether to standardize variables. Default is FALSE, which is different from the \pkg{glmnet} default because the topics are already standarized.  Note that glmnet standardizes the variables by default but then projects them back to their original scales before reporting coefficients.
+}
+\item{nfolds}{
+the number of cross-validation folds.  Defaults to 20.
+}
+\item{...}{
+Additional arguments to be passed to glmnet.  This can be useful for addressing convergence problems.
 }
 }
 \details{

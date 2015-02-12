@@ -70,6 +70,12 @@ grad <- function(eta, doc.ct, mu, siginv, beta, Ndoc=sum(doc.ct)) {
 #       nearly as often.  Particularly I suspect some of the elements in the
 #       cross product could be sped up quite a bit.
 #   NB: Bound and hessian barely communicate with one another here.
+#       1/29/15 I revisited this and tuned it up a bit but was unable to 
+#       substantially reduce the communication issues.
+#   NB: 1/29/15- benchmarking on poliblog5k with 100 topics suggests that
+#       crossprod() is a surpringly big chunk of the cost despite it only
+#       appearing in the Hessian.  Its the single bigest chunk after "*"
+#       its producing a K by K matrix but still surprising...
 hpb <- function(eta, doc.ct, mu, siginv, beta, Ndoc=sum(doc.ct), sigmaentropy) {
   #basic transforms
   expeta <- c(exp(eta),1)
@@ -85,29 +91,38 @@ hpb <- function(eta, doc.ct, mu, siginv, beta, Ndoc=sum(doc.ct), sigmaentropy) {
   phi <- t(phi) #transpose so its in the K by W format expected
   EB <- EB*sqrt(doc.ct) #set up matrix to take the cross product
   
+  Ntheta <- Ndoc*theta
+  rtNtheta <- sqrt(Ndoc)*theta
   #First piece is the quotient rule portion that shows up from E[z], second piece is the part
   # that shows up regardless as in Wang and Blei (2013) for example.  Last element is just siginv
   hess <- -((diag(phisums) - crossprod(EB)) - 
-              Ndoc*(diag(theta) - theta%o%theta))[1:length(eta),1:length(eta)] + siginv
+              (diag(Ntheta) - rtNtheta%o%rtNtheta))[1:length(eta),1:length(eta)] + siginv
   
   ###
   # Bound
   
-  nu <- try(chol2inv(chol.default(hess)), silent=TRUE)
-  if(class(nu)=="try-error") {
+  cobj <- try(chol.default(hess), silent=TRUE)
+  if(class(cobj)=="try-error") {
     #brute force solve
     nu <- solve(hess)
     #only if we would produce negative variances do we bother doing nearPD
     if(any(diag(nu)<0)) nu <- as.matrix(nearPD(nu)$mat)
+    detTerm <- .5*determinant(nu, logarithm=TRUE)$modulus
+  } else {
+    #this is the normal case where the hessian an be decomposed
+    nu <- chol2inv(cobj)
+    #this is equivalent to the 1/2 of the log determinant as given above
+    detTerm <- -sum(log(diag(cobj)))
   }
   diff <- eta - mu
-  logphinorm <- log(colSums(theta*beta))
-  part1 <- sum(doc.ct*logphinorm)
-  bound <- part1 + .5*determinant(nu, logarithm=TRUE)$modulus -
-               .5*sum(diff*crossprod(diff,siginv)) -
-                sigmaentropy
-  bound <- as.numeric(bound)
   
+  logphinorm <- log(as.numeric(theta%*%beta))
+  part1 <- sum(doc.ct*logphinorm)
+  bound <- part1 + detTerm - #the determinant is now pre-computed so we can speed it up where possible.
+           .5*sum(diff*crossprod(diff,siginv)) -
+           sigmaentropy
+  bound <- as.numeric(bound)
+    
   #bundle everything up.
   return(list(phis=phi, eta=list(lambda=eta, nu=nu), bound=bound))
 }
