@@ -1,8 +1,8 @@
 Package: stm
 Type: Package
 Title: Estimation of the Structural Topic Model
-Version: 1.0.11
-Date: 2015-2-2
+Version: 1.0.12
+Date: 2015-2-28
 Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 Maintainer: Brandon Stewart <bstewart@fas.harvard.edu>
 Depends: R (>= 2.10)

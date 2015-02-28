@@ -1,5 +1,9 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.0.12}{
+\itemize{
+\item When \code{gamma.prior="L1"} coerce the mu object back to a matrix class object.  Should fix a speed hit introduced in 1.0.10 for this case.
+}}
 \section{Version 1.0.10}{
 \itemize{
 \item Prevalence covariates can now use sparse matrices which will result in better performance for large factors.

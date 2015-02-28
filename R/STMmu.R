@@ -24,12 +24,15 @@ opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL) 
     return(list(mu=mu, gamma=gamma))
   }
   
-  #Gamma Lasso
+  #Lasso
   if(mode=="L1") {
     out <- glmnet(x=covar[,-1], y=lambda, family="mgaussian", alpha=enet)
     unpack <- unpack.glmnet(out, nobs=nrow(covar), ic.k=2)
     gamma <- rbind(unpack$intercept, unpack$coef)
     mu <- t(covar%*%gamma)
+    if(!is.matrix(mu)) {
+      mu <- as.matrix(mu)
+    }
     return(list(mu=mu, gamma=gamma))
   }
 }

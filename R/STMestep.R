@@ -36,9 +36,14 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   lambda <- vector("list", length=N)
   
   # 2) Precalculate common components
-  sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
-  siginv <- solve(sigma)
-    
+  sigobj <- try(chol.default(sigma), silent=TRUE)
+  if(class(sigobj)=="try-error") {
+    sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
+    siginv <- solve(sigma)
+  } else {
+    sigmaentropy <- sum(log(diag(sigobj)))
+    siginv <- chol2inv(sigobj)
+  }
   # 3) Document Scheduling
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
