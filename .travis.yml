@@ -16,3 +16,7 @@ r_binary_packages:
  - wordcloud
  - KernSmooth
  - NLP
+ 
+env:
+  global:
+    - _R_CRAN_CHECK_INCOMING_=false
