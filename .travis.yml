@@ -3,7 +3,6 @@ language: r
 #System dependencies
 r_binary_packages:
  - matrixStats
- - splines
  - slam
  - lda
  - stringr
