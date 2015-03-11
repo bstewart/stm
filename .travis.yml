@@ -1,5 +1,6 @@
 language: r
 warnings_are_errors: true
+r_build_args: --resave-data --no-build-vignettes
 
 #System dependencies
 r_binary_packages:
