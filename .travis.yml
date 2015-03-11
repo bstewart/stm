@@ -1,1 +1,19 @@
 language: r
+
+#System dependencies
+r_binary_packages:
+ - matrixStats
+ - splines
+ - slam
+ - lda
+ - stringr
+ - Matrix
+ - glmnet
+ - igraph
+ - SnowballC
+ - tm
+ - huge
+ - clue
+ - wordcloud
+ - KernSmooth
+ - NLP
