@@ -521,7 +521,7 @@ There are multiple other ways to visualize results from an STM model. Topics the
 \vspace{-20pt}
 \begin{center}
 <<eval=TRUE,fig=TRUE,width=2,height=2>>=
-cloud(poliblogPrevFit, topic=7,width=5)
+cloud(poliblogPrevFit, topic=7)
 @
 \caption{WordCloud Display of vice President topic.}
 \label{fig:cloud}
