@@ -78,10 +78,10 @@ Where the beta matrices are the topic-word matrices for the reference and the ca
 \item{reg.parameter.index}{The \code{reg.parameter.index} argument that was supplied to the function.}
 }
 \references{
-Roberts, Margaret E., Brandon M. Stewart, and Dustin Tingley. "Navigating the Local Modes of Big Data: The Case of Topic Models." Forthcoming.
+Roberts, M., Stewart, B., & Tingley, D. (Forthcoming). "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data Analytics in Social Science, Government, and Industry." New York: Cambridge University Press.
 }
 \author{
-Antonio Coppola, Harvard University
+Antonio Coppola (Harvard University), Brandon Stewart (Princeton University), Dustin Tingley (Harvard University)
 }
 
 \seealso{

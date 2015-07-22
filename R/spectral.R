@@ -15,13 +15,67 @@ gram <- function(mat) {
   mat <- mat[nd>=2,] #its undefined if we don't have docs of length 2
   nd <- nd[nd>=2]
   divisor <- nd*(nd-1)
-  Htilde <- mat/sqrt(divisor)
-  Hhat <- diag(colSums(mat/divisor))
-  Q <- crossprod(Htilde) - Hhat
+  #clearer code is removed below for memory efficiency
+  #Htilde <- mat/sqrt(divisor)
+  #Hhat <- diag(colSums(mat/divisor))
+  #Q <- crossprod(Htilde) - Hhat
+  Q <- crossprod(mat/sqrt(divisor)) - diag(colSums(mat/divisor))
   #if(min(Q)<0) Q@x[Q@x < 0 ] <- 0
   return(as.matrix(Q))
 }
 
+gram.rp <- function(mat, s=.05, p=3000, d.group.size=2000, verbose=TRUE) {
+  # s is the sparsity level
+  # p is the number of projections
+  # d.group.size is the size of the groups of documents analyzed.
+  
+  #first, figure out how many items are necessary to produce the correct sparsity level
+  n.items <- ceiling(s*p)
+  #construct a projection matrix out of a triplet representation
+  triplet <- vector(mode="list", length=ncol(mat))
+  for(i in 1:ncol(mat)) {
+    index <- sample(size=n.items, x=1:p, replace=FALSE)
+    values <- sample(size=length(index), x=c(-1, 1), replace=TRUE)
+    triplet[[i]] <- cbind(i, index, values)
+  }
+  triplet <- do.call(rbind,triplet)
+  proj <- sparseMatrix(i=triplet[,1], j=triplet[,2], x=triplet[,3])
+  rm(triplet)
+  
+  #now we do the projection.
+  # the basic strategy is to do the computation in blocks of documents
+  # I tried various methods of doing one document at a time but they 
+  # were all too slow.
+  D <- nrow(mat)
+  groups <- ceiling(D/d.group.size)
+  Qnorm <- rep(0, ncol(mat))
+  #iterate over blocks adding to total
+  if(verbose) cat("\t")
+  for(i in 1:groups) {
+    smat <- mat[((i-1)*d.group.size + 1):min(i*d.group.size, D),]
+    #not positive about next two lines.
+    rsums <- rowSums(smat)
+    divisor <- rsums*(rsums-1)
+    #divide through
+    smatd <- smat/divisor
+    #update the piece that we will ultimately normalize with
+    Qnorm <- Qnorm + colSums(smatd*(rsums - 1 - smatd))
+    #calculate for the bit below
+    Htilde <- colSums(smatd)*proj
+    rm(smatd) #clear out a copy we don't need
+    smat <- smat/sqrt(divisor)
+    
+    if(i>1) {
+      Q <- Q + t(smat)%*%(smat%*%proj) - Htilde
+    } else {
+      #if its the first 
+      Q <- t(smat)%*%(smat%*%proj) - Htilde
+    }
+    if(verbose) cat(".")
+  }
+  if(verbose) cat("\n")
+  return(as.matrix(Q/Qnorm))
+}
 
 #' Find Anchor Words
 #'
@@ -76,18 +130,22 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 #' combination of the anchor words which can reconstruct each additional word in the 
 #' matrix.  Transform and return as a beta matrix.
 #'
-#' @param Q the gram matrix
+#' @param Qbar the row-normalized gram matrix
 #' @param anchor a vector of indices for rows of Q containing anchors
 #' @param wprob the empirical word probabilities used to renorm the mixture weights. 
 #' @param verbose if TRUE prints information as it progresses.
 #' @param ... optional arguments that will be passed to the exponentiated gradient algorithm.
 #' @return 
 #' \item{A}{a matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-#' \item{R}{a matrix of dimensions K by K that contains the topic covariances.}
-#' \item{condprob}{a list of exponentiated gradient results.  useful for checking convergence.}
 #' @export
-recoverL2 <- function(Q, anchor, wprob, verbose=TRUE, ...) {
-  Qbar <- Q/rowSums(Q)
+recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
+  #NB: I've edited the script to remove some of the calculations by commenting them
+  #out.  This allows us to store only one copy of Q which is more memory efficient.
+  #documentation for other pieces is below.
+  #' \item{R}{a matrix of dimensions K by K that contains the topic covariances.}
+  #' \item{condprob}{a list of exponentiated gradient results.  useful for checking convergence.}
+  
+  #Qbar <- Q/rowSums(Q)
   X <- Qbar[anchor,]
   XtX <- tcrossprod(X)
   
@@ -119,10 +177,10 @@ recoverL2 <- function(Q, anchor, wprob, verbose=TRUE, ...) {
   A <- t(A)/colSums(A)
   
   #Recover The Topic-Topic Covariance Matrix
-  Adag <- mpinv(A)  
-  R <- t(Adag)%*%Q%*%Adag
-  
-  return(list(A=A, R=R, condprob=condprob))
+  #Adag <- mpinv(A)  
+  #R <- t(Adag)%*%Q%*%Adag
+  return(list(A=A))
+  #return(list(A=A, R=R, condprob=condprob))
 }
 
 #' Exponentiated Gradient with L2 Loss
@@ -199,3 +257,15 @@ mpinv <- function (X) {
   else Xsvd$v[, Positive, drop = FALSE] %*% ((1/Xsvd$d[Positive]) * 
                                                t(Xsvd$u[, Positive, drop = FALSE]))
 }
+
+tsneAnchor <- function(Qbar) {
+  if(!(requireNamespace("Rtsne",quietly=TRUE) & requireNamespace("geometry", quietly=TRUE))){
+    stop("Please install the Rtsne and geometry packages to use this setting.")
+  } 
+  #project to 3-D
+  proj <- Rtsne::Rtsne(Qbar, dims=3) 
+  hull <- geometry::convhulln(proj$Y)
+  anchor <- sort(unique(c(hull)))
+  return(anchor)
+}
+

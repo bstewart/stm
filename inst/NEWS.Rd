@@ -1,5 +1,17 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1}{
+\itemize{
+\item Performance improvements via various optimizations including porting some components to C++
+\item Various new experimental features including K=0
+\item Improved documentation including a new version of the vignette.
+\item Better error messages in several places
+\item Experimental options for random projections with spectral initializations
+}}
+\section{Version 1.0.13}{
+\itemize{
+\item Fixes a problem in make.heldout where a document could be completely emptied by the procedure. Hat tip to Jesse  Rhodes for the bug report.
+}}
 \section{Version 1.0.12}{
 \itemize{
 \item When \code{gamma.prior="L1"} coerce the mu object back to a matrix class object.  Should fix a speed hit introduced in 1.0.10 for this case.

@@ -30,7 +30,7 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
 
   #Find type of each variable
   types <- sapply(prep$varlist,function (x) class(prep$data[,x]))
-  
+
   #Make control matrix
   #What is the covariate of interest and what are the controls?
   covariateofinterest <- which(prep$varlist==covariate)
@@ -91,6 +91,7 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
   if(ncol(cdata)>1){
     cdata <- cdata[,names(prep$data)]
   }
+
   #Get model.matrix
   cmatrix <- parseFormulas(prep, cdata)
   return(list(cdata=cdata,cmatrix=cmatrix))

@@ -4,9 +4,9 @@ Website: www.structuraltopicmodel.com
 
 Vignette: [Here](https://github.com/bstewart/stm/blob/master/vignettes/stmVignette.pdf?raw=true)
 
-Authors: [Molly Roberts](http://scholar.harvard.edu/mroberts), [Brandon Stewart](http://scholar.harvard.edu/bstewart) and [Dustin Tingley](http://scholar.harvard.edu/dtingley)
+Authors: [Molly Roberts](http://scholar.harvard.edu/mroberts), [Brandon Stewart](brandonstewart.org) and [Dustin Tingley](http://scholar.harvard.edu/dtingley)
 
-Please email all comments/questions to bstewart [AT] fas.harvard.edu
+Please email all comments/questions to bms4 [AT] princeton.edu
 
 ###Summary
 
@@ -23,12 +23,7 @@ The package currently includes functionality to:
 
 Have a large text corpus or need a language we don't provide support for?  See our sister project [txtorg](http://txtorg.org)
 
-Papers on the Structural Topic Model:
-* Roberts, Stewart and Airoldi. "Structural Topic Models" Copy available [here](http://scholar.harvard.edu/files/bstewart/files/stm.pdf)
-* Roberts, Stewart, Tingley, and Airoldi. "The Structural Topic Model and Applied Social Science." *Advances in Neural Information Processing Systems Workshop on Topic Models: Computation, Application, and Evaluation*. 2013. Copy available [here](http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf)
-* Roberts, Stewart, Tingley, Lucas, Leder-Luis, Gadarian, Albertson, and Rand. "Structural topic models for open-ended survey responses." *American Journal of Political Science*. Forthcoming. Copy available [here](http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf)
-* Lucas, Nielsen, Roberts, Stewart, Storer, and Tingley. "Computer assisted text analysis for comparative politics." Copy available [here](http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf)
-* Reich, Tingley, Leder-Luis, Roberts and Stewart.  "Computer-Assisted Reading and Discovery for Student Generated Text in Massive Open Online Courses" Copy available [here](http://scholar.harvard.edu/files/dtingley/files/educationwriteup.pdf)
+See other materials at www.structuraltopicmodel.com
 
 ### Installation Instructions
 Assuming you already have R installed (if not see http://www.r-project.org/),

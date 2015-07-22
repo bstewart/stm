@@ -1,0 +1,62 @@
+\name{toLDAvis}
+\alias{toLDAvis}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Wrapper to launch LDAvis topic browser.}
+\description{
+Tool for exploring topic/word distributions using LDAvis topic browser.
+}
+\usage{
+toLDAvis(mod,docs,R=30,plot.opts=list(xlab ="PC1", ylab = "PC2"),
+                    lambda.step=.1,out.dir=tempfile(),open.browser=interactive(),
+                    as.gist=FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{mod}{STM object. Output from stm function.
+}
+  \item{docs}{Documents object passed to \code{stm} in this package's standard format (see the documentation in \code{\link{stm}}.
+}
+  \item{R}{
+  passed to \code{\link[LDAvis]{createJSON}} "integer, the number of terms to display in the barcharts of the interactive viz. Default is 30. Recommended to be roughly between 10 and 50."
+  }
+  \item{plot.opts}{
+  passed to \code{\link[LDAvis]{createJSON}} "a named list used to customize various plot elements. By default, the x and y
+axes are labeled 'PC1' and 'PC2' (principal components 1 and 2), since jsPCA
+is the default scaling method.
+"  }
+  \item{lambda.step}{
+  passed to \code{\link[LDAvis]{createJSON}} "a value between 0 and 1. Determines the interstep distance in the grid of lambda
+values over which to iterate when computing relevance. Default is 0.01. Recommended
+to be between 0.01 and 0.1."  }
+  \item{out.dir}{
+    passed to \code{\link[LDAvis]{serVis}} "directory to store html/js/json files."
+  }
+  \item{open.browser}{
+    passed to \code{\link[LDAvis]{serVis}} "Should R open a browser? If yes, this function will attempt to create a local
+file server via the servr package. This is necessary since the javascript needs to
+access local files and most browsers will not allow this."
+  }
+  \item{as.gist}{
+    passed to \code{\link[LDAvis]{serVis}} "should the vis be uploaded as a gist? Will prompt for an interactive login if the
+GITHUB_PAT environment variable is not set"
+  }
+}
+\details{
+Tool for exploring topic/word distributions using LDAvis topic browser. Development build of LDAvis available at https://github.com/cpsievert/LDAvis or download from CRAN.
+}
+\references{
+Carson Sievert and Kenny Shirley. LDAvis: Interactive Visualization of Topic
+  Models. R package version 0.3.1. https://github.com/cpsievert/LDAvis
+}
+\examples{
+\dontrun{
+mod <- stm(poliblog5k.docs, poliblog5k.voc, K=25,
+           prevalence=~rating, data=poliblog5k.meta,
+           max.em.its=2, init.type="Spectral") 
+#please don't run a model with 2 iterations
+#this is done here to make it run quickly.
+toLDAvis(mod=mod, docs=poliblog5k.docs)
+
+}
+}

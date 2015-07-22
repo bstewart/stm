@@ -48,7 +48,7 @@ stm.init <- function(documents, settings) {
     beta <- beta/rowSums(beta)
     lambda <- matrix(0, nrow=N, ncol=(K-1))
   }
-  if(mode=="Spectral") {
+  if(mode=="Spectral" | mode=="SpectralRP") {
     verbose <- settings$verbose
     if(K >= V) stop("Spectral initialization cannot be used for the overcomplete case (K greater than or equal to number of words in vocab)")
     # (1) Prep the Gram matrix
@@ -58,24 +58,36 @@ stm.init <- function(documents, settings) {
     rm(docs)
     wprob <- colSums(mat)
     wprob <- wprob/sum(wprob)
-    Q <- gram(mat)
-    #verify that there are no zeroes
-    keep <- NULL
-    Qsums <- rowSums(Q)
-    if(any(Qsums==0)) {
-      #if there are zeroes, we want to remove them for just the anchor word procedure.
-      temp.remove <- which(Qsums==0)
-      keep <- which(Qsums!=0)
-      Q <- Q[-temp.remove,-temp.remove]
-      Qsums <- Qsums[-temp.remove]
-      wprob <- wprob[-temp.remove]
+    
+    if(mode=="Spectral") {
+      Q <- gram(mat)
+      #verify that there are no zeroes
+      keep <- NULL
+      Qsums <- rowSums(Q)
+      if(any(Qsums==0)) {
+        #if there are zeroes, we want to remove them for just the anchor word procedure.
+        temp.remove <- which(Qsums==0)
+        keep <- which(Qsums!=0)
+        Q <- Q[-temp.remove,-temp.remove]
+        Qsums <- Qsums[-temp.remove]
+        wprob <- wprob[-temp.remove]
+      }
+      Q <- Q/Qsums
+    } else {
+      Q <- gram.rp(mat, s=mod$settings$init$s, p=mod$settings$init$p, 
+                   d.group.size=mod$settings$init$d.group.size, verbose=verbose)
     }
-    Qbar <- Q/Qsums
+    
     
     # (2) anchor words
-    if(verbose) cat("\t Finding anchor words...\n \t")
-    anchor <- fastAnchor(Qbar, K=K, verbose=verbose)
-
+    if(K!=0) {
+      if(verbose) cat("\t Finding anchor words...\n \t")
+      anchor <- fastAnchor(Q, K=K, verbose=verbose)
+    } else {
+      if(verbose) cat("\t Finding anchor words...\n \t")
+      anchor <- tsneAnchor(Q) #run the Lee and Mimno (2014) algorithm
+      K <- length(anchor) # update K
+    }
     # (3) recoverKL
     if(verbose) cat("\n\t Recovering initialization...\n \t")
     beta <- recoverL2(Q, anchor, wprob, verbose=verbose)$A

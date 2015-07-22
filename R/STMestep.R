@@ -58,14 +58,14 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     beta.i <- beta[[aspect]][,words,drop=FALSE]
     
     #infer the document
-    doc.results <- logisticnormal(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
                                   doc=doc, sigmaentropy=sigmaentropy)
     
     # update sufficient statistics 
     sigma.ss <- sigma.ss + doc.results$eta$nu
     beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     bound[i] <- doc.results$bound
-    lambda[[i]] <- doc.results$eta$lambda
+    lambda[[i]] <- c(doc.results$eta$lambda)
     if(verbose && i%%ctevery==0) cat(".")
   }
   if(verbose) cat("\n") #add a line break for the next message.

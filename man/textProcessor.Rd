@@ -1,5 +1,8 @@
 \name{textProcessor}
 \alias{textProcessor}
+\alias{print.textProcessor}
+\alias{head.textProcessor}
+\alias{summary.textProcessor}
 \title{
 Process a vector of raw texts
 }
@@ -12,7 +15,7 @@ textProcessor(documents, metadata=NULL,
               removepunctuation=TRUE, stem=TRUE, wordLengths=c(3,Inf), 
               sparselevel=1, language="en", 
               verbose=TRUE, onlycharacter= FALSE, striphtml=FALSE,
-              customstopwords=NULL) 
+              customstopwords=NULL, onlytxtfiles=TRUE) 
 }
 
 \arguments{
@@ -56,7 +59,9 @@ If true prints information as it processes.
 \item{customstopwords}{
   A character vector containing words to be removed.  Defaults to NULL which does not remove any additional words.  This function is primarily for easy removal of application specific stopwords.  Note that as with standard stopwords these are removed after converting everything to lower case but before removing numbers, punctuation or stemming.  Thus words to be removed should be all lower case but otherwise complete.
 }
-
+\item{onlytxtfiles}{
+  A logical which if \code{TRUE}, When reading files from a local directory, the function will skip over any files that don't end in \code{.txt}. 
+}
 }
 \details{
 This function is designed to provide a convenient and quick way to process a relatively small volume texts for analysis with the package. It is designed to quickly ingest data in a simple form like a spreadsheet where each document sits in a single cell.  You can also pass the filepath of a single directory to the documents argument.  The function will then recursively read in all the files within the directory where each document is a file. Once the text has been processed by \code{tm} the document term matrix is converted to the \code{stm} format using \code{\link{readCorpus}}.

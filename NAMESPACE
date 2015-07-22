@@ -3,8 +3,9 @@ importFrom(matrixStats, logSumExp, rowLogSumExps, colLogSumExps)
 importFrom(slam, tcrossprod_simple_triplet_matrix, simple_triplet_matrix, as.simple_triplet_matrix)
 importFrom(splines, ns,bs)
 importFrom(lda, lda.collapsed.gibbs.sampler)
-importFrom(stringr,str_wrap, str_split, str_detect, str_replace)
+importFrom(stringr,str_wrap, str_split, str_detect, str_replace, str_replace_all)
 importFrom(glmnet, glmnet, cv.glmnet)
+importFrom(Rcpp, evalCpp)
 
 export(stm, summary.STM, print.STM, plot.STM,
        estimateEffect, plot.estimateEffect, 
@@ -12,12 +13,14 @@ export(stm, summary.STM, print.STM, plot.STM,
        labelTopics, print.labelTopics,
        findThoughts, print.findThoughts, plot.findThoughts, plotQuote,
        manyTopics, selectModel, plotModels, plotTopicLoess, 
-       prepDocuments, readCorpus, writeLdac, textProcessor,
+       prepDocuments, readCorpus, writeLdac, textProcessor, print.textProcessor,
+       summary.textProcessor, head.textProcessor,
 	topicQuality, s, 
       permutationTest, plot.STMpermute, cloud, sageLabels, print.sageLabels,
       multiSTM, print.MultimodDiagnostic, plot.MultimodDiagnostic,
   checkBeta, make.heldout, eval.heldout, checkResiduals,
-  searchK, plot.searchK, plotRemoved, thetaPosterior, topicLasso)
+  searchK, plot.searchK, plotRemoved, thetaPosterior, topicLasso,
+	toLDAvis)
 
 S3method(summary, STM)
 S3method(print, STM)
@@ -32,3 +35,9 @@ S3method(print, sageLabels)
 S3method(print, MultimodDiagnostic)
 S3method(plot, MultimodDiagnostic)
 S3method(plot, searchK)
+S3method(print, textProcessor)
+S3method(summary, textProcessor)
+S3method(head, textProcessor)
+
+
+useDynLib(stm)

@@ -44,9 +44,14 @@ stm <- function(documents, vocab, K,
   
   #Check the Number of Topics
   if(missing(K)) stop("K, the number of topics, is required.")
-  if(!(posint(K) && length(K)==1 && K>1)) stop("K must be a positive integer greater than 1.")
-  if(K==2) warning("K=2 is equivalent to a unidimensional scaling model which you may prefer.")
-  
+  if(K!=0) {
+    #this is the old set of checks
+    if(!(posint(K) && length(K)==1 && K>1)) stop("K must be a positive integer greater than 1.")
+    if(K==2) warning("K=2 is equivalent to a unidimensional scaling model which you may prefer.")
+  } else {
+    #this is the special set of checks for Lee and Mimno
+    if(init.type!="Spectral") stop("Topic selection method can only be used with init.type='Spectral'")
+  }
   #Iterations, Verbose etc.
   if(!(length(max.em.its)==1 & posint(max.em.its))) stop("Max EM iterations must be a single positive integer")
   if(!is.logical(verbose)) stop("verbose must be a logical.")
@@ -135,11 +140,13 @@ stm <- function(documents, vocab, K,
                    gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1),
                    sigma=list(prior=sigma.prior),
                    kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
-                              fixedintercept=TRUE, mstep=list(tol=.001, maxit=3)),
+                              fixedintercept=TRUE, mstep=list(tol=.001, maxit=3),
+                              contrast=FALSE),
                    tau=list(mode=match.arg(kappa.prior), tol=1e-5,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
-                   init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01), 
+                   init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
+                             s=.05, p=3000, d.group.size=2000), 
                    seed=seed,
                    ngroups=ngroups)
   if(settings$gamma$mode=="L1") {
@@ -171,7 +178,8 @@ stm <- function(documents, vocab, K,
   legalargs <-  c("tau.maxit", "tau.tol", 
                   "fixedintercept","kappa.mstepmaxit", "kappa.msteptol", 
                   "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
-                  "nits", "burnin", "alpha", "eta")
+                  "nits", "burnin", "alpha", "eta", "contrast",
+                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -193,6 +201,11 @@ stm <- function(documents, vocab, K,
       if(i=="burnin") settings$init$burnin <- control[[i]]
       if(i=="alpha") settings$init$alpha <- control[[i]]
       if(i=="eta") settings$init$eta <- control[[i]]
+      if(i=="contrast") settings$kappa$contrast <- control[[i]]
+      if(i=="rp.s")  settings$init$s <- control[[i]]
+      if(i=="rp.p")  settings$init$p <- control[[i]]
+      if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
+      if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
     }
   }
   

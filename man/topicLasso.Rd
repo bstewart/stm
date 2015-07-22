@@ -5,7 +5,7 @@
 Plot predictions using topics
 }
 \description{
-Use the \pkg{glmnet} package to plot LASSO based estimates of relationship between an arbitrary dependent variable with topics and additional variables as predictors.
+Use the \pkg{glmnet} package to plot LASSO based estimates of relationship between an arbitrary dependent variable with topics and additional variables as predictors.  This function is experimental (see below).
 }
 \usage{
 topicLasso(formula, data, stmobj=NULL, subset=NULL,
@@ -64,6 +64,8 @@ Additional arguments to be passed to glmnet.  This can be useful for addressing 
 This function is used for estimating the most important topical predictors of an arbitrary outcome.  The idea is to run an L1 regularized regression using \code{\link{cv.glmnet}} in the \pkg{glmnet} package where the document-level dependent variable is chosen by the user and the predictors are the document-topic proportions in the \code{\link{stm}} model along with any other variables of interest.
 
 The function uses cross-validation to choose the regularization parameter and generates a plot of which loadings were the most influential in predicting the outcome.  It also invisibly returns the glmnet model so that it can be used for prediction.
+
+NOTE: This function is still very experimental and may have stability issues.  If stability issues are encountered see the documentation in \pkg{glmnet} for arguments that can be passed to improve convergence.  Also, it is unlikely to work well with multivariate gaussian or multinomial families.
 }
 \references{
 Friedman, Jerome, Trevor Hastie, and Rob Tibshirani. "Regularization paths for generalized linear models via coordinate descent." Journal of statistical software 33.1 (2010): 1.

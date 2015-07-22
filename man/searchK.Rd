@@ -5,7 +5,7 @@ Computes diagnostic values for models with different values of K (number of topi
 
 \description{
  With user-specified initialization, this function  runs selectModel for different
- user-specified topic numbers and computes diagnostic properties for the resturned model. These include exclusivity,
+ user-specified topic numbers and computes diagnostic properties for the returned model. These include exclusivity,
  semantic coherence, heldout likelihood, bound, lbound, and residual. 
 }
 \usage{

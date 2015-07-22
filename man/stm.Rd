@@ -28,7 +28,7 @@ stm(documents, vocab, K,
   Character vector specifying the words in the corpus in the order of the vocab indices in documents. Each term in the vocabulary index must appear at least once in the documents.  See \code{\link{prepDocuments}} for dropping unused items in the vocabulary.
 }
   \item{K}{
-  A positive integer (of size 2 or greater) representing the desired number of topics. Additional detail on choosing the number of topics in details.
+  Typically a positive integer (of size 2 or greater) representing the desired number of topics. If \code{init.type="Spectral"} you can also set \code{K=0} to use the algorithm of Lee and Mimno (2014) to set the number of topics (although unlike the standard spectral initialization this is not deterministic).  Additional detail on choosing the number of topics below.
 }
   \item{prevalence}{
   A formula object with no response variable or a matrix containing topic prevalence covariates.  Use \code{\link{s}}, \code{\link[splines]{ns}} or \code{\link[splines]{bs}} to specify smooth terms. See details for more information.
@@ -82,9 +82,11 @@ Convergence tolerance.  EM stops when the relative change in the approximate bou
  }
 }
 \details{
-This is the main function for estimating a Structural Topic Model (STM).  STM is an admixture with covariates in both mixture components.  Users provide a corpus of documents and a number of topics.  Each word in a document comes from exactly one topic and each document is represented by the proportion of its words that come from each of the K topics.  These proportions are found in the N (number of documents) by K (user specified number of topics) theta matrix.  Each of the K topics are represented as distributions over words.  The K-by-V (number of words in the vocabulary) matrix logbeta contains the natural log of the probability of seeing each word conditional on the topic.  
+This is the main function for estimating a Structural Topic Model (STM).  STM is an admixture with covariates in both mixture components.  Users provide a corpus of documents and a number of topics.  Each word in a document comes from exactly one topic and each document is represented by the proportion of its words that come from each of the K topics.  These proportions are found in the N (number of documents) by K (user specified number of topics) theta matrix.  Each of the K topics are represented as distributions over words.  The K-by-V (number of words in the vocabulary) matrix logbeta contains the natural log of the probability of seeing each word conditional on the topic.
 
 The most important user input in parametric topic models is the number of topics.  There is no right answer to the appropriate number of topics.  More topics will give more fine-grained representations of the data at the potential cost of being less precisely estimated.  The number must be at least 2 which is equivalent to a unidimensional scaling model.  For short corpora focused on very specific subject matter (such as survey experiments) 3-10 topics is a useful starting range.  For small corpora (a few hundred to a few thousand) 5-50 topics is a good place to start.  Beyond these rough guidelines it is application specific.  Previous applications in political science with medium sized corpora (10k to 100k documents) have found 60-100 topics to work well.  For larger corpora 100 topics is a useful default size.  Of course, your mileage may vary.
+
+When \code{init.type="Spectral"} and \code{K=0} the number of topics is set using the algorithm in Lee and Mimno (2014).  See vignette for details.  We emphasize here as we do there that this does not estimate the "true" number of topics and does not necessarily have any particular statistical properties for consistently estimating the number of topics.  It can however provide a useful starting point.
 
 The model for topical prevalence includes covariates which the analyst believes may influence the frequency with which a topic is discussed.  This is specified as a formula which can contain smooth terms using splines or by using the function \code{\link{s}}.  The response portion of the formula should be left blank.  See the examples.  These variables can include numeric and factor variables.  While including variables of class \code{Dates} or other non-numeric, non-factor types will work in \code{stm} it may not always work for downstream functions such as \code{\link{estimateEffect}}.
 
@@ -94,7 +96,7 @@ In addition to the default priors for prevalence, we also make use of the \code{
 
 The default prior choice for content covariates is now the \code{L1} option.  This uses an approximation framework developed in Taddy (2013) called Distributed Multinomial Regression which utilizes a factorized poisson approximation to the multinomial.  See Roberts, Stewart and Airoldi (2014) for details on the implementation here.  This is dramatically faster than previous versions.  The old default setting which uses a Jeffreys prior is also available.  
 
-The argument \code{init.type} allows the user to specify an intialization method.  The default uses collapsed gibbs sampling for the LDA model.  The choice \code{"Spectral"} provides a deterministic inialization using the spectral algorithm given in Arora et al 2013.  See Roberts, Stewart and Tingley (2014) for details and a comparison of differnet approaches.  Particularly when the number of documents is relatively large we highly recommend the Spectral algorithm which often performs extremely well.  Note that the random seed plays no role in the spectral initialization as it is completely deterministic.
+The argument \code{init.type} allows the user to specify an intialization method.  The default uses collapsed gibbs sampling for the LDA model.  The choice \code{"Spectral"} provides a deterministic inialization using the spectral algorithm given in Arora et al 2013.  See Roberts, Stewart and Tingley (2014) for details and a comparison of different approaches.  Particularly when the number of documents is relatively large we highly recommend the Spectral algorithm which often performs extremely well.  Note that the random seed plays no role in the spectral initialization as it is completely deterministic (unless using the \code{K=0} or random projection settings).
 
 Specifying an integer greater than 1 for the argument \code{ngroups} causes the corpus to be broken into the specified number of groups.  Global updates are then computed after each group in turn.  This approach, called memoized variational inference in Hughes and Sudderth (2013), can lead to more rapid convergence when the number of documents is large.  Note that the memory requirements scale linearly with the number of groups so this provides a tradeoff between memory efficiency and computational power.
 
@@ -116,6 +118,11 @@ The \code{control} argument is a list with named components which can be used to
     \item{\code{burnin}}{Sets the burnin for collapsed gibbs sampling in LDA intializations. Defaults to 25}
     \item{\code{alpha}}{Sets the prevalence hyperparameter in collapsed gibbs sampling in LDA initializations.  Defaults to 50/K}
     \item{\code{eta}}{Sets the topic-word hyperparameter in collapsed gibbs sampling in LDa intializations.  Defaults to .01}
+    \item{\code{contrast}}{A logical indicating whether a standard contrast coding should be used for content covariates.  Typically this should remain at the default of FALSE.}
+    \item{\code{rp.s}}{Parameter between 0 and 1 controlling the sparsity of random projections for the spectral initailization.  Defaults to .05}
+    \item{\code{rp.p}}{Dimensionality of the random projections for the spectral initialization.  Defaults to 3000.}
+    \item{\code{rp.d.group.size}}{Controls the size of blocks considered at a time when computing the random projections for the spectral initialization.  Defaults to 2000.}
+    \item{\code{SpectralRP}}{A logical which when \code{TRUE} turns on the experimental random projections spectral initialization.}
 }}
 \value{
 An object of class STM
@@ -129,6 +136,7 @@ An object of class STM
 \item{eta}{Matrix of means for the variational distribution of the multivariate normal latent variables used to calculate theta.}
 \item{invsigma}{The inverse of the sigma matrix.}
 \item{time}{The time elapsed in seconds}
+\item{version}{The version number of the package with which the model was estimated.}
 }
 
 \references{
@@ -138,14 +146,11 @@ An object of class STM
   Computation, Application, and
   Evaluation. http://goo.gl/uHkXAQ
 
-  Roberts M., Stewart, B. and Airoldi, E. (2014) "Structural Topic Models" 
+  Roberts M., Stewart, B. and Airoldi, E. (2015) "A model of text for experimentation in the social sciences" 
   
-  Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
-  Gadarian, S., Albertson, B., Albertson, B. and Rand,
-  D. (Forthcoming). "Structural topic models for open ended survey
-  responses." American Journal of Political Science http://goo.gl/0x0tHJ
+Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., Albertson, B., et al. (2014). Structural topic models for open ended survey responses. American Journal of Political Science, 58(4), 1064-1082. http://goo.gl/0x0tHJ
   
-  Roberts, M., Stewart, B. and Tingley, D. (2014) `` Navigating the Local Modes of Big Data: The Case of Topic Models''
+Roberts, M., Stewart, B., & Tingley, D. (Forthcoming). "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data Analytics in Social Science, Government, and Industry." New York: Cambridge University Press.
 }
 
 \seealso{

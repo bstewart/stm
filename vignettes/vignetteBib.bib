@@ -7,11 +7,13 @@
   pages={993-1022},
 }
 
-@article{arora2012practical,
-  title={A practical algorithm for topic modeling with provable guarantees},
-  author={Arora, Sanjeev and Ge, Rong and Halpern, Yoni and Mimno, David and Moitra, Ankur and Sontag, David and Wu, Yichen and Zhu, Michael},
-  journal={arXiv preprint arXiv:1212.4777},
-  year={2012}
+@inproceedings{wallach2009evaluation,
+  title={Evaluation methods for topic models},
+  author={Wallach, Hanna M and Murray, Iain and Salakhutdinov, Ruslan and Mimno, David},
+  booktitle={Proceedings of the 26th Annual International Conference on Machine Learning},
+  pages={1105--1112},
+  year={2009},
+  organization={ACM}
 }
 
 @article{blei2007correlated,
@@ -23,29 +25,15 @@
   publisher={JSTOR}
 }
 
-@article{robertsstewartchina,
-  title = {What the Big Picture Reveals About Governments:
-Scalable Text Analysis of Millions of Newspapers in China},
-  author = {Margaret E. Roberts and Brandon M. Stewart},
-  journal = {Working paper},
-  year = {2014}
-}
-
 @article{TextComparative,
 	title = {Computer assisted text analysis for comparative politics},
-	year = {2013},
+	year = {2015},
 	author = {Lucas, Christopher and Nielsen, Richard and Roberts, Margaret and Stewart, Brandon and Storer, Alex and Tingley, Dustin},
-journal={Working Paper},
+journal={Political Analysis},
+ volume={23},
+ issue={2},
+ pages={254--277}
 }
-
-@article{StudentText,
-	author = {Reich, Justin and Tingley, Dustin and Leder-Luis, Jetson and Roberts, Margaret E. and Stewart, Brandon M.},
-	title = {Computer Assisted Reading and Discovery for Student Generated Text},
-	journal = {Working Paper},
-        year={2014}
-} 
-	
-
 
 @article{nips2013,
 	author = {Margaret E. Roberts and Brandon M. Stewart and Dustin Tingley and Edoardo M. Airoldi},
@@ -73,18 +61,16 @@ journal={Working Paper},
 }
 
 @article{ajps,
-	title = {Structural topic models for open-ended survey responses},
-	journal = {American Journal of Political Science},
-	year = {2014},
-	author = {Margaret E. Roberts and Brandon M. Stewart and Tingley, Dustin and Christopher Lucas and Jetson Leder-Luis and Shana Gadarian
-and Bethany Albertson and David Rand}
-	}
-@article{taddy2013distributed,
-  title={Distributed Multinomial Regression},
-  author={Taddy, Matt},
-  journal={arXiv preprint arXiv:1311.6139},
-  year={2013}
+  title={Structural Topic Models for Open-Ended Survey Responses},
+  author={Roberts, Margaret E and Stewart, Brandon M and Tingley, Dustin and Lucas, Christopher and Leder-Luis, Jetson and Gadarian, Shana Kushner and Albertson, Bethany and Rand, David G},
+  journal={American Journal of Political Science},
+  volume={58},
+  number={4},
+  pages={1064--1082},
+  year={2014},
+  publisher={Wiley Online Library}
 }
+
 @article{taddy2012multinomial,
   title={Multinomial inverse regression for text analysis},
   author={Taddy, Matt},
@@ -113,13 +99,114 @@ and Bethany Albertson and David Rand}
   year={2010}
 }
 
-@Manual{matrixStats,
-title = {matrixStats: Methods that apply to rows and columns of a matrix},
-author = {Henrik Bengtsson},
-year = {2014},
-note = {R package version 0.8.14},
-url = {http://CRAN.R-project.org/package=matrixStats},
+@article{friedman2010regularization,
+  title={Regularization paths for generalized linear models via coordinate descent},
+  author={Friedman, Jerome and Hastie, Trevor and Tibshirani, Rob},
+  journal={Journal of Statisical Software},
+  volume={33},
+  number={1},
+  pages={1},
+  year={2010},
 }
+
+
+@article {StudentText,
+	title = {Computer Assisted Reading and Discovery for Student Generated Text in Massive Open Online Courses},
+	journal = {Journal of Learning Analytics},
+	year = {Forthcoming},
+	author = {Reich, Justin and Tingley, Dustin and Jetson Leder-Luis and Margaret E. Roberts and Brandon M. Stewart}
+}
+
+@misc{MatrixStats,
+  title={matrixStats: Methods that apply to rows and columns of a matrix},
+  author={Bengtsson, H and Corrada-Bravo, H and Gentleman, R and Jaffee, H},
+  year={2014},
+  publisher={R package version 0.8}
+}
+
+
+@article{slam,
+  title={slam: Sparse Lightweight Arrays and Matrices},
+  author={Hornik, K and Meyer, D and Buchta, Ch},
+  journal={R package version 0.1-32, URL http://CRAN. R-project. org/package= slam},
+  year={2014}
+}
+
+@article{lda,
+  title={lda: Collapsed gibbs sampling for topic models},
+  author={Chang, Jonathan},
+  journal={R package version 1.3.2, URL http://CRAN. R-project. org/package= lda},
+  year={2015}
+}
+
+@article{SnowballC,
+  title={SnowballC: Snowball stemmers based on the C libstemmer UTF-8 library},
+  author={Bouchet-Valat,Milan},
+  journal={R package version 0.5.1, URL http://CRAN. R-project. org/package= SnowballC},
+  year={2014}
+}
+
+@article{hornik2011topicmodels,
+  title={topicmodels: An R package for fitting topic models},
+  author={Hornik, Kurt and Gr{\"u}n, Bettina},
+  journal={Journal of Statistical Software},
+  volume={40},
+  number={13},
+  pages={1--30},
+  year={2011},
+  publisher={American Statistical Association}
+}
+
+@article{stringr,
+  title={stringr: Make it easier to work with strings},
+  author={Wickham, Hadley},
+  journal={R package version 0.6.2},
+  volume={2},
+  year={2012}
+}
+
+@article{meyer2008text,
+  title={Text mining infrastructure in R},
+  author={Meyer, David and Hornik, Kurt and Feinerer, Ingo},
+  journal={Journal of Statistical Software},
+  volume={25},
+  number={5},
+  pages={1--54},
+  year={2008},
+  publisher={American Statistical Association}
+}
+
+@article{huge,
+  title={The huge package for high-dimensional undirected graph estimation in r},
+  author={Zhao, Tuo and Liu, Han and Roeder, Kathryn and Lafferty, John and Wasserman, Larry},
+  journal={The Journal of Machine Learning Research},
+  volume={13},
+  number={1},
+  pages={1059--1062},
+  year={2012},
+  publisher={JMLR. org}
+}
+
+@article{igraph,
+  title={The igraph software package for complex network research},
+  author={Csardi, Gabor and Nepusz, Tamas},
+  journal={InterJournal, Complex Systems},
+  volume={1695},
+  number={5},
+  pages={1--9},
+  year={2006}
+}
+
+@inbook{chaptermulti,
+	title = {Navigating the Local Modes of Big Data: The Case of Topic Models},
+	booktitle = {Data Analytics in Social Science, Government, and Industry},
+	year = {Forthcoming},
+	publisher = {Cambridge University Press},
+	organization = {Cambridge University Press},
+	address = {New York},
+	author = {Margaret Roberts and Brandon Stewart and Tingley, Dustin}
+}
+
 
 @Manual{rcitation,
 title = {R: A Language and Environment for Statistical Computing},
@@ -130,90 +217,184 @@ year = {2014},
 url = {http://www.R-project.org/},
 }
 
-@Manual{slam,
-title = {slam: Sparse Lightweight Arrays and Matrices},
-author = {Kurt Hornik and David Meyer and Christian Buchta},
-year = {2014},
-note = {R package version 0.1-31},
-url = {http://CRAN.R-project.org/package=slam},
+
+@article{arora2012practical,
+  title={A practical algorithm for topic modeling with provable guarantees},
+  author={Arora, Sanjeev and Ge, Rong and Halpern, Yoni and Mimno, David and Moitra, Ankur and Sontag, David and Wu, Yichen and Zhu, Michael},
+  journal={arXiv preprint arXiv:1212.4777},
+  year={2012}
 }
 
-@Manual{lda,
-title = {lda: Collapsed Gibbs sampling methods for topic models.},
-author = {Jonathan Chang},
-year = {2012},
-note = {R package version 1.3.2},
-url = {http://CRAN.R-project.org/package=lda},
+@article{TvinnereimClimate,
+  title={Explaining topic prevalence in answers to open-ended survey questions about climate change},
+  author={Tvinnereim, Endre},
+  journal={Nature Climate Change},
+  year={forthcoming}
 }
 
-@Manual{stringr,
-title = {stringr: Make it easier to work with strings.},
-author = {Hadley Wickham},
-year = {2012},
-note = {R package version 0.6.2},
-url = {http://CRAN.R-project.org/package=stringr},
-}
-
-@Manual{SnowballC,
-title = {SnowballC: Snowball stemmers based on the C libstemmer UTF-8 library},
-author = {Milan Bouchet-Valat},
-year = {2013},
-note = {R package version 0.5},
-url = {http://CRAN.R-project.org/package=SnowballC},
-}
-
-@article{meyer2008text,
-title={Text mining infrastructure in R},
-author={Meyer, David and Hornik, Kurt and Feinerer, Ingo},
-journal={Journal of Statistical Software},
-volume={25},
-number={5},
-pages={1--54},
-year={2008},
-publisher={American Statistical Association}
-}
-
-@Article{igraph,
-title = {The igraph software package for complex network research},
-author = {Gabor Csardi and Tamas Nepusz},
-journal = {InterJournal},
-volume = {Complex Systems},
-pages = {1695},
-year = {2006},
-url = {http://igraph.org},
-}
-
-@Manual{huge,
-title = {huge: High-dimensional Undirected Graph Estimation},
-author = {Tuo Zhao and Han Liu and Kathryn Roeder and John Lafferty and Larry Wasserman},
-year = {2013},
-note = {R package version 1.2.5},
-url = {http://CRAN.R-project.org/package=huge},
-}
-
-@article{friedman2010regularization,
-title={Regularization paths for generalized linear models via coordinate descent},
-author={Friedman, Jerome and Hastie, Trevor and Tibshirani, Rob},
-journal={Journal of statistical software},
-volume={33},
-number={1},
-pages={1},
-year={2010},
-publisher={NIH Public Access}
-}
-
-
-
-@techreport{robertsnavigating,
-  title={Navigating the Local Modes of Big Data: The Case of Topic Models},
-  author={Roberts, Margaret E and Stewart, Brandon M and Tingley, Dustin},
-  institution={Working Paper. Export BibTex Tagged XML},
-  year={2014}
-}
 
 @article{taddyestimation,
   title={On Estimation and Selection for Topic Models},
   author={Taddy, Matthew A},
   journal={Journal of Machine Learning Research},
   year={2012}
+}
+
+@book{sailing,
+  title={Sailing the water’s edge: domestic politics and American foreign policy},
+  author={Milner, Helen V and Tingley, Dustin H},
+  publisher={Princeton University Press},
+  year={2015}
+}
+@techreport{khan2009variational,
+	Author = {Khan, Mohammad Emtiyaz and Bouchard, Guillaume},
+	Institution = {University of British Columbia},
+	Title = {Variational EM Algorithms for Correlated Topic Models},
+	Year = {2009}}
+
+
+@article{taddy2013distributed,
+  title={Distributed Multinomial Regression},
+  author={Taddy, Matt},
+  journal={arXiv preprint arXiv:1311.6139},
+  year={2013}
+}
+@article{hornik2005clue,
+  title={A clue for cluster ensembles},
+  author={Hornik, Kurt},
+  journal={Journal of Statistical Software},
+  volume={14},
+  number={12},
+  year={2005},
+  publisher={University of California, Los Angeles}
+}
+
+@manual{wordcloud,
+    title = {wordcloud: Word Clouds},
+    author = {Ian Fellows},
+    year = {2014},
+    note = {R package version 2.5},
+    url = {http://CRAN.R-project.org/package=wordcloud},
+  }
+  @Manual{geometry,
+    title = {geometry: Mesh generation and surface tesselation},
+    author = {Kai Habel and Raoul Grasman and Andreas Stahel and Andreas Stahel and David C. Sterratt},
+    year = {2014},
+    note = {R package version 0.3-5},
+    url = {http://CRAN.R-project.org/package=geometry},
+  }
+@Article{RcppArmadillo,
+    title = {RcppArmadillo: Accelerating R with high-performance C++ linear algebra},
+    author = {Dirk Eddelbuettel and Conrad Sanderson},
+    journal = {Computational	Statistics and Data Analysis},
+    year = {2014},
+    volume = {71},
+    month = {March},
+    pages = {1054--1063},
+    url = {http://dx.doi.org/10.1016/j.csda.2013.02.005},
+  }  
+@article{eddelbuettel2011rcpp,
+  title={Rcpp: Seamless R and C++ integration},
+  author={Eddelbuettel, Dirk and Fran{\c{c}}ois, Romain and Allaire, J and Chambers, John and Bates, Douglas and Ushey, Kevin},
+  journal={Journal of Statistical Software},
+  volume={40},
+  number={8},
+  pages={1--18},
+  year={2011}
+}
+@Manual{Rtsne,
+    title = {Rtsne: T-Distributed Stochastic Neighbor Embedding using Barnes-Hut
+Implementation},
+    author = {Jesse Krijthe},
+    year = {2015},
+    note = {R package version 0.10},
+    url = {http://CRAN.R-project.org/package=Rtsne},
+  }  
+ @Manual{KernSmooth,
+    title = {KernSmooth: Functions for Kernel Smoothing Supporting Wand & Jones (1995)},
+    author = {Matt Wand},
+    year = {2015},
+    note = {R package version 2.23-14},
+    url = {http://CRAN.R-project.org/package=KernSmooth},
+  }
+  
+@article{wang2013variational,
+  title={Variational inference in nonconjugate models},
+  author={Wang, Chong and Blei, David M},
+  journal={The Journal of Machine Learning Research},
+  volume={14},
+  number={1},
+  pages={1005--1031},
+  year={2013},
+  publisher={JMLR. org}
+}
+@article{van2014accelerating,
+  title={Accelerating t-sne using tree-based algorithms},
+  author={Van Der Maaten, Laurens},
+  journal={The Journal of Machine Learning Research},
+  volume={15},
+  number={1},
+  pages={3221--3245},
+  year={2014},
+  publisher={JMLR. org}
+}
+@inproceedings{lee2014low,
+  title={Low-dimensional embeddings for interpretable anchor-based topic inference},
+  author={Lee, Moontae and Mimno, David},
+  booktitle={Proceedings of Empirical Methods in Natural Language Processing},
+  year={2014}
+}
+@article{wang2015time,
+  title={Time-Dependent Topic Analysis with Endogenous and Exogenous Processes},
+  author={Wang, Baiyang and Klabjan, Diego},
+  year={2015}
+}
+
+@article{goodman2015creating,
+  title={Creating and Destroying Party Brands},
+  author={Goodman, Craig and Grimmer, Justin and Parker, David and Zlotnick, Frances},
+  year={2015}
+}
+@article{stmjasa,
+	title = {A model of text for experimentation in the social sciences},
+	year = {2015},
+	author = {Margaret E. Roberts and Brandon M. Stewart and Edoardo M Airoldi}
+}
+
+@article{rcpparma,
+    title = {RcppArmadillo: Accelerating R with high-performance C++ linear algebra},
+    author = {Dirk Eddelbuettel and Conrad Sanderson},
+    journal = {Computational	Statistics and Data Analysis},
+    year = {2014},
+    volume = {71},
+    month = {March},
+    pages = {1054--1063},
+    url = {http://dx.doi.org/10.1016/j.csda.2013.02.005},
+  }
+
+@article{fearfriction,
+  title={Fear or Friction?  How Censorship Slows the Spread of Information in the Digital Age},
+  author={Roberts, Margaret},
+  year={2015}
+}
+@article{learningfrom,
+  title={Learning from Cheap Talk: Predicting North Korean Actions from Their Words},
+  author={Kuk, John Seungmin and Rhee, Inbok},
+    year={2015}
+}
+@article{fromtiananmen,
+  title={From Tiananmen to Outsourcing: How Rising Import Competition has Changed Congressional Voting Towards China},
+  author={Kuk, John Seungmin and Seligsohn, Deborah and Zhang, Jack Jiakun},
+  year={2015}
+}
+@article{constituent,
+  title={Constituent Communications in a New Technological Era: Congressional E-Newsletters},
+  author={Janusz, Andrew and Kuk, John Seungmin and Lajevardi, Nazita},
+  year={2015}
+}
+
+@article{chuangcomputer,
+  title={Computer-Assisted Content Analysis: Topic Models for Exploring Multiple Subjective Interpretations},
+  author={Chuang, Jason and Wilkerson, John D and Weiss, Rebecca and Tingley, Dustin and Stewart, Brandon M and Roberts, Margaret E and Poursabzi-Sangdeh, Forough and Grimmer, Justin and Findlater, Leah and Boyd-Graber, Jordan and others},
+  year={2015}
 }
