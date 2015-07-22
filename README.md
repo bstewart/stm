@@ -8,6 +8,8 @@ Authors: [Molly Roberts](http://scholar.harvard.edu/mroberts), [Brandon Stewart]
 
 Please email all comments/questions to bms4 [AT] princeton.edu
 
+[![Build Status](https://travis-ci.org/bstewart/stm.png?branch=master)](https://travis-ci.org/bstewart/stm)
+
 ###Summary
 
 This repository will host the development version of the package.  It is also available on CRAN. It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). 
