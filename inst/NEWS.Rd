@@ -1,6 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
-\section{Version 1.1}{
+\section{Version 1.1.1}{
+\itemize{
+\item Updated Vignette
+}}
+\section{Version 1.1.0}{
 \itemize{
 \item Performance improvements via various optimizations including porting some components to C++
 \item Various new experimental features including K=0

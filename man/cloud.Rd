@@ -17,7 +17,7 @@ cloud(stmobj, topic=NULL, type=c("model", "documents"),
 The STM model object to be used in making the word cloud.
 }
 \item{topic}{
-NULL to plot the marginal distribution of words in the corpus or a single integer indicating the topic number.
+NULL to plot the marginal distribution of words in the corpus, or a single integer indicating the topic number.
 }
 \item{type}{
 Specifies how the wordcloud is constructed.  The type \code{"model"} which is used by default is based on the probability of the word given the topic.  The type \code{"documents"} plots words within documents that have a topic proportion of higher than \code{thresh}.  This requires that the \code{documents} argument also be specified.   

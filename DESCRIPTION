@@ -1,13 +1,13 @@
 Package: stm
 Type: Package
 Title: Estimation of the Structural Topic Model
-Version: 1.1.0
-Date: 2015-7-22
+Version: 1.1.1
+Date: 2015-8-28
 Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 Maintainer: Brandon Stewart <bms4@princeton.edu>
 Depends: R (>= 2.10)
 LinkingTo: Rcpp, RcppArmadillo
-Imports: matrixStats, splines, slam, lda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3)
+Imports: matrixStats, splines, slam, lda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3), grDevices, graphics, stats, utils
 Suggests: igraph, SnowballC, tm (>= 0.6), huge, clue, wordcloud, KernSmooth, NLP, LDAvis, geometry, Rtsne
 LazyData: yes
 Description: The Structural Topic Model (STM) allows researchers 
@@ -15,4 +15,4 @@ Description: The Structural Topic Model (STM) allows researchers
   The package also includes tools for model selection, visualization,
   and estimation of topic-covariate regressions.
 License: MIT + file LICENSE
-URL: http://structuraltopicmodel.com
+URL: http://structuraltopicmodel.com 

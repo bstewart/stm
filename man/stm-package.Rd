@@ -45,7 +45,7 @@ Pre-Fit Models and Data:
 \author{
 Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 
-Maintainer: Brandon Stewart <bstewart@fas.harvard.edu>
+Maintainer: Brandon Stewart <bms4@princeton.edu>
 }
 \references{
 Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013) "The
@@ -55,7 +55,7 @@ Computation, Application, and Evaluation. http://goo.gl/uHkXAQ
 
 Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
 Gadarian, S., Albertson, B., Albertson, B. and Rand,
-D. (Forthcoming). "Structural topic models for open ended survey
+D. (2014). "Structural topic models for open ended survey
 responses." American Journal of Political Science http://goo.gl/0x0tHJ
 }
 \keyword{ package }
