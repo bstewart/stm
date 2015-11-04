@@ -39,7 +39,7 @@ Additional parameters passed to \code{wordcloud}.
 Uses the \pkg{wordcloud} package to make a word cloud of a particular topic.  The option \code{"model"} uses the topic-word model parameters.  Thus it shows words weighted by their probability conditional that the word comes from a particular topic.  With content covariates it averages over the values for all levels of the content covariate weighted by the empirical frequency in the dataset.  The option \code{"documents"} plots the words which appear in documents that have a topic proportion higher than \code{thresh}.  Thus \code{"model"} gives a pure model based interpetation of the topic while \code{"documents"} gives a picture of all the words in documents which are highly associated with the topic.
 }
 \references{
-Ian Fellows (2013). wordcloud: Word Clouds. R package version 2.4.
+Ian Fellows (2014). wordcloud: Word Clouds. R package version 2.5.
   \url{http://CRAN.R-project.org/package=wordcloud}}
 \seealso{
 \code{\link{plot.STM}}

@@ -41,7 +41,7 @@ We note that in models with low numbers of topics the simple procedure and the m
 \item{cor}{K by K correlation matrix element-wise multiplied by the adjacency matrix. Note that this will contain significant negative correlations as well as positive correlations.}
 }
 \references{
-Lucas C, Nielsen R, Roberts ME, Stewart BM, Storer A, Tingley D. Computer assisted text analysis for comparative politics.
+Lucas, Christopher, Richard A. Nielsen, Margaret E. Roberts, Brandon M. Stewart, Alex Storer, and Dustin Tingley. "Computer-Assisted Text Analysis for Comparative Politics." Political Analysis (2015).
 
 T. Zhao and H. Liu. The huge Package for High-dimensional Undirected Graph Estimation in R. Journal of Machine Learning Research, 2012
 

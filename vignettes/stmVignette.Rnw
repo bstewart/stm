@@ -1,6 +1,6 @@
 %\VignetteIndexEntry{Using stm}
 %\documentclass[nojss]{jss}
-\documentclass[article]{jss}
+\documentclass[article,shortnames]{jss}
 
 \author{\hspace{1.1in}Margaret E. Roberts\\\hspace{1.1in}UCSD \And
   \hspace{1.5in}Brandon M. Stewart\\\hspace{1.5in}Princeton \And
@@ -13,7 +13,7 @@
 \Shorttitle{Structural Topic Models}  %% a short title (if necessary)
 
 \Abstract{
-This vignette demonstrates how to use the Structural Topic Model, \pkg{stm}, \texttt{R} package. The Structural Topic Model (STM) allows researchers to flexibly estimate a topic model that includes document-level meta-data. Estimation is accomplished through a fast variational approximation based approach. The \pkg{stm} package provides many useful features, including rich ways to explore topics, appropriate uncertainty estimation, and extensive plotting and visualization options.
+This vignette demonstrates how to use the Structural Topic Model \pkg{stm} \texttt{R} package. The Structural Topic Model allows researchers to flexibly estimate a topic model that includes document-level meta-data. Estimation is accomplished through a fast variational approximation based approach. The \pkg{stm} package provides many useful features, including rich ways to explore topics, appropriate uncertainty estimation, and extensive plotting and visualization options.
 }
 
 \Keywords{structural topic model, text analysis, LDA, \pkg{stm}, \proglang{R}}
@@ -49,12 +49,11 @@ This vignette demonstrates how to use the Structural Topic Model, \pkg{stm}, \te
 \usepackage{natbib}
 
 % == Other Packages
-\usepackage{amsmath, amsfonts, amssymb}
-%, url, bm}
-%\usepackage{rotating}
-%\usepackage{latexsym}
-%\usepackage{graphicx}
-%\usepackage{ulem}
+\usepackage{amsmath, amsfonts, amssymb, url, bm}
+\usepackage{rotating}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{ulem}
 
 \usepackage{placeins}
 
@@ -64,16 +63,20 @@ This vignette demonstrates how to use the Structural Topic Model, \pkg{stm}, \te
 
 \setkeys{Gin}{width=0.5\textwidth}
 
+\def\citepos#1{\citeauthor{#1}'s (\citeyear{#1})}
+\newcommand\citea{\citeauthor}
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
-\spacingset{1.5}
+\spacingset{1}
 
+<<echo=FALSE>>=
+options(prompt = "R> ", continue = "+", width = 70, useFancyQuotes = FALSE)
+@ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
-%\subsection{Method Overview}
 
-Text data is ubiquitious in social science research: traditional media, social media, survey data, and numerous other sources contribute to the massive quantity of text in the modern information age. The mounting availability of and interest in text data has been the development of a variety of statistical approaches for analyzing this data. We focus on the Structural Topic Model (STM), and its implementation in the \pkg{stm}, \texttt{R} package,  which provides users tools for machine-assisted reading of large text corpora.\footnote{We thank Antonio Coppola, Jetson Leder-Luis, Christopher Lucas, and Alex Storer for various assistance in the construction of this package.  We also thank the many package users who have written in with bug reports and feature requests. Additional details and development version at \url{structuraltopicmodel.com}}  Building off of the tradition of probabilistic topic models, such as the Latent Dirichlet Allocation (LDA) \citep{blei2003latent} and Correlated Topic Model (CTM) \citep{blei2007correlated}, the Structural Topic Model's key innovation is that it permits users to incorporate \emph{metadata}, defined as information about each document, into the topic model. With the STM, users can model anything from the framing of international newspapers \citep{stmjasa}, open ended survey responses in the American National Election Study results \citep{ajps}, to online class forums \citep{StudentText}, to Twitter feeds and religious statements \citep{TextComparative}, to lobbying reports \citep{sailing}.\footnote{A fast growing range of other papers also utilize the model in a variety of ways \citep{wang2015time,goodman2015creating,fearfriction,learningfrom,fromtiananmen,constituent,chuangcomputer,TvinnereimClimate}.}
+Text data is ubiquitious in social science research: traditional media, social media, survey data, and numerous other sources contribute to the massive quantity of text in the modern information age. The mounting availability of and interest in text data has been the development of a variety of statistical approaches for analyzing this data. We focus on the Structural Topic Model (STM), and its implementation in the \pkg{stm} \texttt{R} package,  which provides users tools for machine-assisted reading of large text corpora.\footnote{We thank Antonio Coppola, Jetson Leder-Luis, Christopher Lucas, and Alex Storer for various assistance in the construction of this package.  We also thank the many package users who have written in with bug reports and feature requests. Additional details and development version at \url{structuraltopicmodel.com}}  Building off of the tradition of probabilistic topic models, such as the Latent Dirichlet Allocation (LDA) \citep{blei2003latent} and Correlated Topic Model (CTM) \citep{blei2007correlated}, the Structural Topic Model's key innovation is that it permits users to incorporate \emph{metadata}, defined as information about each document, into the topic model. With the STM, users can model anything from the framing of international newspapers \citep{stmjasa}, open ended survey responses in the American National Election Study results \citep{ajps}, to online class forums \citep{StudentText}, to Twitter feeds and religious statements \citep{TextComparative}, to lobbying reports \citep{sailing}.\footnote{A fast growing range of other papers also utilize the model in a variety of ways \citep{wang2015time,goodman2015creating,fearfriction,constituent,chuangcomputer,TvinnereimClimate}.}
 
 
 The goal of the Structural Topic Model is to allow researchers to discover topics and estimate their relationship to document metadata. Outputs of the model can be used to conduct hypothesis testing about these relationships. This of course mirrors the type of analysis that social scientists perform with other types of data, where the goal is to discover relationships between variables and test hypotheses. Thus the methods implemented in this paper help to build a bridge between statistical techniques and research goals. However, the \pkg{stm} package also provides tools to assist with a wide range of the work flow associated with analyzing textual data. The design of the package is such that users have a broad array of options to process raw text data, explore and analyze the data and present findings using a variety of plotting tools.
@@ -91,15 +94,23 @@ The generative process for each document (indexed by $d$) for a STM model with $
 
 \begin{enumerate}
 \item Draw the document-level attention to each topic from a logistic-normal generalized linear model based on document covariates $X_d$. \\
-$\vec{\theta}_d | X_d\gamma, \Sigma \sim$ LogisticNormal$(\mu = X_d\gamma, \Sigma)$
+\begin{equation}\label{eqn:dgp1}
+\vec{\theta}_d | X_d\gamma, \Sigma \sim \text{ LogisticNormal}(\mu = X_d\gamma, \Sigma)
+\end{equation}
 \item Form the document-specific distribution over words representing each topic ($k$) using the baseline word distribution ($m$), the topic specific deviation $\kappa_k$, the covariate group deviation $\kappa_g$ and the interaction between the two $\kappa_i$.\\
-$\beta_{d,k} \propto $ exp$(m + \kappa_{k} + \kappa_{g_d} + \kappa_{i = (kg_d)})$
+\begin{equation}\label{eqn:dgp2}
+\beta_{d,k} \propto  \text{ exp}(m + \kappa_{k} + \kappa_{g_d} + \kappa_{i = (kg_d)})
+\end{equation}
 \item For each word in the document, ($n \in 1, \dots, N_d$):
 \begin{itemize}
 \item Draw word's topic assignment based on the document-specific distribution over topics.\\
- $z_{d, n} | \vec{\theta}_d \sim $ Multinomial$(\vec{\theta})$
+\begin{equation}\label{eqn:dgp3}
+z_{d, n} | \vec{\theta}_d \sim \text{ Multinomial}(\vec{\theta})
+\end{equation}
 \item Conditional on the topic chosen, draw an observed word from that topic.\\
-$ w_{d, n} | z_{d, n}, \beta_{d, k= z} \sim $ Multinomial$(\beta_{d, k = z})$
+\begin{equation}\label{eqn:dpg4}
+ w_{d, n} | z_{d, n}, \beta_{d, k= z} \sim \text{ Multinomial}(\beta_{d, k = z})
+\end{equation}
 \end{itemize}
 \end{enumerate}
 
@@ -117,14 +128,14 @@ To fit the model, we use a semi-collapsed variational Expectation-Maximization a
 \section{Using the Structural Topic Model}
 \label{sec:use}
 
-In this section we demonstrate the basics of using the package.\footnote{The stm package leverages functions from a variety of other packages, including \pkg{Rcpp} \citep{eddelbuettel2011rcpp}, \pkg{RcppArmadillo} \citep{RcppArmadillo}, \pkg{MatrixStats} \citep{MatrixStats}, \pkg{slam} \citep{slam}, \pkg{lda} \citep{lda}, \pkg{stringr} \citep{stringr}, \pkg{SnowballC} \citep{SnowballC}, \pkg{tm} \citep{meyer2008text}, \pkg{igraph} \citep{igraph}, \pkg{huge} \citep{huge}, \pkg{glmnet} \citep{friedman2010regularization}, \pkg{clue} \citep{hornik2005clue}, \pkg{wordcloud} \citep{wordcloud}, \pkg{KernSmooth} \citep{KernSmooth}, \pkg{geometry} \citep{geometry}, and \pkg{Rtsne} \citep{Rtsne}}. Figure~\ref{fig:stmreview} presents a heuristic overview of the package, which parallels a typical workflow. For each step we list different functions in the \pkg{stm} package that accomplish each task. First users ingest the data and prepare it for analysis. Next a structural topic model is estimated. As we discuss below, the ability to estimate the structural topic model quickly allows for the \emph{evaluation}, \emph{understanding}, and \emph{visualization} of results. For each of these steps we provide examples of some of the functions that are in the package and discussed in this paper. All of the functions come with help files, and examples, that can be accessed by typing ? and then the function's name.
+In this section we demonstrate the basics of using the package.\footnote{The \pkg{stm} package leverages functions from a variety of other packages, including \pkg{Rcpp} \citep{eddelbuettel2011rcpp}, \pkg{RcppArmadillo} \citep{RcppArmadillo}, \pkg{MatrixStats} \citep{MatrixStats}, \pkg{slam} \citep{slam}, \pkg{lda} \citep{lda}, \pkg{stringr} \citep{stringr}, \pkg{SnowballC} \citep{SnowballC}, \pkg{tm} \citep{meyer2008text}, \pkg{igraph} \citep{igraph}, \pkg{huge} \citep{huge}, \pkg{glmnet} \citep{friedman2010regularization}, \pkg{clue} \citep{hornik2005clue}, \pkg{wordcloud} \citep{wordcloud}, \pkg{KernSmooth} \citep{KernSmooth}, \pkg{geometry} \citep{geometry}, and \pkg{Rtsne} \citep{Rtsne}}. Figure~\ref{fig:stmreview} presents a heuristic overview of the package, which parallels a typical workflow. For each step we list different functions in the \pkg{stm} package that accomplish each task. First users ingest the data and prepare it for analysis. Next a structural topic model is estimated. As we discuss below, the ability to estimate the structural topic model quickly allows for the \emph{evaluation}, \emph{understanding}, and \emph{visualization} of results. For each of these steps we provide examples of some of the functions that are in the package and discussed in this paper. All of the functions come with help files, and examples, that can be accessed by typing ? and then the function's name.
 
 
 
 \begin{figure}
   \centering
   \includegraphics[scale=.45]{Flowchart}
-  \caption{Heuristic description of STM package features.}\label{fig:stmreview}
+  \caption{Heuristic description of \pkg{stm} package features.}\label{fig:stmreview}
 \end{figure}
 
 \FloatBarrier
@@ -145,21 +156,15 @@ The first step is to load data into \texttt{R}. The \pkg{stm} package represents
 
 \subsubsection{Reading in data from a ``spreadsheet''}
 
-A common way that researchers store text data alongside covariates related to the text is in a spreadsheet, with each row a separate observation and one column containing the text data. The \pkg{stm} packages comes with a special function, \code{textProcessor}, that conveniently reads in data stored in this format and processes the data to ready it for analysis in the \pkg{stm} package.  For example, users would first read in a .csv file that contains the textual data and associated metadata using native R functions, or load a pre-prepared dataframe as we do below.\footnote{Note that the model does not permit estimation when there are variables used in the model that have missing values. As such, it can be helpful to subset data to observations that do not have missing values for metadata that will be used in the STM model.} Next, they would pass this object through the \code{textProcessor} function.
+A common way that researchers store text data alongside covariates related to the text is in a spreadsheet, with each row a separate observation and one column containing the text data. The \pkg{stm} package comes with a special function, \code{textProcessor}, that conveniently reads in data stored in this format and processes the data to ready it for analysis in the \pkg{stm} package.  For example, users would first read in a .csv file that contains the textual data and associated metadata using native \proglang{R} functions, or load a pre-prepared dataframe as we do below.\footnote{Note that the model does not permit estimation when there are variables used in the model that have missing values. As such, it can be helpful to subset data to observations that do not have missing values for metadata that will be used in the STM model.} Next, they would pass this object through the \code{textProcessor} function.
 
 To illustrate how to use the \pkg{stm} package, we will use a collection of blogposts about American politics that were written in 2008, from the CMU 2008 Political Blog Corpus \citep{poliblog}.\footnote{The set of blogs is available at \url{http://sailing.cs.cmu.edu/socialmedia/blog2008.html} and documentation on the blogs is available at \url{http://www.sailing.cs.cmu.edu/socialmedia/blog2008.pdf}.  You can find the cleaned version of the data we used for this vignette here: \url{http://goo.gl/tsprNO}.} The blogposts were gathered from six different blogs: American Thinker, Digby, Hot Air, Michelle Malkin, Think Progress, and Talking Points Memo.  Each blog has its own particular political bent.  The day within 2008 when each blog was written was also recorded.  Thus for each blogpost, there is metadata on the day it was written and the political ideology of the blog for which it was written. In this case, each blog post is a row in a .csv file, with the text contained in a variable called ``documents''.
 
 
 <<eval=FALSE>>=
-#read in your data that is in a spreadsheet form .csv file here)
-#You can find the cleaned version of the poliblog data
-# we used for this paper here: \url{http://goo.gl/tsprNO}.
 data <- read.csv("poliblogs2008.csv")
-#stemming/stopword removal, etc.
 processed <- textProcessor(data$documents, metadata = data)
-#structure and index for usage in the stm model. Verify no-missingness.
 out <- prepDocuments(processed$documents, processed$vocab, processed$meta)
-#output will have object meta, documents, and vocab
 docs <- out$documents
 vocab <- out$vocab
 meta  <-out$meta
@@ -168,13 +173,13 @@ meta  <-out$meta
 
 \subsubsection{Reading in data from other text processing programs}
 
-Sometimes researchers will encounter data that is not in a spreadsheet format. The \code{readCorpus} function is capable of loading data from a wide variety of formats, including the standard R matrix class along with the sparse matrices from the packages \pkg{slam} and \pkg{Matrix}.  Document term matrices created by the popular package \pkg{tm} are inherited from the \pkg{slam} sparse matrix format and thus are included as a special case.
+Sometimes researchers will encounter data that is not in a spreadsheet format. The \code{readCorpus} function is capable of loading data from a wide variety of formats, including the standard \proglang{R} matrix class along with the sparse matrices from the packages \pkg{slam} and \pkg{Matrix}.  Document term matrices created by the popular package \pkg{tm} are inherited from the \pkg{slam} sparse matrix format and thus are included as a special case.
 
 A program that is helpful for setting up and processing text data with document metadata, is \href{www.txtorg.org}{txtorg} \citep{TextComparative}. The \pkg{txtorg} program generates three separate files: a metadata file, a vocabulary file, and a file with the original documents. The default export format for \pkg{txtorg} is the \texttt{ldac} sparse matrix format popularized by David Blei's implementation of LDA.  The \code{readCorpus()} function can read in data of this type using the ``ldac'' option.
 
 \subsubsection{Pre-processing text content}
 
-It is often useful to engage in some processing of the text data before modelling it. The most common processing steps are stemming (reducing words to their root form) and stop word removal (e.g., the, is, at). The \code{textProcessor} function implements stemming and stop word removal across multiple languages by using the \pkg{tm} package. In addition to the options available in the \pkg{tm} package, there are native options in \code{textProcessor} for the removal of non-character text and html code as well as the ability to pass custom stop word lists. All of these are features that the authors and users have requested over time and are intended to make the \pkg{STM} package as versatile as possible.
+It is often useful to engage in some processing of the text data before modelling it. The most common processing steps are stemming (reducing words to their root form) and stop word removal (e.g., the, is, at). The \code{textProcessor} function implements stemming and stop word removal across multiple languages by using the \pkg{tm} package. In addition to the options available in the \pkg{tm} package, there are native options in \code{textProcessor} for the removal of non-character text and html code as well as the ability to pass custom stop word lists. All of these are features that the authors and users have requested over time and are intended to make the \pkg{stm} package as versatile as possible.
 
 
 \subsection{Prepare: Associating text with metadata}
@@ -187,7 +192,7 @@ After reading in the data, we suggest using the utility function \code{prepDocum
 <<eval=FALSE>>=
 plotRemoved(processed$documents, lower.thresh = seq(1, 200, by = 100))
 out <- prepDocuments(processed$documents, processed$vocab,
-                     processed$meta, lower.thresh = 15)
+  processed$meta, lower.thresh = 15)
 @
 
 to evaluate how many words and documents would be removed from the dataset at each word threshold, which is the minimum number of documents a word needs to appear in in order for the word to be kept within the vocabulary.  Then the user can select their preferred threshold within \code{prepDocuments}.
@@ -214,12 +219,12 @@ In this example, we use the ratings variable (blog ideology) as a covariate in t
 
 In this example we simply let prevalence be a function of the ``ratings'' variable, which is coded as either ``Liberal'' or ``Conservative,'' and the variable ``day.'' which is an integer measure of days running from the first to the last day of 2008. To illustrate, we now estimate a 20 topic STM model. The user can then pass the output from the model, \code{poliblogPrevFit}, through the various functions we discuss below (e.g., \code{plot.STM}) to inspect the results.
 
-If a user wishes to specify additional prevalence covariates, she would do so using the standard formula notation in \code{R} which we discuss at greater length below. A feature of the \code{stm} function is that ``prevalence'' can be expressed as a formula that can include multiple covariates and factorial or continuous covariates.  For example, by using the formula setup we can enter other covariates additively. Additionally users can include more flexible functional forms of continuous covariates, including standard transforms like \code{log()}, as well as \code{ns()} or \code{bs()} from the \pkg{splines} package. The \pkg{stm} package also includes a convenience function \code{s()}, which selects a fairly flexible b-spline basis. In the current example we allow for the variable ``date'' to be estimated with a spline. As we show later in the paper, interactions between covariates can also be added using the standard notation for \texttt{R} formulas. In summary, in the example below, we enter in the variables additively, but allowing for the day variable, an integer variable measuring which day the blog was posted, to have a non-linear relationship in the topic estimation stage.
+If a user wishes to specify additional prevalence covariates, she would do so using the standard formula notation in \proglang{R} which we discuss at greater length below. A feature of the \code{stm} function is that ``prevalence'' can be expressed as a formula that can include multiple covariates and factorial or continuous covariates.  For example, by using the formula setup we can enter other covariates additively. Additionally users can include more flexible functional forms of continuous covariates, including standard transforms like \code{log()}, as well as \code{ns()} or \code{bs()} from the \pkg{splines} package. The \pkg{stm} package also includes a convenience function \code{s()}, which selects a fairly flexible b-spline basis. In the current example we allow for the variable ``date'' to be estimated with a spline. As we show later in the paper, interactions between covariates can also be added using the standard notation for \texttt{R} formulas. In summary, in the example below, we enter in the variables additively, but allowing for the day variable, an integer variable measuring which day the blog was posted, to have a non-linear relationship in the topic estimation stage.
 
 <<eval=FALSE>>=
 poliblogPrevFit <- stm(out$documents, out$vocab, K = 20,
-            prevalence =~ rating + s(day), max.em.its = 75,
-            data = out$meta, init.type = "Spectral")
+  prevalence =~ rating + s(day), max.em.its = 75,
+  data = out$meta, init.type = "Spectral")
 @
 
 The model is set to run for a maximum of 75 EM iterations (controlled by \code{max.em.its}) using a seed we selected (\code{seed}).  Typically, convergence of the model will be monitored by the change in the approximate bound between EM iterations.  Once the bound has a small enough change between iterations, the model is considered converged. To reduce compiling time, in this paper we do not run the models and instead load a workspace with the models already estimated.
@@ -243,8 +248,8 @@ When the user cannot use the spectral initialization, she should estimate many m
 
 <<eval=FALSE>>=
 poliblogSelect <- selectModel(out$documents, out$vocab, K = 20,
-        prevalence =~ rating + s(day), max.em.its = 75,
-        data = out$meta, runs = 20, seed = 8458159)
+  prevalence =~ rating + s(day), max.em.its = 75,
+  data = out$meta, runs = 20, seed = 8458159)
 @
 In order to select a model for further investigation, users must choose one of the candidate models' outputs from \code{selectModel}. To do this, \code{plotModel} can be used to plot the average \emph{semantic coherence} and \emph{exclusivity} scores for each model (represented by topic numbers) as well as the semantic coherence and exclusivity for each topic.\footnote{See \citet{stmjasa,ajps} for a discussion of these criteria.} Each of these criteria are calculated for each topic within a model run. The \code{plotModel} function calculates the average across all topics for each run of the model and plots these by labeling the model run with a numeral. Often times users will select a model with desirable properties in both dimensions (i.e., models with average scores towards the upper right side of the plot). As shown in Figure~\ref{fig:select}, the \code{plotModel} function also plots each topic's values, which helps give a sense of the variation in these parameters.\footnote{For a given model, the user can plot the semantic coherence and exclusivity scores with the \code{topicQuality} function.}
 
@@ -254,7 +259,7 @@ In order to select a model for further investigation, users must choose one of t
 <<eval=TRUE,fig=TRUE,width=4,height=4>>=
 plotModels(poliblogSelect)
 @
-\caption{Plot of selectModel results. Numerals represent the average for each model, and dots represent topic specific scores.}
+\caption{Plot of \code{selectModel} results. Numerals represent the average for each model, and dots represent topic specific scores.}
 \label{fig:select}
 \end{center}
 \end{figure}
@@ -262,7 +267,7 @@ plotModels(poliblogSelect)
 Next the user would want to select one of these models to work with. For example, the third model could be extracted from the object that is outputted by \code{selectModel}.
 
 <<eval=FALSE>>=
-selectedmodel <- poliblogSelect$runout[[3]] #choose the third model
+selectedmodel <- poliblogSelect$runout[[3]] 
 @
 
 Alternatively, as discussed in Section~\ref{sec:eval}, the user can evaluate the stability of particular \emph{topics} across models.  
@@ -274,7 +279,7 @@ STM assumes a fixed user-specified number of topics. There is not a ``right'' an
 
 <<eval=FALSE>>=
 storage <- searchK(out$documents, out$vocab, K = c(7, 10),
-        prevalence =~ rating + s(day), data = meta)
+  prevalence =~ rating + s(day), data = meta)
 @
 
 
@@ -295,13 +300,13 @@ After choosing a model based on ex-ante criteria, the user must next interpret t
 
 We next describe two approaches for users to explore the topics that have been estimated. The first approach is to look at collections of words that are associated with topics. The second approach is to read actual documents that are estimated to be highly associated with each topic. Both of these approaches should be used. Below, we use the 20 topic model estimated with the spectral initialization.
 
-To explore the words associated with each topic we can use the \code{labelTopics} function.  For models where a content covariate is included \code{sageLabels} can also be used. Both these functions will print to the monitor words associated with each topic. The function by default prints several different types of word profiles, including highest probability words and FREX words.\footnote{For more information on FREX and high probability rankings, see \citet{nips2013,stmjasa,ajps,TextComparative}. For more information on score, see the LDA R package, \url{http://cran.r-project.org/web/packages/lda/lda.pdf}. For more information on lift, see \citet{taddy2012multinomial}.}  In order to translate these results to a format that can easily be used within a paper, the \code{plot.stm(,type = "labels")} function will print topic words to a graphic device. Notice that in this case, the labels option is specified as the \code{plot.STM} function has several functionalities that we describe below (the options for ``perspectives" and ``summary").
+To explore the words associated with each topic we can use the \code{labelTopics} function.  For models where a content covariate is included \code{sageLabels} can also be used. Both these functions will print to the monitor words associated with each topic. The function by default prints several different types of word profiles, including highest probability words and FREX words.\footnote{For more information on FREX and high probability rankings, see \citet{nips2013,stmjasa,ajps,TextComparative}. For more information on score, see the \pkg{lda} \proglang{R} package, \url{http://cran.r-project.org/web/packages/lda/lda.pdf}. For more information on lift, see \citet{taddy2012multinomial}.}  In order to translate these results to a format that can easily be used within a paper, the \code{plot.stm(,type = "labels")} function will print topic words to a graphic device. Notice that in this case, the labels option is specified as the \code{plot.STM} function has several functionalities that we describe below (the options for ``perspectives" and ``summary").
 
 <<eval=TRUE>>=
 labelTopics(poliblogPrevFit, c(3, 7, 20))
 @
 
-To read documents that are highly associated with topics the \code{findThoughts} function can be used. This function will print the documents highly associated with each topic.\footnote{The \code{theta} parameter in the stm object output has the posterior probability that this function uses.} Reading these documents is helpful for understanding the content of a topic and interpreting its meaning.
+To read documents that are highly associated with topics the \code{findThoughts} function can be used. This function will print the documents highly associated with each topic.\footnote{The \code{theta} parameter in the \code{stm} object output has the posterior probability that this function uses.} Reading these documents is helpful for understanding the content of a topic and interpreting its meaning.
 
 In our example, for expositional purposes, we restrict the length of the document to the first 200 characters.\footnote{This uses the object \code{shortdoc} contained in the workspace loaded above, which is the first 200 characters of original text.} We see that Topic 3 describes discussions of Obama during the 2008 presidential election. Topic 20 discusses the Bush administration.
 
@@ -309,25 +314,25 @@ To print example documents to a graphics device, \code{plotQuote} can be used. T
 
 <<eval=TRUE,results=hide>>=
 thoughts3 <- findThoughts(poliblogPrevFit, texts = shortdoc,
-                        n = 2, topics = 3)$docs[[1]]
+  n = 2, topics = 3)$docs[[1]]
 thoughts20 <- findThoughts(poliblogPrevFit, texts = shortdoc,
-                           n = 2, topics = 20)$docs[[1]]
+  n = 2, topics = 20)$docs[[1]]
 @
 
 %manually correcting some unicode errors
-<<eval=TRUE, echo=FALSE>>=
+<<eval=TRUE, echo=FALSE, results=verbatim>>=
 thoughts3 <-
-    c("Here's video of the ad we reported on below that the Obama campaign is running in Ohio responding to the earlier Swift-Boating spot tying Obama to former Weatherman Bill Ayers... With all our pr",
+  c("Here's video of the ad we reported on below that the Obama campaign is running in Ohio responding to the earlier Swift-Boating spot tying Obama to former Weatherman Bill Ayers... With all our pr",
       "As noted here and elsewhere, the words 'William Ayers' appeared nowhere in yesterday's debate, despite the fact that the McCain campaign hinted for days that McCain would go hard at Obama's association")
 thoughts20 <-
-    c("Waxman calls for release of FBI interviews with Bush and Cheney.  In a letter to Attorney General Michael Mukasey today, Rep. Henry Waxman (D-CA), the Chairman of the Hous e Committee on Oversight",
+  c("Waxman calls for release of FBI interviews with Bush and Cheney.  In a letter to Attorney General Michael Mukasey today, Rep. Henry Waxman (D-CA), the Chairman of the Hous e Committee on Oversight",
       "Report: Bush 'Personally Directed' Gonzales To Strong-Arm Ashcroft At His BedsideIn his May 2007 testimony, describing the infamous strong-arming of John Ashcroft done by Andy Card and Alberto")
 @
 
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE>>=
+<<eval=TRUE,fig=TRUE, keep.source=TRUE, results = verbatim>>=
 par(mfrow = c(1, 2),mar = c(.5, .5, 1, .5))
 plotQuote(thoughts3, width = 30, main = "Topic 3")
 plotQuote(thoughts20, width = 30, main = "Topic 20")
@@ -348,10 +353,10 @@ Estimating the relationship between metadata and topics is a core feature of the
 
 
 
-<<eval=TRUE>>=
+<<eval=TRUE, keep.source=TRUE, results = verbatim>>=
 out$meta$rating <- as.factor(out$meta$rating)
 prep <- estimateEffect(1:20 ~ rating + s(day), poliblogPrevFit,
-         meta = out$meta, uncertainty = "Global")
+  meta = out$meta, uncertainty = "Global")
 @
 
 
@@ -368,7 +373,7 @@ Corpus level visualization can be done in several different ways. The first rela
 <<eval=TRUE,fig=TRUE,width=8>>=
 plot.STM(poliblogPrevFit, type = "summary", xlim = c(0, .3))
 @
-\caption{Graphical Display of Estimated Topic Proportions.}
+\caption{Graphical display of estimated topic proportions.}
 \label{fig:summary}
 \end{center}
 \end{figure}
@@ -383,22 +388,21 @@ We now discuss plotting metadata/topic relationships in substantial detail, as t
 First, users must specify the variable that they wish to use for calculating an effect. If there are multiple variables specified in \code{estimateEffect}, then all other variables are held at their sample median. These parameters include the expected proportion of a document that belongs to a topic as a function of a covariate, or a first difference type estimate, where topic prevalence for a particular topic is contrasted for two groups (e.g., liberal versus conservative).  \code{estimateEffect} should be run and the output saved before plotting when it is time intensive to calculate uncertainty estimates and/or because users might wish to plot different quantities of interest using the same simulated parameters from \code{estimateEffect}.\footnote{The help file for this function describes several different ways for uncertainty estimate calculation, some of which are much faster than others.} The output can then be plotted. %In this example we use a string variable and it is required that for this function that we first convert it into a factor variable.
 
 
-When the covariate of interest is binary, or users are interested in a particular contrast, the method = "difference" option will plot the change in topic proportion shifting from one specific value to another. Figure~\ref{fig:difference} gives an example. For factor variables, users may wish to plot the marginal topic proportion for each of the levels ("pointestimate").
+When the covariate of interest is binary, or users are interested in a particular contrast, the method = "difference" option will plot the change in topic proportion shifting from one specific value to another. Figure~\ref{fig:difference} gives an example. For factor variables, users may wish to plot the marginal topic proportion for each of the levels (\code{"pointestimate"}).
 
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=6,height=4>>=
+<<eval=TRUE,fig=TRUE,width=6,height=4, keep.source=TRUE, results = verbatim>>=
 plot.estimateEffect(prep, covariate = "rating", topics = c(3, 7, 20),
-        model = poliblogPrevFit, method = "difference",
-        cov.value1 = "Liberal", cov.value2 = "Conservative",
-        xlab = "More Conservative ... More Liberal",
-        main = "Effect of Liberal vs. Conservative",
-        xlim = c(-.1, .1), labeltype = "custom",
-        custom.labels = c('Obama', 'Sarah Palin',
-                          'Bush Presidency'))
+  model = poliblogPrevFit, method = "difference",
+  cov.value1 = "Liberal", cov.value2 = "Conservative",
+  xlab = "More Conservative ... More Liberal",
+  main = "Effect of Liberal vs. Conservative",
+  xlim = c(-.1, .1), labeltype = "custom",
+  custom.labels = c('Obama', 'Sarah Palin','Bush Presidency'))
 @
-\caption{Graphical Display of Topical Prevalence Contrast.}
+\caption{Graphical display of topical prevalence contrast.}
 \label{fig:difference}
 \end{center}
 \end{figure}
@@ -411,17 +415,16 @@ When users have variables that they want to treat continuously, users can choose
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8>>=
+<<eval=TRUE,fig=TRUE,width=8, keep.source=TRUE, results = verbatim>>=
 plot.estimateEffect(prep, "day", method = "continuous", topics = 7,
-model = z, printlegend = FALSE, xaxt = "n", xlab = "Time (2008)")
-monthseq <- seq(from = as.Date("2008-01-01"),
-                to = as.Date("2008-12-01"), by = "month")
+  model = z, printlegend = FALSE, xaxt = "n", xlab = "Time (2008)")
+monthseq <- seq(from = as.Date("2008-01-01"), 
+  to = as.Date("2008-12-01"), by = "month")
 monthnames <- months(monthseq)
-axis(1,
-     at = as.numeric(monthseq) - min(as.numeric(monthseq)),
-     labels = monthnames)
+axis(1,at = as.numeric(monthseq) - min(as.numeric(monthseq)), 
+  labels = monthnames)
 @
-\caption{Graphical Display of Topic Prevalence. Topic 7 prevalence is plotted as a smooth function of day, holding rating at sample median, with 95\% confidence intervals.}
+\caption{Graphical display of topic prevalence. Topic 7 prevalence is plotted as a smooth function of day, holding rating at sample median, with 95\% confidence intervals.}
 \label{fig:spline}
 \end{center}
 \end{figure}
@@ -433,8 +436,8 @@ We can also plot the influence of covariates included in as a topical content co
 
 <<eval=FALSE>>=
 poliblogContent <- stm(out$documents, out$vocab, K = 20,
-        prevalence =~ rating + s(day), content =~ rating,
-        max.em.its = 75, data = out$meta, init.type = "Spectral")
+  prevalence =~ rating + s(day), content =~ rating,
+  max.em.its = 75, data = out$meta, init.type = "Spectral")
 @
 
 Next, the results can be plotted using the \code{plot.STM(,type = "perspectives")} function.  This functions shows which words within a topic are more associated with one covariate value versus another. In Figure~\ref{fig:perp}, vocabulary differences by ratings is plotted for topic 11. Topic 11 is related to Guantanamo. Its top FREX words were ``tortur, detaine, court, justic, interrog, prosecut, legal''. However, Figure~\ref{fig:perp} lets us see how liberals and conservatives talk about this topic differently. In particular, liberals emphasized ``torture'' whereas conservatives emphasize typical court language such as ``illegal'' and ``law.'' \footnote{At this point you can only
@@ -442,10 +445,10 @@ Next, the results can be plotted using the \code{plot.STM(,type = "perspectives"
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8,height=6>>=
+<<eval=TRUE,fig=TRUE,width=8,height=6, keep.source=TRUE, results = verbatim>>=
 plot.STM(poliblogContent, type = "perspectives", topics = 11)
 @
-\caption{Graphical Display of Topical Perspectives.}
+\caption{Graphical display of topical perspectives.}
 \label{fig:perp}
 \end{center}
 \end{figure}
@@ -454,10 +457,10 @@ This function can also be used to plot the contrast in words across two topics.\
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=6,height=4>>=
+<<eval=TRUE,fig=TRUE,width=6,height=4,keep.source=TRUE, results = verbatim>>=
 plot.STM(poliblogPrevFit, type = "perspectives", topics = c(12, 20))
 @
-\caption{Graphical Display of Topical Contrast between Topics 12 and 20.}
+\caption{Graphical display of topical contrast between topics 12 and 20.}
 \label{fig:perp2}
 \end{center}
 \end{figure}
@@ -470,29 +473,29 @@ Another modification that is possible in this framework is to allow for interact
 
 <<eval=FALSE>>=
 poliblogInteraction <- stm(out$documents, out$vocab, K = 20,
-        prevalence =~ rating * day, max.em.its = 75,
-        data = out$meta, init.type = "Spectral")
+  prevalence =~ rating * day, max.em.its = 75,
+  data = out$meta, init.type = "Spectral")
 @
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8>>=
+<<eval=TRUE,fig=TRUE,width=8, keep.source=TRUE, results = verbatim>>=
 prep <- estimateEffect(c(20) ~ rating * day, poliblogInteraction,
-        metadata = out$meta, uncertainty = "None")
+  metadata = out$meta, uncertainty = "None")
 
 plot.estimateEffect(prep, covariate = "day", model = poliblogInteraction,
-        method = "continuous", xlab = "Days", moderator = "rating",
-        moderator.value = "Liberal", linecol = "blue", ylim = c(0, .12),
-        printlegend = F)
+  method = "continuous", xlab = "Days", moderator = "rating",
+  moderator.value = "Liberal", linecol = "blue", ylim = c(0, .12),
+  printlegend = F)
 
 plot.estimateEffect(prep, covariate = "day", model = poliblogInteraction,
-        method = "continuous", xlab = "Days", moderator = "rating",
-        moderator.value = "Conservative", linecol = "red", add = T,
-        printlegend = F)
+  method = "continuous", xlab = "Days", moderator = "rating",
+  moderator.value = "Conservative", linecol = "red", add = T,
+  printlegend = F)
 legend(0, .08, c("Liberal", "Conservative"),
-       lwd = 2, col = c("blue", "red"))
+  lwd = 2, col = c("blue", "red"))
 @
-\caption{Graphical Display of Topical Content. This plots the interaction between time (day of blog post) and rating (liberal versus conservative). Topic 20 prevalence is plotted as linear function of time, holding the rating at either 0 (Liberal) or 1 (Conservative). Were other variables included in the model, they would be held at their sample medians.}
+\caption{Graphical display of topical content. This plots the interaction between time (day of blog post) and rating (liberal versus conservative). Topic 20 prevalence is plotted as linear function of time, holding the rating at either 0 (Liberal) or 1 (Conservative). Were other variables included in the model, they would be held at their sample medians.}
 \label{fig:spline2}
 \end{center}
 \end{figure}
@@ -507,10 +510,10 @@ There are multiple other ways to visualize results from an STM model. Topics the
 \begin{figure}
 \vspace{-20pt}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=2,height=2>>=
+<<eval=TRUE,fig=TRUE,width=2,height=2, keep.source=TRUE, results = verbatim>>=
 cloud(poliblogPrevFit, topic = 7, scale = c(2,.25))
 @
-\caption{WordCloud Display of vice President topic.}
+\caption{Word cloud display of vice President topic.}
 \label{fig:cloud}
 \end{center}
 \vspace{-20pt}
@@ -519,17 +522,17 @@ cloud(poliblogPrevFit, topic = 7, scale = c(2,.25))
 
 In addition, the Structural Topic Model permits correlations between topics. Positive correlations between topics indicate that both topics are likely to be discussed within a document. These can be visualized using \code{plot.topicCorr()}. The user can specify a correlation threshold.  If two topics are correlated above that threshold, then those two topics are considered to be linked.  After calculating which topics are correlated with one another, \code{plot.topicCorr} produces a layout of topic correlations using a force-directed layout algorithm, which we present in Figure~\ref{fig:correlations}. We can use the correlation graph to observe the connection between such as topics 12 (Iraq War) and 20 (Bush administration). \code{plot.topicCorr} has several options that are described in the help file.
 
-<<eval=TRUE>>=
+<<eval=TRUE, keep.source=TRUE, results = verbatim>>=
 mod.out.corr <- topicCorr(poliblogPrevFit)
 @
 
 \begin{figure}
 \vspace{-20pt}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=4,height=4>>=
+<<eval=TRUE,fig=TRUE,width=4,height=4, keep.source=TRUE, results = verbatim>>=
 plot.topicCorr(mod.out.corr)
 @
-\caption{Graphical Display of Topic Correlations.}
+\caption{Graphical display of topic correlations.}
 \label{fig:correlations}
 \end{center}
 \vspace{-20pt}
@@ -542,7 +545,7 @@ Finally, there are several add-on packages that take output from a structural to
 \section{Changing basic estimation defaults}
 \label{sec:defaults}
 
-In this section, we explain how to change default settings in the STM package's estimation commands.  We start by discussing how to chose among different methods for initializing model parameters.  We then discuss how to set and evaluate convergence criteria.  Next we describe a method for accelerating convergence when the analysis includes a large number of documents. Finally we discuss some variations on content covariate models which allow the user to control model complexity.
+In this section, we explain how to change default settings in the \pkg{stm} package's estimation commands.  We start by discussing how to chose among different methods for initializing model parameters.  We then discuss how to set and evaluate convergence criteria.  Next we describe a method for accelerating convergence when the analysis includes a large number of documents. Finally we discuss some variations on content covariate models which allow the user to control model complexity.
 
 \subsection{Initialization}
 \label{sec:init}
@@ -568,17 +571,17 @@ Once a model has been fit, convergence can easily be assessed by plotting the va
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8>>=
+<<eval=TRUE,fig=TRUE,width=8, keep.source=TRUE, results = verbatim>>=
 plot(poliblogPrevFit$convergence$bound, type = "l",
-     ylab = "Approximate Objective",
-     main = "Convergence")
+  ylab = "Approximate Objective",
+  main = "Convergence")
 @
-\caption{Graphical Display of Convergence.}
+\caption{Graphical display of convergence.}
 \label{fig:converge}
 \end{center}
 \end{figure}
 
-\subsection{Accelarating Convergence}
+\subsection{Accelerating convergence}
 When the number of documents is large convergence in topic models can be slow.  This is because each iteration requires a complete pass over all the documents before updating the global parameters.  To accelerate convergence we can split the documents into several equal-sized blocks and update the global parameters after each block.  The option \code{ngroups} specifies the number of blocks, and setting it equal to an integer greater than one turns on this functionality.
 
 Note that setting the \code{ngroups} value to a large number can dramatically increase the memory requirements of the function.  Thus as the number of blocks is increased we are trading off memory for computational efficiency.
@@ -600,7 +603,7 @@ Users can turn off interactions by specifying the option \code{interactions = FA
 In this section we review options for altering the prior structure in the \code{stm}  function.  We highlight the alternatives and provide intuition for the properties of each option. We chose default settings that we expect will perform  the best in the majority of cases and thus changing these settings should only be necessary if the defaults are not performing well.
 
 \subsection{Changing estimation of prevalence covariate coefficients}
-The user can choose between two options: ``Pooled" and ``L1".   The difference between these two is that the ``L1" option can induce sparsity in the coefficients (i.e., many are set exactly to zero) while the ``Pooled" estimator is computationally more efficient. ``Pooled" is the default option and estimates a model where the coefficients on topic prevalence have a zero-mean Normal prior with variance given a broad inverse-gamma hyperprior.  This provides moderate shrinkage towards zero but does not induce sparsity. In practice we recommend the default ``Pooled" estimator unless the prevalence covariates are very high dimensional (such as a factor with hundreds of categories).
+The user can choose between two options: \code{"Pooled"} and \code{"L1"}.   The difference between these two is that the \code{"L1"} option can induce sparsity in the coefficients (i.e., many are set exactly to zero) while the \code{"Pooled"} estimator is computationally more efficient. \code{"Pooled"} is the default option and estimates a model where the coefficients on topic prevalence have a zero-mean Normal prior with variance given a broad inverse-gamma hyperprior.  This provides moderate shrinkage towards zero but does not induce sparsity. In practice we recommend the default \code{"Pooled"} estimator unless the prevalence covariates are very high dimensional (such as a factor with hundreds of categories).
 
 
 You can also choose \code{gamma.prior = "L1"} which uses the \code{glmnet} package \citep{friedman2010regularization} to allow for grouped penalties between the L1 and L2 norm. In these settings we estimate a regularization path and then select the optimal shrinkage parameter using a user-tunable information criterion. By default selecting the L1 option will apply the L1 penalty by selecting the optimal shrinkage parameter using AIC. The defaults have been specifically tuned for the STM but almost all the relevant arguments can be changed through the \code{control} argument. Changing the \code{gamma.enet} parameter by specifying \code{control = list(gamma.enet = .5)} allows the user to choose a mix between the L1 and L2 norms. When set to 1 (as by default) this is the lasso penalty, when set to 0 it is the ridge penalty. Any value in between is a mixture called the elastic net.
@@ -617,10 +620,10 @@ There are over a dozen additional options documented in \code{stm} for altering 
 
 \section{Performance and design}
 \label{sec:performance}
-The primary reason to use the \pkg{stm} is the rich feature set summarized in Figure \ref{fig:stmreview}.  However, a key part of making the tool practical for every day use is increasing the speed of estimation.  Due to the non-conjugate model structure, bayesian inference for the Structural Topic Model is challenging and computationally intensive. Over the course of developing the \pkg{stm} package we have continually introduced new methods to make estimating the model faster. In this section, we demonstrate large performance gains over the closest analog accesible through \code{R} and then detail some of the approaches that make those gains possible.
+The primary reason to use the \pkg{stm} is the rich feature set summarized in Figure \ref{fig:stmreview}.  However, a key part of making the tool practical for every day use is increasing the speed of estimation.  Due to the non-conjugate model structure, bayesian inference for the Structural Topic Model is challenging and computationally intensive. Over the course of developing the \pkg{stm} package we have continually introduced new methods to make estimating the model faster. In this section, we demonstrate large performance gains over the closest analog accesible through \proglang{R} and then detail some of the approaches that make those gains possible.
 
 \subsection{Benchmarks}
-Without the inclusion of covariates, STM reduces to a logistic-normal topic model, often called the Correlated Topic Model (CTM) \citep{blei2007correlated}. The \pkg{topicmodels} package in \code{R} provides an interface to David Blei's original \code{C} code to estimate the CTM \citep{hornik2011topicmodels}.  This provides us with the opportunity to produce a direct comparison to a comparable model.  While the generative models are the same, the variational approximations to the posterior are actually distinct, with the Blei code using a different approach to the nonconjugacy problem.
+Without the inclusion of covariates, STM reduces to a logistic-normal topic model, often called the Correlated Topic Model (CTM) \citep{blei2007correlated}. The \pkg{topicmodels} package in \proglang{R} provides an interface to David Blei's original \proglang{C} code to estimate the CTM \citep{hornik2011topicmodels}.  This provides us with the opportunity to produce a direct comparison to a comparable model.  While the generative models are the same, the variational approximations to the posterior are actually distinct, with the Blei code using a different approach to the nonconjugacy problem.
 
 In order to provide a direct comparison we use a set of 5000 randomly sampled documents from the poliblog2008 corpus described above.  This set of documents is included as \code{poliblog5k} in the \pkg{stm} package.  We want to evaluate both the speed with which the model estimates as well as the quality of the solution.  Due to the differences in the variational approximation the objective functions are not directly comparable so we use an estimate of the expected per-document held-out log-likelihood.  With the built-in function \code{make.heldout} we construct a dataset in which 10\% of documents have half of their words removed.  We can then evaluate the quality of inferred topics on the same evaluation set across all models.
 <<eval=FALSE>>=
@@ -631,29 +634,27 @@ We arbitrarily decided to evaluate performance using \code{K = 100} topics.
 
 The function \code{CTM} in the \pkg{topicmodels} package uses different default settings than the original Blei code.  Thus we present results using both sets of settings. We start by converting our document format to the simple triplet matrix format used by the \pkg{topicmodels} package using an internal \pkg{stm} function.
 <<eval=FALSE>>=
-slam <- stm:::doc.to.ijv(heldout$documents)
-slam <- simple_triplet_matrix(slam$i, slam$j, slam$v)
-colnames(slam) <- heldout$vocab
+slam <- convertCorpus(heldout$documents, heldout$vocab, type="slam")
 @
 
 We then estimate the model with both sets of defaults
 <<eval=FALSE>>=
 mod1 <- CTM(slam, k = 100)
 control_CTM_VEM <- list(estimate.beta = TRUE, verbose = 1,
-                       seed = as.integer(2138), nstart = 1L, best = TRUE,
-                       var = list(iter.max = 20, tol = 1e-6),
-                       em = list(iter.max = 1000, tol = 1e-3),
-                       initialize = "random",
-                       cg = list(iter.max = -1, tol = 1e-6))
+  seed = as.integer(2138), nstart = 1L, best = TRUE,
+  var = list(iter.max = 20, tol = 1e-6),
+  em = list(iter.max = 1000, tol = 1e-3),
+  initialize = "random",
+  cg = list(iter.max = -1, tol = 1e-6))
 mod2 <- CTM(slam, k = 100, control = control_CTM_VEM)
 @
 
 For the STM we estimate two versions, one with default convergence settings and one with \code{emtol = 1e-3} to match the Blei convergence tolerance.  In both cases we use the spectral initialization method which we generally recommend.
 <<eval=FALSE>>=
 stm.mod1 <- stm(heldout$documents, heldout$vocab, K = 100,
-                init.type = "Spectral")
+  init.type = "Spectral")
 stm.mod2 <- stm(heldout$documents, heldout$vocab, K = 100,
-                init.type = "Spectral", emtol = 1e-3)
+  init.type = "Spectral", emtol = 1e-3)
 @
 
 \begin{table}[]
@@ -678,7 +679,7 @@ In \cite{blei2007correlated} and \pkg{topicmodels}, the inference procedure for 
 
 By contrast in STM we combine the Laplace approximate variational inference scheme of \cite{wang2013variational} with a partially collapsed strategy inspired by \cite{khan2009variational} in which we analytically integrate out the token-level parameters. This allows us to perform one numerical optimization which optimizes the variational mean of the topic proportions ($\lambda$) and then solves in closed form for the variance and the implied token assignments.  This removes iteration between blocks of parameters within each document dramatically speeding convergence.  Details can be found in \cite{stmjasa}.
 
-We use quasi-Newton methods to optimize $\lambda$, initializing at the previous iteration's estimate.  This process of warm-starting the optimization process means that the cost of inference per iteration often drops considerably as the model approaches convergence (e.g., the default STM example above the first iteration takes close to 45 seconds but quickly drops down to 30 seconds).    Because this optimization step is the main bottleneck for performance we code the objective function and gradient in the fast \code{C++} library \code{Armadillo} using the \pkg{RcppArmadillo} package \citep{RcppArmadillo}.  After computing the optimal $\lambda$ we calculate the variance of the variational posterior by calculating the hessian (also implemented in \code{C++}) and efficiently inverting it via the Cholesky decomposition.
+We use quasi-Newton methods to optimize $\lambda$, initializing at the previous iteration's estimate.  This process of warm-starting the optimization process means that the cost of inference per iteration often drops considerably as the model approaches convergence (e.g., the default STM example above the first iteration takes close to 45 seconds but quickly drops down to 30 seconds).    Because this optimization step is the main bottleneck for performance we code the objective function and gradient in the fast \proglang{C++} library \code{Armadillo} using the \pkg{RcppArmadillo} package \citep{RcppArmadillo}.  After computing the optimal $\lambda$ we calculate the variance of the variational posterior by calculating the hessian (also implemented in \proglang{C++}) and efficiently inverting it via the Cholesky decomposition.
 
 The \pkg{stm} implementations also benefit from better model initialization strategies.  \pkg{topicmodels} only allows for a model to be initialized randomly or by a pre-existing model.  By contrast \pkg{stm} provides two powerful and fast initialization strategies as described above in Section \ref{sec:init}.
 
@@ -722,7 +723,7 @@ The second quantity reports the effect of the (permuted) covariate on the topic 
 
 \clearpage
 \pdfbookmark[1]{References}{References}
-\bibliography{vignetteBib}
+\bibliography{extracted}
 
 
 \end{document}

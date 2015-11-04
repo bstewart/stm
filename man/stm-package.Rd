@@ -57,6 +57,8 @@ Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
 Gadarian, S., Albertson, B., Albertson, B. and Rand,
 D. (2014). "Structural topic models for open ended survey
 responses." American Journal of Political Science http://goo.gl/0x0tHJ
+
+Additional papers at: structuraltopicmodel.com
 }
 \keyword{ package }
 \seealso{

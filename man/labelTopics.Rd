@@ -51,6 +51,9 @@ A labelTopics object (list)
 \item{score }{matrix of best words by score}
 \item{topicnums }{a vector of topic numbers which correspond to the rows}
 }
+\references{
+Taddy, Matt. "Multinomial inverse regression for text analysis." Journal of the American Statistical Association 108.503 (2013): 755-770.
+}
 \seealso{
 \code{\link{stm}}
 \code{\link{plot.STM}}

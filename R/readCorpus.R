@@ -33,8 +33,17 @@ read.dtm <- function(dtm) {
   #convert a standard document-term matrix to list format.
   dtm.mat <- as.matrix(dtm)
   vocab <- colnames(dtm)
-  documents <- apply(dtm.mat, 1, function(y) {
-    rbind(which(y > 0), as.integer(y[y > 0])) })
+  if(any(dtm.mat==0)) {
+    #if the dtm is not sparse we have to use a slightly slower method
+    #to avoid it coercing back to a matrix
+    documents <- lapply(split(dtm.mat, row(dtm.mat)), function(y) {
+      rbind(which(y > 0), as.integer(y[y > 0])) }) 
+    names(documents) <- NULL #we overwrite the automatically generated labels to match other method
+  } else {
+    #the more usual sparse matrix case
+    documents <- apply(dtm.mat, 1, function(y) {
+      rbind(which(y > 0), as.integer(y[y > 0])) })
+  }
   return(list(documents=documents, vocab=vocab))
 }
 

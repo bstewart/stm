@@ -82,10 +82,8 @@ Additional parameters passed to ploting functions.
 The function can produce three types of plots which summarize an STM object which is chosen by the argument \code{type}.  \code{summary} produces a plot which displays the topics ordered by their expected frequency across the corpus.  \code{labels} plots the top words selected according to the chosen criteria for each selected topics.  \code{perspectives} plots two topic or topic-covariate combinations.  Words are sized proportional to their use within the plotted topic-covariate combinations and oriented along the X-axis based on how much they favor one of the two configurations.  If the words cluster on top of each other the user can either set the plot size to be larger or shrink the total number of words on the plot.  The vertical configuration of the words is random and thus can be rerun to produce different results each time. \code{hist} plots a histogram of the MAP estimates of the document-topic loadings across all documents.  The median is also denoted by a dashed red line. 
 }
 \references{
-  Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J.,
-  Gadarian, S., Albertson, B., Albertson, B. and Rand,
-  D. (Forthcoming). "Structural topic models for open ended survey
-  responses." American Journal of Political Science http://goo.gl/0x0tHJ}
+Roberts, Margaret E., Brandon M. Stewart, Dustin Tingley, Christopher Lucas, Jetson Leder-Luis, Shana Kushner Gadarian, Bethany Albertson, and David G. Rand.  "Structural Topic Models for Open-Ended Survey Responses." American Journal of Political Science 58, no 4 (2014): 1064-1082.
+}
 \seealso{
 \code{\link{plotQuote}}, \code{\link{plot.topicCorr}}
 }

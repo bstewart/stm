@@ -1,5 +1,14 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1.2}{
+\itemize{
+\item Fixed a small bug that caused readCorpus to fail on dense document term matrices
+\item Fixed a small bug in the random projections algorithm
+\item Improved warnings in stm when restarting models (Hat tip to Andrew Goldstone)
+\item Added the convertCorpus function for converting stm to other formats. 
+\item Formatting changes to the vignette
+}
+}
 \section{Version 1.1.1}{
 \itemize{
 \item Updated Vignette

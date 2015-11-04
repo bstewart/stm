@@ -61,25 +61,20 @@ manyTopics(documents, vocab, K,
       \item{data}{
 	Dataset which contains prevalence and content covariates.}
       \item{init.type}{
-	The method of initialization.  Must be either Latent Dirichlet
-	Allocation (LDA), Dirichlet Multinomial Regression Topic Model
-	(DMR), a random initialization (Random)\
-	or a previous STM object (User).
+	The method of initialization.  See \code{\link{stm}}.
       }
       \item{seed}{
 	Seed for the random number generator. \code{stm} saves the seed
 	it uses on every run so that any result can be exactly
-	reproduced.  When attempting to repro\
-	duce a result with that seed, it should be specified here.
+	reproduced.  When attempting to reproduce a result with that seed, 
+	it should be specified here.
       }
       \item{max.em.its}{
 	  The maximum number of EM iterations.  If convergence has not
 	  been met at this point, a message will be printed.
 	}
       \item{emtol}{
-	  Convergence tolerance.  EM stops when the relative change in
-	the approximate bound drops below this level.  Defaults to
-	.001\%.
+	  Convergence tolerance. 
       }
       \item{verbose}{
 	  A logical flag indicating whether information should be

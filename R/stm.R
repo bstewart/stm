@@ -127,7 +127,10 @@ stm <- function(documents, vocab, K,
   if(!is.logical(LDAbeta)) stop("LDAbeta must be logical")
   if(!is.logical(interactions)) stop("Interactions variable must be logical")
   if(sigma.prior < 0 | sigma.prior > 1) stop("sigma.prior must be between 0 and 1")
-
+  if(!is.null(model)) {
+    if(max.em.its <= model$convergence$its) stop("when restarting a model, max.em.its represents the total iterations of the model 
+                                                 and thus must be greater than the length of the original run")
+  }
   ###
   # Now Construct the Settings File
   ###

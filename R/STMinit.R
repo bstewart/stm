@@ -74,8 +74,9 @@ stm.init <- function(documents, settings) {
       }
       Q <- Q/Qsums
     } else {
-      Q <- gram.rp(mat, s=mod$settings$init$s, p=mod$settings$init$p, 
-                   d.group.size=mod$settings$init$d.group.size, verbose=verbose)
+      keep <- NULL #we have to set this because it is referenced later.
+      Q <- gram.rp(mat, s=settings$init$s, p=settings$init$p, 
+                   d.group.size=settings$init$d.group.size, verbose=verbose)
     }
     
     
