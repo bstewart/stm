@@ -4,7 +4,7 @@ Website: www.structuraltopicmodel.com
 
 Vignette: [Here](https://github.com/bstewart/stm/blob/master/inst/doc/stmVignette.pdf?raw=true)
 
-Authors: [Molly Roberts](http://scholar.harvard.edu/mroberts), [Brandon Stewart](brandonstewart.org) and [Dustin Tingley](http://scholar.harvard.edu/dtingley)
+Authors: [Molly Roberts](http://margaretroberts.net), [Brandon Stewart](http://brandonstewart.org) and [Dustin Tingley](http://scholar.harvard.edu/dtingley)
 
 Please email all comments/questions to bms4 [AT] princeton.edu
 
