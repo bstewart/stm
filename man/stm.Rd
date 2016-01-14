@@ -69,7 +69,7 @@ Convergence tolerance.  EM stops when the relative change in the approximate bou
  A prefit model object.  By passing an \code{stm} object to this argument you can restart an existing model.  See details for more info.
  }
  \item{gamma.prior}{
- sets the prior estimation method for the prevalence covariate model.  The default \code{Pooled} options uses Normal prior distributions with a topic-level pooled variance which is given a broad gamma hyperprior.  The alternative \code{L1} uses \code{glmnet} to estimate a grouped penalty between L1-L2.  See details below.
+ sets the prior estimation method for the prevalence covariate model.  The default \code{Pooled} options uses Normal prior distributions with a topic-level pooled variance which is given a moderately regularizing half-cauchy(1,1) prior.  The alternative \code{L1} uses \code{glmnet} to estimate a grouped penalty between L1-L2.  See details below.
  }
  \item{sigma.prior}{
  a scalar between 0 and 1 which defaults to 0.  This sets the strength of regularization towards a diagonalized covariance matrix.  Setting the value above 0 can be useful if topics are becoming too highly correlated.

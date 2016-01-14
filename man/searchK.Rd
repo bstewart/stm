@@ -50,6 +50,10 @@ Computes diagnostic values for models with different values of K (number of topi
 
 }
 
+\details{
+See the vignette for interepretation of each of these measures.  
+}
+
 \value{
 \item{exclus}{Exclusivity of each model.}
 \item{semcoh}{Semantic coherence of each model.}

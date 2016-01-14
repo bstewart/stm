@@ -5,7 +5,7 @@ theta<-mod$theta
 if(length(mod$beta$logbeta)>1) stop("This function does not yet allow content covariates.")
 phi <- exp(mod$beta$logbeta[[1]])
   if(any(phi==0)){
-    phi<-phi+1e-5
+    phi<-phi + .Machine$double.eps
     phi<-phi/rowSums(phi)
   }
 vocab <- mod$vocab

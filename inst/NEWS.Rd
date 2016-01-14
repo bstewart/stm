@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1.3}{
+\itemize{
+\item Fixed the unexported findTopic()
+\item Improved some documentation
+\item Small finetuning in toLDAViz
+}
+}
 \section{Version 1.1.2}{
 \itemize{
 \item Fixed a small bug that caused readCorpus to fail on dense document term matrices
