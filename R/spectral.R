@@ -263,7 +263,23 @@ tsneAnchor <- function(Qbar) {
     stop("Please install the Rtsne and geometry packages to use this setting.")
   } 
   #project to 3-D
-  proj <- Rtsne::Rtsne(Qbar, dims=3) 
+  proj <- try(Rtsne::Rtsne(Qbar, dims=3) , silent=TRUE)
+  if(class(proj)=="try-error") {
+    #if this failed it is probably duplicates which Rtsne cannot handle
+    dup <- duplicated(Qbar)
+    if(!any(dup)) stop("an unknown error has occured in Rtsne")
+    
+    dup <- which(dup)
+    for(r in dup) {
+      row <- Qbar[r,]
+      row[row>0] <- runif(sum(row>0),0,1e-5) # add a bit of noise to non-zero duplicates
+      row <- row/sum(row) #renormalize
+      Qbar[r,] <- row
+    }
+    #and now do it again
+    proj <- Rtsne::Rtsne(Qbar, dims=3) 
+  }
+  
   hull <- geometry::convhulln(proj$Y)
   anchor <- sort(unique(c(hull)))
   return(anchor)

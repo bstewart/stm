@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1.4}{
+\itemize{
+\item Fixed a rare bug in the K=0 feature for spectral initialization where words with the exact same appearance pattern would cause the projection to fail.
+}
+}
 \section{Version 1.1.3}{
 \itemize{
 \item Fixed the unexported findTopic()
