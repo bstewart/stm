@@ -9,9 +9,10 @@ plot.searchK<-function(x, ...){
   plot(g$K,g$residual,type="p", main="Residuals", xlab="Number of Topics (K)", ylab="Residuals")
   lines(g$K,g$residual,lty=1,col=1 )
   
-  
-  plot(g$K,g$semcoh,type="p", main="Semantic Coherence", xlab="Number of Topics (K)", ylab="Semantic Coherence")
-  lines(g$K,g$semcoh,lty=1,col=1 ) 
+  if(!is.null(g$semcoh)){
+    plot(g$K,g$semcoh,type="p", main="Semantic Coherence", xlab="Number of Topics (K)", ylab="Semantic Coherence")
+    lines(g$K,g$semcoh,lty=1,col=1 ) 
+  }
   
   #plot(g$K,g$exclus,type="n", main="Exclusivity", xlab="Number of Topics (K)", ylab="Exclusivity")
   #lines(g$K,g$exclus,lty=1,col=1 )  

@@ -17,8 +17,10 @@ searchK <- function(documents, vocab, K, init.type = "Spectral",
     model <- stm(documents=heldout$documents,vocab=heldout$vocab,
                  K=K[i], init.type=init.type,...)
     #calculate values to return
-    g$exclus[i]<-mean(unlist(exclusivity(model, M=M, frexw=.7)))
-    g$semcoh[i]<-mean(unlist(semanticCoherence(model, heldout$documents, M)))
+    if( !"content" %in% names(list(...)) ) {  # only calculate exclusivity for models without content covariates
+      g$exclus[i]<-mean(unlist(exclusivity(model, M=M, frexw=.7)))
+      g$semcoh[i]<-mean(unlist(semanticCoherence(model, heldout$documents, M)))
+    }
     g$heldout[i]<-eval.heldout(model, heldout$missing)$expected.heldout    
     g$residual[i]<-checkResiduals(model,heldout$documents)$dispersion
     g$bound[i]<-max(model$convergence$bound)
@@ -26,6 +28,11 @@ searchK <- function(documents, vocab, K, init.type = "Spectral",
     g$em.its[i]<-length(model$convergence$bound)    
   }
   g <- as.data.frame(g)
+  if( "content" %in% names(list(...)) ) {
+    warning("Exclusivity calculation only designed for models without content covariates", call.=FALSE)
+    g$exclus <- NULL
+    g$semcoh <- NULL
+  }
   toreturn <- list(results=g, call=match.call(expand.dots=TRUE))
   class(toreturn)<- "searchK"
   return(toreturn)
