@@ -209,6 +209,32 @@ ol {
   list-style: decimal inside;
   padding-left: 20px;
 }
+/* I added the bit down to the close of li::before.  In doing so it seems to have
+made all of my unordered lists ordered but at this point I'm not going to worry about it.
+It was attempting to fix a problem where the lists weren't tabbed and thus looked 
+really bad. Change made 5/4/2016.  */
+ol,li {
+    margin: 0;
+    padding: 0;
+}
+
+ol {
+    counter-reset: foo;
+    display: table;
+}
+
+li {
+    list-style: none;
+    counter-increment: foo;
+    display: table-row;
+}
+
+li::before {
+    content: counter(foo) ".";
+    display: table-cell;
+    text-align: right;
+    padding-right: .3em;
+}
 
 dl dt {
   font-weight: bold;

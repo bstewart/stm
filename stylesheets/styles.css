@@ -183,6 +183,7 @@ footer {
   bottom:50px;
 }
 
+
 @media print, screen and (max-width: 960px) {
   
   div.wrapper {
@@ -253,3 +254,4 @@ footer {
     color:#444;
   }
 }
+
