@@ -55,7 +55,7 @@ permutationTest <- function(formula, stmobj, treatment,
     settings$covariates$X <- model.matrix(termobj,data=data)
     #run the model
     cat(sprintf("Running model %i of %i \n", (i+1), (nruns)))
-    mod <- stm.control(documents, vocab, settings=settings)
+    mod <- stm.control(documents, vocab, settings=settings, model=NULL)
     par <- qeffects(formula, mod, data, uncertainty)
     
     betamod <- exp(mod$beta$logbeta[[1]])
