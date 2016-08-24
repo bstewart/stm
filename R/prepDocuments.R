@@ -25,7 +25,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   if(!is.null(subsample)) {
     index <- sample(1:length(documents), subsample)
     documents <- documents[index]
-    if(!is.null(meta)) meta <- meta[index,] 
+    if(!is.null(meta)) meta <- meta[index, , drop = FALSE] 
   }
   
   #check that there are no 0 length documents
@@ -89,7 +89,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   }
   
   if(!is.null(docs.removed) & !is.null(meta)){
-    meta<-meta[-docs.removed,]
+    meta<-meta[-docs.removed, , drop = FALSE]
   }
   #recast everything as an integer
   documents <- lapply(documents, function(x) matrix(as.integer(x), nrow=2))
