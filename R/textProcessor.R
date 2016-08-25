@@ -101,7 +101,7 @@ textProcessor <- function(documents, metadata=NULL,
   #If there is metadata we need to remove some documents
   if(!is.null(metadata)) {
     docindex <- unique(dtm$i)
-    metadata <- NLP::meta(txt)[docindex,]
+    metadata <- NLP::meta(txt)[docindex, , drop = FALSE]
   }
   out <- read.slam(dtm) #using the read.slam() function in stm to convert
   
