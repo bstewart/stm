@@ -72,18 +72,23 @@ thetapost.local <- function(model, documents, nsims) {
     hess <- ln.hess(eta, theta, doc.beta, doc.ct, siginv)    
     nu <- try(chol2inv(chol.default(hess)),silent=TRUE)
     if(class(nu)=="try-error") {
+    
       # if it failed we try tightening by taking a BFGS step
-      optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
-                         method="BFGS", control=list(maxit=500),
-                         doc.ct=doc.ct, mu=mu[,i],
-                         siginv=siginv, beta=doc.beta, Ndoc=sum(doc.ct))
+      if (NCOL(mu) == 1) mu.i <- mu else mu.i <- mu[,i]
+      optim.out <- optim(par = eta, fn = lhoodcpp, gr = gradcpp, 
+                         method = "BFGS", control = list(maxit = 500), 
+                         doc_ct = doc.ct, mu = mu.i, siginv = siginv, 
+                         beta = doc.beta)
+                         
       eta <- optim.out$par
       theta <- softmax(c(eta,0))
       hess <- ln.hess(eta, theta, doc.beta, doc.ct, siginv) 
       nu <- try(chol2inv(chol.default(hess)),silent=TRUE)
       if(class(nu)=="try-error") {
+      
         #oh man, it failed again?  Well now we try some really expensive newton optimization
-        newton.out <- newton(eta, doc.ct, mu[,i], siginv, doc.beta, hess, max.its=1000)
+        newton.out <- newton(eta, doc.ct, mu.i, siginv, doc.beta, hess, max.its=1000)
+        
         #if the newton even failed it forces an answer using nearPD so we do have a solution here.
         nu <- newton.out$nu
         eta <- newton.out$eta
@@ -111,17 +116,17 @@ newton <- function(eta, doc.ct, mu, siginv, beta,
   }
   while(its < max.its) {
     #compute the search direction
-    dir <- -solve(hess)%*%gradcpp(eta, doc.ct, mu, siginv, beta)
+    dir <- -solve(hess)%*%gradcpp(eta, beta, doc.ct, mu, siginv)
     #line search
     maxint <- 2
     opt <- optimize(f=search, interval=c(-2,maxint), dir=dir, 
-                    eta=eta,doc.ct=doc.ct, mu=mu,
+                    eta=eta,doc_ct=doc.ct, mu=mu,
                     siginv=siginv, beta=beta, maximum=FALSE)
-    while(opt$objective > lhoodcpp(eta, doc.ct, mu, siginv, beta)) {
+    while(opt$objective > lhoodcpp(eta, beta, doc.ct, mu, siginv)) {
       #re-assess at a smaller point
       maxint <- min(maxint/2, opt$minimum - .00001*opt$minimum)
       opt <- optimize(f=search, interval=c(0,maxint), dir=dir, 
-                      eta=eta,doc.ct=doc.ct, mu=mu,
+                      eta=eta,doc_ct=doc.ct, mu=mu,
                       siginv=siginv, beta=beta, maximum=FALSE)
     }
     
