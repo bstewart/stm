@@ -572,7 +572,7 @@ Once a model has been fit, convergence can easily be assessed by plotting the va
 \begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE,width=8, keep.source=TRUE, results = verbatim>>=
-plot.STM(poliblogPrevFit$convergence$bound, type = "l",
+plot(poliblogPrevFit$convergence$bound, type = "l",
   ylab = "Approximate Objective",
   main = "Convergence")
 @
