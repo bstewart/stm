@@ -80,8 +80,6 @@ coherence values for each topic within each model selected for each number
 of topics.} 
 \item{exclusivity}{Exclusivity values for each topic wihtin each
 model selected.  Only calculated for models without a content covariate.}
- \dontshow{\item{sparsity}{Percent sparsity for the covariate and interaction % kappas
-for models with a content covariate.}}
 }
 \description{
 Works the same as selectModel, except user specifies a range of numbers of

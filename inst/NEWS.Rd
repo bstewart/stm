@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1.5}{
+\itemize{
+\item Huge props to Github User Chris Baker (crew102) who converted all the documentation over to roxygen2
+\item Another set of thanks to crew102 for fixing a problem with metadata which could sometimes become a vector instead of a dataframe.
+\item Thanks to Github user sw1 who fixed a problem with the local uncertainty and permutation tests.
+}
+}
 \section{Version 1.1.4}{
 \itemize{
 \item Fixed a rare bug in the K=0 feature for spectral initialization where words with the exact same appearance pattern would cause the projection to fail.

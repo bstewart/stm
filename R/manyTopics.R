@@ -92,6 +92,7 @@ paretosingle <- function(z) {
 #' exclusivity.  Defaults to 10.
 #' @param \dots Additional options described in details of stm.
 #' @return 
+#' 
 #' \item{out}{List of model outputs the user has to choose from.  Take
 #' the same form as the output from a stm model.} 
 #' \item{semcoh}{Semantic
@@ -99,8 +100,6 @@ paretosingle <- function(z) {
 #' of topics.} 
 #' \item{exclusivity}{Exclusivity values for each topic wihtin each
 #' model selected.  Only calculated for models without a content covariate.}
-#'  \dontshow{\item{sparsity}{Percent sparsity for the covariate and interaction % kappas
-#' for models with a content covariate.}}
 #' @examples
 #' 
 #' \dontrun{
