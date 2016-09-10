@@ -1,3 +1,24 @@
+#' Plot some effects with loess
+#' 
+#' Plots a loess line of the topic proportions on a covariate inputted by the
+#' user. This allows for a more flexible functional form for the relationship.
+#' 
+#' This function is considerably less developed than
+#' \code{\link{plot.estimateEffect}} and we recommend using that function with
+#' splines and high degrees of freedom where possible.  Computes standard
+#' errors through the method of composition as in \code{\link{estimateEffect}}.
+#' 
+#' @param model An STM model object
+#' @param topics Vector of topic numbers to plot by the covariate. E.g.,
+#' c(1,2,3) would plot lines for topics 1,2,3.
+#' @param covariate Covariate vector by which to plot topic proportions.
+#' @param span loess span parameter.  See \code{\link{loess}}
+#' @param level Desired coverage for confidence intervals
+#' @param main Title of the plot, default is ""
+#' @param xlab X-label, default is "Covariate"
+#' @param ylab Y-label, default is "Topic Proportions"
+#' @seealso \code{\link{plot.estimateEffect}}
+#' @export
 plotTopicLoess <- function(model, topics, covariate, span=1.5, level=.95,
                            main="", xlab="Covariate", ylab="Topic Proportions"){
   
@@ -33,7 +54,6 @@ plotTopicLoess <- function(model, topics, covariate, span=1.5, level=.95,
     lines(newdat$x, upp.ci[k,], col=cols[k], lty=2)
   }
 }
-
 
 .tjloesssim <- function(x, topic, covariate, newdat, span){
   fit <- loess(x[,topic] ~ covariate, span=span)

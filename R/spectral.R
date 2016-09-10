@@ -7,9 +7,8 @@
 #' and if true, assign elements less than 0 to zero exactly.  This is mostly
 #' so we don't risk numerical instability later by introducing negative numbers of 
 #' any sort.
-#' @param mat a Matrix sparse Document by Term matrix
+#' @param mat A Matrix sparse Document by Term matrix
 #' @export
-
 gram <- function(mat) {
   nd <- rowSums(mat)
   mat <- mat[nd>=2,] #its undefined if we don't have docs of length 2
@@ -86,9 +85,9 @@ gram.rp <- function(mat, s=.05, p=3000, d.group.size=2000, verbose=TRUE) {
 #' of a process.  One possibility for allowing this would be to return Qbar but
 #' I'm not going to worry about that right now.
 #'
-#' @param Q the gram matrix
-#' @param K the number of desired anchors
-#' @param verbose if TRUE prints a dot to the screen after each anchor
+#' @param Q The gram matrix
+#' @param K The number of desired anchors
+#' @param verbose If TRUE prints a dot to the screen after each anchor
 #' @export
 fastAnchor <- function(Qbar, K, verbose=TRUE) {
   basis <- c()
@@ -130,20 +129,20 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 #' combination of the anchor words which can reconstruct each additional word in the 
 #' matrix.  Transform and return as a beta matrix.
 #'
-#' @param Qbar the row-normalized gram matrix
-#' @param anchor a vector of indices for rows of Q containing anchors
-#' @param wprob the empirical word probabilities used to renorm the mixture weights. 
-#' @param verbose if TRUE prints information as it progresses.
-#' @param ... optional arguments that will be passed to the exponentiated gradient algorithm.
+#' @param Qbar The row-normalized gram matrix
+#' @param anchor A vector of indices for rows of Q containing anchors
+#' @param wprob The empirical word probabilities used to renorm the mixture weights. 
+#' @param verbose If TRUE prints information as it progresses.
+#' @param ... Optional arguments that will be passed to the exponentiated gradient algorithm.
 #' @return 
-#' \item{A}{a matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
+#' \item{A}{A matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
 #' @export
 recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
-  #' \item{R}{a matrix of dimensions K by K that contains the topic covariances.}
-  #' \item{condprob}{a list of exponentiated gradient results.  useful for checking convergence.}
+###  #' \item{R}{a matrix of dimensions K by K that contains the topic covariances.}
+###  #' \item{condprob}{a list of exponentiated gradient results.  useful for checking convergence.}
   
   #Qbar <- Q/rowSums(Q)
   X <- Qbar[anchor,]
@@ -196,18 +195,18 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
 #' The matrix X'X can be passed as an argument in settings
 #' like spectral algorithms where it is constant across multiple optimizations.  
 #'
-#' @param X the transposed feature matrix.
-#' @param y the target vector
-#' @param XtX optionally a precalculated crossproduct.
-#' @param alpha an optional initialization of the parameter.  Otherwise it starts at 1/nrow(X).
-#' @param tol convergence tolerance
-#' @param max.its maximum iterations to run irrespective of tolerance
+#' @param X The transposed feature matrix.
+#' @param y The target vector
+#' @param XtX Optionally a precalculated crossproduct.
+#' @param alpha An optional initialization of the parameter.  Otherwise it starts at 1/nrow(X).
+#' @param tol Convergence tolerance
+#' @param max.its Maximum iterations to run irrespective of tolerance
 #' @return 
-#' \item{par}{optimal weights}
-#' \item{its}{number of iterations run}
-#' \item{converged}{logical indicating if it converged}
-#' \item{entropy}{entropy of the resulting weights}
-#' \item{log.sse}{log of the sum of squared error}
+#' \item{par}{Optimal weights}
+#' \item{its}{Number of iterations run}
+#' \item{converged}{Logical indicating if it converged}
+#' \item{entropy}{Entropy of the resulting weights}
+#' \item{log.sse}{Log of the sum of squared error}
 #' @export
 expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500) {
   if(is.null(alpha)) alpha <- 1/nrow(X) 
@@ -284,4 +283,3 @@ tsneAnchor <- function(Qbar) {
   anchor <- sort(unique(c(hull)))
   return(anchor)
 }
-

@@ -1,6 +1,19 @@
-##
-#Basis function generator
-##
+#' Make a B-spline Basis Function
+#' 
+#' This is a simple wrapper around the \code{\link[splines]{bs}} function in
+#' the splines package.  It will default to a spline with 10 degrees of
+#' freedom.
+#' 
+#' This is a simple wrapper written as users may find it easier to simply type
+#' \code{\link{s}} rather than selecting parameters for a spline.
+#' 
+#' @param x The predictor value.
+#' @param df Degrees of freedom.  Defaults to the minimum of 10 or one minus
+#' the number of unique values in x.
+#' @param \dots Arguments passed to the \code{\link[splines]{bs}} function.
+#' @return A predictor matrix of the basis functions.
+#' @seealso \code{\link[splines]{bs}} \code{\link[splines]{ns}}
+#' @export
 s <- function(x, df, ...) {
   if(class(x)=="Date") {
     warning("A Date object coerced to numeric. 
@@ -19,5 +32,3 @@ s <- function(x, df, ...) {
   }
   return(bs(x, df,...))     
 }
-
-
