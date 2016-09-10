@@ -14,8 +14,6 @@
 #' @param N number of docs to be partially held out
 #' @param proportion proportion of docs to be held out.
 #' @param seed the seed, set for replicability
-#' @param model an stm model
-#' @param missing a missing object created by make.heldout
 #' @examples
 #' 
 #' \dontrun{
@@ -87,6 +85,37 @@ make.heldout <- function(documents, vocab, N=floor(.1*length(documents)),
   return(list(documents=documents,vocab=vocab, missing=missing))
 }
 
+#' Heldout Likelihood by Document Completion
+#' 
+#' Tools for making and evaluating heldout datasets.
+#' 
+#' These functions are used to create and evaluate heldout likelihood using the
+#' document completion method.  The basic idea is to hold out some fraction of
+#' the words in a set of documents, train the model and use the document-level
+#' latent variables to evaluate the probability of the heldout portion. See the
+#' example for the basic workflow.
+#' 
+#' @aliases make.heldout eval.heldout
+#' @param model an stm model
+#' @param missing a missing object created by make.heldout
+#' @examples
+#' 
+#' \dontrun{
+#' 
+#' prep <- prepDocuments(poliblog5k.docs, poliblog5k.voc, 
+#'                       poliblog5k.meta,subsample=500,
+#'                       lower.thresh=20,upper.thresh=200)
+#' heldout <- make.heldout(prep$documents, prep$vocab)
+#' documents <- heldout$documents
+#' vocab <- heldout$vocab
+#' meta <- out$meta
+#' 
+#' stm1<- stm(documents, vocab, 5, 
+#'            prevalence =~ rating+ s(day), 
+#'            init.type="Random",
+#'            data=meta, max.em.its=5)
+#' eval.heldout(stm1, heldout$missing)
+#' }
 #' @export
 eval.heldout <- function(model, missing) {
   heldout <- vector(length=length(missing$index))
