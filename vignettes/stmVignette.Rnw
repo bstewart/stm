@@ -371,7 +371,7 @@ Corpus level visualization can be done in several different ways. The first rela
 \begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE,width=8>>=
-plot.STM(poliblogPrevFit, type = "summary", xlim = c(0, .3))
+stm:::plot.stm(poliblogPrevFit, type = "summary", xlim = c(0, .3))
 @
 \caption{Graphical display of estimated topic proportions.}
 \label{fig:summary}
@@ -446,7 +446,7 @@ Next, the results can be plotted using the \code{plot.STM(,type = "perspectives"
 \begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE,width=8,height=6, keep.source=TRUE, results = verbatim>>=
-plot.STM(poliblogContent, type = "perspectives", topics = 11)
+stm:::plot.stm(poliblogContent, type = "perspectives", topics = 11)
 @
 \caption{Graphical display of topical perspectives.}
 \label{fig:perp}
@@ -458,7 +458,7 @@ This function can also be used to plot the contrast in words across two topics.\
 \begin{figure}
 \begin{center}
 <<eval=TRUE,fig=TRUE,width=6,height=4,keep.source=TRUE, results = verbatim>>=
-plot.STM(poliblogPrevFit, type = "perspectives", topics = c(12, 20))
+stm:::plot.stm(poliblogPrevFit, type = "perspectives", topics = c(12, 20))
 @
 \caption{Graphical display of topical contrast between topics 12 and 20.}
 \label{fig:perp2}
