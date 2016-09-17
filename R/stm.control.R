@@ -2,7 +2,7 @@
 #compared to the original we have more initializations, 
 # more explicit options, trimmed fat, memoization
 
-stm.control <- function(documents, vocab, settings, model) {
+stm.control <- function(documents, vocab, settings, model=NULL) {
   
   globaltime <- proc.time()
   verbose <- settings$verbose

@@ -1,5 +1,11 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1.5}{
+\itemize{
+\item searchK() can now be used with content covariates thanks to github user rosemm
+\item added a querying function based on data.table into findThoughts()
+}
+}
 \section{Version 1.1.4}{
 \itemize{
 \item Fixed a rare bug in the K=0 feature for spectral initialization where words with the exact same appearance pattern would cause the projection to fail.

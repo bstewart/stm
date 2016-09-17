@@ -1,4 +1,5 @@
 import(Matrix)
+import(data.table)
 importFrom(matrixStats, logSumExp, rowLogSumExps, colLogSumExps)
 importFrom(slam, tcrossprod_simple_triplet_matrix, simple_triplet_matrix, as.simple_triplet_matrix)
 importFrom(splines, ns,bs)
@@ -25,7 +26,7 @@ export(stm, summary.STM, print.STM, plot.STM,
       multiSTM, print.MultimodDiagnostic, plot.MultimodDiagnostic,
   checkBeta, make.heldout, eval.heldout, checkResiduals,
   searchK, plot.searchK, plotRemoved, thetaPosterior, topicLasso,
-	toLDAvis)
+	toLDAvis, make.dt)
 
 S3method(summary, STM)
 S3method(print, STM)
