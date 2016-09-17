@@ -46,7 +46,7 @@ From the \pkg{tm} package. An integer vector of length 2. Words shorter than the
   Removes terms where at least sparselevel proportion of the entries are 0. Defaults to 1 which effectively turns the feature off.
 }
   \item{language}{
-Language used for processing. Defaults to English. \code{tm} uses the \code{SnowballC} stemmer which as of version 0.5 supports "danish dutch english finnish french german hungarian italian norwegian portuguese romanian russian spanish swedish turkish".  These can be specified as any on of the above strings or by the three-letter ISO-639 codes.  You can also set language to "na" if you want to leave it deliberately unspecified (see documentation in \code{tm})}
+Language used for processing. Defaults to English. \code{tm} uses the \code{SnowballC} stemmer which as of version 0.5 supports "danish dutch english finnish french german hungarian italian norwegian portuguese romanian russian spanish swedish turkish".  These can be specified as any on of the above strings or by the three-letter ISO-639 codes.  You can also set language to "na" if you want to leave it deliberately unspecified (see documentation in \code{tm}).  Note that languages listed here may not all have accompanying stopwords.  However if you have your own stopword list you can use customstopwords below. }
 \item{verbose}{
 If true prints information as it processes.
 }
