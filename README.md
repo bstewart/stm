@@ -54,3 +54,6 @@ install.packages(filepath, repos = NULL)
 
 ### Getting Started
 See the vignette for several example analyses.  The main function to estimate the model is `stm()` but there are a host of other useful functions.  If you have your documents already converted to term-document matrices you can ingest them using `readCorpus()`.  If you just have raw texts you will want to start with `textProcessor()`.
+
+### To Developers
+Up until September 2016 we've primarily been doing development in private in a separate github repository.  As we have gotten several great pull requests from the community, we are in the process of shifting development over here- primarily in the develop branch.
