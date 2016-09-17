@@ -26,7 +26,7 @@ export(stm, summary.STM, print.STM, plot.STM,
       multiSTM, print.MultimodDiagnostic, plot.MultimodDiagnostic,
   checkBeta, make.heldout, eval.heldout, checkResiduals,
   searchK, plot.searchK, plotRemoved, thetaPosterior, topicLasso,
-	toLDAvis)
+	toLDAvis, make.dt)
 
 S3method(summary, STM)
 S3method(print, STM)
