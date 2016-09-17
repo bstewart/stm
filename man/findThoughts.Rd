@@ -18,7 +18,7 @@ findThoughts(model, texts=NULL, topics=NULL, n=3, thresh=NULL, where=NULL, meta=
     Model object created by \code{stm}.
     }
     \item{texts}{
-    A character vector where each entry contains the text of a document.  Must be in the same order as the documents object.
+    A character vector where each entry contains the text of a document.  Must be in the same order as the documents object. NOTE: This is not the documents which are passed to \code{stm} and come out of \code{prepDocuments}, this is the actual text of the document.
   }
   \item{topics}{
      The topic number or vector of topic numbers for which you want to find thoughts.  Defaults to all topics.
