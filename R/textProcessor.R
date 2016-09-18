@@ -111,7 +111,7 @@ textProcessor <- function(documents, metadata=NULL,
   kept <- (1:length(documents) %in% unique(dtm$i))
   vocab <- as.character(out$vocab)
   out <- list(documents=out$documents, vocab=vocab, meta=metadata, docs.removed=which(!kept))
-  class(out) <- "textProcesser"
+  class(out) <- "textProcessor"
   return(out)
 }
 
