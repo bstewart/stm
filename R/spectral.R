@@ -126,7 +126,7 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 #' Recover the topic-word parameters from a set of anchor words using the RecoverL2
 #' procedure of Arora et. al.
 #' 
-#' Using the exponentiated algorithm and an L2 loss identify the optimal convex 
+#' Using quadratic programming identify the optimal convex 
 #' combination of the anchor words which can reconstruct each additional word in the 
 #' matrix.  Transform and return as a beta matrix.
 #'
@@ -137,7 +137,6 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 #' @param ... optional arguments that will be passed to the exponentiated gradient algorithm.
 #' @return 
 #' \item{A}{a matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-#' @export
 recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
@@ -149,6 +148,13 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
   X <- Qbar[anchor,]
   XtX <- tcrossprod(X)
   
+  #In a minute we will do quadratic programming
+  #these jointly define the conditions.  First column
+  #is a sum to 1 constraint.  Remainder are each parameter
+  #greater than 0.
+  Amat <- cbind(1,diag(1,nrow=nrow(X)))
+  bvec <- c(1,rep(0,nrow(X)))
+  
   #Word by Word Solve For the Convex Combination
   condprob <- vector(mode="list", length=nrow(Qbar))
   for(i in 1:nrow(Qbar)) {
@@ -156,10 +162,22 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
       #if its an anchor we create a dummy entry that is 1 by definition
       vec <- rep(0, nrow(XtX))
       vec[match(i,anchor)] <- 1
-      condprob[[i]] <- list(par=vec)
+      condprob[[i]] <- vec
     } else {
       y <- Qbar[i,]
-      condprob[[i]] <- expgrad(X,y,XtX, ...)
+      #condprob[[i]] <- expgrad(X,y,XtX, ...)
+      #when reintroducing this- remember we need to grab out solution.
+      
+      #meq=1 means the sum is treated as an exact equality constraint
+      #and the remainder are >=
+      solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, 
+                                  Amat=Amat, bvec=bvec, meq=1)$solution
+      if(any(solution <= 0)) {
+        #we can get exact 0's or even slightly negative numbers from quadprog
+        #replace with machine double epsilon
+        solution[solution<=0] <- .Machine$double.eps
+      } 
+      condprob[[i]] <- solution
     }
     if(verbose) {
       #if(i%%1 == 0) cat(".")
@@ -171,8 +189,7 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
   if(verbose) cat("\n")
   #Recover Beta (A in this notation)
   #  Now we have p(z|w) but we want the inverse
-  weights <- lapply(condprob, function(x) x$par)
-  weights <- do.call(rbind, weights)
+  weights <- do.call(rbind, condprob)
   A <- weights*wprob
   A <- t(A)/colSums(A)
   
@@ -208,7 +225,6 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
 #' \item{converged}{logical indicating if it converged}
 #' \item{entropy}{entropy of the resulting weights}
 #' \item{log.sse}{log of the sum of squared error}
-#' @export
 expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500) {
   if(is.null(alpha)) alpha <- 1/nrow(X) 
   alpha <- matrix(alpha, nrow=1, ncol=nrow(X))

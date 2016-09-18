@@ -165,7 +165,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   #convert the beta back to log-space
   beta$logbeta <- beta$beta
   for(i in 1:length(beta$logbeta)) {
-    beta$logbeta[[i]] <- log(beta$logbeta[[i]])
+    beta$logbeta[[i]] <- safelog(beta$logbeta[[i]])
   }
   beta$beta <- NULL
   lambda <- cbind(lambda,0)

@@ -7,7 +7,7 @@ Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 Maintainer: Brandon Stewart <bms4@princeton.edu>
 Depends: R (>= 2.10)
 LinkingTo: Rcpp, RcppArmadillo
-Imports: matrixStats, splines, slam, lda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3), grDevices, graphics, stats, utils, data.table
+Imports: matrixStats, splines, slam, lda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3), grDevices, graphics, stats, utils, data.table, quadprog
 Suggests: igraph, SnowballC, tm (>= 0.6), huge, clue, wordcloud, KernSmooth, NLP, LDAvis, geometry, Rtsne, testthat
 LazyData: yes
 Description: The Structural Topic Model (STM) allows researchers 
