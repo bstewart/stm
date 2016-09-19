@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{In Development}{
+\itemize{
+\item Changed the recovery algorithm used in spectral initialization from gradient descent to a more accurate and generally faster one based on quadratic programming.  Old results can be obtained by passing the argument control=list(recoverEG=TRUE)
+\item Clarified some of the documentation in textProcessor thanks to James Gibbon.
+\item Fixed a problem with registration of S3 methods for textProcessor()
+}
+}
 \section{Version 1.1.5}{
 \itemize{
 \item searchK() can now be used with content covariates thanks to github user rosemm
