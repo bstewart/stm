@@ -149,7 +149,7 @@ stm <- function(documents, vocab, K,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
-                             s=.05, p=3000, d.group.size=2000), 
+                             s=.05, p=3000, d.group.size=2000, recoverEG=FALSE), 
                    seed=seed,
                    ngroups=ngroups)
   if(settings$gamma$mode=="L1") {
@@ -182,7 +182,8 @@ stm <- function(documents, vocab, K,
                   "fixedintercept","kappa.mstepmaxit", "kappa.msteptol", 
                   "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
                   "nits", "burnin", "alpha", "eta", "contrast",
-                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP")
+                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
+                  "recoverEG")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -209,6 +210,7 @@ stm <- function(documents, vocab, K,
       if(i=="rp.p")  settings$init$p <- control[[i]]
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
       if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
+      if(i=="recoverEG" & control[[i]]) settings$init$recoverEG <- control[[i]]
     }
   }
   

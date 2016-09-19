@@ -123,6 +123,7 @@ The \code{control} argument is a list with named components which can be used to
     \item{\code{rp.p}}{Dimensionality of the random projections for the spectral initialization.  Defaults to 3000.}
     \item{\code{rp.d.group.size}}{Controls the size of blocks considered at a time when computing the random projections for the spectral initialization.  Defaults to 2000.}
     \item{\code{SpectralRP}}{A logical which when \code{TRUE} turns on the experimental random projections spectral initialization.}
+    \item{\code{recoverEG}}{A logical which when \code{TRUE} turns on the exponentiated gradient descent algorithm for spectral learning.  Available for reverse compatability.}
 }}
 \value{
 An object of class STM

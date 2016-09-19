@@ -137,7 +137,7 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 #' @param ... optional arguments that will be passed to the exponentiated gradient algorithm.
 #' @return 
 #' \item{A}{a matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
+recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=FALSE, ...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
@@ -165,13 +165,16 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, ...) {
       condprob[[i]] <- vec
     } else {
       y <- Qbar[i,]
-      #condprob[[i]] <- expgrad(X,y,XtX, ...)
-      #when reintroducing this- remember we need to grab out solution.
       
-      #meq=1 means the sum is treated as an exact equality constraint
-      #and the remainder are >=
-      solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, 
-                                  Amat=Amat, bvec=bvec, meq=1)$solution
+      if(recoverEG) {
+        solution <- expgrad(X,y,XtX, ...)$par
+      } else {
+        #meq=1 means the sum is treated as an exact equality constraint
+        #and the remainder are >=
+        solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, 
+                                       Amat=Amat, bvec=bvec, meq=1)$solution  
+      }
+      
       if(any(solution <= 0)) {
         #we can get exact 0's or even slightly negative numbers from quadprog
         #replace with machine double epsilon
