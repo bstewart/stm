@@ -137,7 +137,7 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 #' @param ... optional arguments that will be passed to the exponentiated gradient algorithm.
 #' @return 
 #' \item{A}{a matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=FALSE, ...) {
+recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.

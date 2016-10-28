@@ -1,10 +1,11 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
-\section{In Development}{
+\section{Version 1.1.6}{
 \itemize{
-\item Changed the recovery algorithm used in spectral initialization from gradient descent to a more accurate and generally faster one based on quadratic programming.  Old results can be obtained by passing the argument control=list(recoverEG=TRUE)
+\item Added a new recovery algorithm used in spectral initialization from gradient descent to a more accurate and generally faster one based on quadratic programming.  This can be turned on by: control=list(recoverEG=FALSE).  Eventually we may change the default recovery method.
 \item Clarified some of the documentation in textProcessor thanks to James Gibbon.
 \item Fixed a problem with registration of S3 methods for textProcessor()
+\item Added access to the information criterion parameter for L1 mode prevalence covariance in stm.  See the gamma.ic.k option in the control parameters of stm 
 }
 }
 \section{Version 1.1.5}{

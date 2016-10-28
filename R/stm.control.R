@@ -104,7 +104,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
           }
           # Now do the updates themselves
           mu <- opt.mu(lambda=lambda, mode=settings$gamma$mode, 
-                       covar=settings$covariates$X, settings$gamma$enet)
+                       covar=settings$covariates$X, enet=settings$gamma$enet, ic.k=settings$gamma$ic.k)
           sigma <- opt.sigma(nu=sigma.ss, lambda=lambda, 
                              mu=mu$mu, sigprior=settings$sigma$prior)
           beta <- opt.beta(beta.ss, beta$kappa, settings)
@@ -138,7 +138,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       bound.ss <- suffstats$bound
       #do the m-step
       mu <- opt.mu(lambda=lambda, mode=settings$gamma$mode, 
-                   covar=settings$covariates$X, settings$gamma$enet)
+                   covar=settings$covariates$X, enet=settings$gamma$enet, ic.k=settings$gamma$ic.k)
       sigma <- opt.sigma(nu=sigma.ss, lambda=lambda, 
                          mu=mu$mu, sigprior=settings$sigma$prior)
       beta <- opt.beta(beta.ss, beta$kappa, settings)

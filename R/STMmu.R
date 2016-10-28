@@ -1,7 +1,7 @@
 ## Optimization for Global Parameters over Doc-Topic Proportions
 
 #main method up top, regression-implementations below.
-opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL) {
+opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL, ic.k=2) {
 
   #When there are no covariates we use the CTM method
   if(mode=="CTM") {
@@ -27,7 +27,7 @@ opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL) 
   #Lasso
   if(mode=="L1") {
     out <- glmnet(x=covar[,-1], y=lambda, family="mgaussian", alpha=enet)
-    unpack <- unpack.glmnet(out, nobs=nrow(covar), ic.k=2)
+    unpack <- unpack.glmnet(out, nobs=nrow(covar), ic.k=ic.k)
     gamma <- rbind(unpack$intercept, unpack$coef)
     mu <- t(covar%*%gamma)
     if(!is.matrix(mu)) {

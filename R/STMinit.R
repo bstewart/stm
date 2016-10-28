@@ -97,9 +97,10 @@ stm.init <- function(documents, settings) {
       #if there were zeroes, reintroduce them
       #assign missing compoinents the machine double epsilon
       #and renormalize just in case.
-      beta.new <- matrix(0, nrow=K, ncol=V)
-      beta.new[,keep] <- beta
-      beta.new[,temp.remove] <- .Machine$double.eps 
+      #beta.new <- matrix(0, nrow=K, ncol=V)
+      #beta.new[,keep] <- beta
+      #beta.new[,temp.remove] <- .Machine$double.eps 
+      beta.new <- beta + .1 #prior of 1/10 word
       beta <- beta.new/rowSums(beta.new)  
       rm(beta.new)
     }
