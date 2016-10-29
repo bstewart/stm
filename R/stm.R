@@ -23,8 +23,15 @@ stm.dfm <- function(documents, vocab, K,
                         gamma.prior=c("Pooled", "L1"), sigma.prior=0,
                         kappa.prior=c("L1", "Jeffreys"), control=list())  {
 
-  if (!missing(vocab))
-    stop("if documents is a dfm, do not specify vocab separately")
+  if (!missing(vocab)) {
+    # in case K was not specified by name, and it was confused with the
+    # vocab argument (missing for dfm inputs)
+    if (is.numeric(vocab) & length(vocab)==1) {
+      stop("incorrect argument type for vocab, did you mean to specify K = ", vocab, "?")
+    } else {
+      stop("if documents is a dfm, do not specify vocab separately")
+    }
+  }
 
   # convert the dfm input as the first argument into the structure of the
   # older function where this is split into a list
