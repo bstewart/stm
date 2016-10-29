@@ -66,13 +66,11 @@ This vignette demonstrates how to use the Structural Topic Model \pkg{stm} \text
 \def\citepos#1{\citeauthor{#1}'s (\citeyear{#1})}
 \newcommand\citea{\citeauthor}
 
+\usepackage{Sweave}
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+\input{stmVignette-concordance}
 \spacingset{1}
 
-<<echo=FALSE>>=
-options(prompt = "R> ", continue = "+", width = 70, useFancyQuotes = FALSE)
-@ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
@@ -140,10 +138,6 @@ In this section we demonstrate the basics of using the package.\footnote{The \pk
 
 \FloatBarrier
 
-<<eval=TRUE, echo=FALSE>>=
-library("stm")
-set.seed(02138)
-@
 
 
 \subsection{Ingest: Reading and processing text data}
@@ -161,11 +155,12 @@ A common way that researchers store text data alongside covariates related to th
 To illustrate how to use the \pkg{stm} package, we will use a collection of blogposts about American politics that were written in 2008, from the CMU 2008 Political Blog Corpus \citep{poliblog}.\footnote{The set of blogs is available at \url{http://sailing.cs.cmu.edu/socialmedia/blog2008.html} and documentation on the blogs is available at \url{http://www.sailing.cs.cmu.edu/socialmedia/blog2008.pdf}.  You can find the cleaned version of the data we used for this vignette here: \url{http://goo.gl/tsprNO}.} The blogposts were gathered from six different blogs: American Thinker, Digby, Hot Air, Michelle Malkin, Think Progress, and Talking Points Memo.  Each blog has its own particular political bent.  The day within 2008 when each blog was written was also recorded.  Thus for each blogpost, there is metadata on the day it was written and the political ideology of the blog for which it was written. In this case, each blog post is a row in a .csv file, with the text contained in a variable called ``documents''.
 
 
-<<eval=FALSE>>=
-require(quanteda)
-poliblogCorpus <- 
-  corpus(textfile("poliblogs2008.csv", textField = "documents"))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> require(quanteda)
+R> poliblogCorpus <- corpus(textfile("poliblogs2008.csv", textField = "documents"))
+\end{Sinput}
+\end{Schunk}
 
 
 \subsubsection{Reading in data from other text processing programs}
@@ -186,11 +181,13 @@ After reading in the data, we suggest using the utility function \code{prepDocum
 
 \code{prepDocuments} also removes infrequent terms depending on user-set parameter \code{lower.thresh}. The utility function \code{plotRemoved} will plot the number of words and documents removed for different thresholds. For example, the user can use:
 
-<<eval=FALSE>>=
-plotRemoved(processed$documents, lower.thresh = seq(1, 200, by = 100))
-out <- prepDocuments(processed$documents, processed$vocab,
-  processed$meta, lower.thresh = 15)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plotRemoved(processed$documents, lower.thresh = seq(1, 200, by = 100))
+R> out <- prepDocuments(processed$documents, processed$vocab,
++  processed$meta, lower.thresh = 15)
+\end{Sinput}
+\end{Schunk}
 
 to evaluate how many words and documents would be removed from the dataset at each word threshold, which is the minimum number of documents a word needs to appear in in order for the word to be kept within the vocabulary.  Then the user can select their preferred threshold within \code{prepDocuments}.
  
@@ -218,17 +215,21 @@ In this example we simply let prevalence be a function of the ``ratings'' variab
 
 If a user wishes to specify additional prevalence covariates, she would do so using the standard formula notation in \proglang{R} which we discuss at greater length below. A feature of the \code{stm} function is that ``prevalence'' can be expressed as a formula that can include multiple covariates and factorial or continuous covariates.  For example, by using the formula setup we can enter other covariates additively. Additionally users can include more flexible functional forms of continuous covariates, including standard transforms like \code{log()}, as well as \code{ns()} or \code{bs()} from the \pkg{splines} package. The \pkg{stm} package also includes a convenience function \code{s()}, which selects a fairly flexible b-spline basis. In the current example we allow for the variable ``date'' to be estimated with a spline. As we show later in the paper, interactions between covariates can also be added using the standard notation for \texttt{R} formulas. In summary, in the example below, we enter in the variables additively, but allowing for the day variable, an integer variable measuring which day the blog was posted, to have a non-linear relationship in the topic estimation stage.
 
-<<eval=FALSE>>=
-poliblogPrevFit <- stm(out$documents, out$vocab, K = 20,
-  prevalence =~ rating + s(day), max.em.its = 75,
-  data = out$meta, init.type = "Spectral")
-@
+\begin{Schunk}
+\begin{Sinput}
+R> poliblogPrevFit <- stm(out$documents, out$vocab, K = 20,
++  prevalence =~ rating + s(day), max.em.its = 75,
++  data = out$meta, init.type = "Spectral")
+\end{Sinput}
+\end{Schunk}
 
 The model is set to run for a maximum of 75 EM iterations (controlled by \code{max.em.its}) using a seed we selected (\code{seed}).  Typically, convergence of the model will be monitored by the change in the approximate bound between EM iterations.  Once the bound has a small enough change between iterations, the model is considered converged. To reduce compiling time, in this paper we do not run the models and instead load a workspace with the models already estimated.
 
-<<eval=TRUE>>=
-load(url("http://goo.gl/VPdxlS"))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> load(url("http://goo.gl/VPdxlS"))
+\end{Sinput}
+\end{Schunk}
 
 \subsection{Evaluate: Model selection and search}
 
@@ -243,19 +244,24 @@ The second approach is to initialize the model with a short run of a collapsed G
 
 When the user cannot use the spectral initialization, she should estimate many models, each from randomly generated starting values, and then evaluate each \emph{model} according to some separate standard (we provide several below). The function \code{selectModel} automates this process to facilitate finding a model with desirable properties. Users specify the number of ``runs,'' which in the example below is set to 20. \code{selectModel} first casts a net where ``run'' (below 10) models are run for two EM steps, and then models with low likelihoods are discarded. Next, the default returns the 20\% of models with the highest likelihoods, which are then run until convergence or the EM iteration maximum is reached. Notice that options for the \code{stm} function can be passed to \code{selectModels}, such as \code{max.em.its}. If users would like to select a larger number of models to be run completely, this can also be set with an option specified in the help file for this function.
 
-<<eval=FALSE>>=
-poliblogSelect <- selectModel(out$documents, out$vocab, K = 20,
-  prevalence =~ rating + s(day), max.em.its = 75,
-  data = out$meta, runs = 20, seed = 8458159)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> poliblogSelect <- selectModel(out$documents, out$vocab, K = 20,
++  prevalence =~ rating + s(day), max.em.its = 75,
++  data = out$meta, runs = 20, seed = 8458159)
+\end{Sinput}
+\end{Schunk}
 In order to select a model for further investigation, users must choose one of the candidate models' outputs from \code{selectModel}. To do this, \code{plotModel} can be used to plot the average \emph{semantic coherence} and \emph{exclusivity} scores for each model (represented by topic numbers) as well as the semantic coherence and exclusivity for each topic.\footnote{See \citet{stmjasa,ajps} for a discussion of these criteria.} Each of these criteria are calculated for each topic within a model run. The \code{plotModel} function calculates the average across all topics for each run of the model and plots these by labeling the model run with a numeral. Often times users will select a model with desirable properties in both dimensions (i.e., models with average scores towards the upper right side of the plot). As shown in Figure~\ref{fig:select}, the \code{plotModel} function also plots each topic's values, which helps give a sense of the variation in these parameters.\footnote{For a given model, the user can plot the semantic coherence and exclusivity scores with the \code{topicQuality} function.}
 
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=4,height=4>>=
-plotModels(poliblogSelect)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plotModels(poliblogSelect)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-008}
 \caption{Plot of \code{selectModel} results. Numerals represent the average for each model, and dots represent topic specific scores.}
 \label{fig:select}
 \end{center}
@@ -263,9 +269,11 @@ plotModels(poliblogSelect)
 
 Next the user would want to select one of these models to work with. For example, the third model could be extracted from the object that is outputted by \code{selectModel}.
 
-<<eval=FALSE>>=
-selectedmodel <- poliblogSelect$runout[[3]] 
-@
+\begin{Schunk}
+\begin{Sinput}
+R> selectedmodel <- poliblogSelect$runout[[3]] 
+\end{Sinput}
+\end{Schunk}
 
 Alternatively, as discussed in Section~\ref{sec:eval}, the user can evaluate the stability of particular \emph{topics} across models.  
 
@@ -274,10 +282,12 @@ Alternatively, as discussed in Section~\ref{sec:eval}, the user can evaluate the
 STM assumes a fixed user-specified number of topics. There is not a ``right'' answer to the number of topics that are appropriate for a given corpus, but the function \code{searchK} uses a data-driven approach to selecting the number of topics. The function will perform several automated tests to help choose the number of topics including calculating the held out likelihood \citep{wallach2009evaluation} and performing a residual analysis \citep{taddyestimation}. For example, one could estimate a STM model for 7 and 10 topics and compare the results along each of the criteria. The default initialization is the spectral initialization.  This function will also calculate a range of quantities of interest, including the average exclusivity and semantic coherence.\footnote{An alternative approach, useful when not using a spectral initialization, uses the \code{manyTopics} function which makes calls to the \code{stm} or the \code{selectModel} functions across multiple different numbers of topics. Note that in this case the process of extracting results differs from \code{selectModel} because results are stored in a list environment.}
 
 
-<<eval=FALSE>>=
-storage <- searchK(out$documents, out$vocab, K = c(7, 10),
-  prevalence =~ rating + s(day), data = meta)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> storage <- searchK(out$documents, out$vocab, K = c(7, 10),
++  prevalence =~ rating + s(day), data = meta)
+\end{Sinput}
+\end{Schunk}
 
 
  
@@ -299,9 +309,28 @@ We next describe two approaches for users to explore the topics that have been e
 
 To explore the words associated with each topic we can use the \code{labelTopics} function.  For models where a content covariate is included \code{sageLabels} can also be used. Both these functions will print to the monitor words associated with each topic. The function by default prints several different types of word profiles, including highest probability words and FREX words.\footnote{For more information on FREX and high probability rankings, see \citet{nips2013,stmjasa,ajps,TextComparative}. For more information on score, see the \pkg{lda} \proglang{R} package, \url{http://cran.r-project.org/web/packages/lda/lda.pdf}. For more information on lift, see \citet{taddy2012multinomial}.}  In order to translate these results to a format that can easily be used within a paper, the \code{plot.stm(,type = "labels")} function will print topic words to a graphic device. Notice that in this case, the labels option is specified as the \code{plot.STM} function has several functionalities that we describe below (the options for ``perspectives" and ``summary").
 
-<<eval=TRUE>>=
-labelTopics(poliblogPrevFit, c(3, 7, 20))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> labelTopics(poliblogPrevFit, c(3, 7, 20))
+\end{Sinput}
+\begin{Soutput}
+Topic 3 Top Words:
+ 	 Highest Prob: obama, barack, campaign, biden, polit, will, debat 
+ 	 FREX: ayer, barack, obama, wright, biden, jeremiah, joe 
+ 	 Lift: oct, goolsbe, ayerss, ayr, bernadin, ayer, annenberg 
+ 	 Score: oct, obama, barack, ayer, wright, campaign, biden 
+Topic 7 Top Words:
+ 	 Highest Prob: palin, governor, sarah, state, alaska, polit, senat 
+ 	 FREX: blagojevich, palin, sarah, rezko, alaska, governor, gov 
+ 	 Lift: jindal, blagojevich, juneau, monegan, blago, burri, wasilla 
+ 	 Score: monegan, palin, blagojevich, sarah, alaska, rezko, governor 
+Topic 20 Top Words:
+ 	 Highest Prob: bush, presid, administr, said, hous, white, report 
+ 	 FREX: cheney, tortur, cia, administr, interrog, bush, perino 
+ 	 Lift: addington, fratto, perino, mcclellan, feith, plame, cheney 
+ 	 Score: addington, bush, tortur, perino, cia, cheney, administr 
+\end{Soutput}
+\end{Schunk}
 
 To read documents that are highly associated with topics the \code{findThoughts} function can be used. This function will print the documents highly associated with each topic.\footnote{The \code{theta} parameter in the \code{stm} object output has the posterior probability that this function uses.} Reading these documents is helpful for understanding the content of a topic and interpreting its meaning.
 
@@ -309,31 +338,28 @@ In our example, for expositional purposes, we restrict the length of the documen
 
 To print example documents to a graphics device, \code{plotQuote} can be used. The results are displayed in Figure~\ref{fig:example}.
 
-<<eval=TRUE,results=hide>>=
-thoughts3 <- findThoughts(poliblogPrevFit, texts = shortdoc,
-  n = 2, topics = 3)$docs[[1]]
-thoughts20 <- findThoughts(poliblogPrevFit, texts = shortdoc,
-  n = 2, topics = 20)$docs[[1]]
-@
+\begin{Schunk}
+\begin{Sinput}
+R> thoughts3 <- findThoughts(poliblogPrevFit, texts = shortdoc,
++  n = 2, topics = 3)$docs[[1]]
+R> thoughts20 <- findThoughts(poliblogPrevFit, texts = shortdoc,
++  n = 2, topics = 20)$docs[[1]]
+\end{Sinput}
+\end{Schunk}
 
 %manually correcting some unicode errors
-<<eval=TRUE, echo=FALSE, results=verbatim>>=
-thoughts3 <-
-  c("Here's video of the ad we reported on below that the Obama campaign is running in Ohio responding to the earlier Swift-Boating spot tying Obama to former Weatherman Bill Ayers... With all our pr",
-      "As noted here and elsewhere, the words 'William Ayers' appeared nowhere in yesterday's debate, despite the fact that the McCain campaign hinted for days that McCain would go hard at Obama's association")
-thoughts20 <-
-  c("Waxman calls for release of FBI interviews with Bush and Cheney.  In a letter to Attorney General Michael Mukasey today, Rep. Henry Waxman (D-CA), the Chairman of the Hous e Committee on Oversight",
-      "Report: Bush 'Personally Directed' Gonzales To Strong-Arm Ashcroft At His BedsideIn his May 2007 testimony, describing the infamous strong-arming of John Ashcroft done by Andy Card and Alberto")
-@
 
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE, keep.source=TRUE, results = verbatim>>=
-par(mfrow = c(1, 2),mar = c(.5, .5, 1, .5))
-plotQuote(thoughts3, width = 30, main = "Topic 3")
-plotQuote(thoughts20, width = 30, main = "Topic 20")
-@
+\begin{Schunk}
+\begin{Sinput}
+R> par(mfrow = c(1, 2),mar = c(.5, .5, 1, .5))
+R> plotQuote(thoughts3, width = 30, main = "Topic 3")
+R> plotQuote(thoughts20, width = 30, main = "Topic 20")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-014}
 \caption{Example documents highly associated with topics 3 and 20.}
 \label{fig:example}
 \end{center}
@@ -350,11 +376,13 @@ Estimating the relationship between metadata and topics is a core feature of the
 
 
 
-<<eval=TRUE, keep.source=TRUE, results = verbatim>>=
-out$meta$rating <- as.factor(out$meta$rating)
-prep <- estimateEffect(1:20 ~ rating + s(day), poliblogPrevFit,
-  meta = out$meta, uncertainty = "Global")
-@
+\begin{Schunk}
+\begin{Sinput}
+R> out$meta$rating <- as.factor(out$meta$rating)
+R> prep <- estimateEffect(1:20 ~ rating + s(day), poliblogPrevFit,
++  meta = out$meta, uncertainty = "Global")
+\end{Sinput}
+\end{Schunk}
 
 
 \subsection{Visualize: Presenting STM results}
@@ -367,9 +395,12 @@ Corpus level visualization can be done in several different ways. The first rela
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8>>=
-plot.STM(poliblogPrevFit, type = "summary", xlim = c(0, .3))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plot.STM(poliblogPrevFit, type = "summary", xlim = c(0, .3))
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-016}
 \caption{Graphical display of estimated topic proportions.}
 \label{fig:summary}
 \end{center}
@@ -390,15 +421,18 @@ When the covariate of interest is binary, or users are interested in a particula
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=6,height=4, keep.source=TRUE, results = verbatim>>=
-plot.estimateEffect(prep, covariate = "rating", topics = c(3, 7, 20),
-  model = poliblogPrevFit, method = "difference",
-  cov.value1 = "Liberal", cov.value2 = "Conservative",
-  xlab = "More Conservative ... More Liberal",
-  main = "Effect of Liberal vs. Conservative",
-  xlim = c(-.1, .1), labeltype = "custom",
-  custom.labels = c('Obama', 'Sarah Palin','Bush Presidency'))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plot.estimateEffect(prep, covariate = "rating", topics = c(3, 7, 20),
++  model = poliblogPrevFit, method = "difference",
++  cov.value1 = "Liberal", cov.value2 = "Conservative",
++  xlab = "More Conservative ... More Liberal",
++  main = "Effect of Liberal vs. Conservative",
++  xlim = c(-.1, .1), labeltype = "custom",
++  custom.labels = c('Obama', 'Sarah Palin','Bush Presidency'))
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-017}
 \caption{Graphical display of topical prevalence contrast.}
 \label{fig:difference}
 \end{center}
@@ -412,15 +446,18 @@ When users have variables that they want to treat continuously, users can choose
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8, keep.source=TRUE, results = verbatim>>=
-plot.estimateEffect(prep, "day", method = "continuous", topics = 7,
-  model = z, printlegend = FALSE, xaxt = "n", xlab = "Time (2008)")
-monthseq <- seq(from = as.Date("2008-01-01"), 
-  to = as.Date("2008-12-01"), by = "month")
-monthnames <- months(monthseq)
-axis(1,at = as.numeric(monthseq) - min(as.numeric(monthseq)), 
-  labels = monthnames)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plot.estimateEffect(prep, "day", method = "continuous", topics = 7,
++  model = z, printlegend = FALSE, xaxt = "n", xlab = "Time (2008)")
+R> monthseq <- seq(from = as.Date("2008-01-01"), 
++  to = as.Date("2008-12-01"), by = "month")
+R> monthnames <- months(monthseq)
+R> axis(1,at = as.numeric(monthseq) - min(as.numeric(monthseq)), 
++  labels = monthnames)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-018}
 \caption{Graphical display of topic prevalence. Topic 7 prevalence is plotted as a smooth function of day, holding rating at sample median, with 95\% confidence intervals.}
 \label{fig:spline}
 \end{center}
@@ -431,20 +468,25 @@ axis(1,at = as.numeric(monthseq) - min(as.numeric(monthseq)),
 
 We can also plot the influence of covariates included in as a topical content covariate. A topical content variable allows for the vocabulary used to talk about a particular topic to vary. First, the STM must be fit with a variable specified in the content option. In the below example, ratings serves this purpose. It is important to note that this is a completely new model, and so the actual topics may differ in both content and numbering compared to the previous example where no content covariate was used.
 
-<<eval=FALSE>>=
-poliblogContent <- stm(out$documents, out$vocab, K = 20,
-  prevalence =~ rating + s(day), content =~ rating,
-  max.em.its = 75, data = out$meta, init.type = "Spectral")
-@
+\begin{Schunk}
+\begin{Sinput}
+R> poliblogContent <- stm(out$documents, out$vocab, K = 20,
++  prevalence =~ rating + s(day), content =~ rating,
++  max.em.its = 75, data = out$meta, init.type = "Spectral")
+\end{Sinput}
+\end{Schunk}
 
 Next, the results can be plotted using the \code{plot.STM(,type = "perspectives")} function.  This functions shows which words within a topic are more associated with one covariate value versus another. In Figure~\ref{fig:perp}, vocabulary differences by ratings is plotted for topic 11. Topic 11 is related to Guantanamo. Its top FREX words were ``tortur, detaine, court, justic, interrog, prosecut, legal''. However, Figure~\ref{fig:perp} lets us see how liberals and conservatives talk about this topic differently. In particular, liberals emphasized ``torture'' whereas conservatives emphasize typical court language such as ``illegal'' and ``law.'' \footnote{At this point you can only
  have a single variable as a content covariate, although that variable can have any number of groups. It cannot be continuous. Note that the computational cost of this type of model rises quickly with the number of groups and so it may be advisable to keep it small.}
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8,height=6, keep.source=TRUE, results = verbatim>>=
-plot.STM(poliblogContent, type = "perspectives", topics = 11)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plot.STM(poliblogContent, type = "perspectives", topics = 11)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-020}
 \caption{Graphical display of topical perspectives.}
 \label{fig:perp}
 \end{center}
@@ -454,9 +496,12 @@ This function can also be used to plot the contrast in words across two topics.\
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=6,height=4,keep.source=TRUE, results = verbatim>>=
-plot.STM(poliblogPrevFit, type = "perspectives", topics = c(12, 20))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plot.STM(poliblogPrevFit, type = "perspectives", topics = c(12, 20))
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-021}
 \caption{Graphical display of topical contrast between topics 12 and 20.}
 \label{fig:perp2}
 \end{center}
@@ -468,30 +513,33 @@ plot.STM(poliblogPrevFit, type = "perspectives", topics = c(12, 20))
 
 Another modification that is possible in this framework is to allow for interactions between covariates such that one variable may ``moderate'' the effect of another variable. In this example, we re-estimated the STM to allow for an interaction between day (entered linearly) and ratings. Then in \code{estimateEffect()} we include the same interaction. This allows us in \code{plot.estimateEffect} to have this interaction plotted. We display the results in Figure~\ref{fig:spline2} for topic 20 (Bush administration). We observe that conservatives never wrote much about this topic, whereas liberals discussed this topic a great deal, but over time the topic diminished in salience.\footnote{Note that the ability to plot interactions only supports interactions with a binary effect modification covariate and does not support interactions with a spline.}
 
-<<eval=FALSE>>=
-poliblogInteraction <- stm(out$documents, out$vocab, K = 20,
-  prevalence =~ rating * day, max.em.its = 75,
-  data = out$meta, init.type = "Spectral")
-@
+\begin{Schunk}
+\begin{Sinput}
+R> poliblogInteraction <- stm(out$documents, out$vocab, K = 20,
++  prevalence =~ rating * day, max.em.its = 75,
++  data = out$meta, init.type = "Spectral")
+\end{Sinput}
+\end{Schunk}
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8, keep.source=TRUE, results = verbatim>>=
-prep <- estimateEffect(c(20) ~ rating * day, poliblogInteraction,
-  metadata = out$meta, uncertainty = "None")
-
-plot.estimateEffect(prep, covariate = "day", model = poliblogInteraction,
-  method = "continuous", xlab = "Days", moderator = "rating",
-  moderator.value = "Liberal", linecol = "blue", ylim = c(0, .12),
-  printlegend = F)
-
-plot.estimateEffect(prep, covariate = "day", model = poliblogInteraction,
-  method = "continuous", xlab = "Days", moderator = "rating",
-  moderator.value = "Conservative", linecol = "red", add = T,
-  printlegend = F)
-legend(0, .08, c("Liberal", "Conservative"),
-  lwd = 2, col = c("blue", "red"))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> prep <- estimateEffect(c(20) ~ rating * day, poliblogInteraction,
++  metadata = out$meta, uncertainty = "None")
+R> plot.estimateEffect(prep, covariate = "day", model = poliblogInteraction,
++  method = "continuous", xlab = "Days", moderator = "rating",
++  moderator.value = "Liberal", linecol = "blue", ylim = c(0, .12),
++  printlegend = F)
+R> plot.estimateEffect(prep, covariate = "day", model = poliblogInteraction,
++  method = "continuous", xlab = "Days", moderator = "rating",
++  moderator.value = "Conservative", linecol = "red", add = T,
++  printlegend = F)
+R> legend(0, .08, c("Liberal", "Conservative"),
++  lwd = 2, col = c("blue", "red"))
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-023}
 \caption{Graphical display of topical content. This plots the interaction between time (day of blog post) and rating (liberal versus conservative). Topic 20 prevalence is plotted as linear function of time, holding the rating at either 0 (Liberal) or 1 (Conservative). Were other variables included in the model, they would be held at their sample medians.}
 \label{fig:spline2}
 \end{center}
@@ -507,9 +555,12 @@ There are multiple other ways to visualize results from an STM model. Topics the
 \begin{figure}
 \vspace{-20pt}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=2,height=2, keep.source=TRUE, results = verbatim>>=
-cloud(poliblogPrevFit, topic = 7, scale = c(2,.25))
-@
+\begin{Schunk}
+\begin{Sinput}
+R> cloud(poliblogPrevFit, topic = 7, scale = c(2,.25))
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-024}
 \caption{Word cloud display of vice President topic.}
 \label{fig:cloud}
 \end{center}
@@ -519,16 +570,21 @@ cloud(poliblogPrevFit, topic = 7, scale = c(2,.25))
 
 In addition, the Structural Topic Model permits correlations between topics. Positive correlations between topics indicate that both topics are likely to be discussed within a document. These can be visualized using \code{plot.topicCorr()}. The user can specify a correlation threshold.  If two topics are correlated above that threshold, then those two topics are considered to be linked.  After calculating which topics are correlated with one another, \code{plot.topicCorr} produces a layout of topic correlations using a force-directed layout algorithm, which we present in Figure~\ref{fig:correlations}. We can use the correlation graph to observe the connection between such as topics 12 (Iraq War) and 20 (Bush administration). \code{plot.topicCorr} has several options that are described in the help file.
 
-<<eval=TRUE, keep.source=TRUE, results = verbatim>>=
-mod.out.corr <- topicCorr(poliblogPrevFit)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> mod.out.corr <- topicCorr(poliblogPrevFit)
+\end{Sinput}
+\end{Schunk}
 
 \begin{figure}
 \vspace{-20pt}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=4,height=4, keep.source=TRUE, results = verbatim>>=
-plot.topicCorr(mod.out.corr)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plot.topicCorr(mod.out.corr)
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-026}
 \caption{Graphical display of topic correlations.}
 \label{fig:correlations}
 \end{center}
@@ -568,11 +624,14 @@ Once a model has been fit, convergence can easily be assessed by plotting the va
 
 \begin{figure}
 \begin{center}
-<<eval=TRUE,fig=TRUE,width=8, keep.source=TRUE, results = verbatim>>=
-plot(poliblogPrevFit$convergence$bound, type = "l",
-  ylab = "Approximate Objective",
-  main = "Convergence")
-@
+\begin{Schunk}
+\begin{Sinput}
+R> plot(poliblogPrevFit$convergence$bound, type = "l",
++  ylab = "Approximate Objective",
++  main = "Convergence")
+\end{Sinput}
+\end{Schunk}
+\includegraphics{stmVignette-027}
 \caption{Graphical display of convergence.}
 \label{fig:converge}
 \end{center}
@@ -623,36 +682,44 @@ The primary reason to use the \pkg{stm} is the rich feature set summarized in Fi
 Without the inclusion of covariates, STM reduces to a logistic-normal topic model, often called the Correlated Topic Model (CTM) \citep{blei2007correlated}. The \pkg{topicmodels} package in \proglang{R} provides an interface to David Blei's original \proglang{C} code to estimate the CTM \citep{hornik2011topicmodels}.  This provides us with the opportunity to produce a direct comparison to a comparable model.  While the generative models are the same, the variational approximations to the posterior are actually distinct, with the Blei code using a different approach to the nonconjugacy problem.
 
 In order to provide a direct comparison we use a set of 5000 randomly sampled documents from the poliblog2008 corpus described above.  This set of documents is included as \code{poliblog5k} in the \pkg{stm} package.  We want to evaluate both the speed with which the model estimates as well as the quality of the solution.  Due to the differences in the variational approximation the objective functions are not directly comparable so we use an estimate of the expected per-document held-out log-likelihood.  With the built-in function \code{make.heldout} we construct a dataset in which 10\% of documents have half of their words removed.  We can then evaluate the quality of inferred topics on the same evaluation set across all models.
-<<eval=FALSE>>=
-set.seed(02138)
-heldout <- make.heldout(poliblog5k.docs, poliblog5k.voc)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> set.seed(02138)
+R> heldout <- make.heldout(poliblog5k.docs, poliblog5k.voc)
+\end{Sinput}
+\end{Schunk}
 We arbitrarily decided to evaluate performance using \code{K = 100} topics.
 
 The function \code{CTM} in the \pkg{topicmodels} package uses different default settings than the original Blei code.  Thus we present results using both sets of settings. We start by converting our document format to the simple triplet matrix format used by the \pkg{topicmodels} package using an internal \pkg{stm} function.
-<<eval=FALSE>>=
-slam <- convertCorpus(heldout$documents, heldout$vocab, type="slam")
-@
+\begin{Schunk}
+\begin{Sinput}
+R> slam <- convertCorpus(heldout$documents, heldout$vocab, type="slam")
+\end{Sinput}
+\end{Schunk}
 
 We then estimate the model with both sets of defaults
-<<eval=FALSE>>=
-mod1 <- CTM(slam, k = 100)
-control_CTM_VEM <- list(estimate.beta = TRUE, verbose = 1,
-  seed = as.integer(2138), nstart = 1L, best = TRUE,
-  var = list(iter.max = 20, tol = 1e-6),
-  em = list(iter.max = 1000, tol = 1e-3),
-  initialize = "random",
-  cg = list(iter.max = -1, tol = 1e-6))
-mod2 <- CTM(slam, k = 100, control = control_CTM_VEM)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> mod1 <- CTM(slam, k = 100)
+R> control_CTM_VEM <- list(estimate.beta = TRUE, verbose = 1,
++  seed = as.integer(2138), nstart = 1L, best = TRUE,
++  var = list(iter.max = 20, tol = 1e-6),
++  em = list(iter.max = 1000, tol = 1e-3),
++  initialize = "random",
++  cg = list(iter.max = -1, tol = 1e-6))
+R> mod2 <- CTM(slam, k = 100, control = control_CTM_VEM)
+\end{Sinput}
+\end{Schunk}
 
 For the STM we estimate two versions, one with default convergence settings and one with \code{emtol = 1e-3} to match the Blei convergence tolerance.  In both cases we use the spectral initialization method which we generally recommend.
-<<eval=FALSE>>=
-stm.mod1 <- stm(heldout$documents, heldout$vocab, K = 100,
-  init.type = "Spectral")
-stm.mod2 <- stm(heldout$documents, heldout$vocab, K = 100,
-  init.type = "Spectral", emtol = 1e-3)
-@
+\begin{Schunk}
+\begin{Sinput}
+R> stm.mod1 <- stm(heldout$documents, heldout$vocab, K = 100,
++  init.type = "Spectral")
+R> stm.mod2 <- stm(heldout$documents, heldout$vocab, K = 100,
++  init.type = "Spectral", emtol = 1e-3)
+\end{Sinput}
+\end{Schunk}
 
 \begin{table}[]
 \centering

@@ -1,0 +1,291 @@
+\begin{thebibliography}{43}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Arora \emph{et~al.}(2013)Arora, Ge, Halpern, Mimno, Moitra, Sontag,
+  Wu, and Zhu}]{arora2012practical}
+Arora S, Ge R, Halpern Y, Mimno D, Moitra A, Sontag D, Wu Y, Zhu M (2013).
+\newblock \enquote{A Practical Algorithm for Topic Modeling with Provable
+  Guarantees.}
+\newblock In \emph{Proceedings of the 30 th International Conference on Machine
+  Learning}.
+
+\bibitem[{Bengtsson(2015)}]{MatrixStats}
+Bengtsson H (2015).
+\newblock \emph{\pkg{matrixStats}: Methods that Apply to Rows and Columns of a
+  Matrix (and to Vectors)}.
+\newblock \proglang{R}~package version 1.14.2,
+  \urlprefix\url{http://CRAN.R-project.org/package=matrixStats}.
+
+\bibitem[{Blei and Lafferty(2007)}]{blei2007correlated}
+Blei DM, Lafferty JD (2007).
+\newblock \enquote{A Correlated Topic Model of Science.}
+\newblock \emph{The Annals of Applied Statistics}, \textbf{1}(1), 17--35.
+
+\bibitem[{Blei \emph{et~al.}(2003)Blei, Ng, and Jordan}]{blei2003latent}
+Blei DM, Ng A, Jordan M (2003).
+\newblock \enquote{Latent Dirichlet Allocation.}
+\newblock \emph{Journal of Machine Learning Research}, \textbf{3}, 993--1022.
+
+\bibitem[{Bouchet-Valat(2014)}]{SnowballC}
+Bouchet-Valat M (2014).
+\newblock \emph{\pkg{SnowballC}: Snowball Stemmers Based on the \proglang{C}
+  Libstemmer UTF-8 Library}.
+\newblock \proglang{R}~package version 0.5.1,
+  \urlprefix\url{http://CRAN.R-project.org/package=SnowballC}.
+
+\bibitem[{Chang(2012)}]{lda}
+Chang J (2012).
+\newblock \emph{\pkg{lda}: Collapsed Gibbs Sampling Methods for Topic Models}.
+\newblock \proglang{R}~package version 1.3.2,
+  \urlprefix\url{http://CRAN.R-project.org/package=lda}.
+
+\bibitem[{Chuang \emph{et~al.}(2014)Chuang, Wilkerson, Weiss, Tingley, Stewart,
+  Roberts, Poursabzi-Sangdeh, Grimmer, Findlater, Boyd-Graber
+  \emph{et~al.}}]{chuangcomputer}
+Chuang J, Wilkerson JD, Weiss R, Tingley D, Stewart BM, Roberts ME,
+  Poursabzi-Sangdeh F, Grimmer J, Findlater L, Boyd-Graber J, \emph{et~al.}
+  (2014).
+\newblock \enquote{Computer-Assisted Content Analysis: Topic Models for
+  Exploring Multiple Subjective Interpretations.}
+\newblock Advances in Neural Information Processing Systems Workshop on
+  Human-Propelled Machine Learning.
+
+\bibitem[{Csardi and Nepusz(2006)}]{igraph}
+Csardi G, Nepusz T (2006).
+\newblock \enquote{The \pkg{igraph} Software Package for Complex Network
+  Research.}
+\newblock \emph{InterJournal, Complex Systems}, \textbf{1695}(5), 1--9.
+
+\bibitem[{Eddelbuettel \emph{et~al.}(2011)Eddelbuettel, Fran{\c{c}}ois,
+  Allaire, Chambers, Bates, and Ushey}]{eddelbuettel2011rcpp}
+Eddelbuettel D, Fran{\c{c}}ois R, Allaire J, Chambers J, Bates D, Ushey K
+  (2011).
+\newblock \enquote{\pkg{Rcpp}: Seamless \proglang{R} and \proglang{C++}
+  Integration.}
+\newblock \emph{Journal of Statistical Software}, \textbf{40}(8), 1--18.
+
+\bibitem[{Eddelbuettel and Sanderson(2014)}]{RcppArmadillo}
+Eddelbuettel D, Sanderson C (2014).
+\newblock \enquote{\pkg{RcppArmadillo}: Accelerating \proglang{R} with
+  High-Performance \proglang{C++} Linear Algebra.}
+\newblock \emph{Computational Statistics and Data Analysis}, \textbf{71},
+  1054--1063.
+
+\bibitem[{Eisenstein \emph{et~al.}(2011)Eisenstein, Ahmed, and
+  Xing}]{eisenstein2011sparse}
+Eisenstein J, Ahmed A, Xing E (2011).
+\newblock \enquote{Sparse Additive Generative Models of Text.}
+\newblock In \emph{Proceedings of the 28th International Conference on Machine
+  Learning}, pp. 1041--1048.
+
+\bibitem[{Eisenstein and Xing(2010)}]{poliblog}
+Eisenstein J, Xing E (2010).
+\newblock \emph{The CMU 2008 Political Blog Corpus}.
+\newblock Carnegie Mellon University.
+
+\bibitem[{Fellows(2014)}]{wordcloud}
+Fellows I (2014).
+\newblock \emph{\pkg{wordcloud}: Word Clouds}.
+\newblock \proglang{R}~package version 2.5,
+  \urlprefix\url{http://CRAN.R-project.org/package=wordcloud}.
+
+\bibitem[{Friedman \emph{et~al.}(2010)Friedman, Hastie, and
+  Tibshirani}]{friedman2010regularization}
+Friedman J, Hastie T, Tibshirani R (2010).
+\newblock \enquote{Regularization Paths for Generalized Linear Models via
+  Coordinate Descent.}
+\newblock \emph{Journal of Statisical Software}, \textbf{33}(1), 1--22.
+
+\bibitem[{Goodman \emph{et~al.}(2015)Goodman, Grimmer, Parker, and
+  Zlotnick}]{goodman2015creating}
+Goodman C, Grimmer J, Parker D, Zlotnick F (2015).
+\newblock \enquote{Creating and Destroying Party Brands.}
+\newblock Unpublished Working Paper,
+  \urlprefix\url{http://stanford.edu/~jgrimmer/destroy.pdf}.
+
+\bibitem[{Habel \emph{et~al.}(2015)Habel, Grasman, Stahel, Stahel, and
+  Sterratt}]{geometry}
+Habel K, Grasman R, Stahel A, Stahel A, Sterratt DC (2015).
+\newblock \emph{\pkg{geometry}: Mesh Generation and Surface Tesselation}.
+\newblock \proglang{R}~package version 0.3-6,
+  \urlprefix\url{http://CRAN.R-project.org/package=geometry}.
+
+\bibitem[{Hornik(2005)}]{hornik2005clue}
+Hornik K (2005).
+\newblock \enquote{A CLUE for CLUster Ensembles.}
+\newblock \emph{Journal of Statistical Software}, \textbf{14}(12).
+
+\bibitem[{Hornik and Gr{\"u}n(2011)}]{hornik2011topicmodels}
+Hornik K, Gr{\"u}n B (2011).
+\newblock \enquote{\pkg{topicmodels}: An \proglang{R}~package for Fitting Topic
+  Models.}
+\newblock \emph{Journal of Statistical Software}, \textbf{40}(13), 1--30.
+
+\bibitem[{Hornik \emph{et~al.}(2014)Hornik, Meyer, and Buchta}]{slam}
+Hornik K, Meyer D, Buchta C (2014).
+\newblock \emph{\pkg{slam}: Sparse Lightweight Arrays and Matrices}.
+\newblock \proglang{R}~package version 0.1-32,
+  \urlprefix\url{http://CRAN.R-project.org/package=slam}.
+
+\bibitem[{Janusz \emph{et~al.}(2015)Janusz, Kuk, and Lajevardi}]{constituent}
+Janusz A, Kuk JS, Lajevardi N (2015).
+\newblock \enquote{Constituent Communications in a New Technological Era:
+  Congressional E-Newsletters.}
+\newblock Midwest Political Science Association Conference.
+
+\bibitem[{Khan and Bouchard(2009)}]{khan2009variational}
+Khan ME, Bouchard G (2009).
+\newblock \enquote{Variational EM Algorithms for Correlated Topic Models.}
+\newblock \emph{Technical report}, University of British Columbia.
+
+\bibitem[{Krijthe(2015)}]{Rtsne}
+Krijthe J (2015).
+\newblock \emph{\pkg{Rtsne}: T-Distributed Stochastic Neighbor Embedding using
+  Barnes-Hut Implementation}.
+\newblock \proglang{R}~package version 0.10,
+  \urlprefix\url{http://CRAN.R-project.org/package=Rtsne}.
+
+\bibitem[{Lee and Mimno(2014)}]{lee2014low}
+Lee M, Mimno D (2014).
+\newblock \enquote{Low-dimensional Embeddings for Interpretable Anchor-Based
+  Topic Inference.}
+\newblock In \emph{Proceedings of Empirical Methods in Natural Language
+  Processing}.
+
+\bibitem[{Lucas \emph{et~al.}(2015)Lucas, Nielsen, Roberts, Stewart, Storer,
+  and Tingley}]{TextComparative}
+Lucas C, Nielsen R, Roberts M, Stewart B, Storer A, Tingley D (2015).
+\newblock \enquote{Computer Assisted Text Analysis for Comparative Politics.}
+\newblock \emph{Political Analysis}, \textbf{23}, 254--277.
+
+\bibitem[{Meyer \emph{et~al.}(2008)Meyer, Hornik, and Feinerer}]{meyer2008text}
+Meyer D, Hornik K, Feinerer I (2008).
+\newblock \enquote{Text Mining Infrastructure in \proglang{R}.}
+\newblock \emph{Journal of Statistical Software}, \textbf{25}(5), 1--54.
+
+\bibitem[{Milner and Tingley(2015)}]{sailing}
+Milner HV, Tingley DH (2015).
+\newblock \emph{Sailing the Water's Edge: Domestic Politics and American
+  Foreign Policy}.
+\newblock Princeton University Press.
+
+\bibitem[{Reich \emph{et~al.}(2015)Reich, Tingley, Leder-Luis, Roberts, and
+  Stewart}]{StudentText}
+Reich J, Tingley D, Leder-Luis J, Roberts ME, Stewart BM (2015).
+\newblock \enquote{Computer Assisted Reading and Discovery for Student
+  Generated Text in Massive Open Online Courses.}
+\newblock \emph{Journal of Learning Analytics}, \textbf{2}(1), 156--184.
+
+\bibitem[{Roberts(2015)}]{fearfriction}
+Roberts M (2015).
+\newblock \enquote{Experiencing Censorship Emboldens Internet Users and
+  Decreases Government Support in China.}
+\newblock Unpublished Working Paper,
+  \urlprefix\url{http://www.margaretroberts.net/wp-content/uploads/2015/07/fear.pdf}.
+
+\bibitem[{Roberts \emph{et~al.}(Forthcoming)Roberts, Stewart, and
+  Tingley}]{chaptermulti}
+Roberts M, Stewart B, Tingley D (Forthcoming).
+\newblock \emph{Navigating the Local Modes of Big Data: The Case of Topic
+  Models}.
+\newblock Cambridge University Press, New York.
+
+\bibitem[{Roberts \emph{et~al.}(2015)Roberts, Stewart, and Airoldi}]{stmjasa}
+Roberts ME, Stewart BM, Airoldi EM (2015).
+\newblock \enquote{A Model of Text for Experimentation in the Social Sciences.}
+\newblock Unpublished Working Paper,
+  \urlprefix\url{http://scholar.princeton.edu/sites/default/files/bstewart/files/stm.pdf}.
+
+\bibitem[{Roberts \emph{et~al.}(2013)Roberts, Stewart, Tingley, and
+  Airoldi}]{nips2013}
+Roberts ME, Stewart BM, Tingley D, Airoldi EM (2013).
+\newblock \enquote{The Structural Topic Model and Applied Social Science.}
+\newblock Advances in Neural Information Processing Systems Workshop on Topic
+  Models: Computation, Application, and Evaluation.
+
+\bibitem[{Roberts \emph{et~al.}(2014)Roberts, Stewart, Tingley, Lucas,
+  Leder-Luis, Gadarian, Albertson, and Rand}]{ajps}
+Roberts ME, Stewart BM, Tingley D, Lucas C, Leder-Luis J, Gadarian SK,
+  Albertson B, Rand DG (2014).
+\newblock \enquote{Structural Topic Models for Open-Ended Survey Responses.}
+\newblock \emph{American Journal of Political Science}, \textbf{58}(4),
+  1064--1082.
+
+\bibitem[{Taddy(2013)}]{taddy2012multinomial}
+Taddy M (2013).
+\newblock \enquote{Multinomial Inverse Regression for Text Analysis.}
+\newblock \emph{Journal of the American Statistical Association},
+  \textbf{108}(503), 755--770.
+
+\bibitem[{Taddy(Forthcoming)}]{taddy2013distributed}
+Taddy M (Forthcoming).
+\newblock \enquote{Distributed Multinomial Regression.}
+\newblock \emph{Annals of Applied Statistics}.
+
+\bibitem[{Taddy(2012)}]{taddyestimation}
+Taddy MA (2012).
+\newblock \enquote{On Estimation and Selection for Topic Models.}
+\newblock In \emph{Proceedings of the 15th International Conference on
+  Artificial Intelligence and Statistics}.
+
+\bibitem[{Tvinnereim and Flottum(2015)}]{TvinnereimClimate}
+Tvinnereim E, Flottum K (2015).
+\newblock \enquote{Explaining Topic Prevalence in Answers to Open-ended Survey
+  Questions about Climate Change.}
+\newblock \emph{Nature Climate Change}, \textbf{5}, 744--747.
+
+\bibitem[{Van Der~Maaten(2014)}]{van2014accelerating}
+Van Der~Maaten L (2014).
+\newblock \enquote{Accelerating t-sne using Tree-based Algorithms.}
+\newblock \emph{The Journal of Machine Learning Research}, \textbf{15}(1),
+  3221--3245.
+
+\bibitem[{Wallach \emph{et~al.}(2009)Wallach, Murray, Salakhutdinov, and
+  Mimno}]{wallach2009evaluation}
+Wallach HM, Murray I, Salakhutdinov R, Mimno D (2009).
+\newblock \enquote{Evaluation Methods for Topic Models.}
+\newblock In \emph{Proceedings of the 26th Annual International Conference on
+  Machine Learning}, pp. 1105--1112. ACM.
+
+\bibitem[{Wand(2015)}]{KernSmooth}
+Wand M (2015).
+\newblock \emph{\pkg{KernSmooth}: Functions for Kernel Smoothing Supporting
+  Wand and Jones (1995)}.
+\newblock \proglang{R}~package version 2.23-15,
+  \urlprefix\url{http://CRAN.R-project.org/package=KernSmooth}.
+
+\bibitem[{Wang and Klabjan(2015)}]{wang2015time}
+Wang B, Klabjan D (2015).
+\newblock \enquote{Time-Dependent Topic Analysis with Endogenous and Exogenous
+  Processes.}
+\newblock Unpublished Working Paper.
+
+\bibitem[{Wang and Blei(2013)}]{wang2013variational}
+Wang C, Blei DM (2013).
+\newblock \enquote{Variational Inference in Nonconjugate Models.}
+\newblock \emph{The Journal of Machine Learning Research}, \textbf{14}(1),
+  1005--1031.
+
+\bibitem[{Wickham(2015)}]{stringr}
+Wickham H (2015).
+\newblock \emph{\pkg{stringr}: Make it Easier to Work with Strings}.
+\newblock \proglang{R}~package version 1.0.0,
+  \urlprefix\url{http://CRAN.R-project.org/package=stringr}.
+
+\bibitem[{Zhao \emph{et~al.}(2012)Zhao, Liu, Roeder, Lafferty, and
+  Wasserman}]{huge}
+Zhao T, Liu H, Roeder K, Lafferty J, Wasserman L (2012).
+\newblock \enquote{The Huge Package for High-dimensional Undirected Graph
+  Estimation in \proglang{R}.}
+\newblock \emph{The Journal of Machine Learning Research}, \textbf{13}(1),
+  1059--1062.
+
+\end{thebibliography}
