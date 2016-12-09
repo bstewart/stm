@@ -25,7 +25,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   if(!is.null(subsample)) {
     index <- sample(1:length(documents), subsample)
     documents <- documents[index]
-    if(!is.null(meta)) meta <- meta[index,] 
+    if(!is.null(meta)) meta <- meta[index, , drop = FALSE] 
   }
   
   #check that there are no 0 length documents
@@ -36,12 +36,15 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   } 
    
   triplet <- doc.to.ijv(documents) #this also fixes the zero indexing.
+  nms <- names(documents) 
   documents <- ijv.to.doc(triplet$i, triplet$j, triplet$v)
+  names(documents) <- nms
   docs.removed <- c()
   
   #Detect Missing Terms
   miss.vocab <- NULL
   vocablist <- sort(unique(triplet$j))
+  wordcounts <- tabulate(triplet$j)
   if(length(vocablist)>length(vocab)) {
     stop("Your documents object has more unique features than your vocabulary file has entries.")
   } 
@@ -51,13 +54,15 @@ prepDocuments <- function(documents, vocab, meta=NULL,
     vocab <- vocab[vocablist]
     new.map <- cbind(vocablist, 1:length(vocablist))
     documents <- lapply(documents, function(d) {
+      nm <- names(d)
       d[1,] <- new.map[match(d[1,], new.map[,1]),2]
+      names(d) <- nm
       return(d)
     })
+    wordcounts <- wordcounts[vocablist]
   }
   
   #Remove Words Appearing Only n Times
-  wordcounts <- tabulate(triplet$j)
   toremove <- which(wordcounts <= lower.thresh | wordcounts >= upper.thresh)
   keepers <- which(wordcounts > lower.thresh & wordcounts < upper.thresh)
   droppedwords <- c(miss.vocab,vocab[toremove])
@@ -84,7 +89,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   }
   
   if(!is.null(docs.removed) & !is.null(meta)){
-    meta<-meta[-docs.removed,]
+    meta<-meta[-docs.removed, , drop = FALSE]
   }
   #recast everything as an integer
   documents <- lapply(documents, function(x) matrix(as.integer(x), nrow=2))

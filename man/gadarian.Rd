@@ -7,7 +7,7 @@ Gadarian and Albertson data
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of the dataset. ~~
-This data set contains variables from Gadarian and Albertson, forthcoming, "Anxiety, Immigration, and the Search for Information", Political Psychology.
+This data set contains variables from Gadarian and Albertson (2014).
 The experiment had those in the treatment condition write about what made them anxious about immigration. The control condition just had subjects write about immigration. 
 }
 \usage{data(gadarian)}
@@ -22,11 +22,10 @@ The experiment had those in the treatment condition write about what made them a
 }
 \source{
 %%  ~~ reference to a publication or URL from which the data were obtained ~~
-Gadarian and Albertson, forthcoming, "Anxiety, Immigration, and the Search for Information", Political Psychology
-http://onlinelibrary.wiley.com/doi/10.1111/pops.12034/abstract
+Gadarian, Shana Kushner, and Bethany Albertson. "Anxiety, immigration, and the search for information." Political Psychology 35.2 (2014): 133-164.
 
-Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., Albertson, B., Albertson, B. and Rand, D. (Forthcoming). "Structural topic models for open ended survey responses." American Journal of Political Science
-http://goo.gl/0x0tHJ
+Roberts, Margaret E., Brandon M. Stewart, Dustin Tingley, Christopher Lucas, Jetson Leder-Luis, Shana Kushner Gadarian, Bethany Albertson, and David G. Rand.  "Structural Topic Models for Open-Ended Survey Responses." American Journal of Political Science 58, no 4 (2014): 1064-1082.
+
 }
 \examples{
 head(gadarian)

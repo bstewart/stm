@@ -2,7 +2,7 @@
 #compared to the original we have more initializations, 
 # more explicit options, trimmed fat, memoization
 
-stm.control <- function(documents, vocab, settings, model) {
+stm.control <- function(documents, vocab, settings, model=NULL) {
   
   globaltime <- proc.time()
   verbose <- settings$verbose
@@ -14,6 +14,8 @@ stm.control <- function(documents, vocab, settings, model) {
     if(verbose) cat("Beginning Initialization.\n")
     #initialize
     model <- stm.init(documents, settings)
+    #if we were using the Lee and Mimno method of setting K, update the settings
+    if(settings$dim$K==0) settings$dim$K <- nrow(model$beta[[1]])
     #unpack
     mu <- list(mu=model$mu)
     sigma <- model$sigma
@@ -171,7 +173,7 @@ stm.control <- function(documents, vocab, settings, model) {
                 vocab=vocab, convergence=convergence, 
                 theta=exp(lambda - row.lse(lambda)), 
                 eta=lambda[,-ncol(lambda), drop=FALSE],
-                invsigma=solve(sigma), time=time)
+                invsigma=solve(sigma), time=time, version=utils::packageDescription("stm")$Version)
   class(model) <- "STM"  
   return(model)
 }

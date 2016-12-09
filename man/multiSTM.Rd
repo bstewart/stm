@@ -12,9 +12,9 @@ The function returns an output of S3 class 'MultimodDiagnostic', with
 associated plotting methods for quick inspection of the test results.
 }
 \usage{
-multiSTM(mod.out, ref.model=NULL, align.global=FALSE, mass.threshold=1, 
+multiSTM(mod.out=NULL, ref.model=NULL, align.global=FALSE, mass.threshold=1, 
     reg.formula=NULL, metadata=NULL, reg.nsims=100, 
-    reg.parameter.index=2, verbose=TRUE)
+    reg.parameter.index=2, verbose=TRUE, from.disk=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,6 +44,9 @@ If \code{reg.formula} is specified, the function analyzes the stability across r
 }
 \item{verbose}{
 If set to \code{TRUE}, the function will report progress.
+}
+\item{from.disk}{
+If set to \code{TRUE}, \code{multiSTM()} will load the input models from disk rather than from RAM. This option is particularly useful for dealing with large numbers of models, and is intended to be used in conjunction with the \code{to.disk} option of \code{selectModel()}. \code{multiSTM()} inspects the current directory for RData files.
 }
 }
 \details{
@@ -75,10 +78,10 @@ Where the beta matrices are the topic-word matrices for the reference and the ca
 \item{reg.parameter.index}{The \code{reg.parameter.index} argument that was supplied to the function.}
 }
 \references{
-Roberts, Margaret E., Brandon M. Stewart, and Dustin Tingley. "Navigating the Local Modes of Big Data: The Case of Topic Models." Forthcoming.
+Roberts, M., Stewart, B., & Tingley, D. (Forthcoming). "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data Analytics in Social Science, Government, and Industry." New York: Cambridge University Press.
 }
 \author{
-Antonio Coppola, Harvard University
+Antonio Coppola (Harvard University), Brandon Stewart (Princeton University), Dustin Tingley (Harvard University)
 }
 
 \seealso{
@@ -89,6 +92,7 @@ Antonio Coppola, Harvard University
 
 \examples{
 \dontrun{
+
 # Example using Gadarian data
 temp<-textProcessor(documents=gadarian$open.ended.response, 
                     metadata=gadarian)
@@ -108,6 +112,16 @@ out <- multiSTM(mod.out, mass.threshold = .75,
                 reg.formula = ~ treatment,
                 metadata = gadarian)
 plot(out)
+
+# Same example as above, but loading from disk
+mod.out <- selectModel(docs, vocab, K=3, 
+                       prevalence=~treatment + s(pid_rep), 
+                       data=meta, runs=20, to.disk=T)
+
+out <- multiSTM(from.disk=T, mass.threshold = .75, 
+                reg.formula = ~ treatment,
+                metadata = gadarian)
+
 }
 \dontrun{
 # One more example using Poliblog data

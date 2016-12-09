@@ -5,7 +5,7 @@ Computes diagnostic values for models with different values of K (number of topi
 
 \description{
  With user-specified initialization, this function  runs selectModel for different
- user-specified topic numbers and computes diagnostic properties for the resturned model. These include exclusivity,
+ user-specified topic numbers and computes diagnostic properties for the returned model. These include exclusivity,
  semantic coherence, heldout likelihood, bound, lbound, and residual. 
 }
 \usage{
@@ -25,10 +25,7 @@ Computes diagnostic values for models with different values of K (number of topi
     A vector of different topic numbers
 }
 \item{init.type}{
-    The method of initialization.  Must be either Latent
-    Dirichlet Allocation (LDA), Dirichlet Multinomial Regression
-    Topic Model (DMR), a random initialization, `spectral', or a previous STM
-    object. If an initialization other than spectral is used, then the selection procedure is manyTopics is used. 
+    The method of initialization. See \code{\link{stm}} for options.  Note that the default option here is different from the main function.
 }
 \item{N}{
   Number of docs to be partially held out
@@ -53,6 +50,10 @@ Computes diagnostic values for models with different values of K (number of topi
 
 }
 
+\details{
+See the vignette for interepretation of each of these measures.  
+}
+
 \value{
 \item{exclus}{Exclusivity of each model.}
 \item{semcoh}{Semantic coherence of each model.}
@@ -62,7 +63,10 @@ Computes diagnostic values for models with different values of K (number of topi
 \item{lbound}{lbound for each model.}
 \item{em.its}{Total number of EM iterations used in fiting the model.}
 }
-
+\seealso{
+\code{\link{plot.searchK}}
+\code{\link{make.heldout}}
+}
 \examples{
 
 
@@ -77,7 +81,7 @@ meta <- out$meta
 set.seed(02138)
 K<-c(5,10,15) 
 kresult <- searchK(documents, vocab, K, prevalence=~treatment + s(pid_rep), data=meta)
-
+plot(kresult)
 
 }
  

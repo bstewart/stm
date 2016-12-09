@@ -1,5 +1,70 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1.5}{
+\itemize{
+\item searchK() can now be used with content covariates thanks to github user rosemm
+\item added a querying function based on data.table into findThoughts()
+}
+}
+\section{Version 1.1.4}{
+\itemize{
+\item Fixed a rare bug in the K=0 feature for spectral initialization where words with the exact same appearance pattern would cause the projection to fail.
+}
+}
+\section{Version 1.1.3}{
+\itemize{
+\item Fixed the unexported findTopic()
+\item Improved some documentation
+\item Small finetuning in toLDAViz
+}
+}
+\section{Version 1.1.2}{
+\itemize{
+\item Fixed a small bug that caused readCorpus to fail on dense document term matrices
+\item Fixed a small bug in the random projections algorithm
+\item Improved warnings in stm when restarting models (Hat tip to Andrew Goldstone)
+\item Added the convertCorpus function for converting stm to other formats. 
+\item Formatting changes to the vignette
+}
+}
+\section{Version 1.1.1}{
+\itemize{
+\item Updated Vignette
+}}
+\section{Version 1.1.0}{
+\itemize{
+\item Performance improvements via various optimizations including porting some components to C++
+\item Various new experimental features including K=0
+\item Improved documentation including a new version of the vignette.
+\item Better error messages in several places
+\item Experimental options for random projections with spectral initializations
+}}
+\section{Version 1.0.13}{
+\itemize{
+\item Fixes a problem in make.heldout where a document could be completely emptied by the procedure. Hat tip to Jesse  Rhodes for the bug report.
+}}
+\section{Version 1.0.12}{
+\itemize{
+\item When \code{gamma.prior="L1"} coerce the mu object back to a matrix class object.  Should fix a speed hit introduced in 1.0.10 for this case.
+}}
+\section{Version 1.0.10}{
+\itemize{
+\item Prevalence covariates can now use sparse matrices which will result in better performance for large factors.
+\item textProcessor() and prepDocuments() now do a better job of preserving labels and keeping track of dropped elements.  Special thanks to Github users gtuckerkellog and elbamos for pull requests.
+\item Fixed an edge case in init.type="Spectral" where words appearing only in documents by themselves would throw an error.  The error was correct but hard to address in certain cases, so now it temporarily removes the words and then reintroduces them before starting inference spreading a tiny bit of mass evenly across the topics.  Hat tip to Nathan Sanders for brining this to our attention.  
+\item New function findTopic() which helps locate topics containing particular words or phrases.
+\item New function topicLasso() helps build predictive models with topics.
+}}
+\section{Version 1.0.8}{
+\itemize{
+\item Fixed a minor bug in prepDocuments which arises in cases where there are vocab elements which do not appear in the data.
+\item Fixed a minor bug in frex calculation that caused some models not to label.
+\item Fixed a minor bug in searchK that caused heldout results to report incorrectly.
+\item Rewrite of plot.estimateEffect() which fixed a bug in some interaction models.  Also returns results invisibly for creating custom plots.
+\item Increased the stability of the spectral methods for stm initialization.
+\item Complete rewrite of plotRemoved() which makes it much faster for larger datasets.
+}
+}
 \section{Version 1.0.1}{
 \itemize{
 \item A minor patch to deal with textProcessor() in older versions of R.

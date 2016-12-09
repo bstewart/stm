@@ -36,9 +36,14 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   lambda <- vector("list", length=N)
   
   # 2) Precalculate common components
-  sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
-  siginv <- solve(sigma)
-    
+  sigobj <- try(chol.default(sigma), silent=TRUE)
+  if(class(sigobj)=="try-error") {
+    sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
+    siginv <- solve(sigma)
+  } else {
+    sigmaentropy <- sum(log(diag(sigobj)))
+    siginv <- chol2inv(sigobj)
+  }
   # 3) Document Scheduling
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
@@ -53,14 +58,14 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     beta.i <- beta[[aspect]][,words,drop=FALSE]
     
     #infer the document
-    doc.results <- logisticnormal(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
                                   doc=doc, sigmaentropy=sigmaentropy)
     
     # update sufficient statistics 
     sigma.ss <- sigma.ss + doc.results$eta$nu
     beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     bound[i] <- doc.results$bound
-    lambda[[i]] <- doc.results$eta$lambda
+    lambda[[i]] <- c(doc.results$eta$lambda)
     if(verbose && i%%ctevery==0) cat(".")
   }
   if(verbose) cat("\n") #add a line break for the next message.

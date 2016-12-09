@@ -1,7 +1,9 @@
 selectModel <- function(documents, vocab, K,
                         prevalence, content, data=NULL,
                         max.em.its=100, verbose=TRUE, init.type = "LDA",
-                        emtol= 1e-05, seed=NULL,runs=50, frexw=.7, net.max.em.its=2, netverbose=FALSE, M=10, N=NULL,...){
+                        emtol= 1e-05, seed=NULL,runs=50, frexw=.7, 
+                        net.max.em.its=2, netverbose=FALSE, M=10, N=NULL,
+                        to.disk=F, ...){
   if(!is.null(seed)) set.seed(seed)
 
   if(is.null(N)){
@@ -42,6 +44,10 @@ selectModel <- function(documents, vocab, K,
                    prevalence=prevalence, content=content, data=data, init.type=init.type, seed=initseed,
                    max.em.its=max.em.its, emtol=emtol, verbose=verbose,...)
     runout[[i]] <- mod.out
+    if(to.disk==T){
+      mod <- mod.out
+      save(mod, file=paste("runout", i, ".RData", sep=""))
+    }
     semcoh[[i]] <- semanticCoherence(mod.out, documents, M)
     if(length(mod.out$beta$logbeta)<2){
       exclusivity[[i]] <- exclusivity(mod.out, M=M, frexw=.7)

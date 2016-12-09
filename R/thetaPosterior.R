@@ -73,10 +73,10 @@ thetapost.local <- function(model, documents, nsims) {
     nu <- try(chol2inv(chol.default(hess)),silent=TRUE)
     if(class(nu)=="try-error") {
       # if it failed we try tightening by taking a BFGS step
-      optim.out <- optim(par=eta, fn=lhood, gr=grad,
+      optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
                          method="BFGS", control=list(maxit=500),
-                         doc.ct=doc.ct, mu=mu[,i],
-                         siginv=siginv, beta=doc.beta, Ndoc=sum(doc.ct))
+                         doc_ct=doc.ct, mu=mu[,i],
+                         siginv=siginv, beta=doc.beta)
       eta <- optim.out$par
       theta <- softmax(c(eta,0))
       hess <- ln.hess(eta, theta, doc.beta, doc.ct, siginv) 
@@ -107,21 +107,22 @@ newton <- function(eta, doc.ct, mu, siginv, beta,
                    hess, max.its=1000) {
   its <- 0
   search <- function(x, dir, eta, ...) {
-    lhood(eta=(eta + x*dir), ...)
+    lhoodcpp(eta=(eta + x*dir), ...)
   }
   while(its < max.its) {
     #compute the search direction
-    dir <- -solve(hess)%*%grad(eta, doc.ct, mu, siginv, beta)
+    dir <- -solve(hess)%*%gradcpp(eta=eta, doc_ct=doc.ct, 
+                                  mu=mu, siginv=siginv, beta=beta)
     #line search
     maxint <- 2
     opt <- optimize(f=search, interval=c(-2,maxint), dir=dir, 
-                    eta=eta,doc.ct=doc.ct, mu=mu,
+                    eta=eta,doc_ct=doc.ct, mu=mu,
                     siginv=siginv, beta=beta, maximum=FALSE)
-    while(opt$objective > lhood(eta, doc.ct, mu, siginv, beta)) {
+    while(opt$objective > lhoodcpp(eta, doc.ct, mu, siginv, beta)) {
       #re-assess at a smaller point
       maxint <- min(maxint/2, opt$minimum - .00001*opt$minimum)
       opt <- optimize(f=search, interval=c(0,maxint), dir=dir, 
-                      eta=eta,doc.ct=doc.ct, mu=mu,
+                      eta=eta,doc_ct=doc.ct, mu=mu,
                       siginv=siginv, beta=beta, maximum=FALSE)
     }
     

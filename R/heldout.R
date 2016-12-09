@@ -11,7 +11,9 @@ make.heldout <- function(documents, vocab, N=floor(.1*length(documents)),
     doc <- documents[[i]]  
     if(ncol(doc)<2) next
     doc <- rep(doc[1,], doc[2,])
-    ho.index <- sample(1:length(doc), floor(pie*length(doc)))
+    #how many tokens to sample? The max ensures at least one is sampled
+    nsamp <- max(1,floor(pie*length(doc)))
+    ho.index <- sample(1:length(doc), nsamp)
     tab <- tabulate(doc[ho.index])
     missing[[ct]] <- rbind(which(tab>0), tab[tab>0])
     tab <- tabulate(doc[-ho.index])

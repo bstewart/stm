@@ -2,10 +2,11 @@
 #Takes a character vector with one entry per document and its metadata
 textProcessor <- function(documents, metadata=NULL, 
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, removepunctuation=TRUE, stem=TRUE, 
-                          sparselevel=1, language="en",
+                          wordLengths=c(3,Inf),sparselevel=1, language="en",
                           verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
-                          customstopwords=NULL) {
+                          customstopwords=NULL, onlytxtfiles=TRUE) {
   if(!requireNamespace("tm",quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
+  if(!(packageVersion("tm")>=0.6)) stop("Please install at least version 0.6 of the tm package.")
   if(stem) {
     if(!requireNamespace("SnowballC", quietly=TRUE)) stop("Please install SnowballC to use stemming.")
   }
@@ -13,6 +14,14 @@ textProcessor <- function(documents, metadata=NULL,
   #If there is only one item assume its a url and load it.
   if(length(documents)==1) {
     filelist <- list.files(path=documents, full.names=TRUE, recursive=TRUE)
+    if(onlytxtfiles) {
+      filetype <- sapply(filelist,function(x) {
+                          n <- nchar(x)
+                          substr(x, n-3,n)
+                          })
+      documents <- filelist[filetype==".txt"]
+      
+    }
     documents <- vector(length=length(filelist))
     if(verbose) cat(sprintf("Loading %i files from directory...\n", length(documents)))
     for(i in 1:length(filelist)) {
@@ -25,6 +34,9 @@ textProcessor <- function(documents, metadata=NULL,
   if(striphtml){
   documents <- gsub('<.+?>', ' ', documents)
   }
+  #remove non-visible characters
+  documents <- str_replace_all(documents,"[^[:graph:]]", " ")
+  
   if(onlycharacter){
   documents <- gsub("[^[:alnum:]///' ]", " ", documents)
   }
@@ -67,17 +79,13 @@ textProcessor <- function(documents, metadata=NULL,
   
   if(!is.null(metadata)) {
     for(i in 1:ncol(metadata)) {
-     if(packageVersion("tm") >= "0.6") {   
        NLP::meta(txt, colnames(metadata)[i]) <- metadata[,i]
-     } else {
-       tm::meta(txt, colnames(metadata)[i]) <- metadata[,i]
-     }
     }
   }
   
   #Make a matrix
   if(verbose) cat("Creating Output... \n")
-  dtm <- tm::DocumentTermMatrix(txt)
+  dtm <- tm::DocumentTermMatrix(txt, control=list(wordLengths=wordLengths))
   if(sparselevel!=1) {
     ntokens <- sum(dtm$v)
     V <- ncol(dtm)
@@ -93,13 +101,37 @@ textProcessor <- function(documents, metadata=NULL,
   #If there is metadata we need to remove some documents
   if(!is.null(metadata)) {
     docindex <- unique(dtm$i)
-    if(packageVersion("tm") >= "0.6") {
-      metadata <- NLP::meta(txt)[docindex,]
-    } else {
-      metadata <- tm::meta(txt)[docindex,]
-    }
+    metadata <- NLP::meta(txt)[docindex, , drop = FALSE]
   }
   out <- read.slam(dtm) #using the read.slam() function in stm to convert
+  
+  ## It's possible that the processing has caused some documents to be
+  ## dropped. These will be removed in the conversion from dtm to
+  ## internal representation.  Better keep a record
+  kept <- (1:length(documents) %in% unique(dtm$i))
   vocab <- as.character(out$vocab)
-  return(list(documents=out$documents, vocab=vocab, meta=metadata))
+  out <- list(documents=out$documents, vocab=vocab, meta=metadata, docs.removed=which(!kept))
+  class(out) <- "textProcesser"
+  return(out)
+}
+
+print.textProcessor <- function(x,...) {
+  toprint <- sprintf("A text corpus with %i documents, and an %i word dictionary.\n", 
+                     length(x$documents), 
+                     length(x$vocab))
+  cat(toprint)
+}
+
+
+summary.textProcessor <- function(object,...) {
+  toprint <- sprintf("A text corpus with %i documents, and an %i word dictionary. Use str() to inspect object or see documentation \n", 
+                     length(object$documents), 
+                     length(object$vocab))
+  cat(toprint)
+}
+
+head.textProcessor <- function(x,...) {
+  for(i in 1:length(x)) {
+    print(head(x[[i]]))
+  }
 }

@@ -2,7 +2,12 @@
 #Basis function generator
 ##
 s <- function(x, df, ...) {
-  if(class(x)=="Date") x <- as.numeric(x)
+  if(class(x)=="Date") {
+    warning("A Date object coerced to numeric. 
+            Converting variable in advance will stop this warning in the future.
+            Postprocessing tools may not work with dates.")
+    x <- as.numeric(x)
+  }
   nval <- length(unique(x))
   if(nval==1) stop("Smooth requested on covariate with only one value.")
   if(nval==2) {

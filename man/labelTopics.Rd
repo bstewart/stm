@@ -20,7 +20,7 @@ labelTopics(model, topics=NULL, n = 7, frexweight = 0.5)
   A vector of numbers indicating the topics to include.  Default is all topics.
   }
   \item{n}{
-The desired number of words (per type) used to label each topic.
+The desired number of words (per type) used to label each topic. Must be 2 or greater.
 }
   \item{frexweight}{
 A weight used in our approximate FREX scoring algorithm (see details).}
@@ -50,6 +50,9 @@ A labelTopics object (list)
 \item{lift }{matrix of highest scoring words by lift}
 \item{score }{matrix of best words by score}
 \item{topicnums }{a vector of topic numbers which correspond to the rows}
+}
+\references{
+Taddy, Matt. "Multinomial inverse regression for text analysis." Journal of the American Statistical Association 108.503 (2013): 755-770.
 }
 \seealso{
 \code{\link{stm}}

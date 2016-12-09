@@ -19,7 +19,9 @@ stm <- function(documents, vocab, K,
   if(missing(documents)) stop("Must include documents")
   if(!is.list(documents)) stop("documents must be a list, see documentation.")
   if(!all(unlist(lapply(documents, is.matrix)))) stop("Each list element in documents must be a matrix. See documentation.")
-  
+  if(any(unlist(lapply(documents, function(x) anyDuplicated(x[1,]))))) {
+    stop("Duplicate term indices within a document.  See documentation for proper format.")
+  }
   N <- length(documents)
   
   #Extract and Check the Word indices
@@ -42,9 +44,14 @@ stm <- function(documents, vocab, K,
   
   #Check the Number of Topics
   if(missing(K)) stop("K, the number of topics, is required.")
-  if(!(posint(K) && length(K)==1 && K>1)) stop("K must be a positive integer greater than 1.")
-  if(K==2) warning("K=2 is equivalent to a unidimensional scaling model which you may prefer.")
-  
+  if(K!=0) {
+    #this is the old set of checks
+    if(!(posint(K) && length(K)==1 && K>1)) stop("K must be a positive integer greater than 1.")
+    if(K==2) warning("K=2 is equivalent to a unidimensional scaling model which you may prefer.")
+  } else {
+    #this is the special set of checks for Lee and Mimno
+    if(init.type!="Spectral") stop("Topic selection method can only be used with init.type='Spectral'")
+  }
   #Iterations, Verbose etc.
   if(!(length(max.em.its)==1 & posint(max.em.its))) stop("Max EM iterations must be a single positive integer")
   if(!is.logical(verbose)) stop("verbose must be a logical.")
@@ -56,13 +63,22 @@ stm <- function(documents, vocab, K,
     if(inherits(x,"formula")) {
       termobj <- terms(x, data=data)
       if(attr(termobj, "response")==1) stop("Response variables should not be included in prevalence formula.")
-      xmat <- model.matrix(termobj,data=data)
+      xmat <- try(sparse.model.matrix(termobj,data=data),silent=TRUE)
+      if(class(xmat)=="try-error") stop("Error creating model matrix.
+                                        This could be caused by many things including
+                                        explicit calls to a namespace within the formula.
+                                        Try a simpler formula.")
+      propSparse <- 1 - nnzero(xmat)/length(xmat) 
+      #if its less than 50% sparse or there are fewer than 50 columns, just convert to a standard matrix
+      if(propSparse < .5 | ncol(xmat) < 50) {
+        xmat <- as.matrix(xmat)
+      }
       return(xmat)
     }
     if(is.matrix(x)) {
       #Does it have an intercept in first column?
-      if(isTRUE(all.equal(x[,1],rep(1,nrow(x))))) return(x) 
-      else return(cbind(1,x))
+      if(isTRUE(all.equal(x[,1],rep(1,nrow(x))))) return(Matrix(x)) 
+      else return(cbind(1,Matrix(x)))
     }
   }
   
@@ -72,7 +88,7 @@ stm <- function(documents, vocab, K,
   if(!missing(prevalence)) {
     if(!is.matrix(prevalence) & !inherits(prevalence, "formula")) stop("Prevalence Covariates must be specified as a model matrix or as a formula")
     xmat <- makeTopMatrix(prevalence,data)
-    if(nrow(na.omit(xmat)) != length(documents)) stop("Complete cases in prevalence covariate does not match the number of documents.")
+    if(is.na(nnzero(xmat))) stop("Missing values in prevalence covariates.")
   } else {
     xmat <- NULL
   }
@@ -111,7 +127,10 @@ stm <- function(documents, vocab, K,
   if(!is.logical(LDAbeta)) stop("LDAbeta must be logical")
   if(!is.logical(interactions)) stop("Interactions variable must be logical")
   if(sigma.prior < 0 | sigma.prior > 1) stop("sigma.prior must be between 0 and 1")
-
+  if(!is.null(model)) {
+    if(max.em.its <= model$convergence$its) stop("when restarting a model, max.em.its represents the total iterations of the model 
+                                                 and thus must be greater than the length of the original run")
+  }
   ###
   # Now Construct the Settings File
   ###
@@ -124,11 +143,13 @@ stm <- function(documents, vocab, K,
                    gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1),
                    sigma=list(prior=sigma.prior),
                    kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
-                              fixedintercept=TRUE, mstep=list(tol=.001, maxit=3)),
+                              fixedintercept=TRUE, mstep=list(tol=.001, maxit=3),
+                              contrast=FALSE),
                    tau=list(mode=match.arg(kappa.prior), tol=1e-5,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
-                   init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01), 
+                   init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
+                             s=.05, p=3000, d.group.size=2000), 
                    seed=seed,
                    ngroups=ngroups)
   if(settings$gamma$mode=="L1") {
@@ -160,7 +181,8 @@ stm <- function(documents, vocab, K,
   legalargs <-  c("tau.maxit", "tau.tol", 
                   "fixedintercept","kappa.mstepmaxit", "kappa.msteptol", 
                   "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
-                  "nits", "burnin", "alpha", "eta")
+                  "nits", "burnin", "alpha", "eta", "contrast",
+                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -182,6 +204,11 @@ stm <- function(documents, vocab, K,
       if(i=="burnin") settings$init$burnin <- control[[i]]
       if(i=="alpha") settings$init$alpha <- control[[i]]
       if(i=="eta") settings$init$eta <- control[[i]]
+      if(i=="contrast") settings$kappa$contrast <- control[[i]]
+      if(i=="rp.s")  settings$init$s <- control[[i]]
+      if(i=="rp.p")  settings$init$p <- control[[i]]
+      if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
+      if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
     }
   }
   

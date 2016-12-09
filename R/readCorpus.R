@@ -33,16 +33,33 @@ read.dtm <- function(dtm) {
   #convert a standard document-term matrix to list format.
   dtm.mat <- as.matrix(dtm)
   vocab <- colnames(dtm)
-  documents <- apply(dtm.mat, 1, function(y) {
-    rbind(which(y > 0), as.integer(y[y > 0])) })
+  if(any(dtm.mat==0)) {
+    #if the dtm is not sparse we have to use a slightly slower method
+    #to avoid it coercing back to a matrix
+    documents <- lapply(split(dtm.mat, row(dtm.mat)), function(y) {
+      rbind(which(y > 0), as.integer(y[y > 0])) }) 
+    names(documents) <- NULL #we overwrite the automatically generated labels to match other method
+  } else {
+    #the more usual sparse matrix case
+    documents <- apply(dtm.mat, 1, function(y) {
+      rbind(which(y > 0), as.integer(y[y > 0])) })
+  }
   return(list(documents=documents, vocab=vocab))
 }
 
 read.slam <- function(corpus) {
   #convert a simple triplet matrix to list format.
   if(!inherits(corpus, "simple_triplet_matrix")) stop("corpus is not a simple triplet matrix")
-  documents <- ijv.to.doc(corpus$i, corpus$j, corpus$v)
-  vocab <- corpus$dimnames[[2]]
+  if ("TermDocumentMatrix" %in% class(corpus)) {
+    non_empty_docs <- which(slam::col_sums(corpus) != 0)
+    documents <- ijv.to.doc(corpus[,non_empty_docs]$j, corpus[,non_empty_docs]$i, corpus[,non_empty_docs]$v) 
+    names(documents) <- corpus[,non_empty_docs]$dimnames$Docs
+   } else {
+    non_empty_docs <- which(slam::row_sums(corpus) != 0)
+    documents <- ijv.to.doc(corpus[non_empty_docs,]$i, corpus[non_empty_docs,]$j, corpus[non_empty_docs,]$v) 
+    names(documents) <- corpus[non_empty_docs,]$dimnames$Docs
+  }
+  vocab <- corpus$dimnames$Terms
   return(list(documents=documents,vocab=vocab))
 }
 

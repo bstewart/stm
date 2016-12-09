@@ -41,10 +41,9 @@ This methods generates a series of plots, which are indexed as follows. If a sub
 }
 
 \references{
-Roberts, Margaret E., Brandon M. Stewart, and Dustin Tingley. "Navigating the Local Modes of Big Data: The Case of Topic Models." Forthcoming.
-}
+Roberts, M., Stewart, B., & Tingley, D. (Forthcoming). "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data Analytics in Social Science, Government, and Industry." New York: Cambridge University Press.}
 \author{
-Brandon M. Stewart and Antonio Coppola, Harvard University
+Brandon M. Stewart (Princeton University) and Antonio Coppola (Harvard University)
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~

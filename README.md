@@ -2,11 +2,15 @@
 
 Website: www.structuraltopicmodel.com
 
-Vignette: [Here](https://github.com/bstewart/stm/blob/master/vignettes/stmVignette.pdf?raw=true)
+Vignette: [Here](https://github.com/bstewart/stm/blob/master/inst/doc/stmVignette.pdf?raw=true)
 
-Authors: [Molly Roberts](http://scholar.harvard.edu/mroberts), [Brandon Stewart](http://scholar.harvard.edu/bstewart) and [Dustin Tingley](http://scholar.harvard.edu/dtingley)
+Authors: [Molly Roberts](http://margaretroberts.net), [Brandon Stewart](http://brandonstewart.org) and [Dustin Tingley](http://scholar.harvard.edu/dtingley)
 
-Please email all comments/questions to bstewart [AT] fas.harvard.edu
+Please email all comments/questions to bms4 [AT] princeton.edu
+
+[![CRAN Version](http://www.r-pkg.org/badges/version/stm)](https://CRAN.R-project.org/package=stm)
+[![Build Status](https://travis-ci.org/bstewart/stm.png?branch=master)](https://travis-ci.org/bstewart/stm)
+[![](http://cranlogs.r-pkg.org/badges/stm)](http://cran.rstudio.com/web/packages/stm/index.html)
 
 ###Summary
 
@@ -23,12 +27,7 @@ The package currently includes functionality to:
 
 Have a large text corpus or need a language we don't provide support for?  See our sister project [txtorg](http://txtorg.org)
 
-Papers on the Structural Topic Model:
-* Roberts, Stewart and Airoldi. "Structural Topic Models" Copy available [here](http://scholar.harvard.edu/files/bstewart/files/stm.pdf)
-* Roberts, Stewart, Tingley, and Airoldi. "The Structural Topic Model and Applied Social Science." *Advances in Neural Information Processing Systems Workshop on Topic Models: Computation, Application, and Evaluation*. 2013. Copy available [here](http://scholar.harvard.edu/files/bstewart/files/stmnips2013.pdf)
-* Roberts, Stewart, Tingley, Lucas, Leder-Luis, Gadarian, Albertson, and Rand. "Structural topic models for open-ended survey responses." *American Journal of Political Science*. Forthcoming. Copy available [here](http://scholar.harvard.edu/files/dtingley/files/topicmodelsopenendedexperiments.pdf)
-* Lucas, Nielsen, Roberts, Stewart, Storer, and Tingley. "Computer assisted text analysis for comparative politics." Copy available [here](http://scholar.harvard.edu/files/dtingley/files/comparativepoliticstext.pdf)
-* Reich, Tingley, Leder-Luis, Roberts and Stewart.  "Computer-Assisted Reading and Discovery for Student Generated Text in Massive Open Online Courses" Copy available [here](http://scholar.harvard.edu/files/dtingley/files/educationwriteup.pdf)
+See other materials at www.structuraltopicmodel.com
 
 ### Installation Instructions
 Assuming you already have R installed (if not see http://www.r-project.org/),
@@ -57,3 +56,6 @@ install.packages(filepath, repos = NULL)
 
 ### Getting Started
 See the vignette for several example analyses.  The main function to estimate the model is `stm()` but there are a host of other useful functions.  If you have your documents already converted to term-document matrices you can ingest them using `readCorpus()`.  If you just have raw texts you will want to start with `textProcessor()`.
+
+### To Developers
+Up until September 2016 we've primarily been doing development in private in a separate github repository.  As we have gotten several great pull requests from the community, we are in the process of shifting development over here- primarily in the development branch.
