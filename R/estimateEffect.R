@@ -1,5 +1,3 @@
-# See vignette for examples of ploting models with an interaction.
-
 #' Estimates regressions using an STM object
 #' 
 #' Estimates a regression where documents are the units, the outcome is the

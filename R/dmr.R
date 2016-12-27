@@ -1,3 +1,5 @@
+#Not used at the moment.
+
 # Dirichlet Multinomial Regression model
 # (Workhorse function, also pretty fast.)
 

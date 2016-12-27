@@ -1,4 +1,5 @@
-  ################################################################################# 
+# NOTE: Not currently exported.
+################################################################################# 
 # FACTOR CHECK
 # Control for topics that load exclusively on a single (discrete) covariate level.
 # Author: Antonio Coppola (acoppola@college.harvard.edu)
