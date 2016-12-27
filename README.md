@@ -8,7 +8,9 @@ Authors: [Molly Roberts](http://margaretroberts.net), [Brandon Stewart](http://b
 
 Please email all comments/questions to bms4 [AT] princeton.edu
 
+[![CRAN Version](http://www.r-pkg.org/badges/version/stm)](https://CRAN.R-project.org/package=stm)
 [![Build Status](https://travis-ci.org/bstewart/stm.png?branch=master)](https://travis-ci.org/bstewart/stm)
+[![](http://cranlogs.r-pkg.org/badges/stm)](http://cran.rstudio.com/web/packages/stm/index.html)
 
 ###Summary
 
@@ -56,4 +58,4 @@ install.packages(filepath, repos = NULL)
 See the vignette for several example analyses.  The main function to estimate the model is `stm()` but there are a host of other useful functions.  If you have your documents already converted to term-document matrices you can ingest them using `readCorpus()`.  If you just have raw texts you will want to start with `textProcessor()`.
 
 ### To Developers
-Up until September 2016 we've primarily been doing development in private in a separate github repository.  As we have gotten several great pull requests from the community, we are in the process of shifting development over here- primarily in the develop branch.
+Up until September 2016 we've primarily been doing development in private in a separate github repository.  As we have gotten several great pull requests from the community, we are in the process of shifting development over here- primarily in the development branch.
