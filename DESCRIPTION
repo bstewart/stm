@@ -1,13 +1,8 @@
 Package: stm
 Type: Package
 Title: Estimation of the Structural Topic Model
-<<<<<<< HEAD
 Version: 1.1.6
 Date: 2016-10-28
-=======
-Version: 1.1.5
-Date: 2016-09-10
->>>>>>> pr/30
 Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 Maintainer: Brandon Stewart <bms4@princeton.edu>
 Depends: R (>= 2.10)
@@ -21,5 +16,4 @@ Description: The Structural Topic Model (STM) allows researchers
   and estimation of topic-covariate regressions.
 License: MIT + file LICENSE
 URL: http://structuraltopicmodel.com 
-Roxygen: list(roclets = c("rd", "collate"))
 RoxygenNote: 5.0.1
