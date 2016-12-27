@@ -121,23 +121,23 @@ logsoftmax <- function(x) {
 }
 
 lse <- function(x) {
- logSumExp(x)
+ matrixStats::logSumExp(x)
 }
 
 row.lse <- function(mat) {
-  rowLogSumExps(mat)
+  matrixStats::rowLogSumExps(mat)
 }
 col.lse <- function(mat) {
-  colLogSumExps(mat)
+  matrixStats::colLogSumExps(mat)
 }
 
 softmax <- function(x) {
   exp(x - lse(x))
 }
 
-safelog <- function(x) {
+safelog <- function(x, min=-1000) {
   out <- log(x)
-  out[which(out< -1000)] <- -1000
+  out[which(out< min)] <- min
   out
 }
 
