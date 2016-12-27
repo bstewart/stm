@@ -1,5 +1,48 @@
-#Topic Labeling according to a series of metrics.
-
+#' Label topics
+#' 
+#' Generate a set of words describing each topic from a fitted STM object.
+#' Uses a variety of labeling algorithms (see details).
+#' 
+#' Four different types of word weightings are printed with label topics.
+#' 
+#' Highest Prob: are the words within each topic with the highest probability
+#' (inferred directly from topic-word distribution parameter \eqn{\beta}).
+#' 
+#' FREX: are the words that are both frequent and exclusive, identifying words
+#' that distinguish topics.  This is calculated by taking the harmonic mean of
+#' rank by probability within the topic (frequency) and rank by distribution of
+#' topic given word \eqn{p(z|w=v)} (exclusivity).  In estimating exclusivity we
+#' use a James-Stein type shrinkage estimator of the distribution
+#' \eqn{p(z|w=v)}.
+#' 
+#' Score and Lift are measures provided in two other popular text mining
+#' packages. For more information on type Score, see the R package
+#' \code{\link{lda}}.  For more information on type Lift, see Taddy,
+#' "Multinomial Inverse Regression for Text Analysis", Journal of the American
+#' Statistical Association 108, 2013 and the R package \code{textir}.
+#' 
+#' @aliases labelTopics print.labelTopics
+#' @param model An \code{STM} model object.
+#' @param topics A vector of numbers indicating the topics to include.  Default
+#' is all topics.
+#' @param n The desired number of words (per type) used to label each topic.
+#' @param frexweight A weight used in our approximate FREX scoring algorithm
+#' (see details).
+#' @return A labelTopics object (list) \item{prob }{matrix of highest
+#' probability words} \item{frex }{matrix of highest ranking frex words}
+#' \item{lift }{matrix of highest scoring words by lift} \item{score }{matrix
+#' of best words by score} \item{topicnums }{a vector of topic numbers which
+#' correspond to the rows}
+#' @seealso \code{\link{stm}} \code{\link{plot.STM}}
+#' @references Taddy, Matt. "Multinomial inverse regression for text analysis."
+#' Journal of the American Statistical Association 108.503 (2013): 755-770.
+#' @examples
+#' 
+#' \dontrun{
+#' 
+#' labelTopics(gadarianFit)
+#' }
+#' @export
 labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   logbeta <- model$beta$logbeta
   K <- model$settings$dim$K
@@ -69,6 +112,7 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   return(out)
 }
 
+#' @export
 print.labelTopics <- function(x,...) {  
   #test of its an aspect model or not
   if(names(x)[1]!="topics") {
@@ -106,5 +150,3 @@ print.labelTopics <- function(x,...) {
     cat(labels)
   }
 }
-  
-  

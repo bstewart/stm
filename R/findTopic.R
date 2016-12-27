@@ -1,3 +1,23 @@
+#' Find topics that contain user specified words.
+#' 
+#' Find topics that contain user specified words.
+#'
+#' @param x The STM model object to be searched. May also be the output from
+#' sageLabels.
+#' @param list Character vector containing words to be searched.
+#' @param n Number of words to consider
+#' @param type Type of words to be searched.
+#' @param verbose A logical indicating whether details should be printed to the
+#' screen.
+#' @examples
+#' 
+#' \dontrun{
+#' 
+#' lab <- sageLabels(gadarianFit, 5)
+#' findTopic(lab, c("poor", "immigr", "peopl"))
+#' findTopic(gadarianFit, c("poor", "immigr", "peopl"))
+#' }
+#' @export
 findTopic <- function(x, list, n=20, type=c("prob", "frex", "lift","score"), verbose=TRUE) {
   type <- match.arg(type)
   if(class(x)=="STM") {
