@@ -1,8 +1,16 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.1.7}{
+\itemize{
+\item Thanks to efforts by Ken Benoit stm can now take a quanteda dfm object.
+\item Thanks to efforts by Chris Baker we are now using roxygen for our documentation.
+}
+}
 \section{Version 1.1.6}{
 \itemize{
-\item Added a new recovery algorithm used in spectral initialization from gradient descent to a more accurate and generally faster one based on quadratic programming.  This can be turned on by: control=list(recoverEG=FALSE).  Eventually we may change the default recovery method.
+\item Added a new recovery algorithm used in spectral initialization from gradient descent to a more accurate and generally faster one based on quadratic programming.  This can be turned on by: control=list(recoverEG=FALSE).  Eventually we may change the default recovery method. Note: while this more
+accurately solves the actual problem, we've seen better results with the early stopping produced by
+exponential gradient not fully convering.  This has been confirmed by the Arora group as well.
 \item Clarified some of the documentation in textProcessor thanks to James Gibbon.
 \item Fixed a problem with registration of S3 methods for textProcessor()
 \item Added access to the information criterion parameter for L1 mode prevalence covariance in stm.  See the gamma.ic.k option in the control parameters of stm 
