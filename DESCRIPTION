@@ -3,11 +3,20 @@ Type: Package
 Title: Estimation of the Structural Topic Model
 Version: 1.1.6
 Date: 2016-10-28
-Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
+Author: Margaret E. Roberts [aut, cre], 
+        Brandon M. Stewart [aut, cre],
+        Dustin Tingley [aut, cre],
+        Kenneth Benoit [ctb]
 Maintainer: Brandon Stewart <bms4@princeton.edu>
+Authors@R: c( 
+    person("Margaret", "Roberts", role = c("aut", "cre")), 
+    person("Brandon M.", "Stewart", role = c("aut", "cre")),
+    person("Dustin", "Tingley", role = c("aut", "cre")),
+    person("Kenneth", "Benoit", role = "ctb")
+    )
 Depends: R (>= 2.10)
 LinkingTo: Rcpp, RcppArmadillo
-Imports: matrixStats, splines, slam, lda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3), grDevices, graphics, stats, utils, data.table, quadprog
+Imports: matrixStats, splines, slam, lda, quanteda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3), grDevices, graphics, stats, utils, data.table, quadprog
 Suggests: igraph, SnowballC, tm (>= 0.6), huge, clue, wordcloud, KernSmooth, NLP, LDAvis, geometry, Rtsne, testthat
 LazyData: yes
 Description: The Structural Topic Model (STM) allows researchers 

@@ -3,8 +3,9 @@
 
 #' Variational EM for the Structural Topic Model
 #' 
+#' 
 #' Estimation of the Structural Topic Model using semi-collapsed variational
-#' EM.  The function takes sparse representation of documents, an integer
+#' EM.  The function takes sparse representation of a document-term matrix, an integer
 #' number of topics, and covariates and returns fitted model parameters.
 #' Covariates can be used in the prior for topic \code{prevalence}, in the
 #' prior for topical \code{content} or both.  See an overview of functions in
@@ -187,22 +188,29 @@
 #' initialization.} 
 #' }
 #' 
-#' @param documents The documents to be modeled.  Object must be a list of with
-#' each element corresponding to a document.  Each document is represented as
-#' an integer matrix with two rows, and columns equal to the number of unique
+#' @param documents The document term matrix to be modeled. These can be supplied
+#' in the native \pkg{stm} format or a \pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) 
+#' object.  When using the quanteda format this will include the vocabulary and
+#' optionally the metadata. If using the native list format, the object must be a 
+#' list of with each element corresponding to a document. Each document is represented
+#' as an integer matrix with two rows, and columns equal to the number of unique
 #' vocabulary words in the document.  The first row contains the 1-indexed
 #' vocabulary entry and the second row contains the number of times that term
-#' appears.
-#' 
-#' This is similar to the format in the \code{\link[lda]{lda}} package except
-#' that (following R convention) the vocabulary is indexed from one. Corpora
+#' appears. This is similar to the format in the \code{\link[lda]{lda}} package 
+#' except that (following R convention) the vocabulary is indexed from one. Corpora
 #' can be imported using the reader function and manipulated using the
 #' \code{\link{prepDocuments}}.  Raw texts can be ingested using
-#' \code{\link{textProcessor}}.
+#' \code{\link{textProcessor}}. Note that when using \pkg{quanteda} \link[quanteda]{dfm}
+#' directly there may be higher memory use (because the texts and metadata are stored
+#' twice). You can convert from \pkg{quanteda}'s format directly to our native format
+#' using the \pkg{quanteda} function \link[quanted]{convert}.
 #' @param vocab Character vector specifying the words in the corpus in the
 #' order of the vocab indices in documents. Each term in the vocabulary index
 #' must appear at least once in the documents.  See \code{\link{prepDocuments}}
-#' for dropping unused items in the vocabulary.
+#' for dropping unused items in the vocabulary.  If \code{documents} is a 
+#' \pkg{quanteda} \link[quanteda]{dfm} object, then \code{vocab} should not
+#'  (and must not) be supplied.  It is contained already inside the \pkg{quanteda}
+#'  dfm.
 #' @param K Typically a positive integer (of size 2 or greater) representing
 #' the desired number of topics. If \code{init.type="Spectral"} you can also
 #' set \code{K=0} to use the algorithm of Lee and Mimno (2014) to set the
@@ -306,18 +314,21 @@
 #' 
 #' \dontrun{
 #' 
-#' #An example using the Gadarian data.  From Raw text to fitted model.
+#' #An example using the Gadarian data.  From Raw text to fitted model using 
+#' #textProcessor() which leverages the tm Package
 #' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
-#' meta<-temp$meta
-#' vocab<-temp$vocab
-#' docs<-temp$documents
-#' out <- prepDocuments(docs, vocab, meta)
-#' docs<-out$documents
-#' vocab<-out$vocab
-#' meta <-out$meta
+#' out <- prepDocuments(temp$docs, temp$vocab, temp$meta)
 #' set.seed(02138)
-#' mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta)
+#' mod.out <- stm(out$documents, out$vocab, 3, 
+#'                prevalence=~treatment + s(pid_rep), data=out$meta)
 #' 
+#' #The same example using quanteda instead of tm via textProcessor()
+#' require(quanteda)
+#' gadarian_corpus <- corpus(gadarian, textField = "open.ended.response")
+#' gadarian_dfm <- dfm(gadarian_corpus, 
+#'                      ignoredFeatures = stopwords("english"),
+#'                      stem = TRUE)
+#'                      
 #' #An example of restarting a model
 #' mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
 #'                data=meta, max.em.its=5)
@@ -333,7 +344,59 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE, 
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), control=list())  {
+                kappa.prior=c("L1", "Jeffreys"), control=list()) {
+  UseMethod("stm")
+}
+
+stm.dfm <- function(documents, vocab, K, 
+                    prevalence, content, data=NULL,
+                    init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
+                    max.em.its=500, emtol=1e-5,
+                    verbose=TRUE, reportevery=5,   
+                    LDAbeta=TRUE, interactions=TRUE, 
+                    ngroups=1, model=NULL,
+                    gamma.prior=c("Pooled", "L1"), sigma.prior=0,
+                    kappa.prior=c("L1", "Jeffreys"), control=list())  {
+  if (!missing(vocab)) {
+    # in case K was not specified by name, and it was confused with the
+    # vocab argument (missing for dfm inputs)
+    if (is.numeric(vocab) & length(vocab)==1) {
+      stop("incorrect argument type for vocab, did you mean to specify K = ", vocab, "?")
+    } else {
+      stop("if documents is a dfm, do not specify vocab separately")
+    }
+  }
+
+  # convert the dfm input as the first argument into the structure of the
+  # older function where this is split into a list
+  dfm_stm <- quanteda::convert(documents, to = "stm", docvars = data)
+  if(is.null(data)) data <- dfm_stm[["meta"]]
+  
+  stm(documents = dfm_stm[["documents"]], 
+      vocab = dfm_stm[["vocab"]], 
+      K = K, 
+      prevalence = prevalence, content = content, 
+      data = dfm_stm[["meta"]],
+      init.type = init.type, 
+      max.em.its = max.em.its, emtol = emtol,
+      verbose = verbose, reportevery = reportevery,   
+      LDAbeta = LDAbeta, interactions = interactions, 
+      ngroups = ngroups, model = model,
+      gamma.prior = gamma.prior, sigma.prior = sigma.prior,
+      kappa.prior = kappa.prior, control = control)
+  
+}
+
+
+stm.list <- function(documents, vocab, K, 
+                     prevalence, content, data=NULL,
+                     init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
+                     max.em.its=500, emtol=1e-5,
+                     verbose=TRUE, reportevery=5,   
+                     LDAbeta=TRUE, interactions=TRUE, 
+                     ngroups=1, model=NULL,
+                     gamma.prior=c("Pooled", "L1"), sigma.prior=0,
+                     kappa.prior=c("L1", "Jeffreys"), control=list())  {
   
   #Match Arguments and save the call
   init.type <- match.arg(init.type)
@@ -432,8 +495,8 @@ stm <- function(documents, vocab, K,
     } else {
       yvar <- as.factor(content)
     }
-      yvarlevels <- levels(yvar)
-      betaindex <- as.numeric(yvar)
+    yvarlevels <- levels(yvar)
+    betaindex <- as.numeric(yvar)
   } else{
     yvarlevels <- NULL
     betaindex <- rep(1, length(documents))
@@ -444,8 +507,8 @@ stm <- function(documents, vocab, K,
   ny <- length(betaindex)
   nx <- ifelse(is.null(xmat), N, nrow(xmat))
   if(N!=nx | N!=ny) stop(paste("number of observations in content covariate (",ny,
-                                  ") prevalence covariate (",
-                                  nx,") and documents (",N,") are not all equal.",sep=""))
+                               ") prevalence covariate (",
+                               nx,") and documents (",N,") are not all equal.",sep=""))
   
   #Some additional sanity checks
   if(!is.logical(LDAbeta)) stop("LDAbeta must be logical")
@@ -464,7 +527,7 @@ stm <- function(documents, vocab, K,
                    topicreportevery=reportevery,
                    convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol),
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels),
-                   gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1, ic.k=2),
+                   gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1),
                    sigma=list(prior=sigma.prior),
                    kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
                               fixedintercept=TRUE, mstep=list(tol=.001, maxit=3),
@@ -473,14 +536,14 @@ stm <- function(documents, vocab, K,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
-                             s=.05, p=3000, d.group.size=2000, recoverEG=FALSE), 
+                             s=.05, p=3000, d.group.size=2000), 
                    seed=seed,
                    ngroups=ngroups)
   if(settings$gamma$mode=="L1") {
     #if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")
     if(ncol(xmat)<=2) stop("Cannot use L1 penalization in prevalence model with 2 or fewer covariates.")
   }
-
+  
   ###
   # Fill in some implied arguments.
   ###
@@ -504,11 +567,9 @@ stm <- function(documents, vocab, K,
   #Full List of legal extra arguments
   legalargs <-  c("tau.maxit", "tau.tol", 
                   "fixedintercept","kappa.mstepmaxit", "kappa.msteptol", 
-                  "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet", 
-                  "gamma.ic.k",
+                  "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
                   "nits", "burnin", "alpha", "eta", "contrast",
-                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
-                  "recoverEG")
+                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -526,7 +587,6 @@ stm <- function(documents, vocab, K,
       if(i=="lambda.min.ratio") settings$tau$lambda.min.ratio <- control[[i]]
       if(i=="ic.k") settings$tau$ic.k <- control[[i]]
       if(i=="gamma.enet") settings$gamma$enet <- control[[i]]
-      if(i=="gamma.ic.k") settings$gamma$ic.k <- control[[i]]
       if(i=="nits") settings$init$nits <- control[[i]]
       if(i=="burnin") settings$init$burnin <- control[[i]]
       if(i=="alpha") settings$init$alpha <- control[[i]]
@@ -536,7 +596,6 @@ stm <- function(documents, vocab, K,
       if(i=="rp.p")  settings$init$p <- control[[i]]
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
       if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
-      if(i=="recoverEG" & control[[i]]) settings$init$recoverEG <- control[[i]]
     }
   }
   

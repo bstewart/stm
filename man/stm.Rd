@@ -12,18 +12,22 @@ stm(documents, vocab, K, prevalence, content, data = NULL,
   "Jeffreys"), control = list())
 }
 \arguments{
-\item{documents}{The documents to be modeled.  Object must be a list of with
-each element corresponding to a document.  Each document is represented as
-an integer matrix with two rows, and columns equal to the number of unique
+\item{documents}{The document term matrix to be modeled. These can be supplied
+in the native \pkg{stm} format or a \pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) 
+object.  When using the quanteda format this will include the vocabulary and
+optionally the metadata. If using the native list format, the object must be a 
+list of with each element corresponding to a document. Each document is represented
+as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
 vocabulary entry and the second row contains the number of times that term
-appears.
-
-This is similar to the format in the \code{\link[lda]{lda}} package except
-that (following R convention) the vocabulary is indexed from one. Corpora
+appears. This is similar to the format in the \code{\link[lda]{lda}} package 
+except that (following R convention) the vocabulary is indexed from one. Corpora
 can be imported using the reader function and manipulated using the
 \code{\link{prepDocuments}}.  Raw texts can be ingested using
-\code{\link{textProcessor}}.}
+\code{\link{textProcessor}}. Note that when using \pkg{quanteda} \link[quanteda]{dfm}
+directly there may be higher memory use (because the texts and metadata are stored
+twice). You can convert from \pkg{quanteda}'s format directly to our native format
+using the \pkg{quanteda} function \link[quanted]{convert}.}
 
 \item{vocab}{Character vector specifying the words in the corpus in the
 order of the vocab indices in documents. Each term in the vocabulary index
@@ -130,7 +134,7 @@ of the package with which the model was estimated.}
 }
 \description{
 Estimation of the Structural Topic Model using semi-collapsed variational
-EM.  The function takes sparse representation of documents, an integer
+EM.  The function takes sparse representation of a document-term matrix, an integer
 number of topics, and covariates and returns fitted model parameters.
 Covariates can be used in the prior for topic \code{prevalence}, in the
 prior for topical \code{content} or both.  See an overview of functions in

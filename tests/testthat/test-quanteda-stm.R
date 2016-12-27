@@ -1,0 +1,36 @@
+# test that stm works with quanteda
+
+require(quanteda)
+
+test_that("Test that stm works on a quanteda dfm", {
+  gadarian_corpus <- corpus(gadarian, textField = "open.ended.response")
+  gadarian_dfm <- dfm(gadarian_corpus, 
+                      ignoredFeatures = stopwords("english"),
+                      stem = TRUE)
+  set.seed(10012) # NYU :-)
+  stm_from_dfm <- stm(gadarian_dfm,
+                      K = 3,
+                      prevalence = ~treatment + s(pid_rep),
+                      data = docvars(gadarian_corpus))
+  expect_identical(class(stm_from_dfm), "STM")
+})
+
+test_that("Test that stm works on a the classic stm object structure", {
+  temp <- textProcessor(documents = gadarian$open.ended.response,
+                        metadata = gadarian)
+  meta <- temp$meta
+  vocab <- temp$vocab
+  docs <- temp$documents
+  out <- prepDocuments(docs, vocab, meta)
+  docs <- out$documents
+  vocab <- out$vocab
+  meta <- out$meta
+  set.seed(10012)
+  stm_from_stmclassic <- 
+    stm(docs, vocab, 3, prevalence = ~treatment + s(pid_rep), data = meta)
+  expect_identical(class(stm_from_stmclassic), "STM")
+})
+
+## could add an additional test to compare the two outputs
+## could differ based on tokenizer, although
+## tm::stopwords("english") is the same set as quanteda::stopwords("english")
