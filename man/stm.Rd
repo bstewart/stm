@@ -5,7 +5,7 @@
 Variational EM for the Structural Topic Model
 }
 \description{
-Estimation of the Structural Topic Model using semi-collapsed variational EM.  The function takes sparse representation of documents, an integer number of topics, and covariates and returns fitted model parameters.  Covariates can be used in the prior for topic \code{prevalence}, in the prior for topical \code{content} or both.  See an overview of functions in the package here: \code{\link{stm-package}}
+Estimation of the Structural Topic Model using semi-collapsed variational EM.  The function takes sparse representation of a document-term matrix, an integer number of topics, and covariates and returns fitted model parameters.  Covariates can be used in the prior for topic \code{prevalence}, in the prior for topical \code{content} or both.  See an overview of functions in the package here: \code{\link{stm-package}}
 }
 \usage{
 stm(documents, vocab, K, 
@@ -20,12 +20,12 @@ stm(documents, vocab, K,
 }
 \arguments{
    \item{documents}{
-  The documents to be modeled.  Object must be a list of with each element corresponding to a document.  Each document is represented as an integer matrix with two rows, and columns equal to the number of unique vocabulary words in the document.  The first row contains the 1-indexed vocabulary entry and the second row contains the number of times that term appears.
+  The documents to be modeled if supplied as a list, or a \pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) object.  If a list, then \code{documents} must be a list of with each element corresponding to a document.  Each document is represented as an integer matrix with two rows, and columns equal to the number of unique vocabulary words in the document.  The first row contains the 1-indexed vocabulary entry and the second row contains the number of times that term appears.
  
   This is similar to the format in the \code{\link[lda]{lda}} package except that (following R convention) the vocabulary is indexed from one. Corpora can be imported using the reader function and manipulated using the \code{\link{prepDocuments}}.  Raw texts can be ingested using \code{\link{textProcessor}}.
   }
   \item{vocab}{
-  Character vector specifying the words in the corpus in the order of the vocab indices in documents. Each term in the vocabulary index must appear at least once in the documents.  See \code{\link{prepDocuments}} for dropping unused items in the vocabulary.
+  Character vector specifying the words in the corpus in the order of the vocab indices in documents. Each term in the vocabulary index must appear at least once in the documents.  See \code{\link{prepDocuments}} for dropping unused items in the vocabulary.   If \code{documents} is a \pkg{quanteda} \link[quanteda]{dfm} object, then \code{vocab} is should not (and must not) also be supplied.
 }
   \item{K}{
   Typically a positive integer (of size 2 or greater) representing the desired number of topics. If \code{init.type="Spectral"} you can also set \code{K=0} to use the algorithm of Lee and Mimno (2014) to set the number of topics (although unlike the standard spectral initialization this is not deterministic).  Additional detail on choosing the number of topics below.
@@ -160,22 +160,21 @@ Roberts, M., Stewart, B., & Tingley, D. (Forthcoming). "Navigating the Local Mod
 }
 \examples{
 \dontrun{
-#An example using the Gadarian data.  From Raw text to fitted model.
-temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
-meta<-temp$meta
-vocab<-temp$vocab
-docs<-temp$documents
-out <- prepDocuments(docs, vocab, meta)
-docs<-out$documents
-vocab<-out$vocab
-meta <-out$meta
+# fit model to the Gadarian data, from raw text to fitted model
+require(quanteda)
+gadarian_corpus <- corpus(gadarian, textField = "open.ended.response")
+gadarian_dfm <- dfm(gadarian_corpus, 
+                    ignoredFeatures = stopwords("english"),
+                    stem = TRUE)
 set.seed(02138)
-mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta)
+mod.out <- stm(gadarian_dfm, K = 3, prevalence = ~treatment + s(pid_rep), 
+               data = docvars(gadarian_corpus))
 
-#An example of restarting a model
-mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
-               data=meta, max.em.its=5)
-mod.out2 <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
-                data=meta, model=mod.out, max.em.its=10)
+# an example of restarting a model
+mod.out <- stm(gadarian_dfm, K = 3, prevalence = ~treatment + s(pid_rep), 
+               data = docvars(gadarian_corpus), max.em.its = 5)
+mod.out2 <- stm(gadarian_dfm, K = 3, prevalence=~treatment + s(pid_rep), 
+                data = docvars(gadarian_corpus), 
+                model = mod.out, max.em.its = 10)
 }
 }

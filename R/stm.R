@@ -9,6 +9,58 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE, 
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
+                kappa.prior=c("L1", "Jeffreys"), control=list()) {
+  UseMethod("stm")
+}
+  
+stm.dfm <- function(documents, vocab, K, 
+                        prevalence, content, data=NULL,
+                        init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
+                        max.em.its=500, emtol=1e-5,
+                        verbose=TRUE, reportevery=5,   
+                        LDAbeta=TRUE, interactions=TRUE, 
+                        ngroups=1, model=NULL,
+                        gamma.prior=c("Pooled", "L1"), sigma.prior=0,
+                        kappa.prior=c("L1", "Jeffreys"), control=list())  {
+
+  if (!missing(vocab)) {
+    # in case K was not specified by name, and it was confused with the
+    # vocab argument (missing for dfm inputs)
+    if (is.numeric(vocab) & length(vocab)==1) {
+      stop("incorrect argument type for vocab, did you mean to specify K = ", vocab, "?")
+    } else {
+      stop("if documents is a dfm, do not specify vocab separately")
+    }
+  }
+
+  # convert the dfm input as the first argument into the structure of the
+  # older function where this is split into a list
+  dfm_stm <- quanteda::convert(documents, to = "stm", docvars = data)
+
+  stm(documents = dfm_stm[["documents"]], 
+      vocab = dfm_stm[["vocab"]], 
+      K = K, 
+      prevalence = prevalence, content = content, 
+      data = dfm_stm[["meta"]],
+      init.type = init.type, 
+      max.em.its = max.em.its, emtol = emtol,
+      verbose = verbose, reportevery = reportevery,   
+      LDAbeta = LDAbeta, interactions = interactions, 
+      ngroups = ngroups, model = model,
+      gamma.prior = gamma.prior, sigma.prior = sigma.prior,
+      kappa.prior = kappa.prior, control = control)
+  
+}
+
+  
+stm.list <- function(documents, vocab, K, 
+                prevalence, content, data=NULL,
+                init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
+                max.em.its=500, emtol=1e-5,
+                verbose=TRUE, reportevery=5,   
+                LDAbeta=TRUE, interactions=TRUE, 
+                ngroups=1, model=NULL,
+                gamma.prior=c("Pooled", "L1"), sigma.prior=0,
                 kappa.prior=c("L1", "Jeffreys"), control=list())  {
   
   #Match Arguments and save the call
