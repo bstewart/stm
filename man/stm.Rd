@@ -32,7 +32,10 @@ using the \pkg{quanteda} function \link[quanted]{convert}.}
 \item{vocab}{Character vector specifying the words in the corpus in the
 order of the vocab indices in documents. Each term in the vocabulary index
 must appear at least once in the documents.  See \code{\link{prepDocuments}}
-for dropping unused items in the vocabulary.}
+for dropping unused items in the vocabulary.  If \code{documents} is a 
+\pkg{quanteda} \link[quanteda]{dfm} object, then \code{vocab} should not
+ (and must not) be supplied.  It is contained already inside the \pkg{quanteda}
+ dfm.}
 
 \item{K}{Typically a positive integer (of size 2 or greater) representing
 the desired number of topics. If \code{init.type="Spectral"} you can also
@@ -322,18 +325,21 @@ initialization.}
 
 \dontrun{
 
-#An example using the Gadarian data.  From Raw text to fitted model.
+#An example using the Gadarian data.  From Raw text to fitted model using 
+#textProcessor() which leverages the tm Package
 temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
-meta<-temp$meta
-vocab<-temp$vocab
-docs<-temp$documents
-out <- prepDocuments(docs, vocab, meta)
-docs<-out$documents
-vocab<-out$vocab
-meta <-out$meta
+out <- prepDocuments(temp$docs, temp$vocab, temp$meta)
 set.seed(02138)
-mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta)
+mod.out <- stm(out$documents, out$vocab, 3, 
+               prevalence=~treatment + s(pid_rep), data=out$meta)
 
+#The same example using quanteda instead of tm via textProcessor()
+require(quanteda)
+gadarian_corpus <- corpus(gadarian, textField = "open.ended.response")
+gadarian_dfm <- dfm(gadarian_corpus, 
+                     ignoredFeatures = stopwords("english"),
+                     stem = TRUE)
+                     
 #An example of restarting a model
 mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
                data=meta, max.em.its=5)

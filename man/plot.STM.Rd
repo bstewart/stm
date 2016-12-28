@@ -2,12 +2,7 @@
 % Please edit documentation in R/plot.STM.R
 \name{plot.STM}
 \alias{plot.STM}
-\title{Produces one of four types of plots for an STM object.  The default option
-\code{"summary"} prints topic words with their corpus frequency.
-\code{"labels"} is for easy printing of tables of indicative words for each
-topic.  \code{"perspectives"} depicts differences between two topics,
-content covariates or combinations. \code{"hist"} creates a histogram of the
-expected distribution of topic proportions across the documents.}
+\title{Functions for plotting STM objects}
 \usage{
 \method{plot}{STM}(x, type = c("summary", "labels", "perspectives", "hist"),
   n = NULL, topics = NULL, labeltype = c("prob", "frex", "lift", "score"),
@@ -69,6 +64,14 @@ vector of length two which has the left hand side label first.}
 \item{\dots}{Additional parameters passed to ploting functions.}
 }
 \description{
+Produces one of four types of plots for an STM object.  The default option
+\code{"summary"} prints topic words with their corpus frequency.
+\code{"labels"} is for easy printing of tables of indicative words for each
+topic.  \code{"perspectives"} depicts differences between two topics,
+content covariates or combinations. \code{"hist"} creates a histogram of the
+expected distribution of topic proportions across the documents.
+}
+\details{
 The function can produce three types of plots which summarize an STM object
 which is chosen by the argument \code{type}.  \code{summary} produces a plot
 which displays the topics ordered by their expected frequency across the

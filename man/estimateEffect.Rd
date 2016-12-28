@@ -117,11 +117,11 @@ as using a spline or a spline with greater degrees of freedom).
 
 #Just one topic (note we need c() to indicate it is a vector)
 prep <- estimateEffect(c(1) ~ treatment, gadarianFit, gadarian)
-plot.estimateEffect(prep, "treatment", model=gadarianFit, method="pointestimate")
+plot(prep, "treatment", model=gadarianFit, method="pointestimate")
 
 #three topics at once
 prep <- estimateEffect(1:3 ~ treatment, gadarianFit, gadarian)
-plot.estimateEffect(prep, "treatment", model=gadarianFit, method="pointestimate")
+plot(prep, "treatment", model=gadarianFit, method="pointestimate")
 }
 }
 \seealso{

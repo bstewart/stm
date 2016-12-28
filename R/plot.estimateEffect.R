@@ -155,9 +155,9 @@
 #' metadata=gadarian)
 #' 
 #' par(mfrow=c(1,2))
-#' plot.estimateEffect(prep, "treatment", method="pointestimate",
+#' plot(prep, "treatment", method="pointestimate",
 #' cov.value1=1, cov.value2=0, xlim=c(-1,1), moderator="binaryvar", moderator.value=1)
-#' plot.estimateEffect(prep, "treatment", method="pointestimate",
+#' plot(prep, "treatment", method="pointestimate",
 #' cov.value1=1, cov.value2=0, xlim=c(-1,1), moderator="binaryvar",
 #' moderator.value=0)
 #' }

@@ -1,5 +1,5 @@
-# Functions for plotting STM objects
-
+#' Functions for plotting STM objects
+#' 
 #' Produces one of four types of plots for an STM object.  The default option
 #' \code{"summary"} prints topic words with their corpus frequency.
 #' \code{"labels"} is for easy printing of tables of indicative words for each
