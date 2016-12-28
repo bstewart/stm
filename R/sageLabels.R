@@ -99,6 +99,7 @@ sageLabels <- function(model, n=7) {
   return(out)
 }
 
+#' @method print sageLabels
 #' @export
 print.sageLabels <- function(x, ...) {
   topicnums <- 1:x$K

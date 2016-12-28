@@ -8,6 +8,7 @@
 #' @aliases summary.STM print.STM
 #' @param object An STM object.
 #' @param \dots Additional arguments affecting the summary
+#' @method summary STM
 #' @export
 summary.STM <- function(object,...) {
   toprint <- sprintf("A topic model with %i topics, %i documents and a %i word dictionary.\n", 
@@ -18,6 +19,7 @@ summary.STM <- function(object,...) {
   labelTopics(object)
 }
 
+#' @method print STM
 #' @export
 print.STM <- function(x,...) {
   toprint <- sprintf("A topic model with %i topics, %i documents and a %i word dictionary.\n", 

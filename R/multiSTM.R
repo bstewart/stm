@@ -723,6 +723,7 @@ plot.MultimodDiagnostic <- function(x, ind=NULL, topics=NULL, ...){
 }
 
 #' @export
+#' @method print MultimodDiagnostic
 print.MultimodDiagnostic <- function(x,...){
   cat(paste("A multimodality diagnostic object for a collection of STM models.
             The diagnostic tests were run on", x$N, "models with", x$K, "topics."))

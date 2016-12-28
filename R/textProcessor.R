@@ -227,6 +227,7 @@ textProcessor <- function(documents, metadata=NULL,
   return(out)
 }
 
+#' @method print textProcessor
 #' @export
 print.textProcessor <- function(x,...) {
   toprint <- sprintf("A text corpus with %i documents, and an %i word dictionary.\n", 
@@ -235,6 +236,7 @@ print.textProcessor <- function(x,...) {
   cat(toprint)
 }
 
+#' @method summary textProcessor
 #' @export
 summary.textProcessor <- function(object,...) {
   toprint <- sprintf("A text corpus with %i documents, and an %i word dictionary. Use str() to inspect object or see documentation \n", 
@@ -243,6 +245,7 @@ summary.textProcessor <- function(object,...) {
   cat(toprint)
 }
 
+#' @method head textProcessor
 #' @export
 head.textProcessor <- function(x,...) {
   for(i in 1:length(x)) {

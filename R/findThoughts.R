@@ -86,9 +86,9 @@ findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=NULL,
   if(!is.null(where)) {
     colnames(theta) <- sprintf("Topic%i", 1:ncol(theta))
     if(is.null(meta)) {
-      dt <- data.table(docnum=1:nrow(theta),theta)
+      dt <- data.table::data.table(docnum=1:nrow(theta),theta)
     } else {
-      dt <- data.table(docnum=1:nrow(theta),theta, meta)
+      dt <- data.table::data.table(docnum=1:nrow(theta),theta, meta)
     }
     for(i in 1:length(topics)) {
       what <- parse(text=sprintf("docnum[order(Topic%i, decreasing=TRUE)][1:%i]", topics[i], n))
@@ -127,6 +127,7 @@ findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=NULL,
   return(out)
 }
 
+#' @method print findThoughts
 #' @export
 print.findThoughts <- function(x,...) {
   toprint <- vector(length=length(x$docs))
@@ -137,6 +138,7 @@ print.findThoughts <- function(x,...) {
   cat(toprint)
 }
 
+#' @method plot findThoughts
 #' @export
 plot.findThoughts <- function(x, sentences=NULL, ...) {
   for(i in 1:length(x$docs)) {
@@ -145,7 +147,7 @@ plot.findThoughts <- function(x, sentences=NULL, ...) {
   }
 }
 
-
+#a little internal function to make a data table out of the thetas.
 make.dt <- function(model, meta=NULL) {
   theta <- model$theta
   colnames(theta) <- sprintf("Topic%i", 1:ncol(theta))

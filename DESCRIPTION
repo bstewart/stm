@@ -3,14 +3,14 @@ Type: Package
 Title: Estimation of the Structural Topic Model
 Version: 1.1.6
 Date: 2016-10-28
-Author: Margaret E. Roberts [aut, cre], 
-        Brandon M. Stewart [aut, cre],
+Author: Margaret Roberts [aut, cre], 
+        Brandon Stewart [aut, cre],
         Dustin Tingley [aut, cre],
         Kenneth Benoit [ctb]
 Maintainer: Brandon Stewart <bms4@princeton.edu>
 Authors@R: c( 
     person("Margaret", "Roberts", role = c("aut", "cre")), 
-    person("Brandon M.", "Stewart", role = c("aut", "cre")),
+    person("Brandon", "Stewart", email="bms4@princeton.edu",role = c("aut", "cre")),
     person("Dustin", "Tingley", role = c("aut", "cre")),
     person("Kenneth", "Benoit", role = "ctb")
     )
@@ -25,4 +25,5 @@ Description: The Structural Topic Model (STM) allows researchers
   and estimation of topic-covariate regressions.
 License: MIT + file LICENSE
 URL: http://structuraltopicmodel.com 
+BugReports: https://github.com/bstewart/stm/issues
 RoxygenNote: 5.0.1
