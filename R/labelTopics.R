@@ -112,6 +112,7 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   return(out)
 }
 
+#' @method print labelTopics
 #' @export
 print.labelTopics <- function(x,...) {  
   #test of its an aspect model or not

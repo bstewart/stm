@@ -1,5 +1,9 @@
-## Structural Topic Model
-# wrapper for the stm.control function.  
+######
+# Structural Topic Model
+# this is just a wrapper for the stm.control function which is where
+# the majority of the work is actually done.
+######
+
 
 #' Variational EM for the Structural Topic Model
 #' 
