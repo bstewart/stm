@@ -5,7 +5,7 @@
 \alias{summary.STM}
 \title{Summary Function for the STM objects}
 \usage{
-summary.STM(object, ...)
+\method{summary}{STM}(object, ...)
 }
 \arguments{
 \item{object}{An STM object.}

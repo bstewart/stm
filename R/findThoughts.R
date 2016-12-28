@@ -64,6 +64,7 @@
 #'                        where = (treatment==1 | pid_rep > .5) & Topic3>.2, meta=gadarian)
 #' plot(thought)         
 #' @export
+#' @import data.table
 findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=NULL,
                          where=NULL, meta=NULL) {
 #Grab up to n texts which are above the threshold

@@ -8,12 +8,6 @@ Author: Margaret Roberts [aut, cre],
         Dustin Tingley [aut, cre],
         Kenneth Benoit [ctb]
 Maintainer: Brandon Stewart <bms4@princeton.edu>
-Authors@R: c( 
-    person("Margaret", "Roberts", role = c("aut", "cre")), 
-    person("Brandon", "Stewart", email="bms4@princeton.edu",role = c("aut", "cre")),
-    person("Dustin", "Tingley", role = c("aut", "cre")),
-    person("Kenneth", "Benoit", role = "ctb")
-    )
 Depends: R (>= 2.10)
 LinkingTo: Rcpp, RcppArmadillo
 Imports: matrixStats, splines, slam, lda, quanteda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3), grDevices, graphics, stats, utils, data.table, quadprog

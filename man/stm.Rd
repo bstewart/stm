@@ -27,7 +27,7 @@ can be imported using the reader function and manipulated using the
 \code{\link{textProcessor}}. Note that when using \pkg{quanteda} \link[quanteda]{dfm}
 directly there may be higher memory use (because the texts and metadata are stored
 twice). You can convert from \pkg{quanteda}'s format directly to our native format
-using the \pkg{quanteda} function \link[quanted]{convert}.}
+using the \pkg{quanteda} function \link[quanteda]{convert}.}
 
 \item{vocab}{Character vector specifying the words in the corpus in the
 order of the vocab indices in documents. Each term in the vocabulary index
