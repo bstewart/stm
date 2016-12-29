@@ -19,7 +19,7 @@ information.}
 \item{n}{Sets the number of words used to label each topic.  In perspective
 plots it approximately sets the total number of words in the plot.  The
 defaults are 3, 20 and 25 for \code{summary}, \code{labels} and
-\code{perspectives} respectively.}
+\code{perspectives} respectively.  n must be greater than or equal to 2}
 
 \item{topics}{Vector of topics to display.  For plot perspectives this must
 be a vector of length one or two. For the other two types it defaults to all

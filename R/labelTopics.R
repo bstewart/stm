@@ -26,6 +26,7 @@
 #' @param topics A vector of numbers indicating the topics to include.  Default
 #' is all topics.
 #' @param n The desired number of words (per type) used to label each topic.
+#' Must be 2 or greater.
 #' @param frexweight A weight used in our approximate FREX scoring algorithm
 #' (see details).
 #' @return A labelTopics object (list) \item{prob }{matrix of highest

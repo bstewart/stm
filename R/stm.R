@@ -151,6 +151,12 @@
 #' parameter is to zero the less sparse the solution will tend to be.}
 #' \item{\code{gamma.enet}}{Controls the elastic net mixing parameter for the
 #' prevalence covariates.  See above for a description.}
+#' \item{\code{gamma.ic.k}}{For L1 mode prevalence covariates this controls the 
+#' selection of the regularization parameter.  We use a generic information criterion
+#'  which penalizes complexity by the parameter \code{ic.k}.  
+#'  When set to 2 (as by default) this results in AIC.  When set to log(n) 
+#'  (where n is the total number of documents in the corpus) this is equivalent to BIC.
+#'    Larger numbers will express a preference for sparser (simpler) models.}
 #' \item{\code{nlambda}}{Controls the length of the regularization path when
 #' using L1 mode for content covariates.  Defaults to 500.  Note that glmnet
 #' relies heavily on warm starts and so a high number will often
@@ -191,6 +197,7 @@
 #' \code{TRUE} turns on the experimental random projections spectral
 #' initialization.} 
 #' }
+#' 
 #' 
 #' @param documents The document term matrix to be modeled. These can be supplied
 #' in the native \pkg{stm} format or a \pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) 

@@ -68,7 +68,9 @@
 #' romanian russian spanish swedish turkish".  These can be specified as any on
 #' of the above strings or by the three-letter ISO-639 codes.  You can also set
 #' language to "na" if you want to leave it deliberately unspecified (see
-#' documentation in \code{tm}).
+#' documentation in \code{tm}) Note that languages listed here may not all have 
+#' accompanying stopwords.  However if you have your own stopword list you can use
+#' customstopwords below.
 #' @param verbose If true prints information as it processes.
 #' @param onlycharacter When TRUE, runs a regular expression substitution to
 #' replace all non-alphanumeric characters. These characters can crash

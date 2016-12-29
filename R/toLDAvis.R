@@ -4,7 +4,7 @@
 #' 
 #' Tool for exploring topic/word distributions using LDAvis topic browser.
 #' Development build of LDAvis available at https://github.com/cpsievert/LDAvis
-#' or download from CRAN.
+#' or download from CRAN. Note: LDAvis may renumber the topics. 
 #' 
 #' @param mod STM object. Output from stm function.
 #' @param docs Documents object passed to \code{stm} in this package's standard
