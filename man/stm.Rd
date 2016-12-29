@@ -334,7 +334,7 @@ initialization.}
 #An example using the Gadarian data.  From Raw text to fitted model using 
 #textProcessor() which leverages the tm Package
 temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
-out <- prepDocuments(temp$docs, temp$vocab, temp$meta)
+out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
 set.seed(02138)
 mod.out <- stm(out$documents, out$vocab, 3, 
                prevalence=~treatment + s(pid_rep), data=out$meta)
@@ -347,10 +347,10 @@ gadarian_dfm <- dfm(gadarian_corpus,
                      stem = TRUE)
                      
 #An example of restarting a model
-mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
-               data=meta, max.em.its=5)
-mod.out2 <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
-                data=meta, model=mod.out, max.em.its=10)
+mod.out <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
+               data=out$meta, max.em.its=5)
+mod.out2 <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
+                data=out$meta, model=mod.out, max.em.its=10)
 }
 }
 \references{

@@ -328,7 +328,7 @@
 #' #An example using the Gadarian data.  From Raw text to fitted model using 
 #' #textProcessor() which leverages the tm Package
 #' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
-#' out <- prepDocuments(temp$docs, temp$vocab, temp$meta)
+#' out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
 #' set.seed(02138)
 #' mod.out <- stm(out$documents, out$vocab, 3, 
 #'                prevalence=~treatment + s(pid_rep), data=out$meta)
@@ -341,10 +341,10 @@
 #'                      stem = TRUE)
 #'                      
 #' #An example of restarting a model
-#' mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
-#'                data=meta, max.em.its=5)
-#' mod.out2 <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), 
-#'                 data=meta, model=mod.out, max.em.its=10)
+#' mod.out <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
+#'                data=out$meta, max.em.its=5)
+#' mod.out2 <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
+#'                 data=out$meta, model=mod.out, max.em.its=10)
 #' }
 #' @export
 stm <- function(documents, vocab, K, 
@@ -359,6 +359,9 @@ stm <- function(documents, vocab, K,
   UseMethod("stm")
 }
 
+#' @method stm dfm
+#' @export
+#' @keywords internal
 stm.dfm <- function(documents, vocab, K, 
                     prevalence, content, data=NULL,
                     init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
@@ -377,7 +380,9 @@ stm.dfm <- function(documents, vocab, K,
       stop("if documents is a dfm, do not specify vocab separately")
     }
   }
-
+  
+  # added a default to use docvars(obj) unless otherwise specified -BMS
+  if(missing(data)) data <- docvars(documents)
   # convert the dfm input as the first argument into the structure of the
   # older function where this is split into a list
   dfm_stm <- quanteda::convert(documents, to = "stm", docvars = data)
@@ -398,7 +403,9 @@ stm.dfm <- function(documents, vocab, K,
   
 }
 
-
+#' @method stm list
+#' @export
+#' @keywords internal
 stm.list <- function(documents, vocab, K, 
                      prevalence, content, data=NULL,
                      init.type=c("LDA", "Random", "Spectral"), seed=NULL, 

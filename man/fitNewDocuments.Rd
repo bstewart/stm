@@ -4,7 +4,7 @@
 \alias{fitNewDocuments}
 \title{Fit New Documents}
 \usage{
-fitNewDocuments(model, documents, data = NULL,
+fitNewDocuments(model, documents, data = NULL, betaIndex = NULL,
   prevalencePrior = c("Average", "Covariate", "None"),
   contentPrior = c("Average", "Covariate"), returnPosterior = FALSE,
   returnPriors = FALSE)
@@ -15,11 +15,16 @@ fitNewDocuments(model, documents, data = NULL,
 \item{documents}{these documents must be in the stm format and be numbered in the same way
 as the documents in the original model with the same dimension of vocabulary!}
 
-\item{data}{the metadata which goes with the unseen documents.}
+\item{data}{the metadata for the prevalence prior which goes with the unseen documents}
 
-\item{prevalencePrior}{three options described in detail below.}
+\item{betaIndex}{an integer vector which indicates which level of the content covariate is used
+for each unseen document.}
 
-\item{contentPrior}{two options described in detail below.}
+\item{prevalencePrior}{three options described in detail below.  Defaults to "Average" when
+\code{data} is not provided and "Covariate" when it is.}
+
+\item{contentPrior}{two options described in detail below. Defaults to "Average" when 
+\code{betaIndex} is not provided and "Covariate" when it is.}
 
 \item{returnPosterior}{the function always returns the posterior mode of theta
 (document-topic proportions),  If set to TRUE this will return the full variational
@@ -49,7 +54,11 @@ in general produce more sharply peaked topic distributions than the prior. This 
 even without the covariates.  This is not an option for topical content covariate models.  If
 you do not observe the topical content covariate, use the "Average" option.} 
 \item{"Average"}{We use a prior that is based on the average over the documents in the training
-set.  This does not require the unseen documents to observe the covariates.  In the case of 
+set.  This does not require the unseen documents to observe the covariates.  In a model that originally
+had covariates we need to adjust our estimate of the variance-covariance matrix sigma to accomodate that
+we no longer have the covariate information.  So we recalculate the variance based on what it would have
+been if we didn't have any covariates.  This helps avoid an edge case where the covariates are extremely
+influential and we don't want that strength applied to the new covariate-less setting.  In the case of 
 content covariates this essentially use the \code{\link{sageLabels}} approach to create a
 marginalized distribution over words for each topic.
 }
