@@ -1,3 +1,14 @@
+#TODO: Create an exported version of the design matrix function
+#      Update parseFormulas to use the new thing
+#      Write a testing function
+#      Content covariates
+#      Write the part that actually does the fitting
+#      Write the return structure and document
+#      Write an example
+#      Put in seealso links
+
+
+
 #' Fit New Documents
 #' 
 #' A function for predicting thetas for an unseen document based on the previously fit model.
@@ -50,12 +61,22 @@
 #' in turn be used to check that you have formatted your result correctly. If you want even more fine-grained
 #' control we recommend you directly use the optimization function \code{\link{optimizeDocument}}
 #' 
+#' \strong{specialFunctions} As mentioned above the key difficulty is functions in the formulas which
+#' are dependent for their form on the data passed to them (like splines e.g \code{bs()}, but unlike 
+#' e.g. \code{log()}).  This function allows for the special functions \code{"s", "ns", "bs", "poly", "pspline"}
+#' internally what we do is create a temporary function that calls the relevant predict function
+#' e.g. \code{predict.bs()} using the generic assigned to that function and the original data.  If you
+#' want to use a different function which also has a predict method associated with it, you can pass it
+#' here and it will be incorporated.
+#' 
 #' @param model the originally fit STM object.
-#' @param documents these documents must be in the stm format and be numbered in the same way
-#' as the documents in the original model with the same dimension of vocabulary!
+#' @param documents the new documents to be fit. These documents must be in the stm format and
+#'  be numbered in the same way as the documents in the original model with the same dimension of vocabulary.
 #' @param newData the metadata for the prevalence prior which goes with the unseen documents. As in
 #' the original data this cannot have any missing data.
 #' @param origData the original metadata used to fit the STM object. 
+#' @param prevalence the original formula passed to prevalence when \code{stm()} was called. The function
+#' will try to reconstruct this.
 #' @param betaIndex an integer vector which indicates which level of the content covariate is used
 #' for each unseen document. If originally passed as a factor, this can be passed as a factor or 
 #' character vector as well but it must not have any levels not included in the original factor.
@@ -75,15 +96,21 @@
 #' @param designMatrix an option for advanced users to pass an already constructed design matrix for
 #' prevalence covariates.  This will override the options in \code{newData}, \code{origData} and
 #' \code{test}.  See details below- please do not attempt to use without reading carefully.
+#' @param specialFunctions an option for advanced users.  This allows you to pass a character
+#' vector containing the names of any special functions that you may wish to use on the data
+#' inside your formula. See details below.  By default we include \code{"s", "ns", "bs", "poly", "pspline"}
 #' @examples
 #' 
+#' @seealso \code{\link{optimizeDocument}} \code{\link{make.heldout}}
 #' @export
-fitNewDocuments <- function(model, documents, newData=NULL, origData=NULL, betaIndex=NULL,
+fitNewDocuments <- function(model, documents, newData=NULL, 
+                            origData=NULL, prevalence=NULL, betaIndex=NULL,
                             prevalencePrior=c("Average","Covariate","None"),
                             contentPrior=c("Average","Covariate"),
                             returnPosterior=FALSE,
                             returnPriors=FALSE,
-                            test=TRUE, designMatrix=NULL) {
+                            test=TRUE, designMatrix=NULL,
+                            specialFunctions=NULL) {
   #Some checks from the stm() function
   if(!is.list(documents)) stop("documents must be a list, see documentation.")
   if(!all(unlist(lapply(documents, is.matrix)))) stop("Each list element in documents must be a matrix. See documentation.")
@@ -92,8 +119,8 @@ fitNewDocuments <- function(model, documents, newData=NULL, origData=NULL, betaI
   }
   
   #Some additional checks here:
-  if(!is.null(data)) {
-    if(nrow(data)!=length(documents)) stop("Rows in the dataset does not match the length of the new documents")
+  if(!is.null(newData)) {
+    if(nrow(newData)!=length(documents)) stop("Rows in the dataset does not match the length of the new documents")
     if(max(unlist(lapply(documents, function(x) x[1,]))) > length(model$vocab)) stop("Vocabulary in new documents is larger than the original fitted model.")
   }
   
@@ -145,20 +172,98 @@ fitNewDocuments <- function(model, documents, newData=NULL, origData=NULL, betaI
       sigma <- model$sigma - covariance/nrow(model$eta) + newcovariance/nrow(model$eta)
     }
   }
-  if(prevtype=="Covariate") {
-    #Covariates
-    #this is the tough case.  Need to do our best to reconstruct the design matrix for the
+  if(prevtype=="Covariate"){
+    #Covariates will require a mu and sigma
+    if(!missing(designMatrix)) {
+      #if we have manually been passed the design matrix use it here
+      if(ncol(model$settings$covariates$X) != ncol(designMatrix)) stop("designMatrix columns do not match original design matrix.")
+      X <- designMatrix
+    } else {
+      #First we need to find the formula
+      if(!is.null(prevalence)) {
+        #easiest case is that the user provides it.
+        if(!inherits(prevalence, "formula")) stop("prevalence argument must provide a formula if specified")
+        formula <- prevalence
+      } else {
+        #okay the user hasn't provided it, let's find it.
+        if(!is.null(model$setting$covariates$formula)) {
+          #if its a new stm object we've saved it.
+          formula <- model$settings$covariates$formula
+        } else {
+          #third case it isn't in the object, let's reconstruct it from the call
+          call <- model$settings$call
+          #grab the formula 
+          #(code here matches the element of the call, grabs that component, drops the outside parentheses,
+          # converts to a formula)
+          formula <- as.formula(call[c(match(c("prevalence"), names(call),0L))][[1L]])
+        }
+      }
+      
+      origData$lpid_rep <- asinh(origData$pid_rep)
+      formula <- ~treatment*s(pid_rep) + s(lpid_rep)
+      
+      #Second, we now have the formula, let's evaluate in the context of the original data
+      termobj <- terms(formula, data=origData)
+      mf <- model.frame(termobj, data=origData)
     
-    #TODO: require old data, modify parseFormulas to allow all basis functions.  Consider
-    #including poly in there too.  It has a predict function.  I think ns() and bs() do too
-    #so maybe that's the whole gambit?
-    
-    #I think we should consider exporting the function too...
+      #now let's identify the specials and build out functions for them
+      elements <- colnames(attr(terms(formula), "factors"))
+      specialtypes <- c("s", "ns", "bs", "poly", "pspline")
+      if(!is.null(specialFunctions)) specialtypes <- c(specialtypes,specialFunctions)
+      special <- attr(terms(formula, 
+                            specials=specialtypes),
+                      "special")
+      newformula <- formula
+      for(i in 1:length(special)) {
+        #for each special check if there are any
+        if(is.null(special[[i]])) next
+        #okay now that we know there is at least one
+        #now we step through five steps
+        
+        #1) loop over elements of specials
+        for(j in 1:length(special[[i]])) {
+          #2) find the element of interest
+          elem <- elements[special[[i]][j]]
+          #3) create a function name based on names(special)[i].  
+          funcname <- sprintf("%sfn%i",names(special)[i],j)
+          #4) write a predict function using that name
+          #   this calls predict on the newdata (x) using the old model frame
+          assign(funcname, function(x,...) predict(mf[[elem]],x))
+          #5) figure out what just the variable name is.  There is probably a more elegant way to do this
+          # the more obvious way is via all.vars() but this doesn't line us up with elements
+          # also get_all_vars but same problem.
+          # The basic strategy is to use reverse to get only the first and last parenthesis so functions can be nested
+          varname <- stringi::stri_split_fixed(elem, "(", n=2)[[1]][2]
+          varname <- stringi::stri_reverse(varname)
+          varname <- stringi::stri_split_fixed(varname, ")",n=2)[[1]][2]
+          varname <- stringi::stri_reverse(varname)
+          #6) replace the full element in the formula with the newfunction called on the original variable
+          replace <- sprintf("%s(%s)", funcname, varname)
+          newformula <- as.character(newformula)
+          newformula[2] <- stringi::stri_replace_all_fixed(as.character(newformula)[2],
+                                                           replacement=replace,
+                                                           pattern=elem)
+          newformula <- as.formula(newformula) #coerce back to formula
+          #7) move on to the next one
+        }
+      }
+      #now we have a new variable called newformula which has an updated formula for us to call!   
+      X <- try(Matrix::sparse.model.matrix(termobj,data=origData),silent=TRUE)
+      if(class(X)=="try-error") stop("Error creating model matrix. Check your formula.")
+      
+      if(test) {
+        #write a test here. First I need to export.
+      }
+    }
+    sigma <- model$sigma
+    mu <- t(X%*%gamma)
   }
-
-   #Generate the Content Prior Matrix
+  
+  #Generate the Content Prior Matrix
      #the trick here is using the yvarlevels to work back what the factor is.  
      #Should have three types: integer, factor, character
+  
+  
   
   #Loop Over and fit them all
   
