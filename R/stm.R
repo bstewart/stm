@@ -381,26 +381,26 @@ stm.dfm <- function(documents, vocab, K,
     }
   }
   
-  # added a default to use docvars(obj) unless otherwise specified -BMS
-  if(missing(data)) data <- docvars(documents)
   # convert the dfm input as the first argument into the structure of the
   # older function where this is split into a list
   dfm_stm <- quanteda::convert(documents, to = "stm", docvars = data)
   if(is.null(data)) data <- dfm_stm[["meta"]]
   
-  stm(documents = dfm_stm[["documents"]], 
-      vocab = dfm_stm[["vocab"]], 
-      K = K, 
-      prevalence = prevalence, content = content, 
-      data = dfm_stm[["meta"]],
-      init.type = init.type, 
-      max.em.its = max.em.its, emtol = emtol,
-      verbose = verbose, reportevery = reportevery,   
-      LDAbeta = LDAbeta, interactions = interactions, 
-      ngroups = ngroups, model = model,
-      gamma.prior = gamma.prior, sigma.prior = sigma.prior,
-      kappa.prior = kappa.prior, control = control)
-  
+  out <- stm(documents = dfm_stm[["documents"]], 
+            vocab = dfm_stm[["vocab"]], 
+            K = K, 
+            prevalence = prevalence, content = content, 
+            data = dfm_stm[["meta"]],
+            init.type = init.type, 
+            max.em.its = max.em.its, emtol = emtol,
+            verbose = verbose, reportevery = reportevery,   
+            LDAbeta = LDAbeta, interactions = interactions, 
+            ngroups = ngroups, model = model,
+            gamma.prior = gamma.prior, sigma.prior = sigma.prior,
+            kappa.prior = kappa.prior, control = control)
+  #need to update the call so it looks like the user's original call
+  out$settings$call <- match.call()
+  return(out)
 }
 
 #' @method stm list
