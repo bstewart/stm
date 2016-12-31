@@ -49,6 +49,7 @@ predict.s <- function (object, newx, ...)
 }
 
 #' @export
+#' @importFrom stats makepredictcall
 #' @keywords internal
 makepredictcall.s <- function (var, call) 
 {
