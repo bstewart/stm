@@ -5,7 +5,9 @@
 #' freedom.
 #' 
 #' This is a simple wrapper written as users may find it easier to simply type
-#' \code{\link{s}} rather than selecting parameters for a spline.
+#' \code{s} rather than selecting parameters for a spline. We also include
+#' \code{predict} and \code{makepredictcall} generic functions for the class
+#' so it will work in settings where \code{\link{predict}} is called.
 #' 
 #' @param x The predictor value.
 #' @param df Degrees of freedom.  Defaults to the minimum of 10 or one minus
@@ -30,5 +32,31 @@ s <- function(x, df, ...) {
   if(missing(df)) {
     df <- min(10, (nval-1))
   }
-  return(bs(x, df,...))     
+  obj <- splines::bs(x, df,...)
+  attr(obj, "class") <- c("s", attr(obj, "class")) #we need this to ensure that our predict generics trigger
+  return(obj)
+}
+
+#' @export
+#' @keywords internal
+predict.s <- function (object, newx, ...) 
+{
+  if (missing(newx)) 
+    return(object)
+  a <- c(list(x = newx), attributes(object)[c("degree", "knots", 
+                                              "Boundary.knots", "intercept")])
+  do.call("bs", a)
+}
+
+#' @export
+#' @keywords internal
+makepredictcall.s <- function (var, call) 
+{
+  #if (as.character(call)[1L] != "bs") 
+  #  return(call)
+  at <- attributes(var)[c("degree", "knots", "Boundary.knots", 
+                          "intercept")]
+  xxx <- call[1L:2]
+  xxx[names(at)] <- at
+  xxx
 }

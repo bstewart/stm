@@ -5,20 +5,24 @@
 \title{Fit New Documents}
 \usage{
 fitNewDocuments(model, documents, newData = NULL, origData = NULL,
-  betaIndex = NULL, prevalencePrior = c("Average", "Covariate", "None"),
-  contentPrior = c("Average", "Covariate"), returnPosterior = FALSE,
-  returnPriors = FALSE, test = TRUE, designMatrix = NULL)
+  prevalence = NULL, betaIndex = NULL, prevalencePrior = c("Average",
+  "Covariate", "None"), contentPrior = c("Average", "Covariate"),
+  returnPosterior = FALSE, returnPriors = FALSE, test = TRUE,
+  designMatrix = NULL, specialFunctions = NULL)
 }
 \arguments{
 \item{model}{the originally fit STM object.}
 
-\item{documents}{these documents must be in the stm format and be numbered in the same way
-as the documents in the original model with the same dimension of vocabulary!}
+\item{documents}{the new documents to be fit. These documents must be in the stm format and
+be numbered in the same way as the documents in the original model with the same dimension of vocabulary.}
 
 \item{newData}{the metadata for the prevalence prior which goes with the unseen documents. As in
 the original data this cannot have any missing data.}
 
 \item{origData}{the original metadata used to fit the STM object.}
+
+\item{prevalence}{the original formula passed to prevalence when \code{stm()} was called. The function
+will try to reconstruct this.}
 
 \item{betaIndex}{an integer vector which indicates which level of the content covariate is used
 for each unseen document. If originally passed as a factor, this can be passed as a factor or 
@@ -45,6 +49,10 @@ not to make the object too large.}
 \item{designMatrix}{an option for advanced users to pass an already constructed design matrix for
 prevalence covariates.  This will override the options in \code{newData}, \code{origData} and
 \code{test}.  See details below- please do not attempt to use without reading carefully.}
+
+\item{specialFunctions}{an option for advanced users.  This allows you to pass a character
+vector containing the names of any special functions that you may wish to use on the data
+inside your formula. See details below.  By default we include \code{"s", "ns", "bs", "poly", "pspline"}}
 }
 \description{
 A function for predicting thetas for an unseen document based on the previously fit model.
@@ -97,8 +105,19 @@ need to match the ordering of the design matrix for the original \code{stm} obje
 in an stm model called \code{stmobj} can be found in \code{stmobj$settings$covariates$X} which can
 in turn be used to check that you have formatted your result correctly. If you want even more fine-grained
 control we recommend you directly use the optimization function \code{\link{optimizeDocument}}
+
+\strong{specialFunctions} As mentioned above the key difficulty is functions in the formulas which
+are dependent for their form on the data passed to them (like splines e.g \code{bs()}, but unlike 
+e.g. \code{log()}).  This function allows for the special functions \code{"s", "ns", "bs", "poly", "pspline"}
+internally what we do is create a temporary function that calls the relevant predict function
+e.g. \code{predict.bs()} using the generic assigned to that function and the original data.  If you
+want to use a different function which also has a predict method associated with it, you can pass it
+here and it will be incorporated.
 }
 \examples{
 
+}
+\seealso{
+\code{\link{optimizeDocument}} \code{\link{make.heldout}}
 }
 

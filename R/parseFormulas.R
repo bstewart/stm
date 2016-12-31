@@ -4,12 +4,6 @@
 #be evaluated and then plotted.
 
 
-#TODO: make a version that will work with fitNewDocuments and export.
-#(1) search for any specials: is this possible?
-#(2) evaluate if a predict version exist? is this possible?
-#(3) replace with an alternative if it does by appending the variable name
-#(4) proceed with prediction.
-
 parseFormulas <- function(prep, cdata){
   formula <- prep$formula
   #newdat <- rbind(prep$data, cdata)
@@ -49,3 +43,4 @@ parseFormulas <- function(prep, cdata){
   cdatout <- newX
   return(cdatout)
 }
+

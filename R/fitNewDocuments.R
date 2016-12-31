@@ -198,62 +198,8 @@ fitNewDocuments <- function(model, documents, newData=NULL,
           formula <- as.formula(call[c(match(c("prevalence"), names(call),0L))][[1L]])
         }
       }
-      
-      origData$lpid_rep <- asinh(origData$pid_rep)
-      formula <- ~treatment*s(pid_rep) + s(lpid_rep)
-      
-      #Second, we now have the formula, let's evaluate in the context of the original data
-      termobj <- terms(formula, data=origData)
-      mf <- model.frame(termobj, data=origData)
-    
-      #now let's identify the specials and build out functions for them
-      elements <- colnames(attr(terms(formula), "factors"))
-      specialtypes <- c("s", "ns", "bs", "poly", "pspline")
-      if(!is.null(specialFunctions)) specialtypes <- c(specialtypes,specialFunctions)
-      special <- attr(terms(formula, 
-                            specials=specialtypes),
-                      "special")
-      newformula <- formula
-      for(i in 1:length(special)) {
-        #for each special check if there are any
-        if(is.null(special[[i]])) next
-        #okay now that we know there is at least one
-        #now we step through five steps
-        
-        #1) loop over elements of specials
-        for(j in 1:length(special[[i]])) {
-          #2) find the element of interest
-          elem <- elements[special[[i]][j]]
-          #3) create a function name based on names(special)[i].  
-          funcname <- sprintf("%sfn%i",names(special)[i],j)
-          #4) write a predict function using that name
-          #   this calls predict on the newdata (x) using the old model frame
-          assign(funcname, function(x,...) predict(mf[[elem]],x))
-          #5) figure out what just the variable name is.  There is probably a more elegant way to do this
-          # the more obvious way is via all.vars() but this doesn't line us up with elements
-          # also get_all_vars but same problem.
-          # The basic strategy is to use reverse to get only the first and last parenthesis so functions can be nested
-          varname <- stringi::stri_split_fixed(elem, "(", n=2)[[1]][2]
-          varname <- stringi::stri_reverse(varname)
-          varname <- stringi::stri_split_fixed(varname, ")",n=2)[[1]][2]
-          varname <- stringi::stri_reverse(varname)
-          #6) replace the full element in the formula with the newfunction called on the original variable
-          replace <- sprintf("%s(%s)", funcname, varname)
-          newformula <- as.character(newformula)
-          newformula[2] <- stringi::stri_replace_all_fixed(as.character(newformula)[2],
-                                                           replacement=replace,
-                                                           pattern=elem)
-          newformula <- as.formula(newformula) #coerce back to formula
-          #7) move on to the next one
-        }
-      }
-      #now we have a new variable called newformula which has an updated formula for us to call!   
-      X <- try(Matrix::sparse.model.matrix(termobj,data=origData),silent=TRUE)
-      if(class(X)=="try-error") stop("Error creating model matrix. Check your formula.")
-      
-      if(test) {
-        #write a test here. First I need to export.
-      }
+     #okay now we have the formula we can call makeDesignMatrix
+     X <- makeDesignMatrix(formula, origData, newData, test=test)
     }
     sigma <- model$sigma
     mu <- t(X%*%gamma)
