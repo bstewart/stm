@@ -74,9 +74,9 @@ makeDesignMatrix <- function(formula,
     
     for(i in 1:2) {
       #create a test model frame and a test X
-      tmf <- model.frame(mt, origData[halves[[i]],], xlev=xlevels)
+      tmf <- model.frame(mt, origData[halves[[i]],,drop=FALSE], xlev=xlevels)
       tX <- model.matrix(mt,tmf, contrasts.arg=contrasts)
-      if(!isTRUE(all.equal(tX, mm[halves[[i]],], check.attributes=FALSE))) {
+      if(!isTRUE(all.equal(tX, mm[halves[[i]],,drop=FALSE], check.attributes=FALSE))) {
         stop("Model matrix constructed but testing failed.  This suggests you are using a function without
              a makepredictcall() and predict() generic.")
       }

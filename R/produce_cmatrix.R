@@ -96,6 +96,7 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
   }
 
   #Get model.matrix
-  cmatrix <- parseFormulas(prep, cdata)
+  #cmatrix <- parseFormulas(prep, cdata)
+  cmatrix <- makeDesignMatrix(prep$formula, prep$data, cdata, sparse=FALSE)
   return(list(cdata=cdata,cmatrix=cmatrix))
 }

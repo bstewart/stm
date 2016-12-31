@@ -141,9 +141,9 @@ confidence intervals.  See \code{\link{estimateEffect}}.
 \dontrun{
 
 prep <- estimateEffect(1:3 ~ treatment, gadarianFit, gadarian)
-plot.estimateEffect(prep, "treatment", model=gadarianFit,
+plot(prep, "treatment", model=gadarianFit,
 method="pointestimate")
-plot.estimateEffect(prep, "treatment", model=gadarianFit,
+plot(prep, "treatment", model=gadarianFit,
 method="difference",cov.value1=1,cov.value2=0)
 
 #If the covariate were a binary factor, 
