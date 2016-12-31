@@ -348,7 +348,7 @@
 #' }
 #' @export
 stm <- function(documents, vocab, K, 
-                prevalence, content, data=NULL,
+                prevalence=NULL, content=NULL, data=NULL,
                 init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
                 max.em.its=500, emtol=1e-5,
                 verbose=TRUE, reportevery=5,   
@@ -363,7 +363,7 @@ stm <- function(documents, vocab, K,
 #' @export
 #' @keywords internal
 stm.dfm <- function(documents, vocab, K, 
-                    prevalence, content, data=NULL,
+                    prevalence=NULL, content=NULL, data=NULL,
                     init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
                     max.em.its=500, emtol=1e-5,
                     verbose=TRUE, reportevery=5,   

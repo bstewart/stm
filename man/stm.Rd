@@ -4,7 +4,7 @@
 \alias{stm}
 \title{Variational EM for the Structural Topic Model}
 \usage{
-stm(documents, vocab, K, prevalence, content, data = NULL,
+stm(documents, vocab, K, prevalence = NULL, content = NULL, data = NULL,
   init.type = c("LDA", "Random", "Spectral"), seed = NULL,
   max.em.its = 500, emtol = 1e-05, verbose = TRUE, reportevery = 5,
   LDAbeta = TRUE, interactions = TRUE, ngroups = 1, model = NULL,

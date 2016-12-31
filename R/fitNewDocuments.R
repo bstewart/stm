@@ -134,10 +134,10 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
   #Check arguments for prevalencePrior and content prior
    if(!is.null(prevalencePrior)) {
     prevtype <- match.arg(prevalencePrior)
-    if(prevtype == "Covariate" & is.null(data)) stop("Must specify data to use covariate type prevalencePrior")
+    if(prevtype == "Covariate" & is.null(newData)) stop("Must specify data to use covariate type prevalencePrior")
   } else {
     #if the data is supplied, use it.
-    prevtype <- ifelse(is.null(data), "Average", "Covariate")
+    prevtype <- ifelse(is.null(newData), "Average", "Covariate")
   }
   if(!is.null(contentPrior)){
     contenttype <- match.arg(contentPrior)

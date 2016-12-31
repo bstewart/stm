@@ -53,7 +53,7 @@ makeDesignMatrix <- function(formula,
 
   #this is inspired from the way predict.lm is structured 
   termobj <- terms(formula, data = origData)
-  termobj <- delete.response(termobj)
+  termobj <- stats::delete.response(termobj)
   mf <- model.frame(termobj, data = origData)
   mt <- attr(mf, "terms")
   mm <- model.matrix(mt, mf)
