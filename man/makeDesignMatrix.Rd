@@ -17,7 +17,7 @@ the data in the returned model matrix.}
 \item{test}{when set to TRUE runs a test that the matrix was constructed correctly
 see details for more.}
 
-\item{sparse}{by default returns a sparse matrix using \code{\link[sparse.model.matrix]{dfm}} in 
+\item{sparse}{by default returns a sparse matrix using \code{\link[Matrix]{sparse.model.matrix}} in 
 \pkg{Matrix}}
 }
 \description{
@@ -52,8 +52,11 @@ the original data in half and ensure that looking at each half separately produc
 the same values as the complete original data.
 }
 \examples{
-foo <- data.frame(response=rnorm(30),predictor=as.factor(rep(c("A","B","C"),10)), predictor2=rnorm(30))
-foo.new <- data.frame(predictor=as.factor(c("A","C","C")), predictor2=foo$predictor2[1:3])
+foo <- data.frame(response=rnorm(30),
+                  predictor=as.factor(rep(c("A","B","C"),10)), 
+                  predictor2=rnorm(30))
+foo.new <- data.frame(predictor=as.factor(c("A","C","C")), 
+                      predictor2=foo$predictor2[1:3])
 makeDesignMatrix(~predictor + s(predictor2), foo, foo.new)
 }
 \seealso{

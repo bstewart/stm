@@ -4,11 +4,12 @@
 \alias{fitNewDocuments}
 \title{Fit New Documents}
 \usage{
-fitNewDocuments(model, documents, newData = NULL, origData = NULL,
-  prevalence = NULL, betaIndex = NULL, prevalencePrior = c("Average",
-  "Covariate", "None"), contentPrior = c("Average", "Covariate"),
-  returnPosterior = FALSE, returnPriors = FALSE, test = TRUE,
-  designMatrix = NULL, specialFunctions = NULL)
+fitNewDocuments(model = NULL, documents = NULL, newData = NULL,
+  origData = NULL, prevalence = NULL, betaIndex = NULL,
+  prevalencePrior = c("Average", "Covariate", "None"),
+  contentPrior = c("Average", "Covariate"), returnPosterior = FALSE,
+  returnPriors = FALSE, designMatrix = NULL, test = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{model}{the originally fit STM object.}
@@ -21,10 +22,10 @@ the original data this cannot have any missing data.}
 
 \item{origData}{the original metadata used to fit the STM object.}
 
-\item{prevalence}{the original formula passed to prevalence when \code{stm()} was called. The function
+\item{prevalence}{the original formula passed to prevalence when \code{stm} was called. The function
 will try to reconstruct this.}
 
-\item{betaIndex}{an integer vector which indicates which level of the content covariate is used
+\item{betaIndex}{a vector which indicates which level of the content covariate is used
 for each unseen document. If originally passed as a factor, this can be passed as a factor or 
 character vector as well but it must not have any levels not included in the original factor.}
 
@@ -44,15 +45,34 @@ which can be very memory intensive if you are processing a lot of documents.}
 using the covariate prior this will be a set of indices to the original beta matrix so as
 not to make the object too large.}
 
-\item{test}{a test of the functions ability to reconstruct the original functions.}
-
 \item{designMatrix}{an option for advanced users to pass an already constructed design matrix for
 prevalence covariates.  This will override the options in \code{newData}, \code{origData} and
 \code{test}.  See details below- please do not attempt to use without reading carefully.}
 
-\item{specialFunctions}{an option for advanced users.  This allows you to pass a character
-vector containing the names of any special functions that you may wish to use on the data
-inside your formula. See details below.  By default we include \code{"s", "ns", "bs", "poly", "pspline"}}
+\item{test}{a test of the functions ability to reconstruct the original functions.}
+
+\item{verbose}{Should a dot be printed every time 1 percent of the documents are fit.}
+}
+\value{
+a list 
+
+\item{theta}{a matrix with one row per document contain the document-topic proportions at the posterior mode}
+\item{eta}{the mean of the variational posterior, only provided when posterior is requested. 
+Matrix of same dimension as theat}
+\item{nu}{a list with one element per document containing the covariance matrix of the variational posterior.
+Only provided when posterior is requested.}
+\item{phis}{a list with one element per K by V' matrix containing the variational distribution for each token 
+(where V' is the number of unique words in the given document.  They are in the order of appearence in the document. 
+For words repeated more than once the sum of the column is the number of times that token appeared.  This is only
+provided if the posterior is requested.}
+\item{bound}{a vector with one element per document containing the approximate variational lower bound. This is only
+provided if the posterior is requested.}
+\item{beta}{A list where each element contains the unlogged topic-word distribution for each level of the content covariate.
+This is only provided if prior is requested.}
+\item{betaindex}{a vector with one element per document indicating which element of the beta list the documents pairs with.
+This is only provided if prior is requested.}
+\item{mu}{a matrix where each column includes the K-1 dimension prior mean for each document. This is only provided if prior is requested.}
+\item{sigma}{a K-1 by K-1 matrix containing the prior covariance. This is only provided if prior is requested.}
 }
 \description{
 A function for predicting thetas for an unseen document based on the previously fit model.
@@ -64,7 +84,7 @@ models without covariate information, models with prevalence covariates only, mo
 content covariates only and models with both.  When there is not covariate information the
 choice is essentially whether or not to use prior information.
 
-For each case we offer three choices (and may offer more in the future):
+We offer three types pf choices (and may offer more in the future):
 \describe{
 \item{"None"}{No prior is used.  In the prevalence case this means that the model simply
 maximizes the likelihood of seeing the words given the word-topic distribution.  This will
@@ -89,35 +109,30 @@ If you fit a document that was used during training with the options to replicat
 updates the topic-word distributions last so they may shifted since the document-topic proportions
 were updated.  If the original model converged, they should be very close.
 
-\strong{Testing:} The complication of this function is getting the transformations right.  Functions
-like \code{s()}, \code{bs()}, \code{ns()} and \code{poly()} produce an output that is dependent on
-all the observations passed to it.  Thus when doing the fitting we need to ensure the new prediction
-matrix is created in the same way as when the model was original fit.  \code{fitNewDocuments} will
-attempt to solve this problem internally but we can't solve every edge case. As such we have built-in
-a way of testing if the process had worked.  As long as \code{test=TRUE} the function will take subsets
-of the original data and evaluate if it has succeeded in reconstructing those values.  If the values
-produced are different it will issue an error and stop.
+By default the function returns only the MAP estimate of the normalized document-topic proportions
+theta.  By selecting \code{returnPrior=TRUE} you can get the various model parameters used to complete
+the fit.  By selecting \code{returnPosterior=TRUE} you can get the full variational posterior.  Please
+note that the full variational posterior is very memory intensive.  For a sense of scale it requires an
+extra \eqn{K^2 + K \times (V'+1) + 1} doubles per document where V' is the number of unique tokens in the document.
+
+\strong{Testing:} Getting the prevalence covariates right in the unseen documents can be tricky.  However
+as long as you leave \code{test} set to \code{TRUE} the code will automatically run a test to make sure
+that everything lines up.  See the internal function \code{\link{makeDesignMatrix}} for more on what is 
+going on here.
 
 \strong{Passing a Design Matrix}  Advanced users may wish to circumvent this process and pass their
 own design matrix possibly because they used their own function for transforming the original input
-variables.  This can be done by passing the design matrix using \code{designMatrix}.  The columns
-need to match the ordering of the design matrix for the original \code{stm} object.  The design matrix
-in an stm model called \code{stmobj} can be found in \code{stmobj$settings$covariates$X} which can
-in turn be used to check that you have formatted your result correctly. If you want even more fine-grained
-control we recommend you directly use the optimization function \code{\link{optimizeDocument}}
+variables.  This can be done by passing the design matrix using the \code{designMatrix} argument
+The columns need to match the ordering of the design matrix for the original \code{stm} object.  
+The design matrix in an stm model called \code{stmobj} can be found in \code{stmobj$settings$covariates$X} 
+which can in turn be used to check that you have formatted your result correctly. If you are going to 
+try this we recommend that you read the documentation for \code{\link{makeDesignMatrix}} to understand
+some of the challenges involved.
 
-\strong{specialFunctions} As mentioned above the key difficulty is functions in the formulas which
-are dependent for their form on the data passed to them (like splines e.g \code{bs()}, but unlike 
-e.g. \code{log()}).  This function allows for the special functions \code{"s", "ns", "bs", "poly", "pspline"}
-internally what we do is create a temporary function that calls the relevant predict function
-e.g. \code{predict.bs()} using the generic assigned to that function and the original data.  If you
-want to use a different function which also has a predict method associated with it, you can pass it
-here and it will be incorporated.
-}
-\examples{
-
+If you want even more fine-grained control we recommend you directly use the 
+optimization function \code{\link{optimizeDocument}}
 }
 \seealso{
-\code{\link{optimizeDocument}} \code{\link{make.heldout}}
+\code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
 }
 

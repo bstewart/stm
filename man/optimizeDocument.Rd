@@ -5,7 +5,8 @@
 \title{Optimize Document}
 \usage{
 optimizeDocument(document, eta, mu, beta, sigma = NULL, sigmainv = NULL,
-  sigmaentropy = NULL, method = "BFGS", control = list(maxit = 500))
+  sigmaentropy = NULL, method = "BFGS", control = list(maxit = 500),
+  posterior = TRUE)
 }
 \arguments{
 \item{document}{a single matrix containing the document in the \code{\link{stm}} format}
@@ -31,6 +32,9 @@ need to supply this.  See below.}
 
 \item{control}{the control argument passed to \code{\link{optim}}.  Sets the maximum number of observations
 to 500 but can be used to set other aspects of the optimization per the instructions in \code{\link{optim}}}
+
+\item{posterior}{should the full posterior be returned?  If TRUE (as it is by default) returns the full 
+variational posterior.  Otherwise just returns the point estimate.}
 }
 \value{
 a list 

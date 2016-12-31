@@ -1,14 +1,3 @@
-#TODO: Create an exported version of the design matrix function
-#      Update parseFormulas to use the new thing
-#      Write a testing function
-#      Content covariates
-#      Write the part that actually does the fitting
-#      Write the return structure and document
-#      Write an example
-#      Put in seealso links
-
-
-
 #' Fit New Documents
 #' 
 #' A function for predicting thetas for an unseen document based on the previously fit model.
@@ -19,7 +8,7 @@
 #' content covariates only and models with both.  When there is not covariate information the
 #' choice is essentially whether or not to use prior information.
 #' 
-#' For each case we offer three choices (and may offer more in the future):
+#' We offer three types pf choices (and may offer more in the future):
 #' \describe{
 #' \item{"None"}{No prior is used.  In the prevalence case this means that the model simply
 #' maximizes the likelihood of seeing the words given the word-topic distribution.  This will
@@ -44,30 +33,28 @@
 #' updates the topic-word distributions last so they may shifted since the document-topic proportions
 #' were updated.  If the original model converged, they should be very close.
 #' 
-#' \strong{Testing:} The complication of this function is getting the transformations right.  Functions
-#' like \code{s()}, \code{bs()}, \code{ns()} and \code{poly()} produce an output that is dependent on
-#' all the observations passed to it.  Thus when doing the fitting we need to ensure the new prediction
-#' matrix is created in the same way as when the model was original fit.  \code{fitNewDocuments} will
-#' attempt to solve this problem internally but we can't solve every edge case. As such we have built-in
-#' a way of testing if the process had worked.  As long as \code{test=TRUE} the function will take subsets
-#' of the original data and evaluate if it has succeeded in reconstructing those values.  If the values
-#' produced are different it will issue an error and stop.
+#' By default the function returns only the MAP estimate of the normalized document-topic proportions
+#' theta.  By selecting \code{returnPrior=TRUE} you can get the various model parameters used to complete
+#' the fit.  By selecting \code{returnPosterior=TRUE} you can get the full variational posterior.  Please
+#' note that the full variational posterior is very memory intensive.  For a sense of scale it requires an
+#' extra \eqn{K^2 + K \times (V'+1) + 1} doubles per document where V' is the number of unique tokens in the document. 
+#' 
+#' \strong{Testing:} Getting the prevalence covariates right in the unseen documents can be tricky.  However
+#' as long as you leave \code{test} set to \code{TRUE} the code will automatically run a test to make sure
+#' that everything lines up.  See the internal function \code{\link{makeDesignMatrix}} for more on what is 
+#' going on here.
 #' 
 #' \strong{Passing a Design Matrix}  Advanced users may wish to circumvent this process and pass their
 #' own design matrix possibly because they used their own function for transforming the original input
-#' variables.  This can be done by passing the design matrix using \code{designMatrix}.  The columns
-#' need to match the ordering of the design matrix for the original \code{stm} object.  The design matrix
-#' in an stm model called \code{stmobj} can be found in \code{stmobj$settings$covariates$X} which can
-#' in turn be used to check that you have formatted your result correctly. If you want even more fine-grained
-#' control we recommend you directly use the optimization function \code{\link{optimizeDocument}}
+#' variables.  This can be done by passing the design matrix using the \code{designMatrix} argument
+#' The columns need to match the ordering of the design matrix for the original \code{stm} object.  
+#' The design matrix in an stm model called \code{stmobj} can be found in \code{stmobj$settings$covariates$X} 
+#' which can in turn be used to check that you have formatted your result correctly. If you are going to 
+#' try this we recommend that you read the documentation for \code{\link{makeDesignMatrix}} to understand
+#' some of the challenges involved.  
 #' 
-#' \strong{specialFunctions} As mentioned above the key difficulty is functions in the formulas which
-#' are dependent for their form on the data passed to them (like splines e.g \code{bs()}, but unlike 
-#' e.g. \code{log()}).  This function allows for the special functions \code{"s", "ns", "bs", "poly", "pspline"}
-#' internally what we do is create a temporary function that calls the relevant predict function
-#' e.g. \code{predict.bs()} using the generic assigned to that function and the original data.  If you
-#' want to use a different function which also has a predict method associated with it, you can pass it
-#' here and it will be incorporated.
+#' If you want even more fine-grained control we recommend you directly use the 
+#' optimization function \code{\link{optimizeDocument}}
 #' 
 #' @param model the originally fit STM object.
 #' @param documents the new documents to be fit. These documents must be in the stm format and
@@ -75,9 +62,9 @@
 #' @param newData the metadata for the prevalence prior which goes with the unseen documents. As in
 #' the original data this cannot have any missing data.
 #' @param origData the original metadata used to fit the STM object. 
-#' @param prevalence the original formula passed to prevalence when \code{stm()} was called. The function
+#' @param prevalence the original formula passed to prevalence when \code{stm} was called. The function
 #' will try to reconstruct this.
-#' @param betaIndex an integer vector which indicates which level of the content covariate is used
+#' @param betaIndex a vector which indicates which level of the content covariate is used
 #' for each unseen document. If originally passed as a factor, this can be passed as a factor or 
 #' character vector as well but it must not have any levels not included in the original factor.
 #' @param prevalencePrior three options described in detail below.  Defaults to "Average" when
@@ -92,25 +79,42 @@
 #'  (either by the user or chosen internally by the defaults).  In the case of content covariates
 #'  using the covariate prior this will be a set of indices to the original beta matrix so as
 #'  not to make the object too large.
-#' @param test a test of the functions ability to reconstruct the original functions.
 #' @param designMatrix an option for advanced users to pass an already constructed design matrix for
 #' prevalence covariates.  This will override the options in \code{newData}, \code{origData} and
 #' \code{test}.  See details below- please do not attempt to use without reading carefully.
-#' @param specialFunctions an option for advanced users.  This allows you to pass a character
-#' vector containing the names of any special functions that you may wish to use on the data
-#' inside your formula. See details below.  By default we include \code{"s", "ns", "bs", "poly", "pspline"}
-#' @examples
+#' @param test a test of the functions ability to reconstruct the original functions.
+#' @param verbose Should a dot be printed every time 1 percent of the documents are fit.
 #' 
-#' @seealso \code{\link{optimizeDocument}} \code{\link{make.heldout}}
+#' @return a list 
+#' 
+#' \item{theta}{a matrix with one row per document contain the document-topic proportions at the posterior mode}
+#' \item{eta}{the mean of the variational posterior, only provided when posterior is requested. 
+#' Matrix of same dimension as theat}
+#' \item{nu}{a list with one element per document containing the covariance matrix of the variational posterior.
+#' Only provided when posterior is requested.}
+#' \item{phis}{a list with one element per K by V' matrix containing the variational distribution for each token 
+#' (where V' is the number of unique words in the given document.  They are in the order of appearence in the document. 
+#' For words repeated more than once the sum of the column is the number of times that token appeared.  This is only
+#' provided if the posterior is requested.}
+#' \item{bound}{a vector with one element per document containing the approximate variational lower bound. This is only
+#' provided if the posterior is requested.}
+#' \item{beta}{A list where each element contains the unlogged topic-word distribution for each level of the content covariate.
+#' This is only provided if prior is requested.}
+#' \item{betaindex}{a vector with one element per document indicating which element of the beta list the documents pairs with.
+#' This is only provided if prior is requested.}
+#' \item{mu}{a matrix where each column includes the K-1 dimension prior mean for each document. This is only provided if prior is requested.}
+#' \item{sigma}{a K-1 by K-1 matrix containing the prior covariance. This is only provided if prior is requested.}
+#' @seealso \code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
 #' @export
-fitNewDocuments <- function(model, documents, newData=NULL, 
+fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL, 
                             origData=NULL, prevalence=NULL, betaIndex=NULL,
                             prevalencePrior=c("Average","Covariate","None"),
                             contentPrior=c("Average","Covariate"),
                             returnPosterior=FALSE,
                             returnPriors=FALSE,
-                            test=TRUE, designMatrix=NULL,
-                            specialFunctions=NULL) {
+                            designMatrix=NULL, test=TRUE, 
+                            verbose=TRUE) {
+  
   #Some checks from the stm() function
   if(!is.list(documents)) stop("documents must be a list, see documentation.")
   if(!all(unlist(lapply(documents, is.matrix)))) stop("Each list element in documents must be a matrix. See documentation.")
@@ -124,24 +128,27 @@ fitNewDocuments <- function(model, documents, newData=NULL,
     if(max(unlist(lapply(documents, function(x) x[1,]))) > length(model$vocab)) stop("Vocabulary in new documents is larger than the original fitted model.")
   }
   
+  #set up the counter
+  if(verbose) ctevery <- ifelse(length(documents)>100, floor(length(documents)/100), 1)
   
-   if(!missing(prevalencePrior)) {
+  #Check arguments for prevalencePrior and content prior
+   if(!is.null(prevalencePrior)) {
     prevtype <- match.arg(prevalencePrior)
     if(prevtype == "Covariate" & is.null(data)) stop("Must specify data to use covariate type prevalencePrior")
   } else {
     #if the data is supplied, use it.
-    prevtype <- ifelse(missing(data), "Average", "Covariate")
+    prevtype <- ifelse(is.null(data), "Average", "Covariate")
   }
-  if(!missing(contentPrior)){
+  if(!is.null(contentPrior)){
     contenttype <- match.arg(contentPrior)
     if(contenttype == "Covariate" & is.null(betaIndex)) stop("Must specify betaIndex to use covariate type contentPrior")
   } else {
     #if the data is supplied use it.
-    contenttype <- ifelse(missing(betaIndex), "Average", "Covariate") 
+    contenttype <- ifelse(is.null(betaIndex), "Average", "Covariate") 
   }
 
-  if(missing(model)) stop("Please specify a fitted STM object for model")
-  if(missing(documents)) stop("Please specify an stm formatted document list for documents argument")
+  if(is.null(model)) stop("Please specify a fitted STM object for model")
+  if(is.null(documents)) stop("Please specify an stm formatted document list for documents argument")
   
   
   K <- model$settings$dim$K
@@ -174,7 +181,7 @@ fitNewDocuments <- function(model, documents, newData=NULL,
   }
   if(prevtype=="Covariate"){
     #Covariates will require a mu and sigma
-    if(!missing(designMatrix)) {
+    if(!is.null(designMatrix)) {
       #if we have manually been passed the design matrix use it here
       if(ncol(model$settings$covariates$X) != ncol(designMatrix)) stop("designMatrix columns do not match original design matrix.")
       X <- designMatrix
@@ -205,14 +212,94 @@ fitNewDocuments <- function(model, documents, newData=NULL,
     mu <- t(X%*%gamma)
   }
   
-  #Generate the Content Prior Matrix
-     #the trick here is using the yvarlevels to work back what the factor is.  
-     #Should have three types: integer, factor, character
+  #Generate the Content Prior beta and betaindex
+  if(contentPrior == "Average") {
+    if(length(model$beta$logbeta) == 1) {
+      #in this scenario we have the customary case of no content covariates
+      betaindex <- rep(1,length(documents))
+      beta <- list(exp(model$beta$logbeta[[1]])) #put it in a list we can treat it the same
+    } else {
+      #in this scenario we have content covariates but no actual data so
+      #instead we marginalize.
+      betalist <- lapply(model$beta$logbeta, exp)
+      weights <- tabulate(model$settings$covariates$betaindex)
+      weights <- weights/sum(weights)
+      beta <- betalist[[1]]*weights[1]
+      for(i in 2:length(betalist)) {
+        beta <- beta + betalist[[i]]*weights[i]
+      }
+      beta <- list(beta) #put it in a list so we can treat them all the same
+      #we have now essentially decided to use a single beta
+      betaindex <- rep(1,length(documents))
+    }
+  } else {
+    #in this scenario we are going to have different betas
+    #based on what the user passed us.
+    levels <- model$settings$covariates$yvarlevels
+    betaindex <- as.numeric(factor(betaIndex, levels = levels))
+    if(any(is.na(betaindex))) stop("NA in the betaIndex variable.  This could be due to the factor names not matching the original model.")
+    beta <- lapply(model$beta$logbeta, exp)
+  }
+  #####
+  #Now actually do the optimization
+  #####
+  #precompute terms for the loop over documents
+  sigobj <- try(chol.default(sigma), silent=TRUE)
+  if(class(sigobj)=="try-error") {
+    sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
+    siginv <- solve(sigma)
+  } else {
+    sigmaentropy <- sum(log(diag(sigobj)))
+    siginv <- chol2inv(sigobj)
+  }
   
+  lambda <- vector(mode="list", length=length(documents))
+  if(returnPosterior) {
+    nu <- vector(mode="list", length=length(documents))
+    phi <- vector(mode="list", length=length(documents))
+    bound <- vector(length=length(documents))
+  }
+  for(i in 1:length(documents)) {
+    #update components
+    doc <- documents[[i]]
+    words <- doc[1,]
+    aspect <- betaindex[i]
+    init <- rep(0, K-1)
+    mu.i <- mu[,i]
+    #infer the document
+    results <- optimizeDocument(doc, eta=init, mu=mu.i, beta=beta[[aspect]],  
+                                     sigmainv=siginv, sigmaentropy=sigmaentropy,
+                                     posterior=returnPosterior)
+    lambda[[i]] <- c(results$lambda)
+    if(returnPosterior) {
+      nu[[i]] <- results$nu
+      phi[[i]] <- results$phi
+      bound[i] <- results$bound
+    }
+    if(verbose && i%%ctevery==0) cat(".")
+  }
+  lambda <- do.call(rbind, lambda)
+  theta <- exp(lambda - row.lse(lambda))
   
-  
-  #Loop Over and fit them all
-  
-  #Return some structure including the fits.
-   
+  #Return the results.  Only use theta if they haven't
+  #asked for the priors or posterior.
+  toReturn <- list(theta=theta, eta=list(), 
+                   nu=list(), phi=list(), 
+                   bound=c(), beta=list(),
+                   betaindex=c(),
+                   mu=c(), sigma=c()) 
+  if(returnPosterior) {
+    toReturn$nu <- nu
+    toReturn$eta <- lambda
+    toReturn$phi <- phi
+    toReturn$bound <- bound
+  }
+    
+  if(returnPriors) {
+    toReturn$beta <- beta
+    toReturn$mu <- mu
+    toReturn$sigma <- sigma
+    toReturn$betaindex <- betaindex
+  }
+  return(toReturn)
 }

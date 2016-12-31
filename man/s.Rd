@@ -24,7 +24,9 @@ freedom.
 }
 \details{
 This is a simple wrapper written as users may find it easier to simply type
-\code{\link{s}} rather than selecting parameters for a spline.
+\code{s} rather than selecting parameters for a spline. We also include
+\code{predict} and \code{makepredictcall} generic functions for the class
+so it will work in settings where \code{\link{predict}} is called.
 }
 \seealso{
 \code{\link[splines]{bs}} \code{\link[splines]{ns}}

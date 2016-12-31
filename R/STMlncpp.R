@@ -4,8 +4,12 @@
 #the wrapper provides some useful documentation.  Essentially all
 #it does is subset beta for the user and make the argument ordering
 #and naming matching the rest of the package.
+
+#12/31/2016 added the hpbcpp argument so I can opt not to call it
+#inside fitNewDocuments
 logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy, 
-                              method="BFGS", control=list(maxit=500)) {
+                              method="BFGS", control=list(maxit=500),
+                              hpbcpp=TRUE) {
   doc.ct <- doc[2,]
   Ndoc <- sum(doc.ct)
   #even at K=100, BFGS is faster than L-BFGS
@@ -13,6 +17,8 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
                      method=method, control=control,
                      doc_ct=doc.ct, mu=mu,
                      siginv=siginv, beta=beta)
+  
+  if(!hpbcpp) return(list(eta=list(lambda=optim.out$par)))
   
   #Solve for Hessian/Phi/Bound returning the result
   hpbcpp(optim.out$par, doc_ct=doc.ct, mu=mu,
@@ -59,7 +65,8 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
 #' @param method the method passed to \code{\link{optim}}.  Uses "BFGS" by default.
 #' @param control the control argument passed to \code{\link{optim}}.  Sets the maximum number of observations
 #' to 500 but can be used to set other aspects of the optimization per the instructions in \code{\link{optim}}
-#' 
+#' @param posterior should the full posterior be returned?  If TRUE (as it is by default) returns the full 
+#' variational posterior.  Otherwise just returns the point estimate.
 #' @return a list 
 #' 
 #' \item{phis}{A K by V* matrix containing the variational distribution for each token (where V* is the number of 
@@ -85,7 +92,8 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
 #' @export
 optimizeDocument <- function(document, eta, mu, beta, sigma=NULL, 
                              sigmainv=NULL, sigmaentropy=NULL,
-                             method="BFGS", control=list(maxit=500)) {
+                             method="BFGS", control=list(maxit=500),
+                             posterior=TRUE) {
   if(is.null(sigma) & (is.null(sigmainv) | is.null(sigmaentropy))) {
     stop("You must specify either sigma OR sigma inverse and sigma entropy")
   }
@@ -107,7 +115,8 @@ optimizeDocument <- function(document, eta, mu, beta, sigma=NULL,
                          didn't pass the logged version of beta?")
   
   beta <- beta[,document[1,]]
-  out <- logisticnormalcpp(eta, mu, siginv, beta, document, sigmaentropy)
+  out <- logisticnormalcpp(eta, mu, siginv, beta, document, sigmaentropy,
+                           method=method, control=control, hpbcpp=posterior)
   toReturn <- list(lambda=out$eta$lambda, phi=out$phi, nu=out$eta$nu, bound=out$bound)
   return(toReturn)
 }

@@ -407,7 +407,7 @@ stm.dfm <- function(documents, vocab, K,
 #' @export
 #' @keywords internal
 stm.list <- function(documents, vocab, K, 
-                     prevalence, content, data=NULL,
+                     prevalence=NULL, content=NULL, data=NULL,
                      init.type=c("LDA", "Random", "Spectral"), seed=NULL, 
                      max.em.its=500, emtol=1e-5,
                      verbose=TRUE, reportevery=5,   
@@ -490,7 +490,7 @@ stm.list <- function(documents, vocab, K,
   ###
   #Now we parse both sets of covariates
   ###
-  if(!missing(prevalence)) {
+  if(!is.null(prevalence)) {
     if(!is.matrix(prevalence) & !inherits(prevalence, "formula")) stop("Prevalence Covariates must be specified as a model matrix or as a formula")
     xmat <- makeTopMatrix(prevalence,data)
     if(is.na(nnzero(xmat))) stop("Missing values in prevalence covariates.")
@@ -498,7 +498,7 @@ stm.list <- function(documents, vocab, K,
     xmat <- NULL
   }
   
-  if(!missing(content)) {
+  if(!is.null(content)) {
     if(inherits(content, "formula")) {
       termobj <- terms(content, data=data)
       if(attr(termobj, "response")==1) stop("Response variables should not be included in content formula.")
@@ -567,12 +567,12 @@ stm.list <- function(documents, vocab, K,
   ###
   
   #Is there a covariate on top?
-  if(missing(prevalence)) {
+  if(is.null(prevalence)) {
     settings$gamma$mode <- "CTM" #without covariates has to be estimating the mean.
   } 
   
   #Is there a covariate on the bottom?
-  if(missing(content)) {
+  if(is.null(content)) {
     settings$kappa$interactions <- FALSE #can't have interactions without a covariate.
   } else {
     settings$kappa$LDAbeta <- FALSE #can't do LDA topics with a covariate 
