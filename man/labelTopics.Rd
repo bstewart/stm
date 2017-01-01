@@ -14,7 +14,7 @@ labelTopics(model, topics = NULL, n = 7, frexweight = 0.5)
 is all topics.}
 
 \item{n}{The desired number of words (per type) used to label each topic.
-Must be 2 or greater.}
+Must be 1 or greater.}
 
 \item{frexweight}{A weight used in our approximate FREX scoring algorithm
 (see details).}

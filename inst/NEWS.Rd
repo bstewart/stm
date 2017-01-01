@@ -9,7 +9,10 @@
 \item We document and export optimizeDocument which provides access to the document level E-step.
 \item We have documented and exported several of the labeling functions including calcfrex, calcscore, calclift and js.estimate.  These are marked with keyword internal because they don't have much error checking and most users will want labelTopics anyhow.  But they can be accessed with ? and are linked from labelTopics
 \item After much popular demand we have released a fitNewDocuments() function which will calculate topic proportions for documents not used to fit the models.  There are many different options here.
+\item estimateEffect now has a summary function which will make regression tables
+\item a number of the internals to plot.estimateEffect have been improved which should eliminate some edge case bugs.
 \item Much of the documentation has been updated as has the vignette.
+\item Our wrapper s() for the splines package function bs() now has predict functions associated with it so it should work in contexts like lm()
 }
 }
 \section{Version 1.1.6}{
