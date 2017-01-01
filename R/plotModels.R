@@ -36,6 +36,7 @@
 #'  
 #' @export
 plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:length(models$runout),...){
+  if(class(models)!="selectModel") stop("plotModels only works for selectModel objects.")
   if(length(models$runout[[1]]$beta$logbeta)<2){
     plot(0, 0, xlab=xlab, ylab=ylab, col="white", xlim=c(min(unlist(models$semcoh)), max(unlist(models$semcoh))),
          ylim=c(min(unlist(models$exclusivity)), max(unlist(models$exclusivity))),...)

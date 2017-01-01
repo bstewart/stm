@@ -149,5 +149,7 @@ selectModel <- function(documents, vocab, K,
       sparsity[[i]] = numsparse/ncol(kappas)
     }
   }
-  return(list(runout=runout, semcoh=semcoh, exclusivity=exclusivity, sparsity=sparsity))
+  out <- list(runout=runout, semcoh=semcoh, exclusivity=exclusivity, sparsity=sparsity)
+  class(out) <- "selectModel"
+  return(out)
 }
