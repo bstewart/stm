@@ -27,7 +27,7 @@
 #' @param topics A vector of numbers indicating the topics to include.  Default
 #' is all topics.
 #' @param n The desired number of words (per type) used to label each topic.
-#' Must be 2 or greater.
+#' Must be 1 or greater.
 #' @param frexweight A weight used in our approximate FREX scoring algorithm
 #' (see details).
 #' @return A labelTopics object (list) \item{prob }{matrix of highest
@@ -45,6 +45,7 @@
 #' }
 #' @export
 labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
+  if(n<1) stop("n must be 1 or greater")
   logbeta <- model$beta$logbeta
   K <- model$settings$dim$K
   vocab <- model$vocab
@@ -53,7 +54,11 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   aspect <- length(logbeta)>1
 
   out <- list()
-  if(!aspect) {    
+  if(!aspect) {
+    out$prob <- list()
+    out$frex <- list()
+    out$lift <- list()
+    out$score <- list()
     logbeta <- logbeta[[1]]
     wordcounts <- model$settings$dim$wcounts$x
     #Calculate FREX Score

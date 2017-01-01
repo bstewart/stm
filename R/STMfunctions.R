@@ -93,7 +93,7 @@ calcfrex <- function(logbeta, w=.5, wordcounts=NULL) {
     excl <- safelog(sapply(1:ncol(excl), function(x) js.estimate(exp(excl[,x]), wordcounts[x])))
   } 
   freqscore <- apply(logbeta,1,data.table::frank)/ncol(logbeta)
-  exclscore <- apply(excl,1,data,table::frank)/ncol(logbeta)
+  exclscore <- apply(excl,1,data.table::frank)/ncol(logbeta)
   frex <- 1/(w/freqscore + (1-w)/exclscore)
   apply(frex,2,order,decreasing=TRUE)
 }
