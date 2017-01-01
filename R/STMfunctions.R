@@ -21,7 +21,23 @@ posint <- function(x) {
   all(is.wholenumber(x)) & all(x>0)
 }
 
-#From Peter Hoff
+
+#' Draw from a Multivariate Normal
+#' 
+#' A basic function for doing multivariate normal simulations
+#' via the cholesky decomposition of the covariance matrix. Function
+#' is based on one by Peter Hoff.
+#' 
+#' This is a pretty standard multivariate normal generator. It could
+#' almost certainly be faster if we ported it over to \pkg{RcppArmadillo}
+#' but it isn't used a ton at the moment.
+#' 
+#' @param n number of draws
+#' @param mu the K-dimensional mean
+#' @param Sigma the K by K dimensional positive definite covariance matrix
+#' @param chol.Sigma the cholesky decomposition of the Sigma matrix.
+#' 
+#' @keywords internal
 rmvnorm<-function(n,mu,Sigma,chol.Sigma=chol(Sigma)) {
   E<-matrix(rnorm(n*length(mu)),n,length(mu))
   t(  t(E%*%chol.Sigma) +c(mu))
@@ -141,18 +157,28 @@ safelog <- function(x, min=-1000) {
   out
 }
 
-########
-# Some functions for working with glmnet
-########
-#this is a small utility function to process glmnet results
-#it will:
-# 1) select the tuning parameter based on the information criterion weighted by k
-#    (not in the sense of number of topics, in the sense of AIC k=2, BIC k=log n)
-# 2) extract the coefficients.
-# note that this would be straightforward with the coef() option but methods dispatch
-# is way too slow with the S4 class.  This is particularly a problem for kappa with 
-# large V
-unpack.glmnet <- function(mod, nobs, ic.k) {
+
+# Note: I started documenting this but am not exporting because I would need to appropriately
+# generalize.  It is currently only set up to do the mgaussian one I think- but I haven't looked
+# at it in a while.
+
+#' Unpack a \pkg{glmnet} object
+#' 
+#' A function to quickly unpack a \pkg{glmnet} model object and calculate an
+#' optimal model from the regularization path.
+#' 
+#' This is a small utility we wrote to deal with the slow methods dispatch for S4
+#' classes.  The more straightforward option is the \code{coef()} method for \pkg{glmnet}
+#' objects but when trying to make thousands of calls a second, that can be very slow
+#' 
+#' @param mod the glmnet model
+#' @param ic.k the information criterion value.  AIC is \code{ic.k=2} and BIC would be \code{ic.k=log n}
+#' 
+#' @return 
+#' A list
+#' \item{coef}{a matrix of coefficients}
+#' \item{intercept}{the intercepts}
+unpack.glmnet <- function(mod, ic.k) {
   dev <- (1-mod$dev.ratio)*mod$nulldev
   df <- colSums(mod$dfmat)
   ic <- dev + ic.k*df

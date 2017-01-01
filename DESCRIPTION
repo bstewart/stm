@@ -2,7 +2,7 @@ Package: stm
 Type: Package
 Title: Estimation of the Structural Topic Model
 Version: 1.1.8
-Date: 2016-12-28
+Date: 2017-01-01
 Author: Margaret Roberts [aut, cre], 
         Brandon Stewart [aut, cre],
         Dustin Tingley [aut, cre],

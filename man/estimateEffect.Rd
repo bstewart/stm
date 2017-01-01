@@ -125,6 +125,6 @@ plot(prep, "treatment", model=gadarianFit, method="pointestimate")
 }
 }
 \seealso{
-\code{\link{plot.estimateEffect}}
+\code{\link{plot.estimateEffect}} \code{\link{summary.estimateEffect}}
 }
 

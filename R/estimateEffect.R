@@ -93,7 +93,7 @@
 #' meta data.} \item{modelframe}{The model frame created from the formula and
 #' data} \item{varlist}{A variable list useful for mapping terms with columns
 #' in the design matrix}
-#' @seealso \code{\link{plot.estimateEffect}}
+#' @seealso \code{\link{plot.estimateEffect}} \code{\link{summary.estimateEffect}}
 #' @examples
 #' \dontrun{
 #' 
@@ -248,4 +248,69 @@ summary.qr.lm <- function (object) {
   sigma <- sqrt(resvar)
   list(est=est, vcov=(sigma^2 * R))
 }
+
+
+#'Summary for estimateEffect
+#'
+#'Create a summary regression table similar to those produced for \code{lm}
+#'
+#'This function along with \code{\link{print.summary.estimateEffect}} creates
+#'regression tables that look like typically summaries you see in R.  In general
+#'we recommend that you use non-linearities such as splines via function like
+#'\code{\link{s}} and in those circumstances the tables are not particularly
+#'interpretable.  
+#'
+#'Confidence intervals are calculated by using draws from the covariance matrix
+#'of each simulation to estimate the standard error.  Then a t-distribution approximation
+#'is applied to calculate the various quantities of interest.
+#'
+#'@param object an object of class \code{"estimateEffect"}, usually a result of a call to
+#'\code{\link{estimateEffect}}
+#'@param topics a vector containing the topic numbers for each a summary is to be calculated.
+#'Must be contained in the original \code{estimateEffect} object
+#'@param nsim the number of simulations to use per parameter set to calculate the standard error.
+#'Defaults to 500
+#'
+#'@seealso \code{\link{estimateEffect}} \code{\link{plot.estimateEffect}}
+#'@export
+summary.estimateEffect <- function(object, topics=NULL, nsim=500, ...) {
+  if(is.null(topics)) topics <- object$topics
+  if(any(!(topics %in% object$topics))) {
+    stop("Some topics specified with the topics argument are not available in this estimateEffect object.")
+  }
+  tables <- vector(mode="list", length=length(topics))
+  for(i in seq_along(topics)) {
+    sims <- lapply(object$parameters[[topics[i]]], function(x) rmvnorm(nsim, x$est, x$vcov))
+    sims <- do.call(rbind,sims)
+    est<- colMeans(sims)
+    se <- sqrt(apply(sims,2, var))
+    tval <- est/se
+    rdf <- nrow(object$data) - length(est)
+    p <- 2 * stats::pt(abs(tval), rdf, lower.tail = FALSE)
+    
+    coefficients <- cbind(est, se, tval, p)
+    rownames(coefficients) <- attr(object$parameters[[1]][[1]]$est, "names") 
+    colnames(coefficients) <- c("Estimate", "Std. Error", "t value", "Pr(>|t|)")
+    tables[[i]] <- coefficients
+  }
+  out <- list(call=object$call, topics=topics, tables=tables)
+  class(out) <- "summary.estimateEffect"
+  return(out)
+}
   
+#'@export
+print.summary.estimateEffect <- function(x, digits = max(3L, getOption("digits") - 3L), 
+                                         signif.stars = getOption("show.signif.stars"), ...) {
+  cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), 
+      "\n\n", sep = "")
+  
+  for(i in 1:length(x$tables)) {
+    cat(sprintf("\nTopic %i:\n", x$topics[i]))
+    cat("\nCoefficients:\n")
+    coefs <- x$tables[[i]]
+    stats::printCoefmat(coefs, digits = digits, signif.stars = signif.stars, 
+                 na.print = "NA", ...)
+    cat("\n")
+  }
+  invisible(x)
+}
