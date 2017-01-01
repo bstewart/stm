@@ -145,15 +145,50 @@ js.estimate <- function(prob, ct) {
   lambda*unif + (1 - lambda)*prob
 }
 
-#Calculate Lift (Taddys thing this is beta_k,v divided by the empirical term probability)
+#' Calculate Lift Words
+#' 
+#' A primarily internal function for calculating words according to the lift metric.
+#' We expect most users will use \code{\link{labelTopics}} instead.
+#' 
+#' Lift is the calculated by dividing the topic-word distribution by the empirical
+#' word count probability distribution.  In other words the Lift for word v in topic
+#' k can be calculated as:
+#' 
+#' \deqn{Lift = \beta_{k,v}/(w_v/\sum_v w_v)}{Lift = \beta/wbar} 
+#' 
+#' We include this after seeing it used effectively in Matt Taddy's work including his
+#' excellent \pkg{maptpx} package. Definitions are given in Taddy(2012).
+#' 
+#' @param logbeta a K by V matrix containing the log probabilities of seeing word v conditional on topic k
+#' @param wordcounts a V length vector indicating the number of times each word appears in the corpus. 
+#' @references 
+#' Taddy, Matthew. 2012. "On Estimation and Selection for Topic Models." AISTATS JMLR W&CP 22
+#' 
+#' @seealso \code{\link{labelTopics}}
+#' @export
+#' @keywords internal
 calclift <- function(logbeta, wordcounts) {
   emp.prob <- log(wordcounts) - log(sum(wordcounts))
   lift <- logbeta - rep(emp.prob, each=nrow(logbeta)) 
   apply(lift, 1, order, decreasing=TRUE)
 }
 
-#Calculate score (Chang in LDA package etc.)
-#beta times (logbeta - mean_k(logbeta_v))
+#' Calculate Score Words
+#' 
+#' A primarily internal function for calculating words according to the score metric.
+#' We expect most users will use \code{\link{labelTopics}} instead.
+#' 
+#' Score is a metric which we include because it is used effectively in the 
+#' \pkg{lda} package by Jonathan Chang. It is calculated as:
+#' \deqn{\beta_{v, k} (\log \beta_{w,k} - 1 / K \sum_{k'} \log \beta_{v,k'})}
+#' 
+#' @param logbeta a K by V matrix containing the log probabilities of seeing word v conditional on topic k
+#' @references 
+#' Jonathan Chang (2015). lda: Collapsed Gibbs Sampling Methods for Topic Models. R package version 1.4.2.
+#' https://CRAN.R-project.org/package=lda 
+#' @seealso \code{\link{labelTopics}} 
+#' @export
+#' @keywords internal
 calcscore <- function(logbeta) { 
   ldascore <- exp(logbeta)*(logbeta - rep(colMeans(logbeta), each=nrow(logbeta)))
   apply(ldascore, 1, order, decreasing=TRUE)
@@ -235,6 +270,7 @@ safelog <- function(x, min=-1000) {
 #' A list
 #' \item{coef}{a matrix of coefficients}
 #' \item{intercept}{the intercepts}
+#' @keywords internal
 unpack.glmnet <- function(mod, ic.k) {
   dev <- (1-mod$dev.ratio)*mod$nulldev
   df <- colSums(mod$dfmat)

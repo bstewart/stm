@@ -25,4 +25,5 @@ This is a small utility we wrote to deal with the slow methods dispatch for S4
 classes.  The more straightforward option is the \code{coef()} method for \pkg{glmnet}
 objects but when trying to make thousands of calls a second, that can be very slow
 }
+\keyword{internal}
 

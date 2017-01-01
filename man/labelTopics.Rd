@@ -41,13 +41,14 @@ that distinguish topics.  This is calculated by taking the harmonic mean of
 rank by probability within the topic (frequency) and rank by distribution of
 topic given word \eqn{p(z|w=v)} (exclusivity).  In estimating exclusivity we
 use a James-Stein type shrinkage estimator of the distribution
-\eqn{p(z|w=v)}.
+\eqn{p(z|w=v)}.  More information can be found in the documentation for the
+internal function \code{\link{calcfrex}} and \code{\link{js.estimate}}.
 
 Score and Lift are measures provided in two other popular text mining
 packages. For more information on type Score, see the R package
-\code{\link{lda}}.  For more information on type Lift, see Taddy,
-"Multinomial Inverse Regression for Text Analysis", Journal of the American
-Statistical Association 108, 2013 and the R package \code{textir}.
+\code{\link{lda}} or the internal function \code{\link{calcscore}}.  
+For more information on type Lift, see the R package \code{maptpx}
+or or the internal function \code{\link{calclift}}.
 }
 \examples{
 
@@ -56,11 +57,8 @@ Statistical Association 108, 2013 and the R package \code{textir}.
 labelTopics(gadarianFit)
 }
 }
-\references{
-Taddy, Matt. "Multinomial inverse regression for text analysis."
-Journal of the American Statistical Association 108.503 (2013): 755-770.
-}
 \seealso{
-\code{\link{stm}} \code{\link{plot.STM}}
+\code{\link{stm}} \code{\link{plot.STM}} 
+\code{\link{calcfrex}} \code{\link{js.estimate}} \code{\link{calcscore}} \code{\link{calclift}}
 }
 
