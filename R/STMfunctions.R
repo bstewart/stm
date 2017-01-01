@@ -43,23 +43,80 @@ rmvnorm<-function(n,mu,Sigma,chol.Sigma=chol(Sigma)) {
   t(  t(E%*%chol.Sigma) +c(mu))
 }
 
-##
-# Label Functions
-##
+#' Calculate FREX (FRequency and EXclusivity) Words
+#' 
+#' A primarily internal function for calculating FREX words.
+#' We expect most users will use \code{\link{labelTopics}} instead.
+#' 
+#' FREX attempts to find words which are both frequent in and exclusive to a topic of interest.
+#' Balancing these two traits is important as frequent words are often by themselves simply functional
+#' words necessary to discuss any topic.  While completely exclusive words can be so rare as to not
+#' be informative. This accords with a long-running trend in natural language processing which is best exemplified
+#' by the Term frequency-Inverse document frequency metric.  
+#' 
+#' Our notion of FREX comes from a paper by Bischof and Airoldi (2012) which proposed a Hierarchical
+#' Poisson Deconvolution model.  It relies on a known hierarchical structure in the documents and requires
+#' a rather complicated estimation scheme.  We wanted a metric that would capture their core insight but
+#' still be fast to compute.
+#' 
+#' Bischof and Airoldi consider as asummary for a word's contribution to a topic the harmonic mean of the
+#' word's rank in terms of exclusivity and frequency.  The harmonic mean is attractive here because it 
+#' does not allow a high rank along one of the dimensions to compensate for the lower rank in another. Thus
+#' words with a high score must be high along both dimensions.
+#' 
+#' The formula is ' 
+#'\deqn{FREX = \left(\frac{w}{F} + \frac{1-w}{E}\right)^{-1}}{FREX = ((w/F) + ((1-w)/E))^-1} 
+#' where F is the frequency score given by the emperical CDF of the word in it's topic distribution.  Exclusivity
+#' is calculated by column-normalizing the beta matrix (thus representing the conditional probability of seeing
+#' the topic given the word).  Then the empirical CDF of the word is computed within the topic.  Thus words with
+#' high values are those where most of the mass for that word is assigned to the given topic.
+#' 
+#' For rare words exclusivity will always be very high because there simply aren't many instances of the word.
+#' If \code{wordcounts} are passed, the function will calculate a regularized form of this distribution using a
+#' James-Stein type estimator described in \code{\link{js.estimate}}.
+#' 
+#' @param logbeta a K by V matrix containing the log probabilities of seeing word v conditional on topic k
+#' @param w a value between 0 and 1 indicating the proportion of the weight assigned to frequency 
+#' @param wordcounts a vector of word counts.  If provided, a James-Stein type shrinkage estimator is 
+#' applied to stabilize the exclusivity probabilities. This helps with the concern that the rarest words
+#' will always be completely exclusive.
+#' @references 
+#' Bischof and Airoldi (2012) "Summarizing topical content with word frequency and exclusivity"
+#' In Proceedings of the International Conference on Machine Learning.
+#' @seealso \code{\link{labelTopics}} \code{\link{js.estimate}}
+#' @export
+#' @keywords internal
 calcfrex <- function(logbeta, w=.5, wordcounts=NULL) {
   excl <- t(t(logbeta) - col.lse(logbeta))
   if(!is.null(wordcounts)) {
     #if word counts provided calculate the shrinkage estimator
     excl <- safelog(sapply(1:ncol(excl), function(x) js.estimate(exp(excl[,x]), wordcounts[x])))
   } 
-  freqscore <- apply(logbeta,1,rank)/ncol(logbeta)
-  exclscore <- apply(excl,1,rank)/ncol(logbeta)
+  freqscore <- apply(logbeta,1,data.table::frank)/ncol(logbeta)
+  exclscore <- apply(excl,1,data,table::frank)/ncol(logbeta)
   frex <- 1/(w/freqscore + (1-w)/exclscore)
   apply(frex,2,order,decreasing=TRUE)
 }
 
-#A James-Stein Estimator Shrinking to a Uniform Distribution
-#This draws from the Hausser and Strimmer (2009) JMLR piece.
+#' A James-Stein Estimator Shrinking to a Uniform Distribution
+#' 
+#' A primarily internal function used in \code{\link{calcfrex}}.
+#' 
+#' This calculates a James-Stein type shrinkage estimator for a discrete probability
+#' distribution regularizing towards a uniform distribution. The amount of shrinkage
+#' is a function of the variance of MLE and the L2 norm distance from the uniform.
+#' 
+#' This function is based off the ideas in Hausser and Strimmer (2009)
+#' 
+#' @param prob the MLE estimate of the discrete probability distribution
+#' @param ct the count of words observed to estimate that distirbution
+#' 
+#' @references 
+#' Hausser, Jean, and Korbinian Strimmer. "Entropy inference and the James-Stein estimator, 
+#' with application to nonlinear gene association networks." Journal of Machine Learning Research 
+#' 10.Jul (2009): 1469-1484.
+#' @export
+#' @keywords internal
 js.estimate <- function(prob, ct) {
   if(ct<=1) {
     #basically if we only observe a count of 1
