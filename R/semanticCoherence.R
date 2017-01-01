@@ -1,21 +1,22 @@
-semanticCoherence <- function(model.out, documents, M){
-  if(length(model.out$beta$logbeta)!=1) {
+semanticCoherence <- function(model, documents, M=10){
+  if(!inherits(model, "STM")) stop("model must be an STM object")
+                                   
+  if(length(model$beta$logbeta)!=1) {
     result <- 0
-    for(i in 1:length(model.out$beta$logbeta)){
-      subset <- which(model.out$settings$covariates$betaindex==i)
+    for(i in 1:length(model$beta$logbeta)){
+      subset <- which(model$settings$covariates$betaindex==i)
       triplet <- doc.to.ijv(documents[subset])
-      mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model.out$settings$dim$V)
-      result = result + semCoh1beta(mat, M, beta=model.out$beta$logbeta[[i]])*length(subset)
+      mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model$settings$dim$V)
+      result = result + semCoh1beta(mat, M, beta=model$beta$logbeta[[i]])*length(subset)
     }
     return(result/length(documents))
   }
   else {
-    beta <- model.out$beta$logbeta[[1]]
+    beta <- model$beta$logbeta[[1]]
     #Get the Top N Words
     top.words <- apply(beta, 1, order, decreasing=TRUE)[1:M,]
-    wordlist <- unique(as.vector(top.words))
     triplet <- doc.to.ijv(documents)
-    mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model.out$settings$dim$V)
+    mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model$settings$dim$V)
     result = semCoh1beta(mat, M, beta=beta)
   return(result)
   }

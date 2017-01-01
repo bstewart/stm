@@ -1,9 +1,15 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
-\section{Version 1.1.7}{
+\section{Version 1.2.0}{
 \itemize{
 \item Thanks to efforts by Ken Benoit stm can now take a quanteda dfm object.
-\item Thanks to efforts by Chris Baker we are now using roxygen for our documentation.
+\item Thanks to help from Chris Baker we are now using roxygen for our documentation.
+\item Jeffrey Arnold fixed a small bug in toLDAVis.  Thanks!
+\item In making the change to roxygen we unfortunately break backwards compatability.  The package's generic functions such as plot.estimateEffect() and plot.STM() can now only be called by plot() rather than by their full name.
+\item We document and export optimizeDocument which provides access to the document level E-step.
+\item We have documented and exported several of the labeling functions including calcfrex, calcscore, calclift and js.estimate.  These are marked with keyword internal because they don't have much error checking and most users will want labelTopics anyhow.  But they can be accessed with ? and are linked from labelTopics
+\item After much popular demand we have released a fitNewDocuments() function which will calculate topic proportions for documents not used to fit the models.  There are many different options here.
+\item Much of the documentation has been updated as has the vignette.
 }
 }
 \section{Version 1.1.6}{
