@@ -37,7 +37,7 @@
 #' @export
 plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:length(models$runout),...){
   if(!inherits(models, "selectModel")) {
-    if(length(models)==1) stop("plotModels only works for selectModel objects.")
+    if(length(models)==1)   stop("plotModels only works for selectModel objects.")
     #we want to let it run if it was a case before selectModels had a class
     #thus just check if semantic coherence is in there.
     if(is.null(models$semcoh)) stop("plotModels only works for selectModel objects")

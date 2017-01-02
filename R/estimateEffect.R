@@ -270,8 +270,11 @@ summary.qr.lm <- function (object) {
 #'Must be contained in the original \code{estimateEffect} object
 #'@param nsim the number of simulations to use per parameter set to calculate the standard error.
 #'Defaults to 500
+#'@param ... further arguments passed to or from other methods
 #'
 #'@seealso \code{\link{estimateEffect}} \code{\link{plot.estimateEffect}}
+#'@method summary estimateEffect  
+#'@aliases summary.estimateEffect print.summary.estimateEffect
 #'@export
 summary.estimateEffect <- function(object, topics=NULL, nsim=500, ...) {
   if(is.null(topics)) topics <- object$topics
@@ -283,7 +286,7 @@ summary.estimateEffect <- function(object, topics=NULL, nsim=500, ...) {
     sims <- lapply(object$parameters[[topics[i]]], function(x) rmvnorm(nsim, x$est, x$vcov))
     sims <- do.call(rbind,sims)
     est<- colMeans(sims)
-    se <- sqrt(apply(sims,2, var))
+    se <- sqrt(apply(sims,2, stats::var))
     tval <- est/se
     rdf <- nrow(object$data) - length(est)
     p <- 2 * stats::pt(abs(tval), rdf, lower.tail = FALSE)
@@ -297,7 +300,8 @@ summary.estimateEffect <- function(object, topics=NULL, nsim=500, ...) {
   class(out) <- "summary.estimateEffect"
   return(out)
 }
-  
+
+#'@method print summary.estimateEffect  
 #'@export
 print.summary.estimateEffect <- function(x, digits = max(3L, getOption("digits") - 3L), 
                                          signif.stars = getOption("show.signif.stars"), ...) {
