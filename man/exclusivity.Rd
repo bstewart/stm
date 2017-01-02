@@ -26,7 +26,7 @@ achieve by having only a couple of topics which all are dominated by the most co
 also proposed an exclusivity measure.
 
 Our exclusivity measure includes some information on word frequency as well.  It is based on the FREX
-labeling metric (\code{\link{calc.frex}}) with the weight set to .7 in favor of exclusivity by default.
+labeling metric (\code{\link{calcfrex}}) with the weight set to .7 in favor of exclusivity by default.
  
  This function is currently marked with the keyword internal because it does not have much error checking.
 }
