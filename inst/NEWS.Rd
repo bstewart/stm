@@ -5,6 +5,7 @@
 \item Thanks to efforts by Ken Benoit stm can now take a quanteda dfm object.
 \item Thanks to help from Chris Baker we are now using roxygen for our documentation.
 \item Jeffrey Arnold fixed a small bug in toLDAVis.  Thanks!
+\item Carsten Schwemmer helped us find a bug where plot.estimateEffect() didn't work when dplyr was loaded.  This is now fixed.
 \item In making the change to roxygen we unfortunately break backwards compatability.  The package's generic functions such as plot.estimateEffect() and plot.STM() can now only be called by plot() rather than by their full name.
 \item We document and export optimizeDocument which provides access to the document level E-step.
 \item We have documented and exported several of the labeling functions including calcfrex, calcscore, calclift and js.estimate.  These are marked with keyword internal because they don't have much error checking and most users will want labelTopics anyhow.  But they can be accessed with ? and are linked from labelTopics
@@ -13,6 +14,7 @@
 \item a number of the internals to plot.estimateEffect have been improved which should eliminate some edge case bugs.
 \item Much of the documentation has been updated as has the vignette.
 \item Our wrapper s() for the splines package function bs() now has predict functions associated with it so it should work in contexts like lm()
+\item We have documented and exported all the metrics for searchK()
 }
 }
 \section{Version 1.1.6}{

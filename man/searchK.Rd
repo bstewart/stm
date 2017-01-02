@@ -41,10 +41,19 @@ EM iterations used in fiting the model.}
 With user-specified initialization, this function runs selectModel for
 different user-specified topic numbers and computes diagnostic properties
 for the returned model. These include exclusivity, semantic coherence,
-heldout likelihood, bound, lbound, and residual.
+heldout likelihood, bound, lbound, and residual dispersion.
 }
 \details{
-See the vignette for interepretation of each of these measures.
+See the vignette for interepretation of each of these measures.  Each of
+these measures is also available in exported functions:
+\describe{
+\item{exclusivity}{\code{\link{exclusivity}}}
+\item{semantic coherence}{\code{\link{semanticCoherence}}}
+\item{heldout likelihood}{\code{\link{make.heldout}} and \code{\link{eval.heldout}}}
+\item{bound}{calculated by \code{\link{stm}} accessible by \code{max(model$convergence$bound)}}
+\item{lbound}{a correction to the bound that makes the bounds directly comparable \code{max(model$convergence$bound) + lfactorial(model$settings$dim$K)}}
+\item{residual dispersion}{\code{\link{checkResiduals}}}
+}
 }
 \examples{
 

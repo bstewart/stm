@@ -538,7 +538,7 @@ stm.list <- function(documents, vocab, K,
                    topicreportevery=reportevery,
                    convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol),
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels, formula=prevalence),
-                   gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1),
+                   gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1, ic.k=2),
                    sigma=list(prior=sigma.prior),
                    kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
                               fixedintercept=TRUE, mstep=list(tol=.001, maxit=3),
@@ -547,7 +547,7 @@ stm.list <- function(documents, vocab, K,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
-                             s=.05, p=3000, d.group.size=2000), 
+                             s=.05, p=3000, d.group.size=2000, recoverEG=FALSE), 
                    seed=seed,
                    ngroups=ngroups)
   if(settings$gamma$mode=="L1") {
@@ -579,8 +579,10 @@ stm.list <- function(documents, vocab, K,
   legalargs <-  c("tau.maxit", "tau.tol", 
                   "fixedintercept","kappa.mstepmaxit", "kappa.msteptol", 
                   "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
+                  "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
-                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP")
+                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
+                  "recoverEG")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -598,6 +600,7 @@ stm.list <- function(documents, vocab, K,
       if(i=="lambda.min.ratio") settings$tau$lambda.min.ratio <- control[[i]]
       if(i=="ic.k") settings$tau$ic.k <- control[[i]]
       if(i=="gamma.enet") settings$gamma$enet <- control[[i]]
+      if(i=="gamma.ic.k") settings$gamma$ic.k <- control[[i]]
       if(i=="nits") settings$init$nits <- control[[i]]
       if(i=="burnin") settings$init$burnin <- control[[i]]
       if(i=="alpha") settings$init$alpha <- control[[i]]
@@ -607,6 +610,7 @@ stm.list <- function(documents, vocab, K,
       if(i=="rp.p")  settings$init$p <- control[[i]]
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
       if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
+      if(i=="recoverEG" & control[[i]]) settings$init$recoverEG <- control[[i]]
     }
   }
   

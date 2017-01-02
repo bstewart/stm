@@ -1,3 +1,36 @@
+#' Semantic Coherence
+#' 
+#' Calculate semantic coherence (Mimno et al 2011) for an STM model.
+#' 
+#'  Semantic coherence is a metric related to pointwise mutual information that was introduced
+#'  in a paper by David Mimno, Hanna Wallach and colleagues (see references),  The paper details a series
+#'  of manual evaluations which show that their metric is a reasonable surrogate for human judgment.
+#'  The core idea here is that in models which are semantically coherent the words which are most
+#'  probable under a topic should co-occur within the same document.
+#'  
+#'  One of our observations in Roberts et al 2014 was that semantic coherence alone is relatively easy to
+#'  achieve by having only a couple of topics which all are dominated by the most common words.  Thus we
+#'  suggest that users should also consider \code{\link{exclusivity}} which provides a natural counterpoint.
+#'  
+#'  This function is currently marked with the keyword internal because it does not have much error checking.
+#'
+#' @param model the STM object
+#' @param documents the STM formatted documents
+#' @param M the number of top words to consider per topic
+#' 
+#' @return a numeric vector containing semantic coherence for each topic
+#' 
+#' @references 
+#' Mimno, D., Wallach, H. M., Talley, E., Leenders, M., & McCallum, A. (2011, July). 
+#' "Optimizing semantic coherence in topic models." In Proceedings of the Conference on Empirical Methods in 
+#' Natural Language Processing (pp. 262-272). Association for Computational Linguistics. Chicago
+#' 
+#' Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., Albertson, B., et al. (2014). 
+#' "Structural topic models for open ended survey responses." American Journal of Political Science, 58(4), 1064-1082.
+#'  http://goo.gl/0x0tHJ		
+#' @seealso \code{\link{searchK}} \code{\link{plot.searchK}} \code{\link{exclusivity}}
+#' @keywords internal
+#' @export
 semanticCoherence <- function(model, documents, M=10){
   if(!inherits(model, "STM")) stop("model must be an STM object")
                                    
