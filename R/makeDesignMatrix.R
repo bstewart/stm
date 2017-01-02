@@ -62,6 +62,9 @@ makeDesignMatrix <- function(formula,
   newmf <- model.frame(mt, newData, xlev=xlevels)
   if(sparse) {
     X <- try(Matrix::sparse.model.matrix(mt, newmf, contrasts.arg = contrasts))
+    if(class(X)=="try-error") X <- try(stats::model.matrix(mt,newmf, contrasts.arg=contrasts))
+    if(class(X)=="try-error") stop("Error creating model matrix.")
+    X <- Matrix::Matrix(X)
   } else {
     X <- try(model.matrix(mt, newmf, contrasts.arg = contrasts))
   }

@@ -461,11 +461,17 @@ stm.list <- function(documents, vocab, K,
     if(inherits(x,"formula")) {
       termobj <- terms(x, data=data)
       if(attr(termobj, "response")==1) stop("Response variables should not be included in prevalence formula.")
-      xmat <- try(sparse.model.matrix(termobj,data=data),silent=TRUE)
-      if(class(xmat)=="try-error") stop("Error creating model matrix.
-                                        This could be caused by many things including
-                                        explicit calls to a namespace within the formula.
-                                        Try a simpler formula.")
+      xmat <- try(Matrix::sparse.model.matrix(termobj,data=data),silent=TRUE)
+      if(class(xmat)=="try-error") {
+        xmat <- try(stats::model.matrix(termobj, data=data), silent=TRUE)
+        if(class(xmat)=="try-error") {
+                 stop("Error creating model matrix.
+                 This could be caused by many things including
+                 explicit calls to a namespace within the formula.
+                 Try a simpler formula.")
+        }
+        xmat <- Matrix::Matrix(xmat)
+      }
       propSparse <- 1 - nnzero(xmat)/length(xmat) 
       #if its less than 50% sparse or there are fewer than 50 columns, just convert to a standard matrix
       if(propSparse < .5 | ncol(xmat) < 50) {
@@ -475,8 +481,8 @@ stm.list <- function(documents, vocab, K,
     }
     if(is.matrix(x)) {
       #Does it have an intercept in first column?
-      if(isTRUE(all.equal(x[,1],rep(1,nrow(x))))) return(Matrix(x)) 
-      else return(cbind(1,Matrix(x)))
+      if(isTRUE(all.equal(x[,1],rep(1,nrow(x))))) return(Matrix::Matrix(x)) 
+      else return(cbind(1,Matrix::Matrix(x)))
     }
   }
   
