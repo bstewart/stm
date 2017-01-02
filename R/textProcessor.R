@@ -170,6 +170,10 @@ textProcessor <- function(documents, metadata=NULL,
       txt <- tm::tm_map(txt, tolower)
     }
   }
+  if(removepunctuation){
+    if(verbose) cat("Removing punctuation... \n")
+    txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE) #Remove punctuation
+  }
   if(removestopwords){
     if(verbose) cat("Removing stopwords... \n")
     txt <- tm::tm_map(txt, tm::removeWords, tm::stopwords(language)) #Remove stopwords
@@ -181,10 +185,6 @@ textProcessor <- function(documents, metadata=NULL,
   if(removenumbers){
     if(verbose) cat("Removing numbers... \n")
     txt <- tm::tm_map(txt, tm::removeNumbers) #Remove numbers
-  }
-  if(removepunctuation){
-    if(verbose) cat("Removing punctuation... \n")
-    txt <- tm::tm_map(txt, tm::removePunctuation) #Remove punctuation
   }
   if(stem){
     if(verbose) cat("Stemming... \n")
