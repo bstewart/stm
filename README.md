@@ -11,6 +11,8 @@ Please email all comments/questions to bms4 [AT] princeton.edu
 [![CRAN Version](http://www.r-pkg.org/badges/version/stm)](https://CRAN.R-project.org/package=stm)
 [![Build Status](https://travis-ci.org/bstewart/stm.png?branch=master)](https://travis-ci.org/bstewart/stm)
 [![](http://cranlogs.r-pkg.org/badges/stm)](http://cran.rstudio.com/web/packages/stm/index.html)
+[![Total Downloads](http://cranlogs.r-pkg.org/badges/stm)]
+[![codecov](https://codecov.io/gh/bstewart/stm/branch/master/graph/badge.svg)](https://codecov.io/gh/bstewart/stm)
 
 ###Summary
 
