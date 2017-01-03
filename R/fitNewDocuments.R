@@ -8,7 +8,7 @@
 #' content covariates only and models with both.  When there is not covariate information the
 #' choice is essentially whether or not to use prior information.
 #' 
-#' We offer three types pf choices (and may offer more in the future):
+#' We offer three types of choices (and may offer more in the future):
 #' \describe{
 #' \item{"None"}{No prior is used.  In the prevalence case this means that the model simply
 #' maximizes the likelihood of seeing the words given the word-topic distribution.  This will
@@ -85,7 +85,7 @@
 #' @param test a test of the functions ability to reconstruct the original functions.
 #' @param verbose Should a dot be printed every time 1 percent of the documents are fit.
 #' 
-#' @return a list 
+#' @return an object of class fitNewDocuments
 #' 
 #' \item{theta}{a matrix with one row per document contain the document-topic proportions at the posterior mode}
 #' \item{eta}{the mean of the variational posterior, only provided when posterior is requested. 
@@ -105,6 +105,17 @@
 #' \item{mu}{a matrix where each column includes the K-1 dimension prior mean for each document. This is only provided if prior is requested.}
 #' \item{sigma}{a K-1 by K-1 matrix containing the prior covariance. This is only provided if prior is requested.}
 #' @seealso \code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
+#' @examples 
+#' #An example using the Gadarian data.  From Raw text to fitted model.
+#' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+#' out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
+#' set.seed(02138)
+#' #Maximum EM its is set low to make this run fast, run models to convergence!
+#' mod.out <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
+#'               data=out$meta, max.em.its=5)
+#' fitNewDocuments(model=mod.out, documents=out$documents[1:5], newData=out$meta[1:5,],
+#'                origData=out$meta, prevalence=~treatment + s(pid_rep),
+#'                prevalencePrior="Covariate")
 #' @export
 fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL, 
                             origData=NULL, prevalence=NULL, betaIndex=NULL,
@@ -171,7 +182,7 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
       if(ncol(mu)==1) {
         covariance <- crossprod(sweep(model$eta, 2, STATS=as.numeric(mu), FUN="-"))
       } else {
-        covariance <- crossprod(lambda-t(mu)) 
+        covariance <- crossprod(model$eta - t(mu)) 
       }
       mu <- rowMeans(mu) #replace with the new averaged mu
       newcovariance <- crossprod(sweep(model$eta, 2, STATS=mu))
@@ -209,7 +220,7 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
      X <- makeDesignMatrix(formula, origData, newData, test=test)
     }
     sigma <- model$sigma
-    mu <- t(X%*%gamma)
+    mu <- t(X%*%model$mu$gamma)
   }
   
   #Generate the Content Prior beta and betaindex
@@ -262,7 +273,6 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
   for(i in 1:length(documents)) {
     #update components
     doc <- documents[[i]]
-    words <- doc[1,]
     aspect <- betaindex[i]
     init <- rep(0, K-1)
     mu.i <- mu[,i]
@@ -301,5 +311,6 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
     toReturn$sigma <- sigma
     toReturn$betaindex <- betaindex
   }
+  class(toReturn) <- "fitNewDocuments"
   return(toReturn)
 }

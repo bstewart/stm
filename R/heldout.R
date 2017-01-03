@@ -16,22 +16,20 @@
 #' @param seed the seed, set for replicability
 #' @examples
 #' 
-#' \dontrun{
-#' 
-#' prep <- prepDocuments(poliblog5k.docs, poliblog5k.voc, 
+#' prep <- prepDocuments(poliblog5k.docs, poliblog5k.voc,
 #'                       poliblog5k.meta,subsample=500,
 #'                       lower.thresh=20,upper.thresh=200)
 #' heldout <- make.heldout(prep$documents, prep$vocab)
 #' documents <- heldout$documents
 #' vocab <- heldout$vocab
-#' meta <- out$meta
+#' meta <- prep$meta
 #' 
-#' stm1<- stm(documents, vocab, 5, 
-#'            prevalence =~ rating+ s(day), 
+#' stm1<- stm(documents, vocab, 5,
+#'            prevalence =~ rating+ s(day),
 #'            init.type="Random",
 #'            data=meta, max.em.its=5)
 #' eval.heldout(stm1, heldout$missing)
-#' }
+#' 
 #' @export
 make.heldout <- function(documents, vocab, N=floor(.1*length(documents)), 
                          proportion=.5, seed=NULL) {
@@ -55,7 +53,7 @@ make.heldout <- function(documents, vocab, N=floor(.1*length(documents)),
   }
   missing <- list(index=index, docs=missing)
   #check the vocab
-  indices <- sort(unique(unlist(lapply(documents, "[", 1, ))))
+  indices <- sort(unique(unlist(lapply(documents, "[", 1))))
   
   #all sorts of nonsense ensues if there is missingness
   if(length(indices)!=length(vocab)) {
@@ -82,7 +80,9 @@ make.heldout <- function(documents, vocab, N=floor(.1*length(documents)),
     vocab <- vocab[indices]
   }
   #hooray.  return some stuff.
-  return(list(documents=documents,vocab=vocab, missing=missing))
+  heldout <- list(documents=documents,vocab=vocab, missing=missing)
+  class(heldout) <- "heldout"
+  return(heldout)
 }
 
 #' @export

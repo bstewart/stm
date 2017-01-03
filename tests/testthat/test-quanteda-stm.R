@@ -15,7 +15,7 @@ test_that("Test that stm works on a quanteda dfm", {
   expect_identical(class(stm_from_dfm), "STM")
 })
 
-test_that("Test that stm works on a the classic stm object structure", {
+test_that("Test that stm works on a classic stm object structure", {
   temp <- textProcessor(documents = gadarian$open.ended.response,
                         metadata = gadarian)
   meta <- temp$meta

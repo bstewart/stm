@@ -54,7 +54,7 @@ prevalence covariates.  This will override the options in \code{newData}, \code{
 \item{verbose}{Should a dot be printed every time 1 percent of the documents are fit.}
 }
 \value{
-a list 
+an object of class fitNewDocuments
 
 \item{theta}{a matrix with one row per document contain the document-topic proportions at the posterior mode}
 \item{eta}{the mean of the variational posterior, only provided when posterior is requested. 
@@ -84,7 +84,7 @@ models without covariate information, models with prevalence covariates only, mo
 content covariates only and models with both.  When there is not covariate information the
 choice is essentially whether or not to use prior information.
 
-We offer three types pf choices (and may offer more in the future):
+We offer three types of choices (and may offer more in the future):
 \describe{
 \item{"None"}{No prior is used.  In the prevalence case this means that the model simply
 maximizes the likelihood of seeing the words given the word-topic distribution.  This will
@@ -131,6 +131,18 @@ some of the challenges involved.
 
 If you want even more fine-grained control we recommend you directly use the 
 optimization function \code{\link{optimizeDocument}}
+}
+\examples{
+#An example using the Gadarian data.  From Raw text to fitted model.
+temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
+set.seed(02138)
+#Maximum EM its is set low to make this run fast, run models to convergence!
+mod.out <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
+              data=out$meta, max.em.its=5)
+fitNewDocuments(model=mod.out, documents=out$documents[1:5], newData=out$meta[1:5,],
+               origData=out$meta, prevalence=~treatment + s(pid_rep),
+               prevalencePrior="Covariate")
 }
 \seealso{
 \code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
