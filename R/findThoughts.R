@@ -46,8 +46,6 @@
 #' texts.}
 #' @seealso \code{\link{plotQuote}}
 #' @examples
-#' \dontrun{
-#' 
 #' findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1,2), n=3)
 #' 
 #' #We can plot findThoughts objects using plot() or plotQuote
@@ -62,7 +60,7 @@
 #' #we can select a subset of examples as well using either approach
 #' plot(thought,2:3)
 #' plotQuote(thought$docs[[1]][2:3])
-#' }
+#' 
 #' 
 #' #gather thoughts for only treated documents
 #' thought <- findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1,2), n=3, 
@@ -72,7 +70,6 @@
 #' thought <- findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1), n=3, 
 #'                         where = treatment==1 & Topic2>.2, meta=gadarian)
 #' plot(thought)         
-
 #' #these queries can be really complex if you like
 #' thought <- findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1), n=3, 
 #'                        where = (treatment==1 | pid_rep > .5) & Topic3>.2, meta=gadarian)

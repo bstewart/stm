@@ -9,14 +9,13 @@
 #' @param type Type of words to be searched.
 #' @param verbose A logical indicating whether details should be printed to the
 #' screen.
+#' @seealso \code{\link{findThoughts}}
 #' @examples
 #' 
-#' \dontrun{
-#' 
-#' lab <- sageLabels(gadarianFit, 5)
+#' lab <- sageLabels(gadarianFit, n=5)
 #' findTopic(lab, c("poor", "immigr", "peopl"))
 #' findTopic(gadarianFit, c("poor", "immigr", "peopl"))
-#' }
+#' 
 #' @export
 findTopic <- function(x, list, n=20, type=c("prob", "frex", "lift","score"), verbose=TRUE) {
   type <- match.arg(type)

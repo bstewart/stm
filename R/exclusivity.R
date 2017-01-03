@@ -28,6 +28,8 @@
 #'  http://goo.gl/0x0tHJ		
 #' @seealso \code{\link{searchK}} \code{\link{plot.searchK}} \code{\link{semanticCoherence}}
 #' @keywords internal
+#' @examples 
+#' exclusivity(gadarianFit)
 #' @export
 exclusivity <- function(model, M=10, frexw=.7){
   w <- frexw

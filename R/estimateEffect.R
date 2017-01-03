@@ -8,7 +8,10 @@
 #' This function performs a regression where topic-proportions are the outcome
 #' variable.  This allows us to conditional expectation of topic prevalence
 #' given document characteristics.  Use of the method of composition allows us
-#' to incorporate our estimation uncertainty in the dependent variable.
+#' to incorporate our estimation uncertainty in the dependent variable. Mechanically
+#' this means we draw a set of topic proportions from the variational posterior,
+#' compute our coefficients, then repeat.  To compute quantities of interest we
+#' simulate within each batch of coefficients and then average over all our results.
 #' 
 #' The formula specifies the nature of the linear model.  On the left hand-side
 #' we use a vector of integers to indicate the topics to be included as outcome
@@ -95,16 +98,20 @@
 #' in the design matrix}
 #' @seealso \code{\link{plot.estimateEffect}} \code{\link{summary.estimateEffect}}
 #' @examples
-#' \dontrun{
 #' 
 #' #Just one topic (note we need c() to indicate it is a vector)
 #' prep <- estimateEffect(c(1) ~ treatment, gadarianFit, gadarian)
+#' summary(prep)
 #' plot(prep, "treatment", model=gadarianFit, method="pointestimate")
 #' 
 #' #three topics at once
 #' prep <- estimateEffect(1:3 ~ treatment, gadarianFit, gadarian)
+#' summary(prep)
 #' plot(prep, "treatment", model=gadarianFit, method="pointestimate")
-#' }
+#' 
+#' #with interactions
+#' prep <- estimateEffect(1 ~ treatment*s(pid_rep), gadarianFit, gadarian)
+#' summary(prep)
 #' @export
 estimateEffect <- function(formula,
                      stmobj, metadata=NULL,

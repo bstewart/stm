@@ -25,11 +25,12 @@ Find topics that contain user specified words.
 }
 \examples{
 
-\dontrun{
-
-lab <- sageLabels(gadarianFit, 5)
+lab <- sageLabels(gadarianFit, n=5)
 findTopic(lab, c("poor", "immigr", "peopl"))
 findTopic(gadarianFit, c("poor", "immigr", "peopl"))
+
 }
+\seealso{
+\code{\link{findThoughts}}
 }
 

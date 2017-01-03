@@ -18,6 +18,11 @@ Takes an \pkg{stm} formatted documents and vocab object and returns formats
 useable in other packages.
 }
 \details{
+We also recommend the \pkg{quanteda} and \pkg{tm} packages for text preparation
+etc.  The \code{convertCorpus} function is provided as a helpful utility for 
+moving formats around, but if you intend to do text processing with a variety
+of output formats, you likely want to start with \pkg{quanteda} or \pkg{tm}.
+ 
 The various type conversions are described below: 
 \describe{
 \item{\code{type = "slam"}}{Converts to the simple triplet matrix
@@ -31,17 +36,20 @@ Accordingly this type returns a list containing the new documents object and
 the unchanged vocab object.} 
 \item{\code{type = "Matrix"}}{Converts to the
 sparse matrix representation used by \pkg{Matrix}.  This is the format used
-internally by numerous other text analysis packages.} } If you want to write
+internally by numerous other text analysis packages.} }
+
+If you want to write
 out a file containing the sparse matrix representation popularized by David
 Blei's \code{C} code \code{ldac} see the function \code{\link{writeLdac}}.
 }
 \examples{
-\dontrun{
-
 #convert the poliblog5k data to slam package format
 poliSlam <- convertCorpus(poliblog5k.docs, poliblog5k.voc, type="slam")
 class(poliSlam)
-}
+poliMatrix <- convertCorpus(poliblog5k.docs, poliblog5k.voc, type="Matrix")
+class(poliMatrix)
+poliLDA <- convertCorpus(poliblog5k.docs, poliblog5k.voc, type="lda")
+str(poliLDA)
 }
 \seealso{
 \code{\link{writeLdac}} \code{\link{readCorpus}}

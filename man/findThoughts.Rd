@@ -65,8 +65,6 @@ The \code{plot.findThoughts} function is a shortcut for the \code{plotQuote}
 function.
 }
 \examples{
-\dontrun{
-
 findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1,2), n=3)
 
 #We can plot findThoughts objects using plot() or plotQuote
@@ -81,7 +79,7 @@ plot(thought)
 #we can select a subset of examples as well using either approach
 plot(thought,2:3)
 plotQuote(thought$docs[[1]][2:3])
-}
+
 
 #gather thoughts for only treated documents
 thought <- findThoughts(gadarianFit, texts=gadarian$open.ended.response, topics=c(1,2), n=3, 

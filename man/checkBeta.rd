@@ -39,6 +39,9 @@ the total number of problem words.
 Note that if the tolerance value is below 1e-6, this function will throw an
 error.
 }
+\examples{
+checkBeta(gadarianFit)
+}
 \author{
 Antonio Coppola
 }

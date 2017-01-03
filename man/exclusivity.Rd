@@ -30,6 +30,9 @@ labeling metric (\code{\link{calcfrex}}) with the weight set to .7 in favor of e
  
  This function is currently marked with the keyword internal because it does not have much error checking.
 }
+\examples{
+exclusivity(gadarianFit)
+}
 \references{
 Mimno, D., Wallach, H. M., Talley, E., Leenders, M., & McCallum, A. (2011, July). 
 "Optimizing semantic coherence in topic models." In Proceedings of the Conference on Empirical Methods in 

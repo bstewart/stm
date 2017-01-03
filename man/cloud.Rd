@@ -45,10 +45,7 @@ of the topic while \code{"documents"} gives a picture of all the words in
 documents which are highly associated with the topic.
 }
 \examples{
-\dontrun{
-
 cloud(gadarianFit, 1)
-}
 }
 \references{
 Ian Fellows (2014). wordcloud: Word Clouds. R package version
