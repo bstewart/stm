@@ -27,6 +27,8 @@
 #' the relevant beta matrix} \item{check}{A boolean representing if the check
 #' was passed. If wordErrorTotal is all 0s (no errors), check is True.}
 #' @author Antonio Coppola
+#' @examples 
+#' checkBeta(gadarianFit)
 #' @export
 checkBeta <- function(stmobject, tolerance=0.01){
 

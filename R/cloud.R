@@ -31,10 +31,7 @@
 #' @references Ian Fellows (2014). wordcloud: Word Clouds. R package version
 #' 2.5.  \url{http://CRAN.R-project.org/package=wordcloud}
 #' @examples
-#' \dontrun{
-#' 
 #' cloud(gadarianFit, 1)
-#' }
 #' @export
 cloud <- function(stmobj, topic=NULL, type=c("model", "documents"), documents, 
                   thresh=.9, max.words=100, ...) {
