@@ -35,6 +35,9 @@ This function is considerably less developed than
 splines and high degrees of freedom where possible.  Computes standard
 errors through the method of composition as in \code{\link{estimateEffect}}.
 }
+\examples{
+plotTopicLoess(gadarianFit, topics=1, covariate=gadarian$pid_rep)
+}
 \seealso{
 \code{\link{plot.estimateEffect}}
 }

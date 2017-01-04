@@ -18,6 +18,8 @@
 #' @param xlab X-label, default is "Covariate"
 #' @param ylab Y-label, default is "Topic Proportions"
 #' @seealso \code{\link{plot.estimateEffect}}
+#' @examples 
+#' plotTopicLoess(gadarianFit, topics=1, covariate=gadarian$pid_rep)
 #' @export
 plotTopicLoess <- function(model, topics, covariate, span=1.5, level=.95,
                            main="", xlab="Covariate", ylab="Topic Proportions"){
@@ -47,7 +49,7 @@ plotTopicLoess <- function(model, topics, covariate, span=1.5, level=.95,
   plot(0, 0,col="white", ylab=ylab, xlab=xlab, 
        main=main, xlim=range(covariate), ylim=c(min(low.ci), max(upp.ci)))
   
-  cols = rainbow(length(topics))
+  cols = grDevices::rainbow(length(topics))
   for(k in 1:K){
     lines(newdat$x, means[k,], col=cols[k])
     lines(newdat$x, low.ci[k,], col=cols[k], lty=2)

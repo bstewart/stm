@@ -20,7 +20,7 @@ stm.init <- function(documents, settings) {
     resetdocs <- lapply(documents, function(x) {
                         x[1, ] <- as.integer(x[1, ] - 1)
                         x})
-    mod <- lda.collapsed.gibbs.sampler(resetdocs, K, 1:V, 
+    mod <- lda::lda.collapsed.gibbs.sampler(resetdocs, K, 1:V, 
                                        num.iterations=nits, burnin=burnin, 
                                        alpha=alpha, eta=eta)
     

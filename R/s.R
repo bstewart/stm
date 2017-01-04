@@ -41,7 +41,7 @@ predict.s <- function (object, newx, ...)
     return(object)
   a <- c(list(x = newx), attributes(object)[c("degree", "knots", 
                                               "Boundary.knots", "intercept")])
-  do.call("bs", a)
+  do.call("splines::bs", a)
 }
 
 #' @export

@@ -71,7 +71,7 @@ readCorpus <- function(corpus, type=c("dtm", "ldac", "slam", "Matrix","txtorgvoc
          ldac = read.ldac(corpus),
          slam = read.slam(corpus),
          txtorgvocab = read.txtorg.vocab(corpus),
-         Matrix = read.slam(as.simple_triplet_matrix(corpus)))
+         Matrix = read.slam(slam::as.simple_triplet_matrix(corpus)))
 }
 
 read.ldac <- function(filename) {

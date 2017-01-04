@@ -32,6 +32,22 @@ Semantic coherence is a metric related to pointwise mutual information that was 
  
  This function is currently marked with the keyword internal because it does not have much error checking.
 }
+\examples{
+temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+meta<-temp$meta
+vocab<-temp$vocab
+docs<-temp$documents
+out <- prepDocuments(docs, vocab, meta)
+docs<-out$documents
+vocab<-out$vocab
+meta <-out$meta
+set.seed(02138)
+#maximum EM iterations set very low so example will run quickly.
+Run your models to convergence!
+mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta,
+               max.em.its=5)
+semanticCoherence(mod.out, docs)
+}
 \references{
 Mimno, D., Wallach, H. M., Talley, E., Leenders, M., & McCallum, A. (2011, July). 
 "Optimizing semantic coherence in topic models." In Proceedings of the Conference on Empirical Methods in 

@@ -46,8 +46,6 @@ rough measure for evidence in favor of a larger number of topics.'
 }
 \examples{
 
-\dontrun{
-
 #An example using the Gadarian data.  From Raw text to fitted model.
 temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
 meta<-temp$meta
@@ -58,9 +56,11 @@ docs<-out$documents
 vocab<-out$vocab
 meta <-out$meta
 set.seed(02138)
-mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta)
+#maximum EM iterations set very low so example will run quickly.  
+Run your models to convergence!
+mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta,
+               max.em.its=5)
 checkResiduals(mod.out, docs)
-}
 }
 \references{
 Taddy, M. 'On Estimation and Selection for Topic Models'.

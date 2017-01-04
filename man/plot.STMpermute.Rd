@@ -49,12 +49,12 @@ set.seed(02138)
 mod.out <- stm(documents, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta)
 summary(mod.out)
 prep <- estimateEffect(1:3 ~ treatment + s(pid_rep), mod.out, meta)
-plot.estimateEffect(prep, "treatment", model=mod.out,
-                    method="difference",cov.value1=1,cov.value2=0)
+plot(prep, "treatment", model=mod.out,
+     method="difference",cov.value1=1,cov.value2=0)
 test <- permutationTest(formula=~ treatment + s(pid_rep), stmobj=mod.out, 
                         treatment="treatment", nruns=25, documents=documents,
                         vocab=vocab,data=meta, stmverbose=FALSE)
-plot.STMpermute(test,2, xlab="Effect", ylab="Model Index", main="Topic 2 Placebo Test")
+plot(test,2, xlab="Effect", ylab="Model Index", main="Topic 2 Placebo Test")
 }
 }
 \seealso{

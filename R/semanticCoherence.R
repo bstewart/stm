@@ -30,6 +30,21 @@
 #'  http://goo.gl/0x0tHJ		
 #' @seealso \code{\link{searchK}} \code{\link{plot.searchK}} \code{\link{exclusivity}}
 #' @keywords internal
+#' @examples 
+#' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+#' meta<-temp$meta
+#' vocab<-temp$vocab
+#' docs<-temp$documents
+#' out <- prepDocuments(docs, vocab, meta)
+#' docs<-out$documents
+#' vocab<-out$vocab
+#' meta <-out$meta
+#' set.seed(02138)
+#' #maximum EM iterations set very low so example will run quickly.
+#' Run your models to convergence!
+#' mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta,
+#'                max.em.its=5)
+#' semanticCoherence(mod.out, docs)
 #' @export
 semanticCoherence <- function(model, documents, M=10){
   if(!inherits(model, "STM")) stop("model must be an STM object")
@@ -39,7 +54,7 @@ semanticCoherence <- function(model, documents, M=10){
     for(i in 1:length(model$beta$logbeta)){
       subset <- which(model$settings$covariates$betaindex==i)
       triplet <- doc.to.ijv(documents[subset])
-      mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model$settings$dim$V)
+      mat <- slam::simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model$settings$dim$V)
       result = result + semCoh1beta(mat, M, beta=model$beta$logbeta[[i]])*length(subset)
     }
     return(result/length(documents))
@@ -49,7 +64,7 @@ semanticCoherence <- function(model, documents, M=10){
     #Get the Top N Words
     top.words <- apply(beta, 1, order, decreasing=TRUE)[1:M,]
     triplet <- doc.to.ijv(documents)
-    mat <- simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model$settings$dim$V)
+    mat <- slam::simple_triplet_matrix(triplet$i, triplet$j,triplet$v, ncol=model$settings$dim$V)
     result = semCoh1beta(mat, M, beta=beta)
   return(result)
   }
@@ -64,7 +79,7 @@ semCoh1beta <- function(mat, M, beta){
   mat$v <- ifelse(mat$v>1, 1,mat$v) #binarize
   
   #do the cross product to get co-occurences
-  cross <- tcrossprod_simple_triplet_matrix(t(mat))
+  cross <- slam::tcrossprod_simple_triplet_matrix(t(mat))
   
   #create a list object with the renumbered words (so now it corresponds to the rows in the table)
   temp <- match(as.vector(top.words),wordlist)

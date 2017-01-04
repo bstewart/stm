@@ -58,19 +58,11 @@
 #' inspection.}
 #' @seealso \code{\link{plotRemoved}}
 #' @examples
-#' \dontrun{
-#' 
-#' head(gadarian)
-#' #Process the data for analysis.
 #' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
 #' meta<-temp$meta
 #' vocab<-temp$vocab
 #' docs<-temp$documents
 #' out <- prepDocuments(docs, vocab, meta)
-#' docs<-out$documents
-#' vocab<-out$vocab
-#' meta <-out$meta
-#' }
 #' @export
 prepDocuments <- function(documents, vocab, meta=NULL, 
                            lower.thresh=1, upper.thresh=Inf, 

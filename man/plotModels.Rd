@@ -39,15 +39,4 @@ user should check to make sure that sparsity is high enough (typically
 greater than .5), and then should select a model based on semantic
 coherence.
 }
-\examples{
-
-\dontrun{
-
-#storage is an object created by selectModel
-plotModels(storage)
-#this selects the first model from selectModel
-selected<-storage$runout[[1]]
-}
- 
-}
 

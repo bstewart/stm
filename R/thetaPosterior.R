@@ -52,12 +52,8 @@
 #' original \code{\link{stm}} call should be passed here.
 #' @seealso \code{\link{estimateEffect}}
 #' @examples
-#' 
-#' \dontrun{
-#' 
-#'   #global approximation
-#'   draws <- thetaPosterior(gadarianFit, nsims = 100)
-#' }
+#' #global approximation
+#' draws <- thetaPosterior(gadarianFit, nsims = 100)
 #' @export
 thetaPosterior <- function(model, nsims=100, type=c("Global", "Local"), documents=NULL) {
   type <- match.arg(type)
