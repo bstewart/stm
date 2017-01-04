@@ -24,16 +24,6 @@
 #' coherence.
 #' @param ylab Character string that is y axis title. This will be exclusivity.
 #' @param ...  Other plotting parameters.
-#' @examples
-#' 
-#' \dontrun{
-#' 
-#' #storage is an object created by selectModel
-#' plotModels(storage)
-#' #this selects the first model from selectModel
-#' selected<-storage$runout[[1]]
-#' }
-#'  
 #' @export
 plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:length(models$runout),...){
   if(!inherits(models, "selectModel")) {

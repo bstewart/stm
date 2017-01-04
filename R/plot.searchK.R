@@ -21,7 +21,7 @@
 #' K<-c(5,10,15) 
 #' kresult <- searchK(documents, vocab, K, prevalence=~treatment + s(pid_rep), data=meta)
 #' 
-#' plot.searchK(kresult)
+#' plot(kresult)
 #' }
 #'  
 #' @export

@@ -30,10 +30,7 @@
 #' @seealso \code{\link{prepDocuments}}
 #' @examples
 #' 
-#' \dontrun{
-#' 
 #' plotRemoved(poliblog5k.docs, lower.thresh=seq(from = 10, to = 1000, by = 10))
-#' }
 #' @export
 plotRemoved<- function(documents, lower.thresh){
   #sort so we know it is in order
