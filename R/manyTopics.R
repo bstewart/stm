@@ -124,7 +124,7 @@ paretosingle <- function(z) {
 #' #Please note that the way to extract a result for manyTopics is different from selectModel.
 #' }
 #' @export
-manyTopics <- function(documents, vocab, K, prevalence, content, 
+manyTopics <- function(documents, vocab, K, prevalence=NULL, content=NULL, 
                        data = NULL,max.em.its = 100, verbose = TRUE, 
                        init.type = "LDA", 
                        emtol = 1e-05, seed = NULL, runs = 50, 

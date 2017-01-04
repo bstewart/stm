@@ -38,11 +38,7 @@
 #' @seealso \code{\link{stm}} \code{\link{plot.STM}} 
 #' \code{\link{calcfrex}} \code{\link{js.estimate}} \code{\link{calcscore}} \code{\link{calclift}}
 #' @examples
-#' 
-#' \dontrun{
-#' 
 #' labelTopics(gadarianFit)
-#' }
 #' @export
 labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
   if(n<1) stop("n must be 1 or greater")

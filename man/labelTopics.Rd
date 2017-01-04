@@ -51,11 +51,7 @@ For more information on type Lift, see the R package \code{maptpx}
 or or the internal function \code{\link{calclift}}.
 }
 \examples{
-
-\dontrun{
-
 labelTopics(gadarianFit)
-}
 }
 \seealso{
 \code{\link{stm}} \code{\link{plot.STM}} 
