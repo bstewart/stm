@@ -36,8 +36,6 @@
 #' AISTATS 2012, JMLR W&CP 22
 #' @examples
 #' 
-#' \dontrun{
-#' 
 #' #An example using the Gadarian data.  From Raw text to fitted model.
 #' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
 #' meta<-temp$meta
@@ -48,9 +46,11 @@
 #' vocab<-out$vocab
 #' meta <-out$meta
 #' set.seed(02138)
-#' mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta)
+#' #maximum EM iterations set very low so example will run quickly.  
+#' Run your models to convergence!
+#' mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta,
+#'                max.em.its=5)
 #' checkResiduals(mod.out, docs)
-#' }
 #' @export
 checkResiduals <- function(stmobj, documents, tol=.01) {
   beta <- lapply(stmobj$beta$logbeta, exp)

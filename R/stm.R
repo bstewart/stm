@@ -472,7 +472,7 @@ stm.list <- function(documents, vocab, K,
         }
         xmat <- Matrix::Matrix(xmat)
       }
-      propSparse <- 1 - nnzero(xmat)/length(xmat) 
+      propSparse <- 1 - Matrix::nnzero(xmat)/length(xmat) 
       #if its less than 50% sparse or there are fewer than 50 columns, just convert to a standard matrix
       if(propSparse < .5 | ncol(xmat) < 50) {
         xmat <- as.matrix(xmat)

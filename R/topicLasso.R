@@ -114,7 +114,7 @@ topicLasso <- function(formula, data, stmobj=NULL, subset=NULL,
   
   varnames <- c(pvarnames, topiclabs)
   
-  linmod <- cv.glmnet(x=X,y=y, family=family, standardize=standardize, nfolds=nfolds, ...)
+  linmod <- glmnet::cv.glmnet(x=X,y=y, family=family, standardize=standardize, nfolds=nfolds, ...)
   loadings <- coef(linmod)[-1]
   
   posind <- which(loadings>0)

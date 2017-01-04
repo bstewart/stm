@@ -263,14 +263,14 @@ plot.STM <- function(x,
     negdiff <- diff*(diff< -thresh)
     posdiff <- diff*(diff>thresh)
     middiff <- diff*(diff <thresh & diff > -thresh)
-    colors <- rgb(posdiff+.75, .75, -negdiff+.75, maxColorValue=2)
+    colors <- grDevices::rgb(posdiff+.75, .75, -negdiff+.75, maxColorValue=2)
     text(diff, rand, model$vocab[words], cex=text.cex*scale, col=colors, family=family)
     
     #X-axis
     text(.75*min(diff), -length(diff), as.character(plabels[2]), 
-         col=rgb(.5,.5,1.6,2,maxColorValue=2), cex=2, pos=1)
+         col=grDevices::rgb(.5,.5,1.6,2,maxColorValue=2), cex=2, pos=1)
     text(.75*max(diff), -length(diff), as.character(plabels[1]), 
-         col=rgb(1.6,.5,.5,2,maxColorValue=2), cex=2, pos=1)
+         col=grDevices::rgb(1.6,.5,.5,2,maxColorValue=2), cex=2, pos=1)
     segments(min(diff),-.5*length(diff),max(diff),-.5*length(diff))
   }
   

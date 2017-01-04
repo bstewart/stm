@@ -63,12 +63,8 @@ Be careful to ensure that you have sufficient memory before attempting this
 with a large number of simulations, documents or topics.
 }
 \examples{
-
-\dontrun{
-
-  #global approximation
-  draws <- thetaPosterior(gadarianFit, nsims = 100)
-}
+#global approximation
+draws <- thetaPosterior(gadarianFit, nsims = 100)
 }
 \seealso{
 \code{\link{estimateEffect}}

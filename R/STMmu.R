@@ -26,7 +26,7 @@ opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL, 
   
   #Lasso
   if(mode=="L1") {
-    out <- glmnet(x=covar[,-1], y=lambda, family="mgaussian", alpha=enet)
+    out <- glmnet::glmnet(x=covar[,-1], y=lambda, family="mgaussian", alpha=enet)
     unpack <- unpack.glmnet(out, ic.k=ic.k)
     gamma <- rbind(unpack$intercept, unpack$coef)
     mu <- t(covar%*%gamma)

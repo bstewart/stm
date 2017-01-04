@@ -45,17 +45,9 @@
 #' @keywords package
 #' 
 #' @import Matrix
-#' @importFrom matrixStats logSumExp rowLogSumExps colLogSumExps
-#' @importFrom slam tcrossprod_simple_triplet_matrix simple_triplet_matrix as.simple_triplet_matrix
-#' @importFrom splines ns bs
-#' @importFrom lda lda.collapsed.gibbs.sampler
-#' @importFrom stringr str_wrap str_split str_detect str_replace str_replace_all
-#' @importFrom glmnet glmnet cv.glmnet
 #' @importFrom Rcpp evalCpp
-#' @importFrom grDevices rainbow rgb
 #' @importFrom graphics abline axis hist legend lines par plot points segments smoothScatter text title
 #' @importFrom stats aggregate as.formula coef cor cov lm loess median model.frame model.response model.matrix na.omit optim optimize pchisq predict quantile rbinom rgamma rnorm runif terms
-#' @importFrom utils packageVersion
 #' @useDynLib stm
 NULL
 

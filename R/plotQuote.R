@@ -39,7 +39,7 @@ plotQuote <- function(sentences, width=30, text.cex=1, maxwidth=NULL,
     if(!is.null(maxwidth)) {
       sentence <- strwrap(sentence, width=maxwidth)[1]
     }
-    out[[j]] <- str_wrap(sentence, width)
+    out[[j]] <- stringr::str_wrap(sentence, width)
     numlines[j] <- length(strsplit(out[[j]], "\n")[[1]])
   }
   

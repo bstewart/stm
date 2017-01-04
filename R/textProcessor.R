@@ -149,7 +149,7 @@ textProcessor <- function(documents, metadata=NULL,
   documents <- gsub('<.+?>', ' ', documents)
   }
   #remove non-visible characters
-  documents <- str_replace_all(documents,"[^[:graph:]]", " ")
+  documents <- stringr::str_replace_all(documents,"[^[:graph:]]", " ")
   
   if(onlycharacter){
   documents <- gsub("[^[:alnum:]///' ]", " ", documents)

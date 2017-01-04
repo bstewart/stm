@@ -76,19 +76,11 @@ meta data file if you have one.  You can quickly identify the documents
 using the code: \code{which(unlist(lapply(documents, length))==0)}.
 }
 \examples{
-\dontrun{
-
-head(gadarian)
-#Process the data for analysis.
 temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
 meta<-temp$meta
 vocab<-temp$vocab
 docs<-temp$documents
 out <- prepDocuments(docs, vocab, meta)
-docs<-out$documents
-vocab<-out$vocab
-meta <-out$meta
-}
 }
 \seealso{
 \code{\link{plotRemoved}}
