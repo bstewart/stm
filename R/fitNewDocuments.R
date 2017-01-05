@@ -126,6 +126,9 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
                             designMatrix=NULL, test=TRUE, 
                             verbose=TRUE) {
   
+  prevalencePrior <- match.arg(prevalencePrior)
+  contentPrior <- match.arg(contentPrior)
+  
   #Some checks from the stm() function
   if(!is.list(documents)) stop("documents must be a list, see documentation.")
   if(!all(unlist(lapply(documents, is.matrix)))) stop("Each list element in documents must be a matrix. See documentation.")
