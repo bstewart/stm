@@ -110,6 +110,8 @@ optimizeDocument <- function(document, eta, mu, beta, sigma=NULL,
       sigmaentropy <- sum(log(diag(sigobj)))
       siginv <- chol2inv(sigobj)
     }
+  } else {
+    siginv <- sigmainv #just renaming otherwise
   }
   if(any(beta < 0)) stop("Some entries of beta are negative.  Are you sure you
                          didn't pass the logged version of beta?")

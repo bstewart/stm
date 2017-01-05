@@ -164,7 +164,7 @@ textProcessor <- function(documents, metadata=NULL,
     if(verbose) cat("Converting to Lower Case... \n")
     #Convert to Lower case
     #(Note that this is slightly more complicated due to API change in tm)
-    if(packageVersion("tm") >= "0.6") {
+    if(utils::packageVersion("tm") >= "0.6") {
       txt <- tm::tm_map(txt, tm::content_transformer(tolower)) 
     } else {
       txt <- tm::tm_map(txt, tolower)
