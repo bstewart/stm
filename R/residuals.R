@@ -47,7 +47,7 @@
 #' meta <-out$meta
 #' set.seed(02138)
 #' #maximum EM iterations set very low so example will run quickly.  
-#' Run your models to convergence!
+#' #Run your models to convergence!
 #' mod.out <- stm(docs, vocab, 3, prevalence=~treatment + s(pid_rep), data=meta,
 #'                max.em.its=5)
 #' checkResiduals(mod.out, docs)
