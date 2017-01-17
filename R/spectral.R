@@ -9,7 +9,7 @@
 # any sort.
 # @param mat A Matrix sparse Document by Term matrix
 gram <- function(mat) {
-  nd <- rowSums(mat)
+  nd <- Matrix::rowSums(mat)
   mat <- mat[nd>=2,] #its undefined if we don't have docs of length 2
   nd <- nd[nd>=2]
   divisor <- nd*(nd-1)
@@ -17,7 +17,7 @@ gram <- function(mat) {
   #Htilde <- mat/sqrt(divisor)
   #Hhat <- diag(colSums(mat/divisor))
   #Q <- crossprod(Htilde) - Hhat
-  Q <- crossprod(mat/sqrt(divisor)) - diag(colSums(mat/divisor))
+  Q <- Matrix::crossprod(mat/sqrt(divisor)) - Matrix::diag(Matrix::colSums(mat/divisor))
   #if(min(Q)<0) Q@x[Q@x < 0 ] <- 0
   return(as.matrix(Q))
 }

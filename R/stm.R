@@ -189,6 +189,10 @@
 #' \item{\code{SpectralRP}}{A logical which when
 #' \code{TRUE} turns on the experimental random projections spectral
 #' initialization.} 
+#' \item{\code{maxV}}{For spectral initializations this will set the maximum
+#' number of words to be used in the initialization.  It uses the most frequent words
+#' first and then they are reintroduced following initialization.  This allows spectral
+#' to be used with a large V.}
 #' }
 #' 
 #' 
@@ -588,7 +592,7 @@ stm.list <- function(documents, vocab, K,
                   "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
-                  "recoverEG")
+                  "recoverEG", "maxV")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -617,6 +621,10 @@ stm.list <- function(documents, vocab, K,
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
       if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
       if(i=="recoverEG" & control[[i]]) settings$init$recoverEG <- control[[i]]
+      if(i=="maxV" & control[[i]]) {
+        settings$init$maxV <- control[[i]]
+        if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
+      } 
     }
   }
   
