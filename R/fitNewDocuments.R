@@ -292,6 +292,7 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
     if(verbose && i%%ctevery==0) cat(".")
   }
   lambda <- do.call(rbind, lambda)
+  lambda <- cbind(lambda,0)
   theta <- exp(lambda - row.lse(lambda))
   
   #Return the results.  Only use theta if they haven't
@@ -303,7 +304,7 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
                    mu=c(), sigma=c()) 
   if(returnPosterior) {
     toReturn$nu <- nu
-    toReturn$eta <- lambda
+    toReturn$eta <- lambda[,-ncol(lambda), drop=FALSE]
     toReturn$phi <- phi
     toReturn$bound <- bound
   }
