@@ -11,7 +11,8 @@ test_that("Test that stm works on a quanteda dfm", {
   stm_from_dfm <- stm(gadarian_dfm,
                       K = 3,
                       prevalence = ~treatment + s(pid_rep),
-                      data = docvars(gadarian_corpus))
+                      data = docvars(gadarian_corpus),
+                      max.em.its=2)
   expect_identical(class(stm_from_dfm), "STM")
 })
 
@@ -27,7 +28,8 @@ test_that("Test that stm works on a classic stm object structure", {
   meta <- out$meta
   set.seed(10012)
   stm_from_stmclassic <- 
-    stm(docs, vocab, 3, prevalence = ~treatment + s(pid_rep), data = meta)
+    stm(docs, vocab, 3, prevalence = ~treatment + s(pid_rep), data = meta,
+        max.em.its = 2)
   expect_identical(class(stm_from_stmclassic), "STM")
 })
 
