@@ -345,9 +345,9 @@ mod.out <- stm(out$documents, out$vocab, 3,
 
 #The same example using quanteda instead of tm via textProcessor()
 require(quanteda)
-gadarian_corpus <- corpus(gadarian, textField = "open.ended.response")
+gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
 gadarian_dfm <- dfm(gadarian_corpus, 
-                     ignoredFeatures = stopwords("english"),
+                     remove = stopwords("english"),
                      stem = TRUE)
                      
 #An example of restarting a model
