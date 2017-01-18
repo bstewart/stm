@@ -62,6 +62,7 @@ stm.init <- function(documents, settings) {
     if(mode=="Spectral") {
       keep <- NULL
       if(!is.null(maxV)) {
+        if(verbose) cat(sprintf("\t Using only %i most frequent terms during initialization...\n", maxV))
         keep <- order(wprob, decreasing=TRUE)[1:maxV]
         mat <- mat[,keep]
         wprob <- wprob[keep]

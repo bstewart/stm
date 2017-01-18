@@ -82,13 +82,17 @@
 #' The argument \code{init.type} allows the user to specify an intialization
 #' method.  The default uses collapsed gibbs sampling for the LDA model.  The
 #' choice \code{"Spectral"} provides a deterministic inialization using the
-#' spectral algorithm given in Arora et al 2013.  See Roberts, Stewart and
-#' Tingley (2014) for details and a comparison of different approaches.
+#' spectral algorithm given in Arora et al 2014.  See Roberts, Stewart and
+#' Tingley (2016) for details and a comparison of different approaches.
 #' Particularly when the number of documents is relatively large we highly
 #' recommend the Spectral algorithm which often performs extremely well.  Note
 #' that the random seed plays no role in the spectral initialization as it is
 #' completely deterministic (unless using the \code{K=0} or random projection
-#' settings).
+#' settings). When the vocab is larger than 10000 terms we use only the most
+#' frequent 10000 terms in creating the initialization.  This may case the 
+#' first step of the algorithm to have a very bad value of the objective function
+#' but it should quickly stabilize into a good place.  You can tweak the exact 
+#' number where this kicks in with the \code{maxV} argument inside control.
 #' 
 #' Specifying an integer greater than 1 for the argument \code{ngroups} causes
 #' the corpus to be broken into the specified number of groups.  Global updates
@@ -237,7 +241,7 @@
 #' environment.
 #' @param init.type The method of initialization.  Must be either Latent
 #' Dirichlet Allocation ("LDA"), "Random" or "Spectral".  See details for more
-#' info. If you want to replicate a previous result, see the argument
+#' info. If you want to replicate a previous result, see the argument.
 #' \code{seed}.
 #' @param seed Seed for the random number generator. \code{stm} saves the seed
 #' it uses on every run so that any result can be exactly reproduced.  When
@@ -307,15 +311,16 @@
 #' Neural Information Processing Systems Workshop on Topic Models: Computation,
 #' Application, and Evaluation. http://goo.gl/uHkXAQ
 #' 
-#' Roberts M., Stewart, B. and Airoldi, E. (2015) "A model of text for
-#' experimentation in the social sciences"
+#' Roberts M., Stewart, B. and Airoldi, E. (2016) "A model of text for
+#' experimentation in the social sciences" Journal of the American Statistical
+#' Association.
 #' 
 #' Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian,
 #' S., Albertson, B., et al. (2014). Structural topic models for open ended
 #' survey responses. American Journal of Political Science, 58(4), 1064-1082.
 #' http://goo.gl/0x0tHJ
 #' 
-#' Roberts, M., Stewart, B., & Tingley, D. (Forthcoming). "Navigating the Local
+#' Roberts, M., Stewart, B., & Tingley, D. (2016). "Navigating the Local
 #' Modes of Big Data: The Case of Topic Models. In Data Analytics in Social
 #' Science, Government, and Industry." New York: Cambridge University Press.
 #' @examples
@@ -560,6 +565,10 @@ stm.list <- function(documents, vocab, K,
                              s=.05, p=3000, d.group.size=2000, recoverEG=FALSE), 
                    seed=seed,
                    ngroups=ngroups)
+  if(init.type=="Spectral" & V > 10000) {
+    settings$init$maxV <- 10000
+  }
+  
   if(settings$gamma$mode=="L1") {
     #if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")
     if(ncol(xmat)<=2) stop("Cannot use L1 penalization in prevalence model with 2 or fewer covariates.")
