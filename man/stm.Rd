@@ -325,6 +325,10 @@ Defaults to 2000.}
 \item{\code{SpectralRP}}{A logical which when
 \code{TRUE} turns on the experimental random projections spectral
 initialization.} 
+\item{\code{maxV}}{For spectral initializations this will set the maximum
+number of words to be used in the initialization.  It uses the most frequent words
+first and then they are reintroduced following initialization.  This allows spectral
+to be used with a large V.}
 }
 }
 \examples{

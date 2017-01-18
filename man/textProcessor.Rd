@@ -17,8 +17,7 @@ textProcessor(documents, metadata = NULL, lowercase = TRUE,
 \item{documents}{The documents to be processed.  A character vector where
 each entry is the full text of a document.  If of length one it is assumed
 to be a filepath containing a directory where each file is a separate
-document. The \code{tm} package has a variety of extra readers for ingesting
-other file formats (\code{.doc, .pdf, .txt, .xml}).}
+.txt file.}
 
 \item{metadata}{Additional data about the documents.  Specifically a
 \code{data.frame} or \code{matrix} object with number of rows equal to the

@@ -3,9 +3,10 @@
 require(quanteda)
 
 test_that("Test that stm works on a quanteda dfm", {
-  gadarian_corpus <- corpus(gadarian, textField = "open.ended.response")
+  require(quanteda)
+  gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
   gadarian_dfm <- dfm(gadarian_corpus, 
-                      ignoredFeatures = stopwords("english"),
+                      remove = stopwords("english"),
                       stem = TRUE)
   set.seed(10012) # NYU :-)
   stm_from_dfm <- stm(gadarian_dfm,
