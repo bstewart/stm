@@ -12,8 +12,9 @@ opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL, 
   #Variational Linear Regression with a Gamma hyperprior
   if(mode=="Pooled") {
     gamma <- vector(mode="list",length=ncol(lambda))
+    Xcorr <- crossprod(X)
     for (i in 1:ncol(lambda)) {
-      gamma[[i]] <- vb.variational.reg(Y=lambda[,i], X=covar) 
+      gamma[[i]] <- vb.variational.reg(Y=lambda[,i], X=covar, Xcorr=Xcorr) 
     }
     gamma <- do.call(cbind,gamma)
     mu<- t(covar%*%gamma)
@@ -40,8 +41,8 @@ opt.mu <- function(lambda, mode=c("CTM","Pooled", "L1"), covar=NULL, enet=NULL, 
 #Variational Linear Regression with a Half-Cauchy hyperprior 
 # (Implementation based off the various LMM examples from Matt Wand)
 # This code is intended to be passed a Matrix object
-vb.variational.reg <- function(Y,X, b0=1, d0=1) {
-  Xcorr <- crossprod(X)
+vb.variational.reg <- function(Y,X, b0=1, d0=1, Xcorr=NULL) {
+  if(is.null(Xcorr)) Xcorr <- crossprod(X)
   XYcorr <- crossprod(X,Y) 
   
   an <- (1 + nrow(X))/2
