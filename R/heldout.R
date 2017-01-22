@@ -53,8 +53,8 @@ make.heldout <- function(documents, vocab, N=floor(.1*length(documents)),
   }
   missing <- list(index=index, docs=missing)
   #check the vocab
-  indices <- sort(unique(unlist(lapply(documents, "[", 1))))
-  
+  indices <- sort(unique(unlist(lapply(documents, "[",1,))))
+
   #all sorts of nonsense ensues if there is missingness
   if(length(indices)!=length(vocab)) {
     remove <- which(!(1:length(vocab)%in% indices))
