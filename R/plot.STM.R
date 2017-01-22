@@ -18,7 +18,8 @@
 #' words cluster on top of each other the user can either set the plot size to
 #' be larger or shrink the total number of words on the plot.  The vertical
 #' configuration of the words is random and thus can be rerun to produce
-#' different results each time. \code{hist} plots a histogram of the MAP
+#' different results each time. Note that \code{perspectives} plots do 
+#' not use any of the labeling options directly. \code{hist} plots a histogram of the MAP
 #' estimates of the document-topic loadings across all documents.  The median
 #' is also denoted by a dashed red line.
 #' 
@@ -35,7 +36,8 @@
 #' @param labeltype Determines which option of \code{"prob", "frex", "lift",
 #' "score"} is used for choosing the most important words.  See
 #' \code{\link{labelTopics}} for more detail.  Passing an argument to
-#' \code{custom.labels} will overide this.
+#' \code{custom.labels} will overide this. Note that this does not apply to
+#' \code{perspectives} type which always uses highest probability words.
 #' @param frexw If "frex" labeltype is used, this will be the frex weight.
 #' @param main Title to the plot
 #' @param xlim Range of the X-axis.
