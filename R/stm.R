@@ -154,6 +154,9 @@
 #'  When set to 2 (as by default) this results in AIC.  When set to log(n) 
 #'  (where n is the total number of documents in the corpus) this is equivalent to BIC.
 #'    Larger numbers will express a preference for sparser (simpler) models.}
+#' \item{\code{gamma.maxits}}{An integer indicating the maximum number of iterations
+#' that the prevalence regression variational algorithm can run before erroring out.
+#' Defaults to 1000.}
 #' \item{\code{nlambda}}{Controls the length of the regularization path when
 #' using L1 mode for content covariates.  Defaults to 500.  Note that glmnet
 #' relies heavily on warm starts and so a high number will often
@@ -271,8 +274,9 @@
 #' covariate model.  The default \code{Pooled} options uses Normal prior
 #' distributions with a topic-level pooled variance which is given a moderately
 #' regularizing half-cauchy(1,1) prior.  The alternative \code{L1} uses
-#' \code{glmnet} to estimate a grouped penalty between L1-L2.  See details
-#' below.
+#' \code{glmnet} to estimate a grouped penalty between L1-L2.  If your code is running
+#' slowly immediately after "Completed E-Step" appears, you may want to switch to the 
+#' \code{L1} option. See details below.  
 #' @param sigma.prior a scalar between 0 and 1 which defaults to 0.  This sets
 #' the strength of regularization towards a diagonalized covariance matrix.
 #' Setting the value above 0 can be useful if topics are becoming too highly
@@ -553,7 +557,8 @@ stm.list <- function(documents, vocab, K,
                    topicreportevery=reportevery,
                    convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol),
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels, formula=prevalence),
-                   gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1, ic.k=2),
+                   gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1, ic.k=2,
+                              maxits=1000),
                    sigma=list(prior=sigma.prior),
                    kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
                               fixedintercept=TRUE, mstep=list(tol=.001, maxit=3),
@@ -573,7 +578,8 @@ stm.list <- function(documents, vocab, K,
     #if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")
     if(ncol(xmat)<=2) stop("Cannot use L1 penalization in prevalence model with 2 or fewer covariates.")
   }
-  
+
+    
   ###
   # Fill in some implied arguments.
   ###
@@ -601,7 +607,7 @@ stm.list <- function(documents, vocab, K,
                   "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
-                  "recoverEG", "maxV")
+                  "recoverEG", "maxV", "gamma.maxits")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -633,7 +639,8 @@ stm.list <- function(documents, vocab, K,
       if(i=="maxV" & control[[i]]) {
         settings$init$maxV <- control[[i]]
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
-      } 
+      }
+      if(i=="gamma.maxits") settings$gamma$maxits <- control[[i]]
     }
   }
   
