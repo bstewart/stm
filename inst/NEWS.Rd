@@ -15,6 +15,8 @@
 \item Much of the documentation has been updated as has the vignette.
 \item Our wrapper s() for the splines package function bs() now has predict functions associated with it so it should work in contexts like lm()
 \item We have documented and exported all the metrics for searchK()
+\item We made a change in the spectral initialization which ensures that only the top 10000 (a modifiable default) words are used in the initialization.  This allows it to be used effectively with much larger vocab.
+\item Added a modifiable max iteration timeout error for the prevalence regression in stm.  This will only matter for people using covariate sets which are very, very large.
 }
 }
 \section{Version 1.1.6}{

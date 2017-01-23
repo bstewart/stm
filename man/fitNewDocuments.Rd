@@ -15,7 +15,8 @@ fitNewDocuments(model = NULL, documents = NULL, newData = NULL,
 \item{model}{the originally fit STM object.}
 
 \item{documents}{the new documents to be fit. These documents must be in the stm format and
-be numbered in the same way as the documents in the original model with the same dimension of vocabulary.}
+be numbered in the same way as the documents in the original model with the same dimension of vocabulary.
+See the \pkg{quanteda} feature \link[quanteda]{dfm_select} for a way to do this.}
 
 \item{newData}{the metadata for the prevalence prior which goes with the unseen documents. As in
 the original data this cannot have any missing data.}
