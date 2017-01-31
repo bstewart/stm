@@ -59,5 +59,5 @@ vocab <- mod$vocab
 doc.length <- as.integer(unlist(lapply(docs, function(x) sum(x[2,]))))
 term.frequency <- mod$settings$dim$wcounts$x
 f<-LDAvis::createJSON(phi=phi,theta=theta,doc.length=doc.length,vocab=vocab,term.frequency=term.frequency,lambda.step = lambda.step)
-LDAvis::serVis(f,out.dir=out.dir,open.browser=open.browser,as.gist=as.gist)
+LDAvis::serVis(f,out.dir=out.dir,open.browser=open.browser,as.gist=as.gist,R = R)
 }
