@@ -2,7 +2,7 @@ Package: stm
 Type: Package
 Title: Estimation of the Structural Topic Model
 Version: 1.2.0
-Date: 2017-01-31
+Date: 2017-02-09
 Author: Margaret Roberts [aut, cre], 
         Brandon Stewart [aut, cre],
         Dustin Tingley [aut, cre],
@@ -21,3 +21,4 @@ License: MIT + file LICENSE
 URL: http://structuraltopicmodel.com 
 BugReports: https://github.com/bstewart/stm/issues
 RoxygenNote: 5.0.1
+Remotes: kbenoit/quanteda
