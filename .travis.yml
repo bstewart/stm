@@ -19,7 +19,12 @@ r_binary_packages:
  - wordcloud
  - KernSmooth
  - NLP
- 
+r_github_packages:
+  - jimhester/covr
+
 env:
   global:
     - _R_CHECK_FORCE_SUGGESTS_=0
+
+after_success:
+  - Rscript -e 'library(covr);codecov()'

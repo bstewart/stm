@@ -1,5 +1,34 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.2.0}{
+\itemize{
+\item Thanks to efforts by Ken Benoit stm can now take a quanteda dfm object.
+\item Thanks to help from Chris Baker we are now using roxygen for our documentation.
+\item Jeffrey Arnold fixed a small bug in toLDAVis.  Thanks!
+\item Carsten Schwemmer helped us find a bug where plot.estimateEffect() didn't work when dplyr was loaded.  This is now fixed.
+\item In making the change to roxygen we unfortunately break backwards compatability.  The package's generic functions such as plot.estimateEffect() and plot.STM() can now only be called by plot() rather than by their full name.
+\item We document and export optimizeDocument which provides access to the document level E-step.
+\item We have documented and exported several of the labeling functions including calcfrex, calcscore, calclift and js.estimate.  These are marked with keyword internal because they don't have much error checking and most users will want labelTopics anyhow.  But they can be accessed with ? and are linked from labelTopics
+\item After much popular demand we have released a fitNewDocuments() function which will calculate topic proportions for documents not used to fit the models.  There are many different options here.
+\item estimateEffect now has a summary function which will make regression tables
+\item a number of the internals to plot.estimateEffect have been improved which should eliminate some edge case bugs.
+\item Much of the documentation has been updated as has the vignette.
+\item Our wrapper s() for the splines package function bs() now has predict functions associated with it so it should work in contexts like lm()
+\item We have documented and exported all the metrics for searchK()
+\item We made a change in the spectral initialization which ensures that only the top 10000 (a modifiable default) words are used in the initialization.  This allows it to be used effectively with much larger vocab.
+\item Added a modifiable max iteration timeout error for the prevalence regression in stm.  This will only matter for people using covariate sets which are very, very large.
+}
+}
+\section{Version 1.1.6}{
+\itemize{
+\item Added a new recovery algorithm used in spectral initialization from gradient descent to a more accurate and generally faster one based on quadratic programming.  This can be turned on by: control=list(recoverEG=FALSE).  Eventually we may change the default recovery method. Note: while this more
+accurately solves the actual problem, we've seen better results with the early stopping produced by
+exponential gradient not fully convering.  This has been confirmed by the Arora group as well.
+\item Clarified some of the documentation in textProcessor thanks to James Gibbon.
+\item Fixed a problem with registration of S3 methods for textProcessor()
+\item Added access to the information criterion parameter for L1 mode prevalence covariance in stm.  See the gamma.ic.k option in the control parameters of stm 
+}
+}
 \section{Version 1.1.5}{
 \itemize{
 \item searchK() can now be used with content covariates thanks to github user rosemm

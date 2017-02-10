@@ -14,13 +14,14 @@ stm.init <- function(documents, settings) {
   alpha <- settings$init$alpha 
   eta <- settings$init$eta 
   burnin <- settings$init$burnin 
-  
+  maxV <- settings$init$maxV
+    
   #Different Modes
   if(mode=="LDA") {
     resetdocs <- lapply(documents, function(x) {
                         x[1, ] <- as.integer(x[1, ] - 1)
                         x})
-    mod <- lda.collapsed.gibbs.sampler(resetdocs, K, 1:V, 
+    mod <- lda::lda.collapsed.gibbs.sampler(resetdocs, K, 1:V, 
                                        num.iterations=nits, burnin=burnin, 
                                        alpha=alpha, eta=eta)
     
@@ -54,20 +55,30 @@ stm.init <- function(documents, settings) {
     # (1) Prep the Gram matrix
     if(verbose) cat("\t Calculating the gram matrix...\n")
     docs <- doc.to.ijv(documents)
-    mat <- sparseMatrix(docs$i,docs$j, x=docs$v)
+    mat <- Matrix::sparseMatrix(docs$i,docs$j, x=docs$v)
     rm(docs)
-    wprob <- colSums(mat)
+    wprob <- Matrix::colSums(mat)
     wprob <- wprob/sum(wprob)
-    
     if(mode=="Spectral") {
+      keep <- NULL
+      if(!is.null(maxV)) {
+        if(verbose) cat(sprintf("\t Using only %i most frequent terms during initialization...\n", maxV))
+        keep <- order(wprob, decreasing=TRUE)[1:maxV]
+        mat <- mat[,keep]
+        wprob <- wprob[keep]
+      }
       Q <- gram(mat)
       #verify that there are no zeroes
-      keep <- NULL
       Qsums <- rowSums(Q)
+      
       if(any(Qsums==0)) {
         #if there are zeroes, we want to remove them for just the anchor word procedure.
         temp.remove <- which(Qsums==0)
-        keep <- which(Qsums!=0)
+        if(is.null(keep)) {
+         keep <- which(Qsums!=0)
+        } else {
+         keep <- keep[which(Qsums!=0)]
+        }
         Q <- Q[-temp.remove,-temp.remove]
         Qsums <- Qsums[-temp.remove]
         wprob <- wprob[-temp.remove]
@@ -91,15 +102,15 @@ stm.init <- function(documents, settings) {
     }
     # (3) recoverKL
     if(verbose) cat("\n\t Recovering initialization...\n \t")
-    beta <- recoverL2(Q, anchor, wprob, verbose=verbose)$A
+    beta <- recoverL2(Q, anchor, wprob, verbose=verbose, recoverEG=settings$init$recoverEG)$A
     
     if(!is.null(keep)) {
       #if there were zeroes, reintroduce them
-      #assign missing compoinents the machine double epsilon
-      #and renormalize just in case.
+      #add in a little noise here. essentially summed over the vocab
+      #it should only be .1% of the total.
       beta.new <- matrix(0, nrow=K, ncol=V)
       beta.new[,keep] <- beta
-      beta.new[,temp.remove] <- .Machine$double.eps 
+      beta.new <- beta.new + .001/V
       beta <- beta.new/rowSums(beta.new)  
       rm(beta.new)
     }

@@ -4,6 +4,34 @@
 #level but theoretically this could all be constructed as a cumulative
 #measure.  Still it would take an enormous document set for this to matter.
 # -BMS
+
+#' Plot documents, words and tokens removed at various word thresholds
+#' 
+#' A plot function which shows the results of using different thresholds in
+#' \code{prepDocuments} on the size of the corpus.
+#' 
+#' For a lower threshold, \code{prepDocuments} will drop words which appear in
+#' fewer than that number of documents, and remove documents which contain no
+#' more words. This function allows the user to pass a vector of lower
+#' thresholds and observe how \code{prepDocuments} will handle each threshold.
+#' This function produces three plots, showing the number of words, the number
+#' of documents, and the total number of tokens removed as a function of
+#' threshold values. A dashed red line is plotted at the total number of
+#' documents, words and tokens respectively.
+#' 
+#' @param documents The documents to be used for the stm model
+#' @param lower.thresh A vector of integers, each of which will be tested as a
+#' lower threshold for the prepDocuments function.
+#' @return Invisibly returns a list of \item{lower.thresh}{The sorted threshold
+#' values} \item{ndocs}{The number of documents dropped for each value of the
+#' lower threshold} \item{nwords}{The number of entries of the vocab dropped
+#' for each value of the lower threshold.} \item{ntokens}{The number of tokens
+#' dropped for each value of the lower threshold.}
+#' @seealso \code{\link{prepDocuments}}
+#' @examples
+#' 
+#' plotRemoved(poliblog5k.docs, lower.thresh=seq(from = 10, to = 1000, by = 10))
+#' @export
 plotRemoved<- function(documents, lower.thresh){
   #sort so we know it is in order
   lower.thresh <- sort(lower.thresh)

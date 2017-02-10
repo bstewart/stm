@@ -40,7 +40,7 @@ plotContinuous <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
   if (is.null(ylab)) ylab <- "Expected Topic Proportion"
   if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main,
                            xlab=xlab, ylab=ylab,  ...)
-  if (is.null(linecol)) cols = rainbow(length(topics))
+  if (is.null(linecol)) cols = grDevices::rainbow(length(topics))
   if (!is.null(linecol)) cols=linecol
 
   #Plot everything
@@ -125,7 +125,7 @@ plotPointEstimate <- function(prep,covariate,topics, cdata, cmat, simbetas, offs
     for(j in 1:length(topics)){
       points(means[[j]][i], it, pch=16)
       lines(c(cis[[j]][1,i],cis[[j]][2,i]),c(it,it))
-      axis(2,at=it, labels=str_wrap(labels[lab],width=width),las=1, cex=.25, tick=F, pos=cis[[j]][1,i])
+      axis(2,at=it, labels=stringr::str_wrap(labels[lab],width=width),las=1, cex=.25, tick=F, pos=cis[[j]][1,i])
       it = it-1
       lab = lab+1
     }
@@ -189,7 +189,7 @@ plotDifference <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
   for(i in 1:length(topics)){
     points(means[[i]], it, pch=16)
     lines(c(cis[[i]][1],cis[[i]][2]),c(it,it))
-    axis(2,at=it, labels=str_wrap(labels[i],width=width),las=1, cex=.25, tick=F, pos=cis[[i]][1])
+    axis(2,at=it, labels=stringr::str_wrap(labels[i],width=width),las=1, cex=.25, tick=F, pos=cis[[i]][1])
     it = it-1
   }
   return(invisible(list(topics=topics, means=means, cis=cis, labels=labels)))

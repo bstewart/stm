@@ -98,7 +98,7 @@ mnreg <- function(beta.ss,settings) {
     #keep retrying glmnet until it works
     mod <- NULL
     while(is.null(mod)) {
-      mod <- tryCatch(glmnet(x=covar, y=counts[[i]], family="poisson", 
+      mod <- tryCatch(glmnet::glmnet(x=covar, y=counts[[i]], family="poisson", 
                              offset=offset2, standardize=FALSE,
                              intercept=is.null(m), 
                              lambda.min.ratio=lambda.min.ratio,

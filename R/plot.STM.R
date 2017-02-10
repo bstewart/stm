@@ -1,5 +1,79 @@
-#Functions for plotting STM objects
-
+#' Functions for plotting STM objects
+#' 
+#' Produces one of four types of plots for an STM object.  The default option
+#' \code{"summary"} prints topic words with their corpus frequency.
+#' \code{"labels"} is for easy printing of tables of indicative words for each
+#' topic.  \code{"perspectives"} depicts differences between two topics,
+#' content covariates or combinations. \code{"hist"} creates a histogram of the
+#' expected distribution of topic proportions across the documents.
+#' 
+#' The function can produce three types of plots which summarize an STM object
+#' which is chosen by the argument \code{type}.  \code{summary} produces a plot
+#' which displays the topics ordered by their expected frequency across the
+#' corpus.  \code{labels} plots the top words selected according to the chosen
+#' criteria for each selected topics.  \code{perspectives} plots two topic or
+#' topic-covariate combinations.  Words are sized proportional to their use
+#' within the plotted topic-covariate combinations and oriented along the
+#' X-axis based on how much they favor one of the two configurations.  If the
+#' words cluster on top of each other the user can either set the plot size to
+#' be larger or shrink the total number of words on the plot.  The vertical
+#' configuration of the words is random and thus can be rerun to produce
+#' different results each time. Note that \code{perspectives} plots do 
+#' not use any of the labeling options directly. \code{hist} plots a histogram of the MAP
+#' estimates of the document-topic loadings across all documents.  The median
+#' is also denoted by a dashed red line.
+#' 
+#' @param x Model output from stm.
+#' @param type Sets the desired type of plot.  See details for more
+#' information.
+#' @param n Sets the number of words used to label each topic.  In perspective
+#' plots it approximately sets the total number of words in the plot.  The
+#' defaults are 3, 20 and 25 for \code{summary}, \code{labels} and
+#' \code{perspectives} respectively.  n must be greater than or equal to 2
+#' @param topics Vector of topics to display.  For plot perspectives this must
+#' be a vector of length one or two. For the other two types it defaults to all
+#' topics.
+#' @param labeltype Determines which option of \code{"prob", "frex", "lift",
+#' "score"} is used for choosing the most important words.  See
+#' \code{\link{labelTopics}} for more detail.  Passing an argument to
+#' \code{custom.labels} will overide this. Note that this does not apply to
+#' \code{perspectives} type which always uses highest probability words.
+#' @param frexw If "frex" labeltype is used, this will be the frex weight.
+#' @param main Title to the plot
+#' @param xlim Range of the X-axis.
+#' @param ylim Range of the Y-axis.
+#' @param xlab Labels for the X-axis.  For perspective plots, use
+#' \code{plabels} instead.
+#' @param family The Font family.  Most of the time the user will not need to
+#' specify this but if using other character sets can be useful see \link{par}.
+#' @param width Sets the width in number of characters used for string wrapping
+#' in type \code{"labels"}
+#' @param covarlevels A vector of length one or length two which contains the
+#' levels of the content covariate to be used in perspective plots.
+#' @param plabels This option can be used to override the default labels in the
+#' perspective plot that appear along the x-axis.  It should be a character
+#' vector of length two which has the left hand side label first.
+#' @param text.cex Controls the scaling constant on text size.
+#' @param custom.labels A vector of custom labels if labeltype is equal to
+#' "custom".
+#' @param topic.names A vector of custom topic names.  Defaults to "Topic #: ".
+#' @param \dots Additional parameters passed to ploting functions.
+#' @seealso \code{\link{plotQuote}}, \code{\link{plot.topicCorr}}
+#' @references Roberts, Margaret E., Brandon M. Stewart, Dustin Tingley,
+#' Christopher Lucas, Jetson Leder-Luis, Shana Kushner Gadarian, Bethany
+#' Albertson, and David G. Rand.  "Structural Topic Models for Open-Ended
+#' Survey Responses." American Journal of Political Science 58, no 4 (2014):
+#' 1064-1082.
+#' @examples
+#' \dontrun{
+#' 
+#' #Examples with the Gadarian Data
+#' plot(gadarianFit)
+#' plot(gadarianFit,type="labels")
+#' plot(gadarianFit, type="perspectives", topics=c(1,2))
+#' plot(gadarianFit,type="hist")
+#' }
+#' @export
 plot.STM <- function(x, 
                      type=c("summary", "labels", "perspectives", "hist"),
                      n=NULL, topics=NULL,
@@ -191,14 +265,14 @@ plot.STM <- function(x,
     negdiff <- diff*(diff< -thresh)
     posdiff <- diff*(diff>thresh)
     middiff <- diff*(diff <thresh & diff > -thresh)
-    colors <- rgb(posdiff+.75, .75, -negdiff+.75, maxColorValue=2)
+    colors <- grDevices::rgb(posdiff+.75, .75, -negdiff+.75, maxColorValue=2)
     text(diff, rand, model$vocab[words], cex=text.cex*scale, col=colors, family=family)
     
     #X-axis
     text(.75*min(diff), -length(diff), as.character(plabels[2]), 
-         col=rgb(.5,.5,1.6,2,maxColorValue=2), cex=2, pos=1)
+         col=grDevices::rgb(.5,.5,1.6,2,maxColorValue=2), cex=2, pos=1)
     text(.75*max(diff), -length(diff), as.character(plabels[1]), 
-         col=rgb(1.6,.5,.5,2,maxColorValue=2), cex=2, pos=1)
+         col=grDevices::rgb(1.6,.5,.5,2,maxColorValue=2), cex=2, pos=1)
     segments(min(diff),-.5*length(diff),max(diff),-.5*length(diff))
   }
   
@@ -243,6 +317,3 @@ plot.STM <- function(x,
     par(oldpar)
   }
 }
-
-  
-        

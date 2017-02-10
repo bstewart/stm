@@ -31,7 +31,137 @@
 #family: font family
 #custom.labels: vector of custom labels if labeltype="custom"
 
-
+#' Plot effect of covariates on topics
+#' 
+#' Plots the effect of a covariate on a set of topics selected by the user.
+#' Different effect types available depending on type of covariate. Before
+#' running this, the user should run a function to simulate the necessary
+#' confidence intervals.  See \code{\link{estimateEffect}}.
+#' 
+#' 
+#' @param x Output of estimateEffect, which calculates simulated betas for
+#' plotting.
+#' @param covariate String of the name of the main covariate of interest. Must
+#' be enclosed in quotes.  All other covariates within the formula specified in
+#' estimateEffect will be kept at their median.
+#' @param model Model output, only necessary if labeltype is "prob", "frex",
+#' "score", or "lift".  Models with more than one spline cannot be used for
+#' plot.estimateEffect.
+#' @param topics Topics to plot.
+#' @param method Method used for plotting.  "pointestimate" estimates mean
+#' topic proportions for each value of the covariate.  "difference" estimates
+#' the mean difference in topic proportions for two different values of the
+#' covariate (cov.value1 and cov.value2 must be specified).  "continuous"
+#' estimates how topic proportions vary over the support of a continuous
+#' covariate.
+#' @param cov.value1 For method "difference", the value or set of values of
+#' interest at which to set the covariate. In the case of calculating a
+#' treatment/control contrast, set the treatment to cov.value1.
+#' @param cov.value2 For method "difference", the value or set of values which
+#' will be set as the comparison group.  cov.value1 and cov.value2 must be
+#' vectors of the same length.
+#' @param moderator When two terms are interacted and one variable in the
+#' interaction is the covariate of interest, the user can specify the value of
+#' the interaction with moderator.value, and the name of the moderator with
+#' moderator.
+#' @param moderator.value When two terms are interacted and one variable in the
+#' interaction is the covariate of interest, the user can specify the value of
+#' the interaction term.
+#' @param npoints Number of unique points to use for simulation along the
+#' support of a continuous covariate.  For method "continuous" only.
+#' @param nsims Number of simulations for estimation.
+#' @param n Number of words to print if "prob", "score", "lift", or "frex" is
+#' chosen.
+#' @param ci.level Confidence level for confidence intervals.
+#' @param frexw If "frex" labeltype is used, this will be the frex weight.
+#' @param add Logical parameter for whether the line should be added to the
+#' plot, or a new plot should be drawn.
+#' @param linecol For continuous covariates only.  A vector that specifies the
+#' colors of the lines within the plot.  If NULL, then colors will be randomly
+#' generated.
+#' @param verbose.labels For method "difference" -- verboselabels will specify
+#' the comparison covariate values of the covariate on the plot.
+#' @param xlim Vector of x axis minimum and maximum values.
+#' @param ylim Vector of y axis minimum and maximum values.
+#' @param main Character string that is plot title.
+#' @param printlegend Whether to plot a topic legend in the case of a
+#' continuous covariate.
+#' @param labeltype Determines the labeltype for the topics.  The default is
+#' "number" which prints the topic number.  Other options are "prob", which
+#' prints the highest probability words, "score", "lift", and "frex", from
+#' labeltopics (see labeltopics() for more details).  The user can also select
+#' "custom" for custom labels, which should be inputted under custom.labels.
+#' Labels appear in the legend for continous covariates.
+#' @param xlab Character string that is x axis title.
+#' @param ylab Character string that is y axis title.
+#' @param width Number that specifies width of the character string.  Smaller
+#' numbers will have smaller-width labels.  Default is 25.
+#' @param custom.labels A vector of custom labels if labeltype is equal to
+#' "custom".
+#' @param family Font family.
+#' @param ...  Other plotting parameters
+#' @return Values returned invisibly will depend on the method
+#'  
+#' For pointestimate: 
+#' \item{uvals}{Values of the covariate at which means and ci's
+#' were evaluated.} 
+#' \item{topics}{Topics for which means and ci's were
+#' evaluated.} 
+#' \item{means}{For each topic, means for each unique value.}
+#' \item{cis}{For each topic, confidence intervals for each unique value.}
+#' \item{labels}{Labels for each topic and unique value.}
+#' 
+#' For difference: 
+#' \item{topics}{Topics for which difference in means and ci's
+#' were evaluated} 
+#' \item{means}{For each topic, difference in means.}
+#' \item{cis}{For each topic, confidence intervals for difference in means.}
+#' \item{labels}{Labels for each topic.}
+#' 
+#' For continuous: 
+#' \item{x}{Individual values of the covariate at which means
+#' and ci's were evaluated.} 
+#' \item{topics}{Topics for which means and ci's
+#' were evaluated} 
+#' \item{means }{For each topic and each x, means.} 
+#' \item{cis}{For each topic and each x, confidence intervals for difference in means.}
+#' \item{labels}{Labels for each topic.}
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' 
+#' prep <- estimateEffect(1:3 ~ treatment, gadarianFit, gadarian)
+#' plot(prep, "treatment", model=gadarianFit,
+#' method="pointestimate")
+#' plot(prep, "treatment", model=gadarianFit,
+#' method="difference",cov.value1=1,cov.value2=0)
+#' 
+#' #If the covariate were a binary factor, 
+#' #the factor labels can be used to  
+#' #specify the values of cov.value1 (e.g., cov.value1="treat"). 
+#' 
+#' # String variables must be turned to factors prior to plotting. 
+#' #If you see this error, Error in rep.int(c(1, numeric(n)), n - 1L) : 
+#' # invalid 'times' value, then you likely have not done this.
+#' 
+#' #Example of binary times binary interaction
+#' gadarian$binaryvar <- sample(c(0,1), nrow(gadarian), replace=T)
+#' temp <- textProcessor(gadarian$open.ended.response,metadata=gadarian)
+#' out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
+#' stm1 <- stm(out$documents, out$vocab, 3, prevalence=~treatment*binaryvar,
+#'  data=gadarian)
+#' prep <- estimateEffect(c(2) ~ treatment*binaryvar, stmobj=stm1,
+#' metadata=gadarian)
+#' 
+#' par(mfrow=c(1,2))
+#' plot(prep, "treatment", method="pointestimate",
+#' cov.value1=1, cov.value2=0, xlim=c(-1,1), moderator="binaryvar", moderator.value=1)
+#' plot(prep, "treatment", method="pointestimate",
+#' cov.value1=1, cov.value2=0, xlim=c(-1,1), moderator="binaryvar",
+#' moderator.value=0)
+#' }
+#' @export 
 plot.estimateEffect <- function(x, covariate, model=NULL,
                                 topics=x$topics,
                                 method="pointestimate",
