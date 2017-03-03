@@ -362,7 +362,7 @@ plotQuote(thoughts20, width = 30, main = "Topic 20")
 Estimating the relationship between metadata and topics is a core feature of the \pkg{STM} package. These relationships can also play a key role in validating the topic model's usefulness \citep{grimmer2010bayesian,grimmer2013text}. While \code{stm} estimates the relationship for the $K-1$ simplex, the workhorse function for extracting the relationships and associated uncertainty on all $K$ topics is  \code{estimateEffect}. This function simulates a set of parameters which can then be plotted (which we discuss in great detail below). Typically, users will pass the same model of topical prevalence used in estimating the STM to the \code{estimateEffect} function. The syntax of the \code{estimateEffect} function is designed so users specify the set of topics they wish to use for estimation, and then a formula for metadata of interest. Different estimation strategies and standard plot design features can be used by calling the \code{plot.estimateEffect} function.
 
 
-\code{estimateEffect} can calculate uncertainty in several ways. The default is ``global'', which will incorporate estimation uncertainty of the topic proportions into the uncertainty estimates using the method of composition. If users do not propagate the full amount of uncertainty, e.g., in order to speed up computational time, they can choose \code{uncertainty = "None"}, which will result in narrower confidence intervals because it will not include the additional estimation uncertainty.
+\code{estimateEffect} can calculate uncertainty in several ways. The default is ``Global'', which will incorporate estimation uncertainty of the topic proportions into the uncertainty estimates using the method of composition. If users do not propagate the full amount of uncertainty, e.g., in order to speed up computational time, they can choose \code{uncertainty = "None"}, which will result in narrower confidence intervals because it will not include the additional estimation uncertainty.
 
 
 
@@ -482,13 +482,15 @@ plot(poliblogPrevFit, type = "perspectives", topics = c(12, 20))
 
 \subsubsection{Plotting covariate interactions}
 
-Another modification that is possible in this framework is to allow for interactions between covariates such that one variable may ``moderate'' the effect of another variable. In this example, we re-estimated the STM to allow for an interaction between day (entered linearly) and ratings. Then in \code{estimateEffect()} we include the same interaction. This allows us in \code{plot.estimateEffect} to have this interaction plotted. We display the results in Figure~\ref{fig:spline2} for topic 20 (Bush administration). We observe that conservatives never wrote much about this topic, whereas liberals discussed this topic a great deal, but over time the topic diminished in salience.\footnote{Note that the ability to plot interactions only supports interactions with a binary effect modification covariate and does not support interactions with a spline.}
+Another modification that is possible in this framework is to allow for interactions between covariates such that one variable may ``moderate'' the effect of another variable. In this example, we re-estimated the STM to allow for an interaction between day (entered linearly) and ratings. Then in \code{estimateEffect()} we include the same interaction. This allows us in \code{plot.estimateEffect} to have this interaction plotted. We display the results in Figure~\ref{fig:spline2} for topic 20 (Bush administration). We observe that conservatives never wrote much about this topic, whereas liberals discussed this topic a great deal, but over time the topic diminished in salience.
 
 <<eval=FALSE>>=
 poliblogInteraction <- stm(out$documents, out$vocab, K = 20,
   prevalence =~ rating * day, max.em.its = 75,
   data = out$meta, init.type = "Spectral")
 @
+
+We have chosen to enter the day variable here linearly for simplicity; however, we note that you can use the software to estimate interactions with non-linear varaibles such as splines.  However, \code{plot.estimateEffect} only supports interactions with at least one binary effect modification covariate.
 
 \begin{figure}
 \begin{center}
