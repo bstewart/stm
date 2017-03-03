@@ -7,11 +7,11 @@
 \title{Gadarian and Albertson data}
 \format{A data frame with 351 observations on the following 3 variables.
 \describe{ 
-\item{\code{MetaID"}}{A numeric vector containing identification
+\item{\code{MetaID}}{A numeric vector containing identification
 numbers; not used for analysis} 
 \item{\code{treatment}}{A numeric vector
 indicating treatment condition} 
-\item{\code{pid_rep"}}{A numeric vector of
+\item{\code{pid_rep}}{A numeric vector of
 party identification} 
 \item{\code{open.ended.response}}{A character vector
 of the subject's open ended response} 
