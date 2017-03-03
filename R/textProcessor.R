@@ -37,7 +37,8 @@
 #' @aliases textProcessor print.textProcessor head.textProcessor
 #' summary.textProcessor
 #' @param documents The documents to be processed.  A character vector where
-#' each entry is the full text of a document.  If of length one it is assumed
+#' each entry is the full text of a document (if passed as a different type
+#' it will attempt to convert to a character vector).  If of length one it is assumed
 #' to be a filepath containing a directory where each file is a separate
 #' .txt file.
 #' @param metadata Additional data about the documents.  Specifically a

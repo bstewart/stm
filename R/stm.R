@@ -525,6 +525,7 @@ stm.list <- function(documents, vocab, K,
     } else {
       yvar <- as.factor(content)
     }
+    if(any(is.na(yvar))) stop("Your content covariate contains missing values.  All values of the content covariate must be observed.")
     yvarlevels <- levels(yvar)
     betaindex <- as.numeric(yvar)
   } else{

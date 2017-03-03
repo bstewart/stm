@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.2.1}{
+\itemize{
+\item Small updates to the documentation and vignette.
+}
+}
 \section{Version 1.2.0}{
 \itemize{
 \item Thanks to efforts by Ken Benoit stm can now take a quanteda dfm object.
