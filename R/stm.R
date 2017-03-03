@@ -340,11 +340,14 @@
 #'                prevalence=~treatment + s(pid_rep), data=out$meta)
 #' 
 #' #The same example using quanteda instead of tm via textProcessor()
+#' #Note this example works with quanteda version 0.9.9-31 and later
 #' require(quanteda)
 #' gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
 #' gadarian_dfm <- dfm(gadarian_corpus, 
 #'                      remove = stopwords("english"),
 #'                      stem = TRUE)
+#' stm_from_dfm <- stm(gadarian_dfm, K = 3, prevalence = ~treatment + s(pid_rep),
+#'                     data = docvars(gadarian_corpus))
 #'                      
 #' #An example of restarting a model
 #' mod.out <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
