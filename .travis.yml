@@ -22,6 +22,15 @@ r_binary_packages:
  - wordcloud
  - KernSmooth
  - NLP
+ - devtools
+ - quanteda
+ - roxygen
+ - Rtsne
+ - data.table
+ - quadprog
+ - LDAvis
+ - geometry
+
 r_github_packages:
   - jimhester/covr
 
