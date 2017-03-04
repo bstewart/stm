@@ -29,6 +29,7 @@ r_binary_packages:
 
 r_github_packages:
   - jimhester/covr
+  - kbenoit/quanteda
 
 env:
   global:
