@@ -48,7 +48,7 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom graphics abline axis hist legend lines par plot points segments smoothScatter text title
 #' @importFrom stats aggregate as.formula coef cor cov lm loess median model.frame model.response model.matrix na.omit optim optimize pchisq predict quantile rbinom rgamma rnorm runif terms
-#' @useDynLib stm
+#' @useDynLib stm, .registration = TRUE
 NULL
 
 #' Gadarian and Albertson data

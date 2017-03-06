@@ -1,4 +1,7 @@
 language: r
+r:
+  - release
+  - devel
 sudo: required
 warnings_are_errors: true
 r_build_args: --resave-data --compact-vignettes=gs+qpdf
@@ -19,8 +22,14 @@ r_binary_packages:
  - wordcloud
  - KernSmooth
  - NLP
+ - devtools
+ - data.table
+ - quadprog
+ - geometry
+
 r_github_packages:
   - jimhester/covr
+  - kbenoit/quanteda
 
 env:
   global:

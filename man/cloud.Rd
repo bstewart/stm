@@ -49,7 +49,7 @@ cloud(gadarianFit, 1)
 }
 \references{
 Ian Fellows (2014). wordcloud: Word Clouds. R package version
-2.5.  \url{http://CRAN.R-project.org/package=wordcloud}
+2.5.  \url{https://cran.r-project.org/package=wordcloud}
 }
 \seealso{
 \code{\link{plot.STM}}
