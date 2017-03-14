@@ -611,7 +611,7 @@ stm.list <- function(documents, vocab, K,
                   "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
-                  "recoverEG", "maxV", "gamma.maxits")
+                  "recoverEG", "maxV", "gamma.maxits", "model.init")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -645,6 +645,12 @@ stm.list <- function(documents, vocab, K,
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
       }
       if(i=="gamma.maxits") settings$gamma$maxits <- control[[i]]
+      if(i=="model.init") {
+        #change the init procedure to random
+        settings$init$mode <- "Random"
+        #copy in the model to be used
+        settings$init$beta <- beta
+      }
     }
   }
   

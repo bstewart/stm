@@ -21,6 +21,13 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
     sigma <- model$sigma
     beta <- list(beta=model$beta)
     if(!is.null(model$kappa)) beta$kappa <- model$kappa
+    
+    #Temporary feature for fixed initialization 
+    if(!is.null(settings$init$beta)) {
+      #if there was a model passed, unlog and overwrite it.
+      beta <- list(beta=lapply(model$beta$logbeta, exp))
+    }
+    
     lambda <- model$lambda
     convergence <- NULL 
     #discard the old object
