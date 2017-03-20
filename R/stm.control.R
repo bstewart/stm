@@ -25,7 +25,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
     #Temporary feature for fixed initialization 
     if(!is.null(settings$init$beta)) {
       #if there was a model passed, unlog and overwrite it.
-      beta <- list(beta=lapply(model$beta$logbeta, exp))
+      beta <- list(beta=lapply(settings$init$beta, exp))
     }
     
     lambda <- model$lambda

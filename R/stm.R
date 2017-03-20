@@ -638,9 +638,9 @@ stm.list <- function(documents, vocab, K,
       if(i=="rp.s")  settings$init$s <- control[[i]]
       if(i=="rp.p")  settings$init$p <- control[[i]]
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
-      if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
-      if(i=="recoverEG" & control[[i]]) settings$init$recoverEG <- control[[i]]
-      if(i=="maxV" & control[[i]]) {
+      if(i=="SpectralRP" && control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
+      if(i=="recoverEG" && control[[i]]) settings$init$recoverEG <- control[[i]]
+      if(i=="maxV" && control[[i]]) {
         settings$init$maxV <- control[[i]]
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
       }
@@ -649,7 +649,7 @@ stm.list <- function(documents, vocab, K,
         #change the init procedure to random
         settings$init$mode <- "Random"
         #copy in the model to be used
-        settings$init$beta <- beta
+        settings$init$beta <- control[[i]]
       }
     }
   }
