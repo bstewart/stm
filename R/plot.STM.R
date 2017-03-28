@@ -142,7 +142,7 @@ plot.STM <- function(x,
          ylab=ylab, xlab=xlab, ...)
     for(i in 1:length(invrank)) {
       lines(c(0,frequency[invrank[i]]), c(i, i))
-      text(frequency[invrank[i]]+.01, i , lab[invrank[i]],family=family,pos=4, cex=text.cex)
+      text(frequency[invrank[i]]+ min(2*max(frequency), 1)/100, i , lab[invrank[i]],family=family,pos=4, cex=text.cex)
     }
   }
   
