@@ -571,7 +571,7 @@ stm.list <- function(documents, vocab, K,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
-                             s=.05, p=3000, d.group.size=2000, recoverEG=FALSE), 
+                             s=.05, p=3000, d.group.size=2000, recoverEG=TRUE), 
                    seed=seed,
                    ngroups=ngroups)
   if(init.type=="Spectral" & V > 10000) {

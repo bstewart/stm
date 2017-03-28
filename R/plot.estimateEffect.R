@@ -164,7 +164,7 @@
 #' @export 
 plot.estimateEffect <- function(x, covariate, model=NULL,
                                 topics=x$topics,
-                                method="pointestimate",
+                                method=c("pointestimate", "difference","continuous"),
                                 cov.value1=NULL, cov.value2=NULL,
                                 moderator=NULL, moderator.value=NULL,
                                 npoints=100, nsims=100, ci.level=.95,
@@ -174,7 +174,11 @@ plot.estimateEffect <- function(x, covariate, model=NULL,
                                 add=F, linecol=NULL, width=25,
                                 verbose.labels=T, family=NULL,
                                 custom.labels=NULL,...){
-
+  
+  method <- match.arg(method)
+  if(method=="difference" && (is.null(cov.value1) | is.null(cov.value2))) {
+    stop("For method='difference' both cov.value1 and cov.value2 must be specified.")
+  }
   #Produce cdata (data in original form) and
   #cmatrix (data in design matrix form)
   cthis <- produce_cmatrix(prep=x, covariate=covariate, method=method,

@@ -4,12 +4,12 @@
 outputdata <- function(type, data){
   if(type=="character"){
     tab <- table(data[[names(type)]])
-    mode <- names(tab)[tab==max(tab)]
+    mode <- names(tab)[which.max(tab)]
     return(factor(mode, levels=levels(as.factor(data[[names(type)]]))))
   }
   if(type=="factor"){
     tab <- table(data[,names(type)])
-    mode <- names(tab)[tab==max(tab)]
+    mode <- names(tab)[which.max(tab)]
     return(factor(mode, levels=levels(data[[names(type)]])))
   }
   if(type=="numeric"|type=="integer"){

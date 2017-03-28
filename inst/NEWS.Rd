@@ -1,5 +1,14 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.2.2}{
+\itemize{
+\item A small release correcting some minor bugs.
+\item Fixed a bug in estimateEffect when a character or factor variable had 2+ levels with the same number of observtions.  Thanks to APuzyk on github for catching this.
+\item The last release turned on a different recovery method for the spectral algorithm by default.  Changed the default back to exponential gradient as documented.  Thanks to Simone Zhang for this catch.
+\item Better defaults for some of the labeling in plot.STM
+\item Better argument matching and errors for plot.estimateEffect
+}
+}
 \section{Version 1.2.1}{
 \itemize{
 \item Small updates to the documentation and vignette.
