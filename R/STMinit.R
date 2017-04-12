@@ -56,6 +56,7 @@ stm.init <- function(documents, settings) {
     if(verbose) cat("\t Calculating the gram matrix...\n")
     docs <- doc.to.ijv(documents)
     mat <- Matrix::sparseMatrix(docs$i,docs$j, x=docs$v)
+    mat <- methods::as(mat, "dgCMatrix")
     rm(docs)
     wprob <- Matrix::colSums(mat)
     wprob <- wprob/sum(wprob)
