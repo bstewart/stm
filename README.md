@@ -1,4 +1,4 @@
-##stm: An R Package for the Structural Topic Model
+## stm: An R Package for the Structural Topic Model
 
 Website: www.structuraltopicmodel.com
 
@@ -13,7 +13,7 @@ Please email all comments/questions to bms4 [AT] princeton.edu
 [![Downloads](http://cranlogs.r-pkg.org/badges/stm)](http://cran.rstudio.com/web/packages/stm/index.html)
 [![Total Downloads](http://cranlogs.r-pkg.org/badges/grand-total/stm?color=orange)](http://cran.rstudio.com/web/packages/stm/index.html)
 
-###Summary
+### Summary
 
 This repository will host the development version of the package.  It is also available on CRAN. It implements variational EM algorithms for estimating topic models with covariates in a framework we call the Structural Topic Model (stm). 
 
@@ -24,7 +24,7 @@ The package currently includes functionality to:
 * estimate a graph of topic correlations
 * create all the plots used in our various papers
 
-###Other Resources
+### Other Resources
 
 Have a large text corpus or need a language we don't provide support for?  See our sister project [txtorg](http://txtorg.org)
 
