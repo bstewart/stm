@@ -75,4 +75,3 @@ vocab <- out$vocab
 \seealso{
 \code{\link{textProcessor}}, \code{\link{prepDocuments}}
 }
-

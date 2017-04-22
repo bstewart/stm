@@ -92,4 +92,3 @@ plot(test,2, xlab="Effect", ylab="Model Index", main="Topic 2 Placebo Test")
 \seealso{
 \code{\link{plot.STMpermute}}
 }
-

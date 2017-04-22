@@ -33,4 +33,3 @@ findTopic(gadarianFit, c("poor", "immigr", "peopl"))
 \seealso{
 \code{\link{findThoughts}}
 }
-

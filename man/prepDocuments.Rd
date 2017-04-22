@@ -85,4 +85,3 @@ out <- prepDocuments(docs, vocab, meta)
 \seealso{
 \code{\link{plotRemoved}}
 }
-

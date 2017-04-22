@@ -134,4 +134,3 @@ summary(prep)
 \seealso{
 \code{\link{plot.estimateEffect}} \code{\link{summary.estimateEffect}}
 }
-

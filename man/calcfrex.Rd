@@ -55,4 +55,3 @@ In Proceedings of the International Conference on Machine Learning.
 \code{\link{labelTopics}} \code{\link{js.estimate}}
 }
 \keyword{internal}
-

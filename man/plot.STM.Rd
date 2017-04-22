@@ -109,4 +109,3 @@ Survey Responses." American Journal of Political Science 58, no 4 (2014):
 \seealso{
 \code{\link{plotQuote}}, \code{\link{plot.topicCorr}}
 }
-

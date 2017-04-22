@@ -136,10 +136,6 @@ plot(out, ind=(1:4), topics=1)
 plot(out, 16)
 }
 }
-\author{
-Brandon M. Stewart (Princeton University) and Antonio Coppola
-(Harvard University)
-}
 \references{
 Roberts, M., Stewart, B., & Tingley, D. (Forthcoming).
 "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data
@@ -149,6 +145,9 @@ University Press.
 \seealso{
 \code{\link{multiSTM}}
 }
+\author{
+Brandon M. Stewart (Princeton University) and Antonio Coppola
+(Harvard University)
+}
 \keyword{multimodality}
 \keyword{stm}
-
