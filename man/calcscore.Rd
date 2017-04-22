@@ -26,4 +26,3 @@ https://CRAN.R-project.org/package=lda
 \code{\link{labelTopics}}
 }
 \keyword{internal}
-

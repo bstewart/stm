@@ -26,4 +26,3 @@ almost certainly be faster if we ported it over to \pkg{RcppArmadillo}
 but it isn't used a ton at the moment.
 }
 \keyword{internal}
-

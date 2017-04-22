@@ -4,8 +4,8 @@
 \name{poliblog5k}
 \alias{poliblog5k}
 \alias{poliblog5k.docs}
-\alias{poliblog5k.meta}
 \alias{poliblog5k.voc}
+\alias{poliblog5k.meta}
 \title{CMU 2008 Political Blog Corpus}
 \format{A data frame with 5000 observations on the following 4 variables.
 \describe{ 
@@ -57,4 +57,3 @@ prevalence=~rating, data=poliblog5k.meta)
 
 }
 \keyword{datasets}
-

@@ -63,4 +63,3 @@ makeDesignMatrix(~predictor + s(predictor2), foo, foo.new)
 \code{\link{fitNewDocuments}}
 }
 \keyword{internal}
-

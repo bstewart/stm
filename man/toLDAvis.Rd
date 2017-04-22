@@ -66,4 +66,3 @@ Carson Sievert and Kenny Shirley. LDAvis: Interactive
 Visualization of Topic Models. R package version 0.3.1.
 https://github.com/cpsievert/LDAvis
 }
-

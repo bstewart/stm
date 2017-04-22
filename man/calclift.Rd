@@ -32,4 +32,3 @@ Taddy, Matthew. 2012. "On Estimation and Selection for Topic Models." AISTATS JM
 \code{\link{labelTopics}}
 }
 \keyword{internal}
-

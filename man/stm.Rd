@@ -391,4 +391,3 @@ Science, Government, and Industry." New York: Cambridge University Press.
 \code{\link{prepDocuments}} \code{\link{labelTopics}}
 \code{\link{estimateEffect}}
 }
-

@@ -76,4 +76,3 @@ plot(kresult)
 \seealso{
 \code{\link{plot.searchK}} \code{\link{make.heldout}}
 }
-

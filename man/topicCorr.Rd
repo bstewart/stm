@@ -94,4 +94,3 @@ Selection with the Lasso. The Annals of Statistics, 2006.
 \seealso{
 \code{\link{plot.topicCorr}}
 }
-

@@ -31,4 +31,3 @@ so it will work in settings where \code{\link{predict}} is called.
 \seealso{
 \code{\link[splines]{bs}} \code{\link[splines]{ns}}
 }
-
