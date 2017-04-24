@@ -467,7 +467,7 @@ stm.list <- function(documents, vocab, K,
     if(init.type!="Spectral") stop("Topic selection method can only be used with init.type='Spectral'")
   }
   #Iterations, Verbose etc.
-  if(!(length(max.em.its)==1 & posint(max.em.its))) stop("Max EM iterations must be a single positive integer")
+  if(!(length(max.em.its)==1)) stop("Max EM iterations must be a single positive integer")
   if(!is.logical(verbose)) stop("verbose must be a logical.")
   
   ##

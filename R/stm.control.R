@@ -48,6 +48,16 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
     convergence$its <- convergence$its + 1 
   }    
   
+  #Add the initialization and then return the whole thing
+  if(settings$convergence$max.em.its==0) {
+    cat("Returning the initialization only.")
+    beta$logbeta <- beta$beta
+    for(i in 1:length(beta$logbeta)) {
+      beta$logbeta[[i]] <- safelog(beta$logbeta[[i]])
+    }
+    return(list(settings=settings, beta=beta))
+  }
+  
   #Pull out some book keeping elements
   ntokens <- sum(settings$dim$wcounts$x)
   betaindex <- settings$covariates$betaindex
