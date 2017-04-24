@@ -54,4 +54,3 @@ Ian Fellows (2014). wordcloud: Word Clouds. R package version
 \seealso{
 \code{\link{plot.STM}}
 }
-

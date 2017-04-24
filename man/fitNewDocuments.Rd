@@ -148,4 +148,3 @@ fitNewDocuments(model=mod.out, documents=out$documents[1:5], newData=out$meta[1:
 \seealso{
 \code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
 }
-

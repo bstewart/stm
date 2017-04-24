@@ -34,4 +34,3 @@ dt[treatment==0, docnum[order(Topic2, decreasing=FALSE)][1:5]]
 \seealso{
 \code{\link{findThoughts}}
 }
-

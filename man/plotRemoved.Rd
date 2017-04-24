@@ -40,4 +40,3 @@ plotRemoved(poliblog5k.docs, lower.thresh=seq(from = 10, to = 1000, by = 10))
 \seealso{
 \code{\link{prepDocuments}}
 }
-

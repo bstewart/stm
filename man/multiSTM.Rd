@@ -186,10 +186,6 @@ out <- multiSTM(poliblogSelect, mass.threshold=.75,
 plot(out, 1:4)
 }
 }
-\author{
-Antonio Coppola (Harvard University), Brandon Stewart (Princeton
-University), Dustin Tingley (Harvard University)
-}
 \references{
 Roberts, M., Stewart, B., & Tingley, D. (Forthcoming).
 "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data
@@ -200,6 +196,9 @@ University Press.
 \code{\link{plot.MultimodDiagnostic}} \code{\link{selectModel}}
 \code{\link{estimateEffect}}
 }
+\author{
+Antonio Coppola (Harvard University), Brandon Stewart (Princeton
+University), Dustin Tingley (Harvard University)
+}
 \keyword{multimodality}
 \keyword{stm}
-

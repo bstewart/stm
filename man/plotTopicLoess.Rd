@@ -41,4 +41,3 @@ plotTopicLoess(gadarianFit, topics=1, covariate=gadarian$pid_rep)
 \seealso{
 \code{\link{plot.estimateEffect}}
 }
-

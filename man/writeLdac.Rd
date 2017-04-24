@@ -47,4 +47,3 @@ writeLdac(documents, file="gadarian.ldac")
 \seealso{
 \code{\link{readCorpus}}
 }
-

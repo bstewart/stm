@@ -51,4 +51,3 @@ number.
   topicQuality(model=gadarianFit, documents=docs)
 }
 }
-
