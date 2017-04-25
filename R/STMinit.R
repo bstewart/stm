@@ -35,9 +35,8 @@ stm.init <- function(documents, settings) {
     Ndoc <- colSums(theta) #get word counts by doc
     theta <- t(theta)/Ndoc  #norm to proportions
     lambda <- log(theta) - log(theta[,K]) #get the log-space version
-    lambda <- lambda[,-K] #drop off the last column
+    lambda <- lambda[,-K, drop=FALSE] #drop off the last column
     rm(theta) #clear out theta
-    
     mu <- colMeans(lambda) #make a globally shared mean
     mu <- matrix(mu, ncol=1)
     sigma <- cov(lambda)    
