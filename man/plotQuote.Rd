@@ -49,4 +49,3 @@ plotQuote(thoughts)
 \seealso{
 \code{\link{findThoughts}}
 }
-

@@ -103,4 +103,3 @@ Journal of statistical software 33.1 (2010): 1.
 \seealso{
 \pkg{glmnet}
 }
-

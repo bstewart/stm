@@ -30,11 +30,6 @@ Plotting Functions: \code{\link{plot.STM}} \code{\link{plot.estimateEffect}}
 Pre-Fit Models and Data: \code{\link{gadarian}} \code{\link{gadarianFit}}
 \code{\link{poliblog5k}}
 }
-\author{
-Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
-
-Maintainer: Brandon Stewart <bms4@princeton.edu>
-}
 \references{
 Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013)
 "The structural topic model and applied social science." In Advances in
@@ -51,5 +46,9 @@ Additional papers at: structuraltopicmodel.com
 \seealso{
 \code{\link{stm}}
 }
-\keyword{package}
+\author{
+Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 
+Maintainer: Brandon Stewart <bms4@princeton.edu>
+}
+\keyword{package}

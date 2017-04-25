@@ -117,4 +117,3 @@ t<-storage$out[[2]]
 #Please note that the way to extract a result for manyTopics is different from selectModel.
 }
 }
-

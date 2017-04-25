@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.2.3}{
+\itemize{
+\item A small bug fix to fitNewDocuments() thanks to user: OO00OO00 on Github that cause the functionality not to work for CTMs.
+}
+}
 \section{Version 1.2.2}{
 \itemize{
 \item A small release correcting some minor bugs.

@@ -57,4 +57,3 @@ labelTopics(gadarianFit)
 \code{\link{stm}} \code{\link{plot.STM}} 
 \code{\link{calcfrex}} \code{\link{js.estimate}} \code{\link{calcscore}} \code{\link{calclift}}
 }
-

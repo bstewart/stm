@@ -69,4 +69,3 @@ draws <- thetaPosterior(gadarianFit, nsims = 100)
 \seealso{
 \code{\link{estimateEffect}}
 }
-

@@ -26,4 +26,3 @@ classes.  The more straightforward option is the \code{coef()} method for \pkg{g
 objects but when trying to make thousands of calls a second, that can be very slow
 }
 \keyword{internal}
-

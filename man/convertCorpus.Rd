@@ -55,4 +55,3 @@ str(poliLDA)
 \code{\link{writeLdac}} \code{\link{readCorpus}}
 \code{\link{poliblog5k}}
 }
-

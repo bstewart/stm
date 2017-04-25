@@ -45,4 +45,3 @@ checkBeta(gadarianFit)
 \author{
 Antonio Coppola
 }
-

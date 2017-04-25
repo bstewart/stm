@@ -46,4 +46,3 @@ Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., 
 \code{\link{searchK}} \code{\link{plot.searchK}} \code{\link{semanticCoherence}}
 }
 \keyword{internal}
-
