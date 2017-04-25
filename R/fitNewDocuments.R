@@ -280,7 +280,7 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
     aspect <- betaindex[i]
     init <- rep(0, K-1)
     #deal with the special case of mu as a vector.
-    if(class(mu)=="matrix") {
+    if(class(mu)!="numeric") {
       mu.i <- mu[,i]
     } else {
       mu.i <- mu 
