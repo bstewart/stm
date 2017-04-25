@@ -73,6 +73,7 @@
 #' plot(gadarianFit, type="perspectives", topics=c(1,2))
 #' plot(gadarianFit,type="hist")
 #' }
+#' @export plot.STM
 #' @export
 plot.STM <- function(x, 
                      type=c("summary", "labels", "perspectives", "hist"),
