@@ -13,3 +13,7 @@ hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
     .Call('stm_hpbcpp', PACKAGE = 'stm', eta, beta, doc_ct, mu, siginv, sigmaentropy)
 }
 
+phicpp <- function(eta, beta, doc_ct) {
+    .Call('stm_phicpp', PACKAGE = 'stm', eta, beta, doc_ct)
+}
+

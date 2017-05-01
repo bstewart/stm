@@ -192,3 +192,40 @@ SEXP hpbcpp(SEXP eta,
         Rcpp::Named("bound") = bound
         );
 }
+
+
+// [[Rcpp::export]]
+SEXP phicpp(SEXP eta,
+            SEXP beta,
+            SEXP doc_ct){
+  
+  Rcpp::NumericVector etav(eta); 
+  arma::vec etas(etav.begin(), etav.size(), false);
+  Rcpp::NumericMatrix betam(beta);
+  arma::mat betas(betam.begin(), betam.nrow(), betam.ncol());
+  Rcpp::NumericVector doc_ctv(doc_ct);
+  arma::vec doc_cts(doc_ctv.begin(), doc_ctv.size(), false);
+  
+  // Notes from 5/1/17
+  //  Creating a version of the function that only calculates phi.
+  
+  arma::colvec expeta(etas.size()+1); 
+  expeta.fill(1);
+  int neta = etas.size(); 
+  for(int j=0; j <neta;  j++){
+    expeta(j) = exp(etas(j));
+  }
+  
+  //create a new version of the matrix so we can mess with it
+  arma::mat EB(betam.begin(), betam.nrow(), betam.ncol());
+  //multiply each column by expeta
+  EB.each_col() %= expeta; //this should be fastest as its column-major ordering
+  
+  //divide out by the column sums, multiply through by the doc_cts
+  EB.each_row() %= arma::trans(doc_cts)/sum(EB,0);
+  
+  // Generate a return list that mimics the R output
+  return Rcpp::List::create(
+    Rcpp::Named("phis") = EB
+  );
+}
