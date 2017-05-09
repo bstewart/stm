@@ -18,7 +18,7 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
                      doc_ct=doc.ct, mu=mu,
                      siginv=siginv, beta=beta)
   
-  if(!hpbcpp) return(list(eta=list(lambda=optim.out$par)))
+  if(!hpbcpp) return(phicpp(optim.out$par, doc_ct=doc.ct, beta=beta))
   
   #Solve for Hessian/Phi/Bound returning the result
   hpbcpp(optim.out$par, doc_ct=doc.ct, mu=mu,

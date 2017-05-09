@@ -226,6 +226,7 @@ SEXP phicpp(SEXP eta,
   
   // Generate a return list that mimics the R output
   return Rcpp::List::create(
-    Rcpp::Named("phis") = EB
+    Rcpp::Named("phis") = EB,
+    Rcpp::Named("eta") = Rcpp::List::create(Rcpp::Named("lambda")=etas)
   );
 }
