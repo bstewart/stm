@@ -21,8 +21,8 @@ convergence.check <- function(bound.ss, convergence, settings) {
     old <- convergence$bound[convergence$its-1]
     new <- convergence$bound[convergence$its]
     convergence.check <- (new-old)/abs(old)
-    #if(convergence.check < emtol & convergence.check > 0) {
-    if(convergence.check < emtol) {
+    if(convergence.check < emtol & convergence.check > 0) {
+    #if(convergence.check < emtol) {
       convergence$converged <- TRUE
       convergence$stopits <- TRUE
       if(verbose) cat("Model Converged \n")
