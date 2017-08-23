@@ -273,11 +273,13 @@ mpinv <- function (X) {
 }
 
 tsneAnchor <- function(Qbar) {
-  if(!(requireNamespace("Rtsne",quietly=TRUE) & requireNamespace("geometry", quietly=TRUE))){
-    stop("Please install the Rtsne and geometry packages to use this setting.")
+  if(!(requireNamespace("Rtsne",quietly=TRUE) & requireNamespace("geometry", quietly=TRUE & requireNamespace("rsvd", quietly=TRUE)))){
+    stop("Please install the Rtsne, rsvd and geometry packages to use this setting.")
   } 
+
+  Xpca <- rsvd::rpca(Qbar, min(50,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
   #project to 3-D
-  proj <- try(Rtsne::Rtsne(Qbar, dims=3) , silent=TRUE)
+  proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3) , silent=TRUE)
   if(class(proj)=="try-error") {
     #if this failed it is probably duplicates which Rtsne cannot handle
     dup <- duplicated(Qbar)
@@ -291,7 +293,8 @@ tsneAnchor <- function(Qbar) {
       Qbar[r,] <- row
     }
     #and now do it again
-    proj <- Rtsne::Rtsne(Qbar, dims=3) 
+    Xpca <- rsvd::rpca(Qbar, min(50,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
+    proj <- Rtsne::Rtsne(Xpca, pca=FALSE, dims=3)
   }
   
   hull <- geometry::convhulln(proj$Y)
