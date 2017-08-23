@@ -24,6 +24,7 @@
 #' plot(kresult)
 #' }
 #'  
+#' @export plot.searchK
 #' @export
 plot.searchK<-function(x, ...){
   oldpar <- par(no.readonly=TRUE)

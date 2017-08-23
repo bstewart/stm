@@ -82,4 +82,3 @@ optimizeDocument(doc, eta=rep(0, K-1), mu=mu, beta=beta, sigma=sigma)
 \seealso{
 \code{\link{thetaPosterior}}
 }
-

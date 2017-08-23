@@ -55,4 +55,3 @@ http://igraph.sf.net
 \seealso{
 \code{\link{topicCorr}}
 }
-

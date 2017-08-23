@@ -279,7 +279,12 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
     doc <- documents[[i]]
     aspect <- betaindex[i]
     init <- rep(0, K-1)
-    mu.i <- mu[,i]
+    #deal with the special case of mu as a vector.
+    if(class(mu)!="numeric") {
+      mu.i <- mu[,i]
+    } else {
+      mu.i <- mu 
+    }
     #infer the document
     results <- optimizeDocument(doc, eta=init, mu=mu.i, beta=beta[[aspect]],  
                                      sigmainv=siginv, sigmaentropy=sigmaentropy,

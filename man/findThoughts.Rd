@@ -2,8 +2,8 @@
 % Please edit documentation in R/findThoughts.R
 \name{findThoughts}
 \alias{findThoughts}
-\alias{plot.findThoughts}
 \alias{print.findThoughts}
+\alias{plot.findThoughts}
 \title{Find Thoughts}
 \usage{
 findThoughts(model, texts = NULL, topics = NULL, n = 3, thresh = NULL,
@@ -97,4 +97,3 @@ plot(thought)
 \seealso{
 \code{\link{plotQuote}}
 }
-

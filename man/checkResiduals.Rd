@@ -66,4 +66,3 @@ checkResiduals(mod.out, docs)
 Taddy, M. 'On Estimation and Selection for Topic Models'.
 AISTATS 2012, JMLR W&CP 22
 }
-

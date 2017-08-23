@@ -116,7 +116,7 @@ optimizeDocument <- function(document, eta, mu, beta, sigma=NULL,
   if(any(beta < 0)) stop("Some entries of beta are negative.  Are you sure you
                          didn't pass the logged version of beta?")
   
-  beta <- beta[,document[1,]]
+  beta <- beta[,document[1,], drop=FALSE]
   out <- logisticnormalcpp(eta, mu, siginv, beta, document, sigmaentropy,
                            method=method, control=control, hpbcpp=posterior)
   toReturn <- list(lambda=out$eta$lambda, phi=out$phi, nu=out$eta$nu, bound=out$bound)

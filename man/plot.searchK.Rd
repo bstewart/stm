@@ -34,4 +34,3 @@ plot(kresult)
 }
  
 }
-
