@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.2.4}{
+\itemize{
+\item A fix from Jeffrey Arnold that makes the ngroups memoization functionality work more in line with the original Hughes and Sudderth paper. 
+\item Changed documentation for the ngroups memoization functionality in accordance with info from Adel Dauod who showed that in his larger document examples setting ngroups > 1 increased the number of iterations needed for convergence.
+\item Changed the K=0 spectral initialization to use a randomized projection method to calculate the PCA which initializes the T-SNE projection.  This should make the initializations much faster for K=0 and large vocabs.
+}
+}
 \section{Version 1.2.3}{
 \itemize{
 \item A small bug fix to fitNewDocuments() thanks to user: OO00OO00 on Github that cause the functionality not to work for CTMs.

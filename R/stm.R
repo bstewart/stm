@@ -100,7 +100,13 @@
 #' variational inference in Hughes and Sudderth (2013), can lead to more rapid
 #' convergence when the number of documents is large.  Note that the memory
 #' requirements scale linearly with the number of groups so this provides a
-#' tradeoff between memory efficiency and computational power.
+#' tradeoff between memory efficiency and speed.  The claim of speed here
+#' is based on the idea that increasing the number of global updates should
+#' help the model find a solution in fewer passes through the document set.
+#' However, itt is worth noting that for any particular case the model need 
+#' not converge faster and definitely won't converge to the same location. 
+#' This functionality should be considered somewhat experimental and we encourage
+#'  users to let us know what their experiences are like here in practice.
 #' 
 #' Models can now be restarted by passing an \code{STM} object to the argument
 #' \code{model}.  This is particularly useful if you run a model to the maximum
