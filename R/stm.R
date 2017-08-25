@@ -645,7 +645,7 @@ stm.list <- function(documents, vocab, K,
       if(i=="rp.p")  settings$init$p <- control[[i]]
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
       if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
-      if(i=="recoverEG" & control[[i]]) settings$init$recoverEG <- control[[i]]
+      if(i=="recoverEG" & !control[[i]]) settings$init$recoverEG <- control[[i]]
       if(i=="maxV" & control[[i]]) {
         settings$init$maxV <- control[[i]]
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
