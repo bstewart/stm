@@ -206,6 +206,11 @@
 #' number of words to be used in the initialization.  It uses the most frequent words
 #' first and then they are reintroduced following initialization.  This allows spectral
 #' to be used with a large V.}
+#' \item{\code{allow.neg.change}}{Defaults to \code{TRUE}.  Set to \code{FALSE} to keep
+#' the algorithm for converging when the bound change is negative.  NB: because this is 
+#' only an approximation to the lower-bound the change can be negative at times.  Right
+#' now this triggers convergence but the final approximate bound can go higher if you
+#' are willing to wait it out.}
 #' }
 #' 
 #' 
@@ -259,7 +264,9 @@
 #' @param max.em.its The maximum number of EM iterations.  If convergence has
 #' not been met at this point, a message will be printed.
 #' @param emtol Convergence tolerance.  EM stops when the relative change in
-#' the approximate bound drops below this level.  Defaults to .00001.
+#' the approximate bound drops below this level.  Defaults to .00001.  You 
+#' can set it to 0 to have the algorithm run \code{max.em.its} number of steps.
+#' See advanced options under \code{control} for more options.
 #' @param verbose A logical flag indicating whether information should be
 #' printed to the screen.  During the E-step (iteration over documents) a dot
 #' will print each time 1\% of the documents are completed.  At the end of each
@@ -292,8 +299,7 @@
 #' is \code{Jeffreys} which is markedly less computationally efficient but is
 #' included for backwards compatability. See details for more information on
 #' computation.
-#' @param control a list of additional parameters control portions of the
-#' optimization.  See details.
+#' @param control a list of additional advanced parameters. See details.
 #' 
 #' @return An object of class STM 
 #' 
@@ -565,7 +571,8 @@ stm.list <- function(documents, vocab, K,
                             V=V, N=N, wcounts=wcounts),
                    verbose=verbose,
                    topicreportevery=reportevery,
-                   convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol),
+                   convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol, 
+                                    allow.neg.change=TRUE),
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels, formula=prevalence),
                    gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1, ic.k=2,
                               maxits=1000),
@@ -617,7 +624,7 @@ stm.list <- function(documents, vocab, K,
                   "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
-                  "recoverEG", "maxV", "gamma.maxits")
+                  "recoverEG", "maxV", "gamma.maxits", "allow.neg.change")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -651,6 +658,7 @@ stm.list <- function(documents, vocab, K,
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
       }
       if(i=="gamma.maxits") settings$gamma$maxits <- control[[i]]
+      if(i=="allow.neg.change") settings$convergence$allow.neg.change <- control[[i]]
     }
   }
   
