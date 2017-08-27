@@ -9,6 +9,7 @@
 \item You can now run for a fixed number of em steps by setting emtol=0L, you can also disallow negative changes in the bound triggering convergence (see stm help file).
 \item Bumped the required version of R to be consistent with package dependencies, hat tip to Sean Westwood
 \item Fixed an edge case in make.heldout where you can end up with documents being classed as non-integers. Hat tip to github user LouHb.
+\item Fixed a bug that caused R to crash for very large models on Windows machines only.  Huge thanks to Adel Dauod for reporting the bug and doing an enormous amount of testing to isolate it.
 }
 }
 \section{Version 1.2.3}{
