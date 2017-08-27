@@ -214,6 +214,8 @@ textProcessor <- function(documents, metadata=NULL,
   }
   #If there is metadata we need to remove some documents
   if(!is.null(metadata)) {
+    #if it is a type of data frame coerce it so we know its not a tibble or data.table
+    if(inherits(metadata, "data.frame")) metadata <- as.data.frame(metadata)
     docindex <- unique(dtm$i)
     metadata <- NLP::meta(txt)[docindex, , drop = FALSE]
   }
