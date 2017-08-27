@@ -99,6 +99,7 @@
 #' @param custom.labels A vector of custom labels if labeltype is equal to
 #' "custom".
 #' @param family Font family.
+#' @param omit.plot Defaults to FALSE.  When set to TRUE returns everything invisibly but doesn't do any plotting.
 #' @param ...  Other plotting parameters
 #' @return Values returned invisibly will depend on the method
 #'  
@@ -174,7 +175,7 @@ plot.estimateEffect <- function(x, covariate, model=NULL,
                                 labeltype="numbers", n=7, frexw=.5,
                                 add=F, linecol=NULL, width=25,
                                 verbose.labels=T, family=NULL,
-                                custom.labels=NULL,...){
+                                custom.labels=NULL, omit.plot=FALSE,...){
   
   method <- match.arg(method)
   if(method=="difference" && (is.null(cov.value1) | is.null(cov.value2))) {
@@ -201,7 +202,7 @@ plot.estimateEffect <- function(x, covariate, model=NULL,
     toreturn <- plotContinuous(prep=x,covariate=covariate,topics=topics, cdata=cdata, cmat=cmat, simbetas=simbetas,
                    offset=offset,xlab=xlab, ylab=ylab, main=main,
                    xlim=xlim, ylim=ylim, linecol=linecol, add=add,
-                   labeltype=labeltype,n=n,custom.labels=custom.labels,model=model,frexw=frexw,printlegend=printlegend,...)
+                   labeltype=labeltype,n=n,custom.labels=custom.labels,model=model,frexw=frexw,printlegend=printlegend,omit.plot=omit.plot,...)
     return(invisible(toreturn))
   }
   if(method=="pointestimate"){
@@ -210,7 +211,7 @@ plot.estimateEffect <- function(x, covariate, model=NULL,
                       xlim=xlim, ylim=ylim, linecol=linecol, add=add,
                       labeltype=labeltype,n=n,
                                   custom.labels=custom.labels,model=model,frexw=frexw,width=width,
-                                  verbose.labels=verbose.labels,...)
+                                  verbose.labels=verbose.labels,omit.plot=omit.plot,...)
     return(invisible(toreturn))
   }
   if(method=="difference"){
@@ -222,7 +223,7 @@ plot.estimateEffect <- function(x, covariate, model=NULL,
                    labeltype=labeltype,n=n,
                    custom.labels=custom.labels,model=model,frexw=frexw,width=width,
                    cov.value1=cov.value1,
-                               cov.value2=cov.value2,verbose.labels=verbose.labels,...)
+                               cov.value2=cov.value2,verbose.labels=verbose.labels,omit.plot=omit.plot,...)
     return(invisible(toreturn))
   }
 }
