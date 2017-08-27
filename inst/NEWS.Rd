@@ -7,6 +7,8 @@
 \item Changed documentation for the ngroups memoization functionality in accordance with info from Adel Dauod who showed that in his larger document examples setting ngroups > 1 increased the number of iterations needed for convergence.
 \item Changed the K=0 spectral initialization to use a randomized projection method to calculate the PCA which initializes the T-SNE projection.  This should make the initializations much faster for K=0 and large vocabs.
 \item You can now run for a fixed number of em steps by setting emtol=0L, you can also disallow negative changes in the bound triggering convergence (see stm help file).
+\item Bumped the required version of R to be consistent with package dependencies, hat tip to Sean Westwood
+\item Fixed an edge case in make.heldout where you can end up with documents being classed as non-integers. Hat tip to github user LouHb.
 }
 }
 \section{Version 1.2.3}{

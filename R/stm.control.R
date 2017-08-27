@@ -176,9 +176,13 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   lambda <- cbind(lambda,0)
   model <- list(mu=mu, sigma=sigma, beta=beta, settings=settings,
                 vocab=vocab, convergence=convergence,
-                theta=exp(lambda - row.lse(lambda)),
+                theta=exp(lambda - log(rowSums(exp(lambda)))),
+                #note altered from row.lse above because of a
+                #Windows specific bug that was happening with
+                #matrixStats package and large matrices 8/27
                 eta=lambda[,-ncol(lambda), drop=FALSE],
                 invsigma=solve(sigma), time=time, version=utils::packageDescription("stm")$Version)
+  
   class(model) <- "STM"
   return(model)
 }

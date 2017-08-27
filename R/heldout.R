@@ -81,6 +81,10 @@ make.heldout <- function(documents, vocab, N=floor(.1*length(documents)),
   }
   #hooray.  return some stuff.
   heldout <- list(documents=documents,vocab=vocab, missing=missing)
+  #you can get cases where these come out as non-integers...
+  #recast everything just to be sure.
+  heldout$documents <- lapply(heldout$documents, function(x) matrix(as.integer(x), nrow(x), ncol(x)))
+  heldout$missing$docs <- lapply(heldout$missing$docs, function(x) matrix(as.integer(x), nrow(x), ncol(x)))
   class(heldout) <- "heldout"
   return(heldout)
 }
