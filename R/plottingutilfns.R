@@ -48,8 +48,8 @@ plotContinuous <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
     #Plot everything
     for(i in 1:length(topics)){
       lines(uvals, means[[i]], col=cols[i])
-      lines(uvals, cis[[i]][1,], col=cols[i])
-      lines(uvals, cis[[i]][2,], col=cols[i])
+      lines(uvals, cis[[i]][1,], col=cols[i], lty=2)
+      lines(uvals, cis[[i]][2,], col=cols[i], lty=2)
     }
   }
   #Create legend
