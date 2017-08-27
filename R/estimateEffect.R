@@ -290,7 +290,7 @@ summary.estimateEffect <- function(object, topics=NULL, nsim=500, ...) {
   }
   tables <- vector(mode="list", length=length(topics))
   for(i in seq_along(topics)) {
-    sims <- lapply(object$parameters[[topics[i]]], function(x) rmvnorm(nsim, x$est, x$vcov))
+    sims <- lapply(object$parameters[[i]], function(x) rmvnorm(nsim, x$est, x$vcov))
     sims <- do.call(rbind,sims)
     est<- colMeans(sims)
     se <- sqrt(apply(sims,2, stats::var))
