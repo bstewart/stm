@@ -149,7 +149,7 @@ set.seed(2138)
 \subsection{Ingest: Reading and processing text data}
 
 
-The first step is to load data into \proglang{R}. The \pkg{stm} package represents a text corpus in three parts: a \code{documents} list containing word indices and their associated counts,\footnote{A full description of the sparse list format can be found in the help file for \code{stm}.} a \code{vocab} character vector containing the words associated with the word indices, and a \code{metadata} matrix containing document covariates. For illustration purposes, we print an example of two short documents from a  larger corpus below.  The first document contains five words (which would appear at positions 21,23,87,98 and 112 of the vocab vector) and each word appears once except the 21st word which appears twice.
+The first step is to load data into \proglang{R}. The \pkg{stm} package represents a text corpus in three parts: a \code{documents} list containing word indices and their associated counts,\footnote{A full description of the sparse list format can be found in the help file for \code{stm}.} a \code{vocab} character vector containing the words associated with the word indices, and a \code{metadata} matrix containing document covariates. For illustration purposes, we print an example of two short documents from a  larger corpus below.  The first document contains five words (which would appear at positions 21, 23, 87, 98 and 112 of the vocab vector) and each word appears once except the 21st word which appears twice.
 
 <<eval=TRUE, echo=FALSE>>=
 list(poliblog5k.docs[[1]][,1:5], poliblog5k.docs[[2]][,1:3])
@@ -200,7 +200,7 @@ out <- prepDocuments(processed$documents, processed$vocab,
   processed$meta, lower.thresh = 15)
 @
 
-to evaluate how many words and documents would be removed from the dataset at each word threshold, which is the minimum number of documents a word needs to appear in in order for the word to be kept within the vocabulary.  Then the user can select their preferred threshold within \code{prepDocuments}.
+to evaluate how many words and documents would be removed from the dataset at each word threshold, which is the minimum number of documents a word needs to appear in order for the word to be kept within the vocabulary.  Then the user can select their preferred threshold within \code{prepDocuments}.
 
 Importantly, \code{prepDocuments} also will re-index all metadata/document relationships if any changes occur due to processing. For example, if a document is completely removed due to pre-processing, then \code{prepDocuments} will make sure the correct metadata/document relationships hold. After reading in and processing the text data, it is important to inspect features of the documents and the associated vocabulary list to make sure they have been correctly preprocessed.
 
@@ -304,7 +304,7 @@ There are several other functions for evaluation shown in Figure~\ref{fig:stmrev
 After choosing a model, the user must next interpret the model results. There are many ways to investigate the output, such inspecting the words associated with topics or the relationship between metadata and topics. To investigate the output of the model, the \pkg{stm} package provides a number of options.
 
 \begin{enumerate}
-\item Displaying words associated with topics (\code{labelTopics}, \code{plot.STM(,type = "labels")}, \code{sageLabels},\code{plot.STM(,type = "perspectives")}) or documents highly associated with particular topics (\code{findThoughts}, \code{plotQuote}).
+\item Displaying words associated with topics (\code{labelTopics}, \code{plot.STM(,type = "labels")}, \code{sageLabels}, \code{plot.STM(,type = "perspectives")}) or documents highly associated with particular topics (\code{findThoughts}, \code{plotQuote}).
 \item Estimating relationships between metadata and topics/topical content (\code{estimateEffect}).
 \item Calculating topic correlations (\code{topicCorr}).
 \end{enumerate}
@@ -379,7 +379,7 @@ The functions we described previously to \emph{understand} STM results can be le
 
 \subsubsection{Summary visualization}
 
-Corpus level visualization can be done in several different ways. The first relates to the expected proportion of the corpus that belongs to each topic. This can be be plotted using \code{plot.STM(,type = "summary")}. An example from the political blogs data is given in Figure~\ref{fig:summary}. We see, for example, that the Sarah Palin/Vice President topic (7) is actually a relatively minor proportion of the discourse.  The most common topic is a general topic full of words that bloggers commonly use, and therefore is not very interpretable. The words listed in the figure are the top three words associated with the topic.
+Corpus level visualization can be done in several different ways. The first relates to the expected proportion of the corpus that belongs to each topic. This can be plotted using \code{plot.STM(,type = "summary")}. An example from the political blogs data is given in Figure~\ref{fig:summary}. We see, for example, that the Sarah Palin/Vice President topic (7) is actually a relatively minor proportion of the discourse.  The most common topic is a general topic full of words that bloggers commonly use, and therefore is not very interpretable. The words listed in the figure are the top three words associated with the topic.
 
 \begin{figure}
 \begin{center}
@@ -516,7 +516,7 @@ legend(0, .08, c("Liberal", "Conservative"),
 \end{figure}
 
 
-More details are available in the help file for this function.\footnote{An additional option is the use of local local regression (loess). In this case, because multiple covariates are not possible a separate function is required, \code{plotTopicLoess}, which contains a help file for interested users.}.
+More details are available in the help file for this function.\footnote{An additional option is the use of local regression (loess). In this case, because multiple covariates are not possible a separate function is required, \code{plotTopicLoess}, which contains a help file for interested users.}.
 \FloatBarrier
 \subsection{Extend: Additional tools for interpretation and visualization}
 
