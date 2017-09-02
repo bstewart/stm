@@ -71,7 +71,9 @@ here.}
 not been met at this point, a message will be printed.}
 
 \item{emtol}{Convergence tolerance.  EM stops when the relative change in
-the approximate bound drops below this level.  Defaults to .00001.}
+the approximate bound drops below this level.  Defaults to .00001.  You 
+can set it to 0 to have the algorithm run \code{max.em.its} number of steps.
+See advanced options under \code{control} for more options.}
 
 \item{verbose}{A logical flag indicating whether information should be
 printed to the screen.  During the E-step (iteration over documents) a dot
@@ -114,8 +116,7 @@ is \code{Jeffreys} which is markedly less computationally efficient but is
 included for backwards compatability. See details for more information on
 computation.}
 
-\item{control}{a list of additional parameters control portions of the
-optimization.  See details.}
+\item{control}{a list of additional advanced parameters. See details.}
 }
 \value{
 An object of class STM 
@@ -237,7 +238,13 @@ are then computed after each group in turn.  This approach, called memoized
 variational inference in Hughes and Sudderth (2013), can lead to more rapid
 convergence when the number of documents is large.  Note that the memory
 requirements scale linearly with the number of groups so this provides a
-tradeoff between memory efficiency and computational power.
+tradeoff between memory efficiency and speed.  The claim of speed here
+is based on the idea that increasing the number of global updates should
+help the model find a solution in fewer passes through the document set.
+However, itt is worth noting that for any particular case the model need 
+not converge faster and definitely won't converge to the same location. 
+This functionality should be considered somewhat experimental and we encourage
+ users to let us know what their experiences are like here in practice.
 
 Models can now be restarted by passing an \code{STM} object to the argument
 \code{model}.  This is particularly useful if you run a model to the maximum
@@ -337,6 +344,11 @@ initialization.}
 number of words to be used in the initialization.  It uses the most frequent words
 first and then they are reintroduced following initialization.  This allows spectral
 to be used with a large V.}
+\item{\code{allow.neg.change}}{Defaults to \code{TRUE}.  Set to \code{FALSE} to keep
+the algorithm for converging when the bound change is negative.  NB: because this is 
+only an approximation to the lower-bound the change can be negative at times.  Right
+now this triggers convergence but the final approximate bound can go higher if you
+are willing to wait it out.}
 }
 }
 \examples{

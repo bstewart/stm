@@ -100,7 +100,13 @@
 #' variational inference in Hughes and Sudderth (2013), can lead to more rapid
 #' convergence when the number of documents is large.  Note that the memory
 #' requirements scale linearly with the number of groups so this provides a
-#' tradeoff between memory efficiency and computational power.
+#' tradeoff between memory efficiency and speed.  The claim of speed here
+#' is based on the idea that increasing the number of global updates should
+#' help the model find a solution in fewer passes through the document set.
+#' However, itt is worth noting that for any particular case the model need 
+#' not converge faster and definitely won't converge to the same location. 
+#' This functionality should be considered somewhat experimental and we encourage
+#'  users to let us know what their experiences are like here in practice.
 #' 
 #' Models can now be restarted by passing an \code{STM} object to the argument
 #' \code{model}.  This is particularly useful if you run a model to the maximum
@@ -200,6 +206,11 @@
 #' number of words to be used in the initialization.  It uses the most frequent words
 #' first and then they are reintroduced following initialization.  This allows spectral
 #' to be used with a large V.}
+#' \item{\code{allow.neg.change}}{Defaults to \code{TRUE}.  Set to \code{FALSE} to keep
+#' the algorithm for converging when the bound change is negative.  NB: because this is 
+#' only an approximation to the lower-bound the change can be negative at times.  Right
+#' now this triggers convergence but the final approximate bound can go higher if you
+#' are willing to wait it out.}
 #' }
 #' 
 #' 
@@ -253,7 +264,9 @@
 #' @param max.em.its The maximum number of EM iterations.  If convergence has
 #' not been met at this point, a message will be printed.
 #' @param emtol Convergence tolerance.  EM stops when the relative change in
-#' the approximate bound drops below this level.  Defaults to .00001.
+#' the approximate bound drops below this level.  Defaults to .00001.  You 
+#' can set it to 0 to have the algorithm run \code{max.em.its} number of steps.
+#' See advanced options under \code{control} for more options.
 #' @param verbose A logical flag indicating whether information should be
 #' printed to the screen.  During the E-step (iteration over documents) a dot
 #' will print each time 1\% of the documents are completed.  At the end of each
@@ -286,8 +299,7 @@
 #' is \code{Jeffreys} which is markedly less computationally efficient but is
 #' included for backwards compatability. See details for more information on
 #' computation.
-#' @param control a list of additional parameters control portions of the
-#' optimization.  See details.
+#' @param control a list of additional advanced parameters. See details.
 #' 
 #' @return An object of class STM 
 #' 
@@ -559,7 +571,8 @@ stm.list <- function(documents, vocab, K,
                             V=V, N=N, wcounts=wcounts),
                    verbose=verbose,
                    topicreportevery=reportevery,
-                   convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol),
+                   convergence=list(max.em.its=max.em.its, em.converge.thresh=emtol, 
+                                    allow.neg.change=TRUE),
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels, formula=prevalence),
                    gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1, ic.k=2,
                               maxits=1000),
@@ -611,7 +624,7 @@ stm.list <- function(documents, vocab, K,
                   "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
-                  "recoverEG", "maxV", "gamma.maxits")
+                  "recoverEG", "maxV", "gamma.maxits", "allow.neg.change")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -639,12 +652,13 @@ stm.list <- function(documents, vocab, K,
       if(i=="rp.p")  settings$init$p <- control[[i]]
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
       if(i=="SpectralRP" & control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
-      if(i=="recoverEG" & control[[i]]) settings$init$recoverEG <- control[[i]]
+      if(i=="recoverEG" & !control[[i]]) settings$init$recoverEG <- control[[i]]
       if(i=="maxV" & control[[i]]) {
         settings$init$maxV <- control[[i]]
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
       }
       if(i=="gamma.maxits") settings$gamma$maxits <- control[[i]]
+      if(i=="allow.neg.change") settings$convergence$allow.neg.change <- control[[i]]
     }
   }
   

@@ -11,7 +11,7 @@
   xlim = NULL, ylim = NULL, xlab = "", ylab = NULL, main = "",
   printlegend = T, labeltype = "numbers", n = 7, frexw = 0.5, add = F,
   linecol = NULL, width = 25, verbose.labels = T, family = NULL,
-  custom.labels = NULL, ...)
+  custom.labels = NULL, omit.plot = FALSE, ...)
 }
 \arguments{
 \item{x}{Output of estimateEffect, which calculates simulated betas for
@@ -100,6 +100,8 @@ the comparison covariate values of the covariate on the plot.}
 
 \item{custom.labels}{A vector of custom labels if labeltype is equal to
 "custom".}
+
+\item{omit.plot}{Defaults to FALSE.  When set to TRUE returns everything invisibly but doesn't do any plotting.}
 
 \item{...}{Other plotting parameters}
 }

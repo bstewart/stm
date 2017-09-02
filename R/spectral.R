@@ -273,25 +273,27 @@ mpinv <- function (X) {
 }
 
 tsneAnchor <- function(Qbar) {
-  if(!(requireNamespace("Rtsne",quietly=TRUE) & requireNamespace("geometry", quietly=TRUE))){
-    stop("Please install the Rtsne and geometry packages to use this setting.")
+  if(!(requireNamespace("Rtsne",quietly=TRUE) & requireNamespace("geometry", quietly=TRUE & requireNamespace("rsvd", quietly=TRUE)))){
+    stop("Please install the Rtsne, rsvd and geometry packages to use this setting.")
   } 
+
+  Xpca <- rsvd::rpca(Qbar, min(50,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
   #project to 3-D
-  proj <- try(Rtsne::Rtsne(Qbar, dims=3) , silent=TRUE)
+  proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3) , silent=TRUE)
   if(class(proj)=="try-error") {
     #if this failed it is probably duplicates which Rtsne cannot handle
-    dup <- duplicated(Qbar)
+    dup <- duplicated(Xpca)
     if(!any(dup)) stop("an unknown error has occured in Rtsne")
     
     dup <- which(dup)
     for(r in dup) {
-      row <- Qbar[r,]
-      row[row>0] <- runif(sum(row>0),0,1e-5) # add a bit of noise to non-zero duplicates
+      row <- Qbar[Xpca,]
+      row[row!=0] <- runif(sum(row!=0),0,1e-5) # add a bit of noise to non-zero duplicates
       row <- row/sum(row) #renormalize
-      Qbar[r,] <- row
+      Xpca[r,] <- row
     }
     #and now do it again
-    proj <- Rtsne::Rtsne(Qbar, dims=3) 
+    proj <- Rtsne::Rtsne(Xpca, pca=FALSE, dims=3)
   }
   
   hull <- geometry::convhulln(proj$Y)

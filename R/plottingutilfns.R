@@ -18,6 +18,7 @@
 plotContinuous <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,xlab=NULL,
                            ylab=NULL, main=NULL, xlim=NULL, ylim=NULL,
                            linecol=NULL, add=F, labeltype,n=7, custom.labels=NULL,model=NULL,frexw=.5,printlegend=T,
+                           omit.plot=FALSE,
                            ...){
   #What are the unique values of the covariate we are going to plot over?
   uvals <- cdata[,covariate]
@@ -34,32 +35,34 @@ plotContinuous <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
   }
 
   #Get the plot set up
-  if (is.null(xlim)) xlim <- c(min(uvals), max(uvals))
-  if (is.null(ylim)) ylim <- c(min(unlist(cis), na.rm=T),
-                               max(unlist(cis), na.rm=T))
-  if (is.null(ylab)) ylab <- "Expected Topic Proportion"
-  if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main,
-                           xlab=xlab, ylab=ylab,  ...)
-  if (is.null(linecol)) cols = grDevices::rainbow(length(topics))
-  if (!is.null(linecol)) cols=linecol
-
-  #Plot everything
-  for(i in 1:length(topics)){
-    lines(uvals, means[[i]], col=cols[i])
-    lines(uvals, cis[[i]][1,], col=cols[i])
-    lines(uvals, cis[[i]][2,], col=cols[i])
+  if(!omit.plot) {
+    if (is.null(xlim)) xlim <- c(min(uvals), max(uvals))
+    if (is.null(ylim)) ylim <- c(min(unlist(cis), na.rm=T),
+                                 max(unlist(cis), na.rm=T))
+    if (is.null(ylab)) ylab <- "Expected Topic Proportion"
+    if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main,
+                             xlab=xlab, ylab=ylab,  ...)
+    if (is.null(linecol)) cols = grDevices::rainbow(length(topics))
+    if (!is.null(linecol)) cols=linecol
+  
+    #Plot everything
+    for(i in 1:length(topics)){
+      lines(uvals, means[[i]], col=cols[i])
+      lines(uvals, cis[[i]][1,], col=cols[i], lty=2)
+      lines(uvals, cis[[i]][2,], col=cols[i], lty=2)
+    }
   }
-
   #Create legend
   if(printlegend==T){
     labels = createLabels(labeltype=labeltype, covariate=covariate, method="continuous",
       cdata=cdata, cov.value1=NULL, cov.value2=NULL,model=model,n=n,
       topics=topics,custom.labels=custom.labels, frexw=frexw)
-    legend(xlim[1], ylim[2], labels, cols)
+    if(!omit.plot) legend(xlim[1], ylim[2], labels, cols)
     return(invisible(list(x=uvals, topics=topics,means=means, ci=cis, labels=labels)))
   }else{
     return(invisible(list(x=uvals, topics=topics,means=means, ci=cis)))
   }
+  
 }
 
 
@@ -83,7 +86,7 @@ plotContinuous <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
 plotPointEstimate <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,xlab=NULL,
                            ylab=NULL, main=NULL, xlim=NULL, ylim=NULL,
                            linecol=NULL, add=F, labeltype,n=7, custom.labels=NULL,model=NULL,frexw=.5,width=25,verbose.labels=T,
-                           ...){
+                           omit.plot=FALSE, ...){
   #What are the unique values of the covariate we are going to plot over?
   uvals <- cdata[,covariate]
   
@@ -98,36 +101,39 @@ plotPointEstimate <- function(prep,covariate,topics, cdata, cmat, simbetas, offs
     cis[[i]] = apply(sims,1, function(x) quantile(x, c(offset,1-offset)))
   }
 
-  #Get the plot set up
-  if (is.null(ylim)) ylim <- c(0, length(topics)*length(uvals)+1)
-  if (is.null(xlim)) xlim <- c(min(unlist(cis), na.rm=T),
-                               max(unlist(cis), na.rm=T))
-  if(is.null(xlab)) xlab <- "Estimated Topic Proportions"
-  if (is.null(ylab)) ylab <- ""
-  if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main,
-                           xlab=xlab, ylab=ylab,yaxt="n",...)
-
   
-  #Add a line for the 0 x-axis
-  lines(c(0,0), c(0, length(topics)*length(uvals)+2), lty=2)
-
+  if(!omit.plot) {
+    #Get the plot set up
+    if (is.null(ylim)) ylim <- c(0, length(topics)*length(uvals)+1)
+    if (is.null(xlim)) xlim <- c(min(unlist(cis), na.rm=T),
+                                 max(unlist(cis), na.rm=T))
+    if(is.null(xlab)) xlab <- "Estimated Topic Proportions"
+    if (is.null(ylab)) ylab <- ""
+    if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main,
+                             xlab=xlab, ylab=ylab,yaxt="n",...)
+  
+    
+    #Add a line for the 0 x-axis
+    lines(c(0,0), c(0, length(topics)*length(uvals)+2), lty=2)
+  }
   #Create the labels:
   labels = createLabels(labeltype=labeltype, covariate=covariate, method="pointestimate",
       cdata=cdata, cov.value1=NULL, cov.value2=NULL,model=model,n=n,
       topics=topics,custom.labels=custom.labels, frexw=frexw, verbose.labels=verbose.labels)
 
-  
-  #Plot everything
-  #Start at the top, move down
-  it <- length(topics)*length(uvals)
-  lab <- 1
-  for(i in 1:length(uvals)){
-    for(j in 1:length(topics)){
-      points(means[[j]][i], it, pch=16)
-      lines(c(cis[[j]][1,i],cis[[j]][2,i]),c(it,it))
-      axis(2,at=it, labels=stringr::str_wrap(labels[lab],width=width),las=1, cex=.25, tick=F, pos=cis[[j]][1,i])
-      it = it-1
-      lab = lab+1
+  if(!omit.plot) {
+    #Plot everything
+    #Start at the top, move down
+    it <- length(topics)*length(uvals)
+    lab <- 1
+    for(i in 1:length(uvals)){
+      for(j in 1:length(topics)){
+        points(means[[j]][i], it, pch=16)
+        lines(c(cis[[j]][1,i],cis[[j]][2,i]),c(it,it))
+        axis(2,at=it, labels=stringr::str_wrap(labels[lab],width=width),las=1, cex=.25, tick=F, pos=cis[[j]][1,i])
+        it = it-1
+        lab = lab+1
+      }
     }
   }
   return(invisible(list(uvals=uvals, topics=topics, means=means, cis=cis, labels=labels)))
@@ -148,7 +154,7 @@ plotDifference <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
                            ylab=NULL, main=NULL, xlim=NULL, ylim=NULL,
                            cov.value1=NULL, cov.value2=NULL,
                            linecol=NULL, add=F,labeltype,n=7, custom.labels=NULL,model=NULL,frexw=.5,width=25,verbose.labels=T,
-                           ...){
+                           omit.plot=FALSE,...){
   #What are the unique values of the covariate we are going to plot over?
   uvals <- cdata[,covariate]
 
@@ -165,19 +171,20 @@ plotDifference <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
     cis[[i]] = quantile(diff, c(offset,1-offset))
   }
  
-  #Get the plot set up
-  if (is.null(ylim)) ylim <- c(0, length(topics)+1)
-  if (is.null(xlim)) xlim <- c(min(unlist(cis), na.rm=T),
-                               max(unlist(cis), na.rm=T))
-  if(is.null(xlab)) xlab <- "Estimated Topic Proportions"
-  if (is.null(ylab)) ylab <- ""
-  if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main,
-                           xlab=xlab, ylab=ylab,yaxt="n",...)
-
-  
-  #Add a line for the 0 x-axis
-  lines(c(0,0), c(0, length(topics)+2), lty=2)
-
+  if(!omit.plot) {
+    #Get the plot set up
+    if (is.null(ylim)) ylim <- c(0, length(topics)+1)
+    if (is.null(xlim)) xlim <- c(min(unlist(cis), na.rm=T),
+                                 max(unlist(cis), na.rm=T))
+    if(is.null(xlab)) xlab <- "Estimated Topic Proportions"
+    if (is.null(ylab)) ylab <- ""
+    if (add==F) plot(0, 0,col="white",xlim=xlim, ylim=ylim, main=main,
+                             xlab=xlab, ylab=ylab,yaxt="n",...)
+    
+    
+    #Add a line for the 0 x-axis
+    lines(c(0,0), c(0, length(topics)+2), lty=2)
+  }
   #Create labels
     labels = createLabels(labeltype=labeltype, covariate=covariate, method="difference",
       cdata=cdata, cov.value1=cov.value1, cov.value2=cov.value2,model=model,n=n,
@@ -185,12 +192,14 @@ plotDifference <- function(prep,covariate,topics, cdata, cmat, simbetas, offset,
 
   #Plot everything
   #Start at the top, move down
-  it <- length(topics)
-  for(i in 1:length(topics)){
-    points(means[[i]], it, pch=16)
-    lines(c(cis[[i]][1],cis[[i]][2]),c(it,it))
-    axis(2,at=it, labels=stringr::str_wrap(labels[i],width=width),las=1, cex=.25, tick=F, pos=cis[[i]][1])
-    it = it-1
+  if(!omit.plot) {
+    it <- length(topics)
+    for(i in 1:length(topics)){
+      points(means[[i]], it, pch=16)
+      lines(c(cis[[i]][1],cis[[i]][2]),c(it,it))
+      axis(2,at=it, labels=stringr::str_wrap(labels[i],width=width),las=1, cex=.25, tick=F, pos=cis[[i]][1])
+      it = it-1
+    }
   }
   return(invisible(list(topics=topics, means=means, cis=cis, labels=labels)))
 }
