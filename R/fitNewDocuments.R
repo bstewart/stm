@@ -59,7 +59,8 @@
 #' @param model the originally fit STM object.
 #' @param documents the new documents to be fit. These documents must be in the stm format and
 #'  be numbered in the same way as the documents in the original model with the same dimension of vocabulary.
-#'  See the \pkg{quanteda} feature \link[quanteda]{dfm_select} for a way to do this.  
+#'  See \code{\link{alignCorpus}} or the \pkg{quanteda} feature \link[quanteda]{dfm_select} 
+#'  for a way to do this.  
 #' @param newData the metadata for the prevalence prior which goes with the unseen documents. As in
 #' the original data this cannot have any missing data.
 #' @param origData the original metadata used to fit the STM object. 
@@ -105,9 +106,11 @@
 #' This is only provided if prior is requested.}
 #' \item{mu}{a matrix where each column includes the K-1 dimension prior mean for each document. This is only provided if prior is requested.}
 #' \item{sigma}{a K-1 by K-1 matrix containing the prior covariance. This is only provided if prior is requested.}
-#' @seealso \code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
+#' @seealso \code{\link{alignCorpus}} \code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
 #' @examples 
 #' #An example using the Gadarian data.  From Raw text to fitted model.
+#' #(for a case where documents are all not processed at once see the help
+#' # file for alignCorpus)
 #' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
 #' out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
 #' set.seed(02138)

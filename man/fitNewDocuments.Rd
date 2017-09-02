@@ -16,7 +16,8 @@ fitNewDocuments(model = NULL, documents = NULL, newData = NULL,
 
 \item{documents}{the new documents to be fit. These documents must be in the stm format and
 be numbered in the same way as the documents in the original model with the same dimension of vocabulary.
-See the \pkg{quanteda} feature \link[quanteda]{dfm_select} for a way to do this.}
+See \code{\link{alignCorpus}} or the \pkg{quanteda} feature \link[quanteda]{dfm_select} 
+for a way to do this.}
 
 \item{newData}{the metadata for the prevalence prior which goes with the unseen documents. As in
 the original data this cannot have any missing data.}
@@ -135,6 +136,8 @@ optimization function \code{\link{optimizeDocument}}
 }
 \examples{
 #An example using the Gadarian data.  From Raw text to fitted model.
+#(for a case where documents are all not processed at once see the help
+# file for alignCorpus)
 temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
 set.seed(02138)
@@ -146,5 +149,5 @@ fitNewDocuments(model=mod.out, documents=out$documents[1:5], newData=out$meta[1:
                prevalencePrior="Covariate")
 }
 \seealso{
-\code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
+\code{\link{alignCorpus}} \code{\link{optimizeDocument}} \code{\link{make.heldout}} \code{\link{makeDesignMatrix}}
 }
