@@ -124,7 +124,7 @@ thetapost.local <- function(model, documents, nsims) {
     eta <- lambda[i,]
     theta <- model$theta[i,]
     #get just the necessary columns of beta
-    doc.beta <-   beta[[betaindex[i]]][,documents[[i]][1,]]
+    doc.beta <-   beta[[betaindex[i]]][,documents[[i]][1,], drop=FALSE]
     hess <- ln.hess(eta, theta, doc.beta, doc.ct, siginv)    
     nu <- try(chol2inv(chol.default(hess)),silent=TRUE)
     if(class(nu)=="try-error") {
