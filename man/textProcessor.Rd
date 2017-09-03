@@ -11,7 +11,8 @@ textProcessor(documents, metadata = NULL, lowercase = TRUE,
   removestopwords = TRUE, removenumbers = TRUE, removepunctuation = TRUE,
   stem = TRUE, wordLengths = c(3, Inf), sparselevel = 1,
   language = "en", verbose = TRUE, onlycharacter = FALSE,
-  striphtml = FALSE, customstopwords = NULL, onlytxtfiles = TRUE)
+  striphtml = FALSE, customstopwords = NULL, onlytxtfiles = TRUE,
+  v1 = FALSE)
 }
 \arguments{
 \item{documents}{The documents to be processed.  A character vector where
@@ -81,6 +82,9 @@ to be removed should be all lower case but otherwise complete.}
 \item{onlytxtfiles}{A logical which if \code{TRUE}, When reading files from
 a local directory, the function will skip over any files that don't end in
 \code{.txt}.}
+
+\item{v1}{A logical which defaults to \code{FALSE}.  If set to \code{TRUE} it
+will use the ordering of operations we use used in Version 1.0 of the package.}
 }
 \value{
 \item{documents}{A list containing the documents in the stm format.}
