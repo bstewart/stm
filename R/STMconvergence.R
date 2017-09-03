@@ -22,16 +22,21 @@ convergence.check <- function(bound.ss, convergence, settings) {
     new <- convergence$bound[convergence$its]
     convergence.check <- (new-old)/abs(old)
     #if(convergence.check < emtol & convergence.check > 0) {
-    if(convergence.check < emtol) {
-      convergence$converged <- TRUE
-      convergence$stopits <- TRUE
-      if(verbose) cat("Model Converged \n")
-      return(convergence)
+    if(emtol!=0) {
+      if(convergence.check > 0 | settings$convergence$allow.neg.change) {
+        if(convergence.check < emtol) {
+          convergence$converged <- TRUE
+          convergence$stopits <- TRUE
+          if(verbose) cat("Model Converged \n")
+          return(convergence)
+        }
+      }
     }
   }
   
   if(convergence$its==maxits) {
-    if(verbose) cat("Model Terminated Before Convergence Reached \n")
+    if(verbose & emtol!=0) cat("Model Terminated Before Convergence Reached \n")
+    if(verbose & emtol==0) cat("Model Terminated After Requested Number of Steps \n")
     convergence$stopits <- TRUE
     return(convergence)
   }

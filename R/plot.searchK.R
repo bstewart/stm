@@ -1,3 +1,31 @@
+#' Plots diagnostic values resulting from searchK
+#' 
+#' Takes the result of searchK and produces a set of plots for evaluating
+#' optimal topic numbers via visual representation of diagnostic functions.
+#' 
+#' 
+#' @param x A searchK object, containing the diagnostic information of an stm
+#' with a variety of topics.
+#' @param ...  additional arguments for S3 compatability.
+#' @examples
+#' 
+#' \dontrun{
+#' 
+#' K<-c(5,10,15) 
+#' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
+#' out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
+#' documents <- out$documents
+#' vocab <- out$vocab
+#' meta <- out$meta
+#' set.seed(02138)
+#' K<-c(5,10,15) 
+#' kresult <- searchK(documents, vocab, K, prevalence=~treatment + s(pid_rep), data=meta)
+#' 
+#' plot(kresult)
+#' }
+#'  
+#' @export plot.searchK
+#' @export
 plot.searchK<-function(x, ...){
   oldpar <- par(no.readonly=TRUE)
   g <- x$results

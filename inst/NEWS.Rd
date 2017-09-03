@@ -1,5 +1,71 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.2.4}{
+\itemize{
+\item Important bug fix from Chris Baker that caused summary.estimateEffect to not work sometimes.
+\item A fix from Jeffrey Arnold that makes the ngroups memoization functionality work more in line with the original Hughes and Sudderth paper. 
+\item Changed documentation for the ngroups memoization functionality in accordance with info from Adel Dauod who showed that in his larger document examples setting ngroups > 1 increased the number of iterations needed for convergence.
+\item Changed the K=0 spectral initialization to use a randomized projection method to calculate the PCA which initializes the T-SNE projection.  This should make the initializations much faster for K=0 and large vocabs.
+\item You can now run for a fixed number of em steps by setting emtol=0L, you can also disallow negative changes in the bound triggering convergence (see stm help file).
+\item Bumped the required version of R to be consistent with package dependencies, hat tip to Sean Westwood
+\item Fixed an edge case in make.heldout where you can end up with documents being classed as non-integers. Hat tip to github user LouHb.
+\item Fixed a bug that caused R to crash for very large models on Windows machines only.  Huge thanks to Adel Dauod for reporting the bug and doing an enormous amount of testing to isolate it.
+}
+}
+\section{Version 1.2.3}{
+\itemize{
+\item A small bug fix to fitNewDocuments() thanks to user: OO00OO00 on Github that cause the functionality not to work for CTMs.
+}
+}
+\section{Version 1.2.2}{
+\itemize{
+\item A small release correcting some minor bugs.
+\item Fixed a bug in estimateEffect when a character or factor variable had 2+ levels with the same number of observtions.  Thanks to APuzyk on github for catching this.
+\item The last release turned on a different recovery method for the spectral algorithm by default.  Changed the default back to exponential gradient as documented.  Thanks to Simone Zhang for this catch.
+\item Better defaults for some of the labeling in plot.STM
+\item Better argument matching and errors for plot.estimateEffect
+}
+}
+\section{Version 1.2.1}{
+\itemize{
+\item Small updates to the documentation and vignette.
+}
+}
+\section{Version 1.2.0}{
+\itemize{
+\item Thanks to efforts by Ken Benoit stm can now take a quanteda dfm object.
+\item Thanks to help from Chris Baker we are now using roxygen for our documentation.
+\item Jeffrey Arnold fixed a small bug in toLDAVis.  Thanks!
+\item Carsten Schwemmer helped us find a bug where plot.estimateEffect() didn't work when dplyr was loaded.  This is now fixed.
+\item In making the change to roxygen we unfortunately break backwards compatability.  The package's generic functions such as plot.estimateEffect() and plot.STM() can now only be called by plot() rather than by their full name.
+\item We document and export optimizeDocument which provides access to the document level E-step.
+\item We have documented and exported several of the labeling functions including calcfrex, calcscore, calclift and js.estimate.  These are marked with keyword internal because they don't have much error checking and most users will want labelTopics anyhow.  But they can be accessed with ? and are linked from labelTopics
+\item After much popular demand we have released a fitNewDocuments() function which will calculate topic proportions for documents not used to fit the models.  There are many different options here.
+\item estimateEffect now has a summary function which will make regression tables
+\item a number of the internals to plot.estimateEffect have been improved which should eliminate some edge case bugs.
+\item Much of the documentation has been updated as has the vignette.
+\item Our wrapper s() for the splines package function bs() now has predict functions associated with it so it should work in contexts like lm()
+\item We have documented and exported all the metrics for searchK()
+\item We made a change in the spectral initialization which ensures that only the top 10000 (a modifiable default) words are used in the initialization.  This allows it to be used effectively with much larger vocab.
+\item Added a modifiable max iteration timeout error for the prevalence regression in stm.  This will only matter for people using covariate sets which are very, very large.
+}
+}
+\section{Version 1.1.6}{
+\itemize{
+\item Added a new recovery algorithm used in spectral initialization from gradient descent to a more accurate and generally faster one based on quadratic programming.  This can be turned on by: control=list(recoverEG=FALSE).  Eventually we may change the default recovery method. Note: while this more
+accurately solves the actual problem, we've seen better results with the early stopping produced by
+exponential gradient not fully convering.  This has been confirmed by the Arora group as well.
+\item Clarified some of the documentation in textProcessor thanks to James Gibbon.
+\item Fixed a problem with registration of S3 methods for textProcessor()
+\item Added access to the information criterion parameter for L1 mode prevalence covariance in stm.  See the gamma.ic.k option in the control parameters of stm 
+}
+}
+\section{Version 1.1.5}{
+\itemize{
+\item searchK() can now be used with content covariates thanks to github user rosemm
+\item added a querying function based on data.table into findThoughts()
+}
+}
 \section{Version 1.1.4}{
 \itemize{
 \item Fixed a rare bug in the K=0 feature for spectral initialization where words with the exact same appearance pattern would cause the projection to fail.

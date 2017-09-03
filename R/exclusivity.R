@@ -1,10 +1,40 @@
-#rewritten exclusivity code 1/25/2014 to make it a bit faster and add some errors
-# benchmarked and got exact same answers against old code.
-
-exclusivity <- function(mod.out, M=10, frexw=.7){
+#' Exclusivity
+#' 
+#' Calculate an exclusivity metric for an STM model.
+#' 
+#' In Roberts et al 2014 we proposed using the Mimno et al 2011 \code{\link{semanticCoherence}} metric 
+#' for helping with topic model selection. We found that semantic coherence alone is relatively easy to
+#' achieve by having only a couple of topics which all are dominated by the most common words.  Thus we
+#' also proposed an exclusivity measure.  
+#' 
+#' Our exclusivity measure includes some information on word frequency as well.  It is based on the FREX
+#' labeling metric (\code{\link{calcfrex}}) with the weight set to .7 in favor of exclusivity by default.
+#'  
+#'  This function is currently marked with the keyword internal because it does not have much error checking.
+#'
+#' @param model the STM object
+#' @param M the number of top words to consider per topic
+#' @param frexw the frex weight
+#' 
+#' @return a numeric vector containing semantic coherence for each topic
+#' 
+#' @references 
+#' Mimno, D., Wallach, H. M., Talley, E., Leenders, M., & McCallum, A. (2011, July). 
+#' "Optimizing semantic coherence in topic models." In Proceedings of the Conference on Empirical Methods in 
+#' Natural Language Processing (pp. 262-272). Association for Computational Linguistics. Chicago
+#' 
+#' Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., Albertson, B., et al. (2014). 
+#' "Structural topic models for open ended survey responses." American Journal of Political Science, 58(4), 1064-1082.
+#'  http://goo.gl/0x0tHJ		
+#' @seealso \code{\link{searchK}} \code{\link{plot.searchK}} \code{\link{semanticCoherence}}
+#' @keywords internal
+#' @examples 
+#' exclusivity(gadarianFit)
+#' @export
+exclusivity <- function(model, M=10, frexw=.7){
   w <- frexw
-  if(length(mod.out$beta$logbeta)!=1) stop("Exclusivity calculation only designed for models without content covariates")
-  tbeta <- t(exp(mod.out$beta$logbeta[[1]]))
+  if(length(model$beta$logbeta)!=1) stop("Exclusivity calculation only designed for models without content covariates")
+  tbeta <- t(exp(model$beta$logbeta[[1]]))
   s <- rowSums(tbeta)
   mat <- tbeta/s #normed by columns of beta now.
 

@@ -3,17 +3,17 @@
 #data: data in which the variable exists
 outputdata <- function(type, data){
   if(type=="character"){
-    tab <- table(data[,names(type)])
-    mode <- names(tab)[tab==max(tab)]
-    return(factor(mode, levels=levels(as.factor(data[,names(type)]))))
+    tab <- table(data[[names(type)]])
+    mode <- names(tab)[which.max(tab)]
+    return(factor(mode, levels=levels(as.factor(data[[names(type)]]))))
   }
   if(type=="factor"){
     tab <- table(data[,names(type)])
-    mode <- names(tab)[tab==max(tab)]
-    return(factor(mode, levels=levels(data[,names(type)])))
+    mode <- names(tab)[which.max(tab)]
+    return(factor(mode, levels=levels(data[[names(type)]])))
   }
   if(type=="numeric"|type=="integer"){
-    return(median(data[,names(type)]))
+    return(median(data[[names(type)]]))
   }
 }
 
@@ -29,7 +29,10 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
                             cov.value2=NULL, npoints=100, moderator=NULL, moderator.value=NULL){
 
   #Find type of each variable
-  types <- sapply(prep$varlist,function (x) class(prep$data[,x]))
+  types <- lapply(prep$data, class)
+  types <- unlist(types[prep$varlist]) 
+  #switched the below out.
+  #types <- sapply(prep$varlist,function (x) class(prep$data[,x]))
 
   #Make control matrix
   #What is the covariate of interest and what are the controls?
@@ -38,19 +41,20 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
   
   if(method=="pointestimate"){    
                                         #Start cdata with the variable of interest
-    if(types[covariateofinterest]=="character" |
-       types[covariateofinterest]=="factor") cdata <-data.frame(factor(as.character(unique(prep$data[,covariate])),levels=levels(as.factor(prep$data[,covariate]))))
+    if(types[covariateofinterest]=="character") cdata <- data.frame(factor(unique(prep$data[[covariate]])))
+      
+    if(types[covariateofinterest]=="factor") cdata <- data.frame(unique(prep$data[[covariate]]))
     
     if(types[covariateofinterest]=="numeric" |
        types[covariateofinterest]=="integer") cdata <-
-       data.frame(unique(prep$data[,covariate]))
+       data.frame(unique(prep$data[[covariate]]))
     
     names(cdata) <- covariate
   }
   if(method=="difference"){
     if(types[covariateofinterest]=="character" |
        types[covariateofinterest]=="factor") cdata <-
-  data.frame(factor(as.character(c(cov.value1, cov.value2)), levels=levels(as.factor(prep$data[,covariate]))))
+  data.frame(factor(as.character(c(cov.value1, cov.value2)), levels=levels(as.factor(prep$data[[covariate]]))))
     if(types[covariateofinterest]=="numeric" |
        types[covariateofinterest]=="integer") cdata <-  data.frame(c(cov.value1, cov.value2))
     names(cdata) <- covariate
@@ -62,7 +66,7 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
     stop("Covariate of interest must be numeric")
     if(types[covariateofinterest]=="numeric" |
        types[covariateofinterest]=="integer") cdata <-
-  data.frame(seq(min(prep$data[,covariate]),max(prep$data[,covariate]),
+  base::data.frame(seq(min(prep$data[[covariate]]),max(prep$data[[covariate]]),
     length.out=npoints))
     names(cdata) <- covariate
   }
@@ -75,8 +79,8 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
 
   #Insert the value for the interaction, if applicable
   if(!is.null(moderator) & !is.null(moderator.value)){
-    if(is.factor(prep$data[,moderator])|is.character(prep$data[,moderator])){
-      cdata[,moderator] <- factor(moderator.value, levels=levels(as.factor(prep$data[,moderator])))
+    if(is.factor(prep$data[[moderator]])|is.character(prep$data[[moderator]])){
+      cdata[,moderator] <- factor(moderator.value, levels=levels(as.factor(prep$data[[moderator]])))
     }else{
       cdata[,moderator] <- moderator.value
     }
@@ -93,6 +97,7 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
   }
 
   #Get model.matrix
-  cmatrix <- parseFormulas(prep, cdata)
+  #cmatrix <- parseFormulas(prep, cdata)
+  cmatrix <- makeDesignMatrix(prep$formula, prep$data, cdata, sparse=FALSE)
   return(list(cdata=cdata,cmatrix=cmatrix))
 }
