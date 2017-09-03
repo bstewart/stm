@@ -28,6 +28,7 @@
 #' @param heldout.seed If desired, a seed to use when holding out documents for
 #' later heldout likelihood computation
 #' @param M M value for exclusivity computation
+#' @param cores Number of CPUs to use for parallel computation
 #' @param ...  Other diagnostics parameters.
 #' @return \item{exclus}{Exclusivity of each model.} \item{semcoh}{Semantic
 #' coherence of each model.} \item{heldout}{Heldout likelihood for each model.}
@@ -54,40 +55,52 @@
 #'  
 #' @export
 searchK <- function(documents, vocab, K, init.type = "Spectral", 
-                    N=floor(.1*length(documents)), proportion=.5, 
-                    heldout.seed=NULL,
-                    M=10,...) {
-  #Set up the object to return
-  g <- rep(list(vector(length=length(K))), 8)
-  names(g) <- c("K","heldout","residual","bound","lbound","exclus","semcoh","em.its")
-  
+                    N = floor(.1*length(documents)), proportion = .5, 
+                    heldout.seed = NULL, M = 10, cores = 1, ...) {
+
   #Make a heldout dataset
   heldout <- make.heldout(documents,vocab, N=N, proportion=proportion, 
                           seed=heldout.seed)
-  
-  #Loop over each of the number of topics
-  for(i in 1:length(K)) {
-    g$K[i]<-K[i]
-    #run stm
-    model <- stm(documents=heldout$documents,vocab=heldout$vocab,
-                 K=K[i], init.type=init.type,...)
-    #calculate values to return
-    if( !"content" %in% names(list(...)) ) {  # only calculate exclusivity for models without content covariates
-      g$exclus[i]<-mean(unlist(exclusivity(model, M=M, frexw=.7)))
-      g$semcoh[i]<-mean(unlist(semanticCoherence(model, heldout$documents, M)))
-    }
-    g$heldout[i]<-eval.heldout(model, heldout$missing)$expected.heldout    
-    g$residual[i]<-checkResiduals(model,heldout$documents)$dispersion
-    g$bound[i]<-max(model$convergence$bound)
-    g$lbound[i]<-max(model$convergence$bound) + lfactorial(model$settings$dim$K)
-    g$em.its[i]<-length(model$convergence$bound)    
-  }
-  g <- as.data.frame(g)
+
+  # warnings
   if( "content" %in% names(list(...)) ) {
     warning("Exclusivity calculation only designed for models without content covariates", call.=FALSE)
-    g$exclus <- NULL
-    g$semcoh <- NULL
   }
+
+  # compute statistics for a particular number of topics k
+  get_statistics <- function(k, ...) { # k = one particular topic number; K = vector of topic numbers
+      out <- NULL # output vector
+      out[['K']] <- k
+      #run stm
+      model <- stm(documents=heldout$documents,vocab=heldout$vocab,
+                   K=k, init.type=init.type, ...)
+      #calculate values to return
+      if( !"content" %in% names(list(...)) ) {  # only calculate exclusivity for models without content covariates
+        out[['exclus']] <- mean(unlist(exclusivity(model, M=M, frexw=.7)))
+        out[['semcoh']] <- mean(unlist(semanticCoherence(model, heldout$documents, M)))
+      } 
+      out[['heldout']] <- eval.heldout(model, heldout$missing)$expected.heldout    
+      out[['residual']] <- checkResiduals(model,heldout$documents)$dispersion
+      out[['bound']] <- max(model$convergence$bound)
+      out[['lbound']] <- max(model$convergence$bound) + lfactorial(model$settings$dim$K)
+      out[['em.its']] <- length(model$convergence$bound)    
+      return(out)
+  }
+
+  # single core
+  if (cores == 1) {
+      g <- list()
+      for (i in seq_along(K)) { # loop produces nicer printout than lapply
+          g[[i]] <- get_statistics(K[i], ...)
+      }
+  # multi core
+  } else {
+      g <- parallel::mclapply(K, get_statistics, mc.cores = cores, ...)
+  } 
+
+  # output
+  g <- do.call('rbind', g)
+  g <- as.data.frame(g)
   toreturn <- list(results=g, call=match.call(expand.dots=TRUE))
   class(toreturn)<- "searchK"
   return(toreturn)

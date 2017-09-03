@@ -6,7 +6,8 @@
 topics).}
 \usage{
 searchK(documents, vocab, K, init.type = "Spectral", N = floor(0.1 *
-  length(documents)), proportion = 0.5, heldout.seed = NULL, M = 10, ...)
+  length(documents)), proportion = 0.5, heldout.seed = NULL, M = 10,
+  cores = 1, ...)
 }
 \arguments{
 \item{documents}{The documents to be used for the stm model}
@@ -27,6 +28,8 @@ function.}
 later heldout likelihood computation}
 
 \item{M}{M value for exclusivity computation}
+
+\item{cores}{Number of CPUs to use for parallel computation}
 
 \item{...}{Other diagnostics parameters.}
 }
