@@ -12,6 +12,7 @@
 \item Fixed a bug that caused R to crash for very large models on Windows machines only.  Huge thanks to Adel Dauod for reporting the bug and doing an enormous amount of testing to isolate it.
 \item Added the alignCorpus() function to help prep unseen documents for fitNewDocuments()
 \item Thanks to Vincent Arel-Bundock for adding parallel computing to searchK 
+\item Long-overdue thanks to Stephen Woloszynek for fixing some bugs in thetaPosterior when local uncertainty is chosen.
 }
 }
 \section{Version 1.2.3}{
