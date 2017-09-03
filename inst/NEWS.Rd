@@ -10,6 +10,9 @@
 \item Bumped the required version of R to be consistent with package dependencies, hat tip to Sean Westwood
 \item Fixed an edge case in make.heldout where you can end up with documents being classed as non-integers. Hat tip to github user LouHb.
 \item Fixed a bug that caused R to crash for very large models on Windows machines only.  Huge thanks to Adel Dauod for reporting the bug and doing an enormous amount of testing to isolate it.
+\item Added the alignCorpus() function to help prep unseen documents for fitNewDocuments()
+\item Thanks to Vincent Arel-Bundock for adding parallel computing to searchK 
+\item Long-overdue thanks to Stephen Woloszynek for fixing some bugs in thetaPosterior when local uncertainty is chosen.
 }
 }
 \section{Version 1.2.3}{

@@ -89,6 +89,8 @@
 #' @param onlytxtfiles A logical which if \code{TRUE}, When reading files from
 #' a local directory, the function will skip over any files that don't end in
 #' \code{.txt}.
+#' @param v1 A logical which defaults to \code{FALSE}.  If set to \code{TRUE} it
+#' will use the ordering of operations we use used in Version 1.0 of the package.
 #' @return \item{documents}{A list containing the documents in the stm format.}
 #' \item{vocab }{Character vector of vocabulary.} \item{meta}{Data frame or
 #' matrix containing the user-supplied metadata for the retained documents.}
@@ -118,7 +120,7 @@ textProcessor <- function(documents, metadata=NULL,
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, removepunctuation=TRUE, stem=TRUE, 
                           wordLengths=c(3,Inf),sparselevel=1, language="en",
                           verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
-                          customstopwords=NULL, onlytxtfiles=TRUE) {
+                          customstopwords=NULL, onlytxtfiles=TRUE, v1=FALSE) {
   if(!requireNamespace("tm",quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
   if(!(utils::packageVersion("tm")>=0.6)) stop("Please install at least version 0.6 of the tm package.")
   if(stem) {
@@ -146,13 +148,14 @@ textProcessor <- function(documents, metadata=NULL,
   }
   
   if(striphtml){
-  documents <- gsub('<.+?>', ' ', documents)
+    documents <- gsub('<.+?>', ' ', documents)
   }
+  
   #remove non-visible characters
   documents <- stringr::str_replace_all(documents,"[^[:graph:]]", " ")
   
   if(onlycharacter){
-  documents <- gsub("[^[:alnum:]///' ]", " ", documents)
+    documents <- gsub("[^[:alnum:]///' ]", " ", documents)
   }
   
   if(verbose) cat("Building corpus... \n")
@@ -170,9 +173,12 @@ textProcessor <- function(documents, metadata=NULL,
       txt <- tm::tm_map(txt, tolower)
     }
   }
-  if(removepunctuation){
-    if(verbose) cat("Removing punctuation... \n")
-    txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE) #Remove punctuation
+  
+  if(!v1) {
+    if(removepunctuation){
+      if(verbose) cat("Removing punctuation... \n")
+      txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE) #Remove punctuation
+    }
   }
   if(removestopwords){
     if(verbose) cat("Removing stopwords... \n")
@@ -186,6 +192,15 @@ textProcessor <- function(documents, metadata=NULL,
     if(verbose) cat("Removing numbers... \n")
     txt <- tm::tm_map(txt, tm::removeNumbers) #Remove numbers
   }
+  
+  if(v1) {
+    #return to the v1 style of removing punctuation right before stemming
+    if(removepunctuation){
+      if(verbose) cat("Removing punctuation... \n")
+      txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE) #Remove punctuation
+    }    
+  }
+  
   if(stem){
     if(verbose) cat("Stemming... \n")
     txt <- tm::tm_map(txt, tm::stemDocument, language=language)
