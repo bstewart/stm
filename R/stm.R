@@ -209,11 +209,14 @@
 #' number of words to be used in the initialization.  It uses the most frequent words
 #' first and then they are reintroduced following initialization.  This allows spectral
 #' to be used with a large V.}
-#' \item{\code{allow.neg.change}}{Defaults to \code{TRUE}.  Set to \code{FALSE} to keep
-#' the algorithm for converging when the bound change is negative.  NB: because this is 
+#' \item{\code{allow.neg.change}}{A logical indicating whether the algorithm is allowed
+#' to declare convergence when the change in the bound has become negative. 
+#' Defaults to \code{TRUE}.  Set to \code{FALSE} to keep the algorithm from converging
+#'  when the bound change is negative.  NB: because this is 
 #' only an approximation to the lower-bound the change can be negative at times.  Right
-#' now this triggers convergence but the final approximate bound can go higher if you
-#' are willing to wait it out.}
+#' now this triggers convergence but the final approximate bound might go higher if you
+#' are willing to wait it out. The logic of the default setting is that a negative change
+#' in the bound usually means it is barely moving at all.}
 #' \item{\code{custom.beta}}{If \code{init.type="Custom"} you can pass your own initialization
 #' of the topic-word distributions beta to use as an initialization.  Please note that this takes
 #' some care to be sure that it is provided in exactly the right format.  The number of topics and
