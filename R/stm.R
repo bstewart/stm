@@ -262,7 +262,8 @@
 #' attempting to reproduce a result with that seed, it should be specified
 #' here.
 #' @param max.em.its The maximum number of EM iterations.  If convergence has
-#' not been met at this point, a message will be printed.
+#' not been met at this point, a message will be printed.  If you set this to 
+#' 0 it will return the initialization.
 #' @param emtol Convergence tolerance.  EM stops when the relative change in
 #' the approximate bound drops below this level.  Defaults to .00001.  You 
 #' can set it to 0 to have the algorithm run \code{max.em.its} number of steps.
@@ -479,7 +480,7 @@ stm.list <- function(documents, vocab, K,
     if(init.type!="Spectral") stop("Topic selection method can only be used with init.type='Spectral'")
   }
   #Iterations, Verbose etc.
-  if(!(length(max.em.its)==1 & posint(max.em.its))) stop("Max EM iterations must be a single positive integer")
+  if(!(length(max.em.its)==1 & nonnegint(max.em.its))) stop("Max EM iterations must be a single non-negative integer")
   if(!is.logical(verbose)) stop("verbose must be a logical.")
   
   ##

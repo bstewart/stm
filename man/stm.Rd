@@ -68,7 +68,8 @@ attempting to reproduce a result with that seed, it should be specified
 here.}
 
 \item{max.em.its}{The maximum number of EM iterations.  If convergence has
-not been met at this point, a message will be printed.}
+not been met at this point, a message will be printed.  If you set this to 
+0 it will return the initialization.}
 
 \item{emtol}{Convergence tolerance.  EM stops when the relative change in
 the approximate bound drops below this level.  Defaults to .00001.  You 

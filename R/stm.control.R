@@ -52,6 +52,10 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   }
   suffstats <- vector(mode="list", length=ngroups)
 
+  if(settings$convergence$max.em.its==0) {
+    stopits <- TRUE
+    if(verbose) cat("Returning Initialization.")
+  }
   ############
   #Step 2: Run EM
   ############
