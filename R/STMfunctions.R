@@ -21,6 +21,10 @@ posint <- function(x) {
   all(is.wholenumber(x)) & all(x>0)
 }
 
+nonnegint <- function(x) {
+  all(is.wholenumber(x)) & all(x>=0)
+}
+
 
 #' Draw from a Multivariate Normal
 #' 

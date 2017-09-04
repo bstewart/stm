@@ -41,7 +41,8 @@ stm.init <- function(documents, settings) {
     mu <- matrix(mu, ncol=1)
     sigma <- cov(lambda)    
   }
-  if(mode=="Random") {
+  if(mode=="Random" | mode=="Custom") {
+    #Random initialization or if Custom, initalize everything randomly
     mu <- matrix(0, nrow=(K-1),ncol=1)
     sigma <- diag(20, nrow=(K-1))
     beta <- matrix(rgamma(V * K, .1), ncol = V)
@@ -99,7 +100,7 @@ stm.init <- function(documents, settings) {
       anchor <- tsneAnchor(Q) #run the Lee and Mimno (2014) algorithm
       K <- length(anchor) # update K
     }
-    # (3) recoverKL
+    # (3) recoverL2
     if(verbose) cat("\n\t Recovering initialization...\n \t")
     beta <- recoverL2(Q, anchor, wprob, verbose=verbose, recoverEG=settings$init$recoverEG)$A
     
@@ -127,6 +128,18 @@ stm.init <- function(documents, settings) {
   if(!settings$kappa$LDAbeta) {
     model$kappa <- kappa.init(documents, K, V, A, interactions=settings$kappa$interactions)
   }
+  
+  #For custom models we already have a random init, now fill in beta
+  if(mode=="Custom") {
+    newbeta <- settings$init$custom
+    if(!is.list(newbeta)) stop("Custom beta input is not a list")
+    if(length(newbeta)!=length(beta)) stop("Custom beta list is not the same length as model specification")
+    if(any(dim(newbeta[[1]])!=dim(beta[[1]]))) stop("Dimensions of custom beta do not match model specification")
+    if(sum(newbeta[[1]][1,])==1) stop("It looks like you provided an unlogged version of custom beta. See documentation")
+    #okay at this point we probably have checked it enough- copy it over.
+    model$beta <- lapply(newbeta, exp)
+  }
+  
   return(model)
 }
 
