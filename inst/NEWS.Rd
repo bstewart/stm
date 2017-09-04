@@ -14,6 +14,7 @@
 \item Thanks to Vincent Arel-Bundock for adding parallel computing to searchK 
 \item Long-overdue thanks to Stephen Woloszynek for fixing some bugs in thetaPosterior when local uncertainty is chosen.
 \item Setting max.em.its=0 will now return the results of the initialization procedure.
+\item You can now pass your own custom initializations of beta.
 }
 }
 \section{Version 1.2.3}{

@@ -5,7 +5,7 @@
 \title{Variational EM for the Structural Topic Model}
 \usage{
 stm(documents, vocab, K, prevalence = NULL, content = NULL, data = NULL,
-  init.type = c("LDA", "Random", "Spectral"), seed = NULL,
+  init.type = c("LDA", "Random", "Spectral", "Custom"), seed = NULL,
   max.em.its = 500, emtol = 1e-05, verbose = TRUE, reportevery = 5,
   LDAbeta = TRUE, interactions = TRUE, ngroups = 1, model = NULL,
   gamma.prior = c("Pooled", "L1"), sigma.prior = 0, kappa.prior = c("L1",
@@ -58,9 +58,10 @@ covariates.  If unspecified the variables are taken from the active
 environment.}
 
 \item{init.type}{The method of initialization.  Must be either Latent
-Dirichlet Allocation ("LDA"), "Random" or "Spectral".  See details for more
-info. If you want to replicate a previous result, see the argument.
-\code{seed}.}
+Dirichlet Allocation ("LDA"), "Random", "Spectral" or "Custom".  See details for more
+info. If you want to replicate a previous result, see the argument
+\code{seed}.  For "Custom" see the format described below under the \code{custom.beta}
+option of the \code{control} parameters.}
 
 \item{seed}{Seed for the random number generator. \code{stm} saves the seed
 it uses on every run so that any result can be exactly reproduced.  When
@@ -254,6 +255,8 @@ arguments still need to be passed to the object (including any formulas, the
 number of topics, etc.).  Be sure to change the \code{max.em.its} argument
 or it will simply complete one additional iteration and stop.
 
+You can pass a custom initialization of the beta model parameters to \code{stm}.
+
 The \code{control} argument is a list with named components which can be
 used to specify numerous additional computational details.  Valid components
 include: 
@@ -350,6 +353,16 @@ the algorithm for converging when the bound change is negative.  NB: because thi
 only an approximation to the lower-bound the change can be negative at times.  Right
 now this triggers convergence but the final approximate bound can go higher if you
 are willing to wait it out.}
+\item{\code{custom.beta}}{If \code{init.type="Custom"} you can pass your own initialization
+of the topic-word distributions beta to use as an initialization.  Please note that this takes
+some care to be sure that it is provided in exactly the right format.  The number of topics and
+vocab must match exactly.  The vocab must be in the same order.  The values must not be pathological
+(for instance setting the probability of a single word to be 0 under all topics). The beta should be
+formatted in the same way as the piece of a returned stm model object \code{stmobj$beta$logbeta}.
+It should be a list of length the number of levels of the content covariate.  Each element of the list
+is a K by V matrix containing the logged word probability conditional on the topic.  If you use this
+option we recommend that you use \code{max.em.its=0} with the model initialization set to random, inspect
+the returned form of \code{stmobj$beta$logbeta} and ensure that it matches your format.}
 }
 }
 \examples{
