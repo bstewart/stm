@@ -6,7 +6,7 @@
 \item A fix from Jeffrey Arnold that makes the ngroups memoization functionality work more in line with the original Hughes and Sudderth paper. 
 \item Changed documentation for the ngroups memoization functionality in accordance with info from Adel Dauod who showed that in his larger document examples setting ngroups > 1 increased the number of iterations needed for convergence.
 \item Changed the K=0 spectral initialization to use a randomized projection method to calculate the PCA which initializes the T-SNE projection.  This should make the initializations much faster for K=0 and large vocabs.
-\item You can now run for a fixed number of em steps by setting emtol=0L, you can also disallow negative changes in the bound triggering convergence (see stm help file).
+\item You can now run for a fixed number of em steps by setting emtol=0L, you can also disallow negative changes in the bound triggering convergence using the control option allow.neg.change=FALSE.
 \item Bumped the required version of R to be consistent with package dependencies, hat tip to Sean Westwood
 \item Fixed an edge case in make.heldout where you can end up with documents being classed as non-integers. Hat tip to github user LouHb.
 \item Fixed a bug that caused R to crash for very large models on Windows machines only.  Huge thanks to Adel Dauod for reporting the bug and doing an enormous amount of testing to isolate it.
@@ -15,6 +15,7 @@
 \item Long-overdue thanks to Stephen Woloszynek for fixing some bugs in thetaPosterior when local uncertainty is chosen.
 \item Setting max.em.its=0 will now return the results of the initialization procedure.
 \item You can now pass your own custom initializations of beta.
+\item We've removed the text file reader from textProcessor but encourage users who want to read in texts to check out the excellent readtext package.
 }
 }
 \section{Version 1.2.3}{

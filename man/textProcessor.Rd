@@ -11,15 +11,12 @@ textProcessor(documents, metadata = NULL, lowercase = TRUE,
   removestopwords = TRUE, removenumbers = TRUE, removepunctuation = TRUE,
   stem = TRUE, wordLengths = c(3, Inf), sparselevel = 1,
   language = "en", verbose = TRUE, onlycharacter = FALSE,
-  striphtml = FALSE, customstopwords = NULL, onlytxtfiles = TRUE,
-  v1 = FALSE)
+  striphtml = FALSE, customstopwords = NULL, v1 = FALSE)
 }
 \arguments{
 \item{documents}{The documents to be processed.  A character vector where
 each entry is the full text of a document (if passed as a different type
-it will attempt to convert to a character vector).  If of length one it is assumed
-to be a filepath containing a directory where each file is a separate
-.txt file.}
+it will attempt to convert to a character vector).}
 
 \item{metadata}{Additional data about the documents.  Specifically a
 \code{data.frame} or \code{matrix} object with number of rows equal to the
@@ -79,10 +76,6 @@ as with standard stopwords these are removed after converting everything to
 lower case but before removing numbers, punctuation or stemming.  Thus words
 to be removed should be all lower case but otherwise complete.}
 
-\item{onlytxtfiles}{A logical which if \code{TRUE}, When reading files from
-a local directory, the function will skip over any files that don't end in
-\code{.txt}.}
-
 \item{v1}{A logical which defaults to \code{FALSE}.  If set to \code{TRUE} it
 will use the ordering of operations we use used in Version 1.0 of the package.}
 }
@@ -93,18 +86,15 @@ matrix containing the user-supplied metadata for the retained documents.}
 }
 \description{
 Function that takes in a vector of raw texts (in a variety of languages) and
-performs basic operations.  This function is essentially a wrapper \code{tm}
+performs basic operations.  This function is essentially a wrapper \pkg{tm}
 package where various user specified options can be selected.
 }
 \details{
 This function is designed to provide a convenient and quick way to process a
 relatively small volume texts for analysis with the package. It is designed
 to quickly ingest data in a simple form like a spreadsheet where each
-document sits in a single cell.  You can also pass the filepath of a single
-directory to the documents argument.  The function will then recursively
-read in all the files within the directory where each document is a file.
-Once the text has been processed by \code{tm} the document term matrix is
-converted to the \code{stm} format using \code{\link{readCorpus}}.
+document sits in a single cell. If you have texts more complicated than a 
+spreadsheet, we recommend you check out the excellent \pkg{readtext} package.
 
 The processor always strips extra white space but all other processing
 options are optional.  Stemming uses the snowball stemmers and supports a
@@ -124,7 +114,7 @@ tokens removed (appearences of individual words).  The function
 words.  In general the functionality there should be preferred.
 
 We emphasize that this function is a convenience wrapper around the
-excellent \code{tm} package functionality without which it wouldn't be
+excellent \pkg{tm} package functionality without which it wouldn't be
 possible.
 }
 \examples{
