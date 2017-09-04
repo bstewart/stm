@@ -15,6 +15,7 @@
 \item Long-overdue thanks to Stephen Woloszynek for fixing some bugs in thetaPosterior when local uncertainty is chosen.
 \item Setting max.em.its=0 will now return the results of the initialization procedure.
 \item You can now pass your own custom initializations of beta.
+\item We've removed the text file reader from textProcessor but encourage users who want to read in texts to check out the excellent readtext package.
 }
 }
 \section{Version 1.2.3}{

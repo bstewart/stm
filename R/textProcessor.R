@@ -1,17 +1,14 @@
 #' Process a vector of raw texts
 #' 
 #' Function that takes in a vector of raw texts (in a variety of languages) and
-#' performs basic operations.  This function is essentially a wrapper \code{tm}
+#' performs basic operations.  This function is essentially a wrapper \pkg{tm}
 #' package where various user specified options can be selected.
 #' 
 #' This function is designed to provide a convenient and quick way to process a
 #' relatively small volume texts for analysis with the package. It is designed
 #' to quickly ingest data in a simple form like a spreadsheet where each
-#' document sits in a single cell.  You can also pass the filepath of a single
-#' directory to the documents argument.  The function will then recursively
-#' read in all the files within the directory where each document is a file.
-#' Once the text has been processed by \code{tm} the document term matrix is
-#' converted to the \code{stm} format using \code{\link{readCorpus}}.
+#' document sits in a single cell. If you have texts more complicated than a 
+#' spreadsheet, we recommend you check out the excellent \pkg{readtext} package. 
 #' 
 #' The processor always strips extra white space but all other processing
 #' options are optional.  Stemming uses the snowball stemmers and supports a
@@ -31,16 +28,14 @@
 #' words.  In general the functionality there should be preferred.
 #' 
 #' We emphasize that this function is a convenience wrapper around the
-#' excellent \code{tm} package functionality without which it wouldn't be
+#' excellent \pkg{tm} package functionality without which it wouldn't be
 #' possible.
 #' 
 #' @aliases textProcessor print.textProcessor head.textProcessor
 #' summary.textProcessor
 #' @param documents The documents to be processed.  A character vector where
 #' each entry is the full text of a document (if passed as a different type
-#' it will attempt to convert to a character vector).  If of length one it is assumed
-#' to be a filepath containing a directory where each file is a separate
-#' .txt file.
+#' it will attempt to convert to a character vector).  
 #' @param metadata Additional data about the documents.  Specifically a
 #' \code{data.frame} or \code{matrix} object with number of rows equal to the
 #' number of documents and one column per meta-data type. The column names are
@@ -86,9 +81,6 @@
 #' as with standard stopwords these are removed after converting everything to
 #' lower case but before removing numbers, punctuation or stemming.  Thus words
 #' to be removed should be all lower case but otherwise complete.
-#' @param onlytxtfiles A logical which if \code{TRUE}, When reading files from
-#' a local directory, the function will skip over any files that don't end in
-#' \code{.txt}.
 #' @param v1 A logical which defaults to \code{FALSE}.  If set to \code{TRUE} it
 #' will use the ordering of operations we use used in Version 1.0 of the package.
 #' @return \item{documents}{A list containing the documents in the stm format.}
@@ -120,32 +112,14 @@ textProcessor <- function(documents, metadata=NULL,
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, removepunctuation=TRUE, stem=TRUE, 
                           wordLengths=c(3,Inf),sparselevel=1, language="en",
                           verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
-                          customstopwords=NULL, onlytxtfiles=TRUE, v1=FALSE) {
+                          customstopwords=NULL, v1=FALSE) {
   if(!requireNamespace("tm",quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
   if(!(utils::packageVersion("tm")>=0.6)) stop("Please install at least version 0.6 of the tm package.")
   if(stem) {
     if(!requireNamespace("SnowballC", quietly=TRUE)) stop("Please install SnowballC to use stemming.")
   }
   
-  #If there is only one item assume its a url and load it.
-  if(length(documents)==1) {
-    filelist <- list.files(path=documents, full.names=TRUE, recursive=TRUE)
-    if(onlytxtfiles) {
-      filetype <- sapply(filelist,function(x) {
-                          n <- nchar(x)
-                          substr(x, n-3,n)
-                          })
-      documents <- filelist[filetype==".txt"]
-      
-    }
-    documents <- vector(length=length(filelist))
-    if(verbose) cat(sprintf("Loading %i files from directory...\n", length(documents)))
-    for(i in 1:length(filelist)) {
-      documents[i] <- paste(readLines(filelist[i]), collapse=" ")
-    } 
-  } else {
-    documents <- as.character(documents)
-  }
+  documents <- as.character(documents)
   
   if(striphtml){
     documents <- gsub('<.+?>', ' ', documents)

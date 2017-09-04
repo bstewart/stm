@@ -4,11 +4,11 @@
 #' including document-level metadata within mixed-membership topic models. To
 #' read the vignette use \code{vignette('stmVignette')}.
 #' 
-#' Functions to ingest and manipulate documents: \code{\link{textProcessor}}
+#' Functions to manipulate documents: \code{\link{textProcessor}}
 #' \code{\link{readCorpus}} \code{\link{prepDocuments}}
 #' 
 #' Functions to fit the model: \code{\link{stm}} \code{\link{selectModel}}
-#' \code{\link{manyTopics}}
+#' \code{\link{manyTopics}} \code{\link{searchK}}
 #' 
 #' Functions to summarize a model: \code{\link{labelTopics}}
 #' \code{\link{summary.STM}} \code{\link{findThoughts}}
