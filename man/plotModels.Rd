@@ -6,7 +6,7 @@
 outputted from selectModel.}
 \usage{
 plotModels(models, xlab = "Semantic Coherence", ylab = "Exclusivity",
-  labels = 1:length(models$runout), ...)
+  labels = 1:length(models$runout), pch = NULL, ...)
 }
 \arguments{
 \item{models}{Output from selectModel.}
@@ -17,6 +17,8 @@ coherence.}
 \item{ylab}{Character string that is y axis title. This will be exclusivity.}
 
 \item{labels}{Labels for each model.}
+
+\item{pch}{A vector of integers specifying symbol for plotting.}
 
 \item{...}{Other plotting parameters.}
 }
