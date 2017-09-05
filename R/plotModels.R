@@ -23,23 +23,30 @@
 #' @param xlab Character string that is x axis title. This will be semantic
 #' coherence.
 #' @param ylab Character string that is y axis title. This will be exclusivity.
+#' @param pch A vector of integers specifying symbol for plotting.
+#' @param legend.position The location of the legend.  Can be \code{"bottomright", 
+#' "bottom", "bottomleft", "left", "topleft", "top", "topright", "right"} and 
+#' \code{"center"}.
 #' @param ...  Other plotting parameters.
 #' @export
-plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:length(models$runout),...){
+plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", 
+                       labels=1:length(models$runout), pch=NULL, 
+                       legend.position="topleft",...){
   if(!inherits(models, "selectModel")) {
     if(length(models)==1)   stop("plotModels only works for selectModel objects.")
     #we want to let it run if it was a case before selectModels had a class
     #thus just check if semantic coherence is in there.
     if(is.null(models$semcoh)) stop("plotModels only works for selectModel objects")
   }
+  if(is.null(pch)) pch <- rep(16, length(models$runout))
   if(length(models$runout[[1]]$beta$logbeta)<2){
     plot(0, 0, xlab=xlab, ylab=ylab, col="white", xlim=c(min(unlist(models$semcoh)), max(unlist(models$semcoh))),
          ylim=c(min(unlist(models$exclusivity)), max(unlist(models$exclusivity))),...)
     col = grDevices::rainbow(length(models$runout))
     for(i in 1:length(models$runout)){
-      points(models$semcoh[[i]], models$exclusivity[[i]], col=col[i], pch=16, cex=.75)
+      points(models$semcoh[[i]], models$exclusivity[[i]], col=col[i], pch=pch[i], cex=.75)
     }
-    legend(min(unlist(models$semcoh)), max(unlist(models$exclusivity)),labels, col=col, pch=16)
+    legend(x=legend.position,legend=labels, col=col, pch=pch)
     text(unlist(lapply(models$semcoh, mean)), unlist(lapply(models$exclusivity, mean)), labels, col=col)
   }
   if(length(models$runout[[1]]$beta$logbeta)>1){
