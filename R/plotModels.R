@@ -24,9 +24,14 @@
 #' coherence.
 #' @param ylab Character string that is y axis title. This will be exclusivity.
 #' @param pch A vector of integers specifying symbol for plotting.
+#' @param legend.position The location of the legend.  Can be \code{"bottomright", 
+#' "bottom", "bottomleft", "left", "topleft", "top", "topright", "right"} and 
+#' \code{"center"}.
 #' @param ...  Other plotting parameters.
 #' @export
-plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:length(models$runout), pch=NULL, ...){
+plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", 
+                       labels=1:length(models$runout), pch=NULL, 
+                       legend.position="topleft",...){
   if(!inherits(models, "selectModel")) {
     if(length(models)==1)   stop("plotModels only works for selectModel objects.")
     #we want to let it run if it was a case before selectModels had a class
@@ -41,7 +46,7 @@ plotModels <- function(models, xlab="Semantic Coherence", ylab="Exclusivity", la
     for(i in 1:length(models$runout)){
       points(models$semcoh[[i]], models$exclusivity[[i]], col=col[i], pch=pch[i], cex=.75)
     }
-    legend(min(unlist(models$semcoh)), max(unlist(models$exclusivity)),labels, col=col, pch=pch)
+    legend(x=legend.position,legend=labels, col=col, pch=pch)
     text(unlist(lapply(models$semcoh, mean)), unlist(lapply(models$exclusivity, mean)), labels, col=col)
   }
   if(length(models$runout[[1]]$beta$logbeta)>1){
