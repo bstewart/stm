@@ -13,10 +13,12 @@ stm(documents, vocab, K, prevalence = NULL, content = NULL, data = NULL,
 }
 \arguments{
 \item{documents}{The document term matrix to be modeled. These can be supplied
-in the native \pkg{stm} format or a \pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) 
-object.  When using the quanteda format this will include the vocabulary and
-optionally the metadata. If using the native list format, the object must be a 
-list of with each element corresponding to a document. Each document is represented
+in the native \pkg{stm} format, a sparse term count matrix in \code{"dgCMatrix"}
+format with one row per document and one column per term, or a
+\pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) object.
+When using the sparse matrix or quanteda format this will include the
+vocabulary and, for quanteda, optionally the metadata. If using the native list format,
+the object must be a list of with each element corresponding to a document. Each document is represented
 as an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
 vocabulary entry and the second row contains the number of times that term
@@ -32,10 +34,10 @@ using the \pkg{quanteda} function \link[quanteda]{convert}.}
 \item{vocab}{Character vector specifying the words in the corpus in the
 order of the vocab indices in documents. Each term in the vocabulary index
 must appear at least once in the documents.  See \code{\link{prepDocuments}}
-for dropping unused items in the vocabulary.  If \code{documents} is a 
-\pkg{quanteda} \link[quanteda]{dfm} object, then \code{vocab} should not
- (and must not) be supplied.  It is contained already inside the \pkg{quanteda}
- dfm.}
+for dropping unused items in the vocabulary.  If \code{documents} is a
+sparse matrix or \pkg{quanteda} \link[quanteda]{dfm} object, then \code{vocab} should not
+ (and must not) be supplied.  It is contained already inside the column
+ names of the matrix.}
 
 \item{K}{Typically a positive integer (of size 2 or greater) representing
 the desired number of topics. If \code{init.type="Spectral"} you can also
