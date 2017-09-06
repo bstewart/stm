@@ -481,7 +481,7 @@ stm.dgCMatrix <- function(documents, vocab, K,
   }
 
   # convert to docs-by-terms, one column per doc
-  x <- as(Matrix::t(documents), "dgCMatrix")
+  x <- methods::as(Matrix::t(documents), "dgCMatrix")
 
   # get the vocab
   vocab <- rownames(x)
