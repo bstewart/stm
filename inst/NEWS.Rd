@@ -16,6 +16,7 @@
 \item Setting max.em.its=0 will now return the results of the initialization procedure.
 \item You can now pass your own custom initializations of beta.
 \item We've removed the text file reader from textProcessor but encourage users who want to read in texts to check out the excellent readtext package.
+\item stm can now take term matrices from corpus and text2vec and pass them to stm thanks to a contribution from Patrick Perry.
 }
 }
 \section{Version 1.2.3}{
