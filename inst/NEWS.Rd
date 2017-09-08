@@ -1,6 +1,6 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
-\section{Version 1.2.4}{
+\section{Version 1.3.0}{
 \itemize{
 \item Important bug fix from Chris Baker that caused summary.estimateEffect to not work sometimes.
 \item A fix from Jeffrey Arnold that makes the ngroups memoization functionality work more in line with the original Hughes and Sudderth paper. 
@@ -17,6 +17,7 @@
 \item You can now pass your own custom initializations of beta.
 \item We've removed the text file reader from textProcessor but encourage users who want to read in texts to check out the excellent readtext package.
 \item stm can now take term matrices from corpus and text2vec and pass them to stm thanks to a contribution from Patrick Perry.
+\item Additional internal improvements in how inputs are handled by Patrick Perry.
 }
 }
 \section{Version 1.2.3}{

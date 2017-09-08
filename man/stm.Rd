@@ -13,8 +13,8 @@ stm(documents, vocab, K, prevalence = NULL, content = NULL, data = NULL,
 }
 \arguments{
 \item{documents}{The document term matrix to be modeled. These can be supplied
-in the native \pkg{stm} format, a sparse term count matrix in \code{"dgCMatrix"}
-format with one row per document and one column per term, or a
+in the native \pkg{stm} format, a sparse term count matrix with one row
+per document and one column per term, or a
 \pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) object.
 When using the sparse matrix or quanteda format this will include the
 vocabulary and, for quanteda, optionally the metadata. If using the native list format,
