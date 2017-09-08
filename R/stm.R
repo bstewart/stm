@@ -231,8 +231,8 @@
 #' 
 #' 
 #' @param documents The document term matrix to be modeled. These can be supplied
-#' in the native \pkg{stm} format, a sparse term count matrix in \code{"dgCMatrix"}
-#' format with one row per document and one column per term, or a
+#' in the native \pkg{stm} format, a sparse term count matrix with one row
+#' per document and one column per term, or a
 #' \pkg{quanteda} \link[quanteda]{dfm} (document-feature matrix) object.
 #' When using the sparse matrix or quanteda format this will include the
 #' vocabulary and, for quanteda, optionally the metadata. If using the native list format,
@@ -388,150 +388,25 @@
 #'                 data=out$meta, model=mod.out, max.em.its=10)
 #' }
 #' @export
-stm <- function(documents, vocab, K, 
+stm <- function(documents, vocab, K,
                 prevalence=NULL, content=NULL, data=NULL,
-                init.type=c("LDA", "Random", "Spectral", "Custom"), seed=NULL, 
+                init.type=c("LDA", "Random", "Spectral", "Custom"), seed=NULL,
                 max.em.its=500, emtol=1e-5,
-                verbose=TRUE, reportevery=5,   
-                LDAbeta=TRUE, interactions=TRUE, 
+                verbose=TRUE, reportevery=5,
+                LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), control=list()) {
-  UseMethod("stm")
-}
-
-#' @method stm dfm
-#' @export
-#' @keywords internal
-stm.dfm <- function(documents, vocab, K, 
-                    prevalence=NULL, content=NULL, data=NULL,
-                    init.type=c("LDA", "Random", "Spectral", "Custom"), seed=NULL, 
-                    max.em.its=500, emtol=1e-5,
-                    verbose=TRUE, reportevery=5,   
-                    LDAbeta=TRUE, interactions=TRUE, 
-                    ngroups=1, model=NULL,
-                    gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                    kappa.prior=c("L1", "Jeffreys"), control=list())  {
-  if (!missing(vocab)) {
-    # in case K was not specified by name, and it was confused with the
-    # vocab argument (missing for dfm inputs)
-    if (is.numeric(vocab) & length(vocab)==1) {
-      stop("incorrect argument type for vocab, did you mean to specify K = ", vocab, "?")
-    } else {
-      stop("if documents is a dfm, do not specify vocab separately")
-    }
-  }
-  
-  # convert the dfm input as the first argument into the structure of the
-  # older function where this is split into a list
-  dfm_stm <- quanteda::convert(documents, to = "stm", docvars = data)
-  if(is.null(data)) data <- dfm_stm[["meta"]]
-  
-  out <- stm(documents = dfm_stm[["documents"]], 
-            vocab = dfm_stm[["vocab"]], 
-            K = K, 
-            prevalence = prevalence, content = content, 
-            data = dfm_stm[["meta"]],
-            init.type = init.type, 
-            max.em.its = max.em.its, emtol = emtol,
-            verbose = verbose, reportevery = reportevery,   
-            LDAbeta = LDAbeta, interactions = interactions, 
-            ngroups = ngroups, model = model,
-            gamma.prior = gamma.prior, sigma.prior = sigma.prior,
-            kappa.prior = kappa.prior, control = control)
-  #need to update the call so it looks like the user's original call
-  out$settings$call <- match.call()
-  return(out)
-}
-
-#' @method stm dgCMatrix
-#' @export
-#' @keywords internal
-stm.dgCMatrix <- function(documents, vocab, K,
-                          prevalence=NULL, content=NULL, data=NULL,
-                          init.type=c("LDA", "Random", "Spectral", "Custom"),
-                          seed=NULL, max.em.its=500, emtol=1e-5,
-                          verbose=TRUE, reportevery=5,
-                          LDAbeta=TRUE, interactions=TRUE,
-                          ngroups=1, model=NULL,
-                          gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                          kappa.prior=c("L1", "Jeffreys"), control=list())  {
-  if (!missing(vocab)) {
-    # in case K was not specified by name, and it was confused with the
-    # vocab argument (missing for dfm inputs)
-    if (is.numeric(vocab) & length(vocab)==1) {
-      stop("incorrect argument type for vocab, did you mean to specify K = ", vocab, "?")
-    } else {
-      stop("if documents is a dfm, do not specify vocab separately")
-    }
-  }
-
-  # load the matrix namespace; needed for converting Matrix classes,
-  # and for 'colSums' and 't' on a sparse matrix
-  if (!requireNamespace("Matrix")) {
-      stop("failed loading 'Matrix' package namespace")
-  }
-
-  # drop unused terms
-  tot <- Matrix::colSums(documents)
-  unseen <- which(tot == 0)
-  if (length(unseen) > 0) {
-      warning(sprintf("dropping %d unseen terms from the vocabulary", length(unseen)))
-      documents <- documents[, -unseen, drop = FALSE]
-  }
-
-  # convert to docs-by-terms, one column per doc
-  x <- methods::as(Matrix::t(documents), "dgCMatrix")
-
-  # get the vocab
-  vocab <- rownames(x)
-
-  # extract the term count information
-  terms <- x@i + 1L
-  counts <- as.integer(x@x)
-  off <- x@p[-length(x@p)] + 1L
-  len <- x@p[-1L] - x@p[-length(x@p)]
-
-  # fill in the documents
-  documents <- vector("list", ncol(x))
-  names(documents) <- colnames(x)
-  for (i in seq_along(documents)) {
-      ix <- seq.int(off[[i]], length.out = len[[i]])
-      documents[[i]] <- matrix(c(terms[ix], counts[ix]), nrow = 2L,
-                               byrow = TRUE)
-  }
-
-  out <- stm(documents = documents, vocab = vocab, K = K,
-             prevalence = prevalence, content = content,
-             data = data, init.type = init.type,
-             max.em.its = max.em.its, emtol = emtol,
-             verbose = verbose, reportevery = reportevery,
-             LDAbeta = LDAbeta, interactions = interactions,
-             ngroups = ngroups, model = model,
-             gamma.prior = gamma.prior, sigma.prior = sigma.prior,
-             kappa.prior = kappa.prior, control = control)
-  #need to update the call so it looks like the user's original call
-  out$settings$call <- match.call()
-  return(out)
-}
-
-
-#' @method stm list
-#' @export
-#' @keywords internal
-stm.list <- function(documents, vocab, K, 
-                     prevalence=NULL, content=NULL, data=NULL,
-                     init.type=c("LDA", "Random", "Spectral", "Custom"), seed=NULL, 
-                     max.em.its=500, emtol=1e-5,
-                     verbose=TRUE, reportevery=5,   
-                     LDAbeta=TRUE, interactions=TRUE, 
-                     ngroups=1, model=NULL,
-                     gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                     kappa.prior=c("L1", "Jeffreys"), control=list())  {
+                kappa.prior=c("L1", "Jeffreys"), control=list())  {
   
   #Match Arguments and save the call
   init.type <- match.arg(init.type)
   Call <- match.call()
+
+  # Convert the corpus to the internal STM format
+  args <- asSTMCorpus(documents, vocab, data)
+  documents <- args$documents
+  vocab <- args$vocab
+  data <- args$data
   
   #Documents
   if(missing(documents)) stop("Must include documents")
