@@ -2,6 +2,7 @@
 \title{NEWS file for the stm package}
 \section{Version 1.3.0}{
 \itemize{
+\item Changed the default initialization to Spectral (thanks to Carsten Schwemmer for the reminder to do that),
 \item Important bug fix from Chris Baker that caused summary.estimateEffect to not work sometimes.
 \item A fix from Jeffrey Arnold that makes the ngroups memoization functionality work more in line with the original Hughes and Sudderth paper. 
 \item Changed documentation for the ngroups memoization functionality in accordance with info from Adel Dauod who showed that in his larger document examples setting ngroups > 1 increased the number of iterations needed for convergence.

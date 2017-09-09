@@ -5,7 +5,7 @@
 \title{Variational EM for the Structural Topic Model}
 \usage{
 stm(documents, vocab, K, prevalence = NULL, content = NULL, data = NULL,
-  init.type = c("LDA", "Random", "Spectral", "Custom"), seed = NULL,
+  init.type = c("Spectral", "LDA", "Random", "Custom"), seed = NULL,
   max.em.its = 500, emtol = 1e-05, verbose = TRUE, reportevery = 5,
   LDAbeta = TRUE, interactions = TRUE, ngroups = 1, model = NULL,
   gamma.prior = c("Pooled", "L1"), sigma.prior = 0, kappa.prior = c("L1",
@@ -59,7 +59,8 @@ content variable for each document.}
 covariates.  If unspecified the variables are taken from the active
 environment.}
 
-\item{init.type}{The method of initialization.  Must be either Latent
+\item{init.type}{The method of initialization, by default the spectral initialization.
+Must be either Latent
 Dirichlet Allocation ("LDA"), "Random", "Spectral" or "Custom".  See details for more
 info. If you want to replicate a previous result, see the argument
 \code{seed}.  For "Custom" see the format described below under the \code{custom.beta}
