@@ -271,7 +271,8 @@
 #' @param data an optional data frame containing the prevalence and/or content
 #' covariates.  If unspecified the variables are taken from the active
 #' environment.
-#' @param init.type The method of initialization.  Must be either Latent
+#' @param init.type The method of initialization, by default the spectral initialization.  
+#' Must be either Latent
 #' Dirichlet Allocation ("LDA"), "Random", "Spectral" or "Custom".  See details for more
 #' info. If you want to replicate a previous result, see the argument
 #' \code{seed}.  For "Custom" see the format described below under the \code{custom.beta}
@@ -390,7 +391,7 @@
 #' @export
 stm <- function(documents, vocab, K,
                 prevalence=NULL, content=NULL, data=NULL,
-                init.type=c("LDA", "Random", "Spectral", "Custom"), seed=NULL,
+                init.type=c("Spectral", "LDA", "Random", "Custom"), seed=NULL,
                 max.em.its=500, emtol=1e-5,
                 verbose=TRUE, reportevery=5,
                 LDAbeta=TRUE, interactions=TRUE,

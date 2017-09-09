@@ -11,7 +11,11 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   ##########
   ngroups <- settings$ngroups
   if(is.null(model)) {
-    if(verbose) cat("Beginning Initialization.\n")
+    if(verbose) cat(switch(EXPR=settings$init$mode,
+                           Spectral = "Beginning Spectral Initialization \n",
+                           LDA = "Beginning LDA Initialization \n",
+                           Random = "Beginning Random Initialization \n",
+                           Custom = "Beginning Custom Initialization \n"))
     #initialize
     model <- stm.init(documents, settings)
     #if we were using the Lee and Mimno method of setting K, update the settings
