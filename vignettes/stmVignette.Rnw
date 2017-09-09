@@ -67,7 +67,6 @@ This vignette demonstrates how to use the Structural Topic Model \pkg{stm} \text
 \newcommand\citea{\citeauthor}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 \spacingset{1}
 
 <<echo=FALSE>>=
