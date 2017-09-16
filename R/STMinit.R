@@ -97,7 +97,9 @@ stm.init <- function(documents, settings) {
       anchor <- fastAnchor(Q, K=K, verbose=verbose)
     } else {
       if(verbose) cat("\t Finding anchor words...\n \t")
-      anchor <- tsneAnchor(Q) #run the Lee and Mimno (2014) algorithm
+      anchor <- tsneAnchor(Q, verbose=verbose, 
+                           init.dims=settings$init$tSNE_init.dims,
+                           perplexity=settings$init$tSNE_perplexity) #run the Lee and Mimno (2014) algorithm
       K <- length(anchor) # update K
     }
     # (3) recoverL2

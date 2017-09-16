@@ -272,30 +272,46 @@ mpinv <- function (X) {
                                                t(Xsvd$u[, Positive, drop = FALSE]))
 }
 
-tsneAnchor <- function(Qbar) {
+tsneAnchor <- function(Qbar, verbose=TRUE, init.dims=50, perplexity=30) {
   if(!(requireNamespace("Rtsne",quietly=TRUE) & requireNamespace("geometry", quietly=TRUE & requireNamespace("rsvd", quietly=TRUE)))){
     stop("Please install the Rtsne, rsvd and geometry packages to use this setting.")
   } 
-
-  Xpca <- rsvd::rpca(Qbar, min(50,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
+  if(verbose) cat("\t Initializing tSNE with PCA...\n \t")
+  Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
   #project to 3-D
-  proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3) , silent=TRUE)
+  if(verbose) cat("\t Using tSNE to project to a low-dimensional space...\n \t")
+  proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,
+                           initial_dims=init.dims,
+                           perplexity=perplexity) , silent=TRUE)
   if(class(proj)=="try-error") {
-    #if this failed it is probably duplicates which Rtsne cannot handle
-    dup <- duplicated(Xpca)
-    if(!any(dup)) stop("an unknown error has occured in Rtsne")
-    
-    dup <- which(dup)
-    for(r in dup) {
-      row <- Qbar[Xpca,]
-      row[row!=0] <- runif(sum(row!=0),0,1e-5) # add a bit of noise to non-zero duplicates
-      row <- row/sum(row) #renormalize
-      Xpca[r,] <- row
+    if(attr(proj, "condition")$message=="Perplexity is too large.") {
+      rate <- 1
+      while(class(proj)=="try-error" && attr(proj, "condition")$message=="Perplexity is too large.") {
+        rate <- rate + 1
+        if(verbose) cat(sprintf("\t tSNE failed because perplexity is too large. Using perplexity=%f \n \t", perplexity/rate))
+        proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,
+                                 initial_dims=init.dims,
+                                 perplexity=perplexity/rate) , silent=TRUE)
+      }
+    } else {
+      #if this failed it is probably duplicates which Rtsne cannot handle
+      dup <- duplicated(Xpca)
+      if(!any(dup)) stop("an unknown error has occured in Rtsne")
+      
+      dup <- which(dup)
+      for(r in dup) {
+        row <- Qbar[Xpca,]
+        row[row!=0] <- runif(sum(row!=0),0,1e-5) # add a bit of noise to non-zero duplicates
+        row <- row/sum(row) #renormalize
+        Xpca[r,] <- row
+      }
+      #and now do it again
+      proj <- Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,
+                           initial_dims=init.dims,
+                           perplexity=perplexity)
     }
-    #and now do it again
-    proj <- Rtsne::Rtsne(Xpca, pca=FALSE, dims=3)
   }
-  
+  if(verbose) cat("\t Calculating exact convex hull...\n \t")
   hull <- geometry::convhulln(proj$Y)
   anchor <- sort(unique(c(hull)))
   return(anchor)

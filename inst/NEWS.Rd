@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.3.1}{
+\itemize{
+\item Fixing a problem with ngroups and adding a test to detect such problems in the future.
+\item Fixing a bug in K=0 where the method could fail if the perplexity was too large. It now automatically tries to reset itself.  To help with this in the future the initial dimension and perplexity values can now be set through the control options in stm.  Thanks to Mario Santoro for the bug catch and excellent replication file.
+}}
 \section{Version 1.3.0}{
 \itemize{
 \item Changed the default initialization to Spectral (thanks to Carsten Schwemmer for the reminder to do that),

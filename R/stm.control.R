@@ -51,8 +51,8 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   stopits <- FALSE
   if(ngroups!=1) {
     # randomly assign groups so that subsample are representative
-    groups <- split(seq_len(documents),
-                    sample(rep(seq_len(ngroups), length(documents))))
+    groups <- base::split(seq_len(length(documents)),
+                    sample(rep(seq_len(ngroups), length=length(documents))))
   }
   suffstats <- vector(mode="list", length=ngroups)
 
