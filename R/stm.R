@@ -227,6 +227,13 @@
 #' is a K by V matrix containing the logged word probability conditional on the topic.  If you use this
 #' option we recommend that you use \code{max.em.its=0} with the model initialization set to random, inspect
 #' the returned form of \code{stmobj$beta$logbeta} and ensure that it matches your format.}
+#' \item{\code{tSNE_init.dims}}{The K=0 spectral setting uses tSNE to create a low-dimensional
+#' projection of the vocab co-occurence matrix.  tSNE starts with a PCA projection as an initialization.
+#' We actually do the projection outside the tSNE code so we can use a randomized projection approach.
+#' We use the 50 dimensional default of the \pkg{rtsne} package.  That can be changed here.}
+#' \item{\code{tSNE_perplexity}}{The \code{Rtsne} function in the \pkg{rtsne} package uses a perplexity
+#' parameter.  This defaults to 30 and can throw an error when too high.  \code{stm} will automatically lower
+#' the parameter for you until it works, but it can also be directly set here.}
 #' }
 #' 
 #' 
@@ -552,7 +559,8 @@ stm <- function(documents, vocab, K,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
-                             s=.05, p=3000, d.group.size=2000, recoverEG=TRUE), 
+                             s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
+                             tSNE_init.dims=50, tSNE_perplexity=30), 
                    seed=seed,
                    ngroups=ngroups)
   if(init.type=="Spectral" & V > 10000) {
@@ -593,7 +601,7 @@ stm <- function(documents, vocab, K,
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
-                  "custom.beta")
+                  "custom.beta", "tSNE_init.dims", "tSNE_perplexity")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -626,6 +634,8 @@ stm <- function(documents, vocab, K,
         settings$init$maxV <- control[[i]]
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
       }
+      if(i=="tSNE_init.dims" && control[[i]]) settings$init$tSNE_init.dims <- control[[i]]
+      if(i=="tSNE_perplexity" && control[[i]]) settings$init$tSNE_perplexity <- control[[i]]
       if(i=="gamma.maxits") settings$gamma$maxits <- control[[i]]
       if(i=="allow.neg.change") settings$convergence$allow.neg.change <- control[[i]]
       if(i=="custom.beta") {

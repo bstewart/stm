@@ -369,6 +369,13 @@ It should be a list of length the number of levels of the content covariate.  Ea
 is a K by V matrix containing the logged word probability conditional on the topic.  If you use this
 option we recommend that you use \code{max.em.its=0} with the model initialization set to random, inspect
 the returned form of \code{stmobj$beta$logbeta} and ensure that it matches your format.}
+\item{\code{tSNE_init.dims}}{The K=0 spectral setting uses tSNE to create a low-dimensional
+projection of the vocab co-occurence matrix.  tSNE starts with a PCA projection as an initialization.
+We actually do the projection outside the tSNE code so we can use a randomized projection approach.
+We use the 50 dimensional default of the \pkg{rtsne} package.  That can be changed here.}
+\item{\code{tSNE_perplexity}}{The \code{Rtsne} function in the \pkg{rtsne} package uses a perplexity
+parameter.  This defaults to 30 and can throw an error when too high.  \code{stm} will automatically lower
+the parameter for you until it works, but it can also be directly set here.}
 }
 }
 \examples{
