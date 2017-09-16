@@ -25,3 +25,8 @@ test_that("Test that Content works", {
   expect_identical(class(test), "STM")
 })
 
+test_that("Test that ngroups works", {
+  test <- stm(poliblog5k.docs, poliblog5k.voc, K=3, init.type="Random",
+              ngroups=2, max.em.its=2)
+  expect_identical(class(test), "STM")
+})

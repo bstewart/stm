@@ -1,5 +1,9 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.3.1}{
+\itemize{
+\item Fixing a problem with ngroups and adding a test to detect such problems in the future.
+}}
 \section{Version 1.3.0}{
 \itemize{
 \item Changed the default initialization to Spectral (thanks to Carsten Schwemmer for the reminder to do that),
