@@ -32,7 +32,7 @@ test_that("Test that ngroups works", {
 })
 
 test_that("Test that multi-core searchK works", {
-  kresult <- searchK(poliblog5k.docs, poliblog5k.voc, K=c(3,4), 
+  test <- searchK(poliblog5k.docs, poliblog5k.voc, K=c(3,4), 
                      init.type="Random", max.em.its=1, cores = 2)
   expect_identical(class(test), "searchK")
 })
