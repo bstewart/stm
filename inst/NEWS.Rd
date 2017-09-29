@@ -5,6 +5,7 @@
 \item Fixing a problem with ngroups and adding a test to detect such problems in the future. Thanks to Igor Elbert for finding this. 
 \item Fixing a bug in K=0 where the method could fail if the perplexity was too large. It now automatically tries to reset itself.  To help with this in the future the initial dimension and perplexity values can now be set through the control options in stm.  Thanks to Mario Santoro for the bug catch and excellent replication file.
 \item Fixed a very small edge case bug with an internal function that powers prepDocuments() which would cause document sets where every single document had the same number of unique words to fail.
+\item Fixed an issue with heldout document creation where a document could be completely emptied out.  This in turn caused issues in searchK.  Hat tip to KB Park for reporting.
 }}
 \section{Version 1.3.0}{
 \itemize{
