@@ -567,7 +567,7 @@ stm <- function(documents, vocab, K,
                              tSNE_init.dims=50, tSNE_perplexity=30), 
                    seed=seed,
                    ngroups=ngroups,
-                   cores=1)
+                   cores=cores)
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000
   }

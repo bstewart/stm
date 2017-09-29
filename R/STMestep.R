@@ -106,7 +106,8 @@ estepmc <- function(documents, beta.index, update.mu, #null allows for intercept
   out <- parallel::mclapply(groups, FUN=estep_parallel_block, mc.cores=cores,
                             documents=documents, beta.index=beta.index,
                             lambda.old=lambda.old, mu=mu, beta=beta, siginv=siginv,
-                            sigmaentropy=sigmaentropy, K=K, N=N, V=V, A=A)
+                            sigmaentropy=sigmaentropy, update.mu=update.mu,
+                            K=K, N=N, V=V, A=A)
   
   beta.ss <- out[[1]]$beta.ss
   sigma.ss <- out[[1]]$sigma.ss
@@ -122,7 +123,7 @@ estepmc <- function(documents, beta.index, update.mu, #null allows for intercept
   lambda <- vector("list", length=N)
   for(i in 1:cores) {
     bound[groups[[i]]] <- out[[i]]$bound
-    lambda[groups[i]] <- out[[i]]$lambda
+    lambda[groups[[i]]] <- out[[i]]$lambda
   }
 
   #4) Combine and Return Sufficient Statistics
@@ -131,8 +132,10 @@ estepmc <- function(documents, beta.index, update.mu, #null allows for intercept
 }
 
 estep_parallel_block <- function(group, documents, beta.index, lambda.old,
-                                 mu, beta, siginv, sigmaentropy,
+                                 mu, beta, siginv, sigmaentropy, update.mu,
                                  K, N, V, A) {
+  N <- length(group) #redefine N to group length
+  
   # 1) Initialize Sufficient Statistics 
   sigma.ss <- diag(0, nrow=(K-1))
   beta.ss <- vector(mode="list", length=A)
@@ -141,6 +144,8 @@ estep_parallel_block <- function(group, documents, beta.index, lambda.old,
   }
   bound <- vector(length=N)
   lambda <- vector("list", length=N)
+  
+  if(!update.mu) mu.i <- as.numeric(mu)
   
   # 2) Loop the documents in the group
   ct <- 0
