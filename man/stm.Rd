@@ -9,7 +9,7 @@ stm(documents, vocab, K, prevalence = NULL, content = NULL, data = NULL,
   max.em.its = 500, emtol = 1e-05, verbose = TRUE, reportevery = 5,
   LDAbeta = TRUE, interactions = TRUE, ngroups = 1, model = NULL,
   gamma.prior = c("Pooled", "L1"), sigma.prior = 0, kappa.prior = c("L1",
-  "Jeffreys"), control = list())
+  "Jeffreys"), cores = 1, control = list())
 }
 \arguments{
 \item{documents}{The document term matrix to be modeled. These can be supplied
@@ -120,6 +120,10 @@ coefficients.  The default option is the \code{L1} prior.  The second option
 is \code{Jeffreys} which is markedly less computationally efficient but is
 included for backwards compatability. See details for more information on
 computation.}
+
+\item{cores}{an integer indicating the number of cores to use. Defaults to 1.
+Note that when using N cores you use N times the memory which may be 
+prohibitive in some settings.}
 
 \item{control}{a list of additional advanced parameters. See details.}
 }

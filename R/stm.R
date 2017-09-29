@@ -327,6 +327,9 @@
 #' is \code{Jeffreys} which is markedly less computationally efficient but is
 #' included for backwards compatability. See details for more information on
 #' computation.
+#' @param cores an integer indicating the number of cores to use. Defaults to 1.
+#' Note that when using N cores you use N times the memory which may be 
+#' prohibitive in some settings.
 #' @param control a list of additional advanced parameters. See details.
 #' 
 #' @return An object of class STM 
@@ -404,7 +407,8 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), control=list())  {
+                kappa.prior=c("L1", "Jeffreys"), cores=1, 
+                control=list())  {
   
   #Match Arguments and save the call
   init.type <- match.arg(init.type)
@@ -562,7 +566,8 @@ stm <- function(documents, vocab, K,
                              s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
                              tSNE_init.dims=50, tSNE_perplexity=30), 
                    seed=seed,
-                   ngroups=ngroups)
+                   ngroups=ngroups,
+                   cores=1)
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000
   }
