@@ -103,7 +103,7 @@ eval.heldout <- function(model, missing) {
     probs <- model$theta[docid,]%*%beta[[bindex[i]]][,words]
     probs <- rep(probs, missing$docs[[i]][2,])
     heldout[i] <- mean(log(probs)) 
-    ntokens[i] <- sum(words)
+    ntokens[i] <- sum(missing$docs[[i]][2,])
   }
   out <- list(expected.heldout=mean(heldout, na.rm=TRUE), doc.heldout=heldout,
               index=missing$index, ntokens=ntokens) #the mean here to deal with 0 length docs
