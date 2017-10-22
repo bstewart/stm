@@ -57,6 +57,17 @@ these measures is also available in exported functions:
 \item{lbound}{a correction to the bound that makes the bounds directly comparable \code{max(model$convergence$bound) + lfactorial(model$settings$dim$K)}}
 \item{residual dispersion}{\code{\link{checkResiduals}}}
 }
+
+Due to the need to calculate the heldout-likelihood \code{N} documents have
+\code{proportion} of the documents heldout at random.  This means that even
+with the default spectral initialization the results can change from run to run.
+When the number of heldout documents is low or documents are very short, this also
+means that the results can be quite unstable.  For example: the \code{gadarian} code
+demonstration below has heldout results based on only 34 documents and approximately
+150 tokens total.  Clearly this can lead to quite disparate results across runs.  By 
+contrast default settings for the \code{poliblog5k} dataset would yield a heldout sample
+of 500 documents with approximately 50000 tokens for the heldout sample.  We should expect
+this to be substantially more stable.
 }
 \examples{
 
