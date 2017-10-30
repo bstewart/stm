@@ -1,40 +1,12 @@
-language: r
-r:
-  - release
-#  - devel
-sudo: required
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+cache: packages
+sudo: false
 warnings_are_errors: true
 r_build_args: --resave-data --compact-vignettes=gs+qpdf
-dist: trusty
-
-#System dependencies
-r_binary_packages:
- - matrixStats
- - slam
- - lda
- - stringr
- - Matrix
- - glmnet
- - igraph
- - SnowballC
- - tm
- - huge
- - clue
- - wordcloud
- - KernSmooth
- - NLP
- - devtools
- - data.table
- - quadprog
- - geometry
-
 r_github_packages:
   - jimhester/covr
   - kbenoit/quanteda
-
-env:
-  global:
-    - _R_CHECK_FORCE_SUGGESTS_=0
-
 after_success:
   - Rscript -e 'library(covr);codecov()'
