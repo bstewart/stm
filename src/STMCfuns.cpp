@@ -88,7 +88,7 @@ SEXP hpbcpp(SEXP eta,
    Rcpp::NumericVector sigmaentropym(sigmaentropy);
    arma::vec entropy(sigmaentropym);
 
-   //Performance Nots from 3/6/2015
+   //Performance Notes from 3/6/2015
    //  I tried a few different variants and benchmarked this one as roughly twice as
    //  fast as the R code for a K=100 problem.  Key to performance was not creating
    //  too many objects and being selective in how things were flagged as triangular.
@@ -193,3 +193,61 @@ SEXP hpbcpp(SEXP eta,
         Rcpp::Named("bound") = bound
         );
 }
+
+
+// [[Rcpp::export]]
+SEXP expgradcpp(SEXP X_arg,
+                SEXP y_arg,
+                SEXP XtX_arg,
+                SEXP alpha_arg,
+                double eta,
+                int max_its,
+                double tol
+                ){
+  
+    Rcpp::NumericMatrix Xm(X_arg);
+    arma::mat X(Xm.begin(), Xm.nrow(), Xm.ncol(), false);
+    
+    Rcpp::NumericVector yv(y_arg);
+    arma::vec y(yv.begin(), yv.size(), false);
+    
+    Rcpp::NumericMatrix XtXm(XtX_arg);
+    arma::mat XtX(XtXm.begin(), XtXm.nrow(), XtXm.ncol(), false);
+    
+    Rcpp::NumericVector alphav(alpha_arg);
+    arma::vec alpha(alphav.begin(), alphav.size(), false);
+      
+    arma::vec ytX = X*y;    
+    int iter = max_its;
+    double err = 1;
+    double sse_old = 10000;
+    double sse= 0;
+    arma::vec grad = alpha;
+    eta = eta*2; // to bring it in line with R code
+
+    while(iter-- and err > tol)
+     {  
+        //find the gradient(y'X - alpha'X'X)
+        grad = ytX - XtX*alpha;
+        sse = as_scalar(grad.t()*grad);
+        grad = eta*grad;
+        //update the parameter
+        alpha = alpha%exp(grad - grad.max());
+        //project the parameter back to space
+        alpha = alpha/sum(alpha);
+      
+        err = arma::as_scalar(std::abs(sqrt(sse_old)-sqrt(sse)));
+        sse_old = sse;
+    }
+    double entropy = -1*sum(alpha%log(alpha));
+    
+    return Rcpp::List::create(
+      Rcpp::Named("par") = alpha,
+      Rcpp::Named("its") = max_its - (iter+1),
+      Rcpp::Named("converged") = (err < tol),
+      Rcpp::Named("entropy") = entropy,
+      Rcpp::Named("log.sse") = log(sse)
+    );
+}
+    
+    

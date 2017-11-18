@@ -52,11 +52,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// expgradcpp
+SEXP expgradcpp(SEXP X_arg, SEXP y_arg, SEXP XtX_arg, SEXP alpha_arg, double eta, int max_its, double tol);
+RcppExport SEXP _stm_expgradcpp(SEXP X_argSEXP, SEXP y_argSEXP, SEXP XtX_argSEXP, SEXP alpha_argSEXP, SEXP etaSEXP, SEXP max_itsSEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type X_arg(X_argSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type y_arg(y_argSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type XtX_arg(XtX_argSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type alpha_arg(alpha_argSEXP);
+    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< int >::type max_its(max_itsSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(expgradcpp(X_arg, y_arg, XtX_arg, alpha_arg, eta, max_its, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stm_lhoodcpp", (DL_FUNC) &_stm_lhoodcpp, 5},
     {"_stm_gradcpp", (DL_FUNC) &_stm_gradcpp, 5},
     {"_stm_hpbcpp", (DL_FUNC) &_stm_hpbcpp, 6},
+    {"_stm_expgradcpp", (DL_FUNC) &_stm_expgradcpp, 7},
     {NULL, NULL, 0}
 };
 

@@ -134,7 +134,8 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 # @param ... Optional arguments that will be passed to the exponentiated gradient algorithm.
 # @return 
 # \item{A}{A matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
+recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE,
+                      EGcpp=FALSE,...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
@@ -162,7 +163,11 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
       y <- Qbar[i,]
       
       if(recoverEG) {
-        solution <- expgrad(X,y,XtX, ...)$par
+        if(EGcpp) {
+          solution <- c(expgradcpp(X, y, XtX, rep(1/length(anchor), length(anchor)), 50, 500, 1e-07)$par)
+        } else {
+          solution <- expgrad(X,y,XtX, ...)$par
+        }
       } else {
         #meq=1 means the sum is treated as an exact equality constraint
         #and the remainder are >=

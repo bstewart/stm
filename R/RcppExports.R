@@ -13,3 +13,7 @@ hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
     .Call(`_stm_hpbcpp`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
 }
 
+expgradcpp <- function(X_arg, y_arg, XtX_arg, alpha_arg, eta, max_its, tol) {
+    .Call(`_stm_expgradcpp`, X_arg, y_arg, XtX_arg, alpha_arg, eta, max_its, tol)
+}
+

@@ -560,7 +560,8 @@ stm <- function(documents, vocab, K,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
                              s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
-                             tSNE_init.dims=50, tSNE_perplexity=30), 
+                             tSNE_init.dims=50, tSNE_perplexity=30,
+                             EGcpp=FALSE), 
                    seed=seed,
                    ngroups=ngroups)
   if(init.type=="Spectral" & V > 10000) {
@@ -600,7 +601,7 @@ stm <- function(documents, vocab, K,
                   "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
-                  "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
+                  "recoverEG", "EGcpp","maxV", "gamma.maxits", "allow.neg.change",
                   "custom.beta", "tSNE_init.dims", "tSNE_perplexity")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
@@ -630,6 +631,7 @@ stm <- function(documents, vocab, K,
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
       if(i=="SpectralRP" && control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
       if(i=="recoverEG" && !control[[i]]) settings$init$recoverEG <- control[[i]]
+      if(i=="EGcpp" && control[[i]]) settings$init$EGcpp <- control[[i]]
       if(i=="maxV" && control[[i]]) {
         settings$init$maxV <- control[[i]]
         if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
