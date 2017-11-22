@@ -7,6 +7,8 @@
 \item Fixed a very small edge case bug with an internal function that powers prepDocuments() which would cause document sets where every single document had the same number of unique words to fail.
 \item Fixed an issue with heldout document creation where a document could be completely emptied out.  This in turn caused issues in searchK.  Hat tip to KB Park for reporting.
 \item Fixed an issue with heldout evaluation that caused the number of tokens in the heldout set to be reported incorrectly by eval.heldout().  Note the incorrect calculation had no downstream consequences because it was only for storing the term as part of the output object.  Thanks to Jungmin Lee for spotting.
+\item Fixed a small bug that kept the cov.value1 and cov.value2 arguments of plot.estimateEffect from working when factor variables were passed to them instead of character variables. Hat tip to Rob Williams for finding that.
+\item In version 1.3.0 we changed one of the calculations for K=0 to make it faster.  This broke an old bug fix for an unusual edge case.  We have now fixed that.  Thanks to Thien Vuong Nguyen for sending info on such an edge case.
 }}
 \section{Version 1.3.0}{
 \itemize{

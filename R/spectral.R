@@ -300,11 +300,14 @@ tsneAnchor <- function(Qbar, verbose=TRUE, init.dims=50, perplexity=30) {
       
       dup <- which(dup)
       for(r in dup) {
-        row <- Qbar[Xpca,]
+        row <- Qbar[r,]
         row[row!=0] <- runif(sum(row!=0),0,1e-5) # add a bit of noise to non-zero duplicates
         row <- row/sum(row) #renormalize
-        Xpca[r,] <- row
+        Qbar[r,] <- row
       }
+      #we now have to reproject because we have messed with Qbar
+      Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
+      
       #and now do it again
       proj <- Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,
                            initial_dims=init.dims,
