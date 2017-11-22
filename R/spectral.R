@@ -309,6 +309,7 @@ tsneAnchor <- function(Qbar, verbose=TRUE, init.dims=50, perplexity=30) {
       Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
       
       #and now do it again
+      Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
       proj <- Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,
                            initial_dims=init.dims,
                            perplexity=perplexity)
