@@ -133,6 +133,7 @@ topicCorr <- function(model, method=c("simple", "huge"),
 #' cormat <- topicCorr(gadarianFit)
 #' plot(cormat)
 #' }
+#' @export plot.topicCorr
 #' @export
 plot.topicCorr <- function(x, topics=NULL,
                            vlabels=NULL, layout=NULL,
