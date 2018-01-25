@@ -53,6 +53,11 @@
 #' checkResiduals(mod.out, docs)
 #' @export
 checkResiduals <- function(stmobj, documents, tol=.01) {
+  
+  # Convert the corpus to the internal STM format
+  args <- asSTMCorpus(documents)
+  documents <- args$documents
+
   beta <- lapply(stmobj$beta$logbeta, exp)
   theta <- stmobj$theta
   index <- stmobj$settings$covariates$betaindex

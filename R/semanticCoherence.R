@@ -15,7 +15,7 @@
 #'  This function is currently marked with the keyword internal because it does not have much error checking.
 #'
 #' @param model the STM object
-#' @param documents the STM formatted documents
+#' @param documents the STM formatted documents (see \code{\link{stm}} for format).
 #' @param M the number of top words to consider per topic
 #' 
 #' @return a numeric vector containing semantic coherence for each topic
@@ -48,7 +48,11 @@
 #' @export
 semanticCoherence <- function(model, documents, M=10){
   if(!inherits(model, "STM")) stop("model must be an STM object")
-                                   
+  
+  # Convert the corpus to the internal STM format
+  args <- asSTMCorpus(documents)
+  documents <- args$documents
+  
   if(length(model$beta$logbeta)!=1) {
     result <- 0
     for(i in 1:length(model$beta$logbeta)){
