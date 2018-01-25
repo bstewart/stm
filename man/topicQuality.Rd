@@ -10,7 +10,7 @@ topicQuality(model, documents, xlab = "Semantic Coherence",
 \arguments{
 \item{model}{Output from stm, or a selected model from selectModel.}
 
-\item{documents}{Vector containing documents used.}
+\item{documents}{The documents (see \code{\link{stm}} for format).}
 
 \item{xlab}{Character string that is x axis title. This should be semantic
 coherence.}
