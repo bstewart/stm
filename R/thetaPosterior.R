@@ -49,7 +49,7 @@
 #' approximation the \code{"Global"} approximation and the \code{"Local"}
 #' approximation.  See details below.
 #' @param documents If \code{type="Local"}, the documents object used in the
-#' original \code{\link{stm}} call should be passed here.
+#' original \code{\link{stm}} call should be passed here. 
 #' @seealso \code{\link{estimateEffect}}
 #' @examples
 #' #global approximation
@@ -106,6 +106,10 @@ thetapost.global <- function(model, nsims) {
 ##
 # NB: this is slightly complicated by the need to take Newton Steps
 thetapost.local <- function(model, documents, nsims) {
+  # Convert the corpus to the internal STM format
+  args <- asSTMCorpus(documents)
+  documents <- args$documents
+  
   #define some parameters
   sigma <- model$sigma
   siginv <- model$invsigma

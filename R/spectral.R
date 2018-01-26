@@ -277,7 +277,7 @@ tsneAnchor <- function(Qbar, verbose=TRUE, init.dims=50, perplexity=30) {
     stop("Please install the Rtsne, rsvd and geometry packages to use this setting.")
   } 
   if(verbose) cat("\t Initializing tSNE with PCA...\n \t")
-  Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
+  Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(init.dims,ncol(Qbar))]
   #project to 3-D
   if(verbose) cat("\t Using tSNE to project to a low-dimensional space...\n \t")
   proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,
@@ -306,7 +306,7 @@ tsneAnchor <- function(Qbar, verbose=TRUE, init.dims=50, perplexity=30) {
         Qbar[r,] <- row
       }
       #we now have to reproject because we have messed with Qbar
-      Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(50,ncol(Qbar))]
+      Xpca <- rsvd::rpca(Qbar, min(init.dims,ncol(Qbar)), center=TRUE, scale=FALSE, retx=TRUE)$x[,1: min(init.dims,ncol(Qbar))]
       
       #and now do it again
       proj <- Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,

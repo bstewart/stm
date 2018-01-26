@@ -120,6 +120,14 @@ estimateEffect <- function(formula,
   origcall <- match.call()
   thetatype <- match.arg(uncertainty)
   if(thetatype=="None") nsims <- 1 #override nsims for no uncertaintys
+  
+  if(!is.null(documents)) {
+    # Convert the corpus to the internal STM format
+    args <- asSTMCorpus(documents, data=metadata)
+    documents <- args$documents
+    metadata <- args$data
+  }
+  
   ##
   #Step 1: Extract the formula and do some error checking
   ##

@@ -69,6 +69,13 @@ for the dropped items.  If it removed documents it returns a vector of doc
 indices removed. Users with accompanying metadata or texts may want to drop
 those rows from the corresponding objects.
 
+The behavior is such that when \code{prepDocuments} drops documents their
+corresponding rows are deleted and the row names are not renumbered.  We however
+do not recommend using rownames for joins- instead the best practice is to either
+keep a unique identifier in the \code{meta} object for doing joins or use something
+like \pkg{quanteda} which has a more robust interface for manipulating the corpus
+itself.
+
 If you have any documents which are of length 0 in your original object the
 function will throw an error. These should be removed before running the
 function although please be sure to remove the corresponding rows in the

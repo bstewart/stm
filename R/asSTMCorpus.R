@@ -46,7 +46,7 @@ asSTMCorpus <- function(documents, vocab, data = NULL, ...) {
 #' @method asSTMCorpus list
 #' @export
 #' @keywords internal
-asSTMCorpus.list <- function(documents, vocab, data = NULL, ...) {
+asSTMCorpus.list <- function(documents, vocab=NULL, data = NULL, ...) {
   list(documents = documents, vocab = vocab, data = data)
 }
 

@@ -8,7 +8,7 @@
 #' number.
 #' 
 #' @param model Output from stm, or a selected model from selectModel.
-#' @param documents Vector containing documents used.
+#' @param documents The documents (see \code{\link{stm}} for format).
 #' @param labels Vector of number corresponding to topic numbers.
 #' @param M Number of words to use in semantic coherence and exclusivity
 #' calculations
@@ -35,6 +35,10 @@
 #' }
 #' @export
 topicQuality <- function(model, documents, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:ncol(model$theta), M=10,...){
+  # Convert the corpus to the internal STM format
+  args <- asSTMCorpus(documents)
+  documents <- args$documents
+
   if(length(model$beta$logbeta)<2){
     semcoh <- semanticCoherence(model,documents=documents, M=M)
     exclusivity <- exclusivity(model, M=M)

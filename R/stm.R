@@ -80,8 +80,8 @@
 #' also available.
 #' 
 #' The argument \code{init.type} allows the user to specify an intialization
-#' method.  The default uses collapsed gibbs sampling for the LDA model.  The
-#' choice \code{"Spectral"} provides a deterministic inialization using the
+#' method. The default 
+#' choice, \code{"Spectral"}, provides a deterministic inialization using the
 #' spectral algorithm given in Arora et al 2014.  See Roberts, Stewart and
 #' Tingley (2016) for details and a comparison of different approaches.
 #' Particularly when the number of documents is relatively large we highly
@@ -92,7 +92,13 @@
 #' frequent 10000 terms in creating the initialization.  This may case the 
 #' first step of the algorithm to have a very bad value of the objective function
 #' but it should quickly stabilize into a good place.  You can tweak the exact 
-#' number where this kicks in with the \code{maxV} argument inside control.
+#' number where this kicks in with the \code{maxV} argument inside control. There
+#' appear to be some cases where numerical instability in the Spectral algorithm
+#' can cause differences across machines (particularly Windows machines for some reason).
+#' It should always give exactly the same answer for a given machine but if you are
+#' seeing different answers on different machines, see https://github.com/bstewart/stm/issues/133
+#' for a longer explanation.  The other option \code{"LDA"} which uses a few passes
+#' of a Gibbs sampler is perfectly reproducible across machines as long as the seed is set.
 #' 
 #' Specifying an integer greater than 1 for the argument \code{ngroups} causes
 #' the corpus to be broken into the specified number of groups.  Global updates
@@ -209,6 +215,9 @@
 #' number of words to be used in the initialization.  It uses the most frequent words
 #' first and then they are reintroduced following initialization.  This allows spectral
 #' to be used with a large V.}
+#' \item{\code{recoverEG}}{Set to code{TRUE} by default.  If set to \code{FALSE}
+#'  will solve the recovery problem in the Spectral algorithm using a downhill simplex
+#'  method.  See https://github.com/bstewart/stm/issues/133 for more discussion.}
 #' \item{\code{allow.neg.change}}{A logical indicating whether the algorithm is allowed
 #' to declare convergence when the change in the bound has become negative. 
 #' Defaults to \code{TRUE}.  Set to \code{FALSE} to keep the algorithm from converging

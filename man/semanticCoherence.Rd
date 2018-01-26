@@ -9,7 +9,7 @@ semanticCoherence(model, documents, M = 10)
 \arguments{
 \item{model}{the STM object}
 
-\item{documents}{the STM formatted documents}
+\item{documents}{the STM formatted documents (see \code{\link{stm}} for format).}
 
 \item{M}{the number of top words to consider per topic}
 }
