@@ -6,7 +6,7 @@
 \usage{
 toLDAvis(mod, docs, R = 30, plot.opts = list(xlab = "PC1", ylab = "PC2"),
   lambda.step = 0.1, out.dir = tempfile(), open.browser = interactive(),
-  as.gist = FALSE)
+  as.gist = FALSE, reorder.topics = TRUE)
 }
 \arguments{
 \item{mod}{STM object. Output from stm function.}
@@ -39,6 +39,9 @@ access local files and most browsers will not allow this."}
 \item{as.gist}{Passed to \code{\link[LDAvis]{serVis}} "should the vis be
 uploaded as a gist? Will prompt for an interactive login if the GITHUB_PAT
 environment variable is not set"}
+
+\item{reorder.topics}{Passed to \code{\link[LDAvis]{createJSON}} "Should LDAvis
+re-order the K topics in order of decreasing proportion? Default is True"}
 }
 \description{
 Tool for exploring topic/word distributions using LDAvis topic browser.
