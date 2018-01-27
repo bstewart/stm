@@ -18,7 +18,7 @@ Description: The Structural Topic Model (STM) allows researchers
   The package also includes tools for model selection, visualization,
   and estimation of topic-covariate regressions. Methods developed in
   Roberts et al (2014) 10.1111/ajps.12103 and 
-  Roberts et al (2016) 10.1080/01621459.2016.1141684
+  Roberts et al (2016) 10.1080/01621459.2016.1141684.
 License: MIT + file LICENSE
 URL: http://structuraltopicmodel.com 
 BugReports: https://github.com/bstewart/stm/issues
