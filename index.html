@@ -88,8 +88,11 @@ Navigating the Local Modes of Big Data: The Case of Topic Models"</a>  In <em>Da
 </ul><h3>
 
 
-<a name="Packages" class="anchor" href="#Packages"><span class="octicon octicon-link"></span></a>Supporting Packages</h3>
+<a name="Supporting Packages" class="anchor" href="#Packages"><span class="octicon octicon-link"></span></a>Supporting Packages</h3>
 <ul>
+<li> Schwemmer. <a href="https://github.com/methodds/stminsights"> stminsights: A Shiny Application for Inspecting Structural Topic Models. </a>.  A shiny GUI with beautiful graphics. </li>  
+<li> Woloszynek. <a href="https://CRAN.R-project.org/package=themetagenomics"> themetagenomics: Exploring Thematic Structure and Predicted Functionality of 16s rRNA Amplicon Data. </a>. STM for rRNA data. </li> 
+<li> Johannesson. <a href="https://github.com/mikaelpoul/tidystm"> "tidystm: Extract (tidy) effects from estimateEffect" </a>. Makes it easy to make ggplot2 graphics for STM. </li>
 <li>Zangri, Tingley, Stewart. <a href="https://cran.r-project.org/package=stmgui"> "stmgui: Shiny Application for Creating STM Models" </a>. This is a Shiny GUI for running basic STM models. </li>
 <li>Freeman, Chuang, Roberts, Stewart and Tingley. <a href="https://github.com/mroberts/stmBrowser"> "stmBrowser: An R Package for the Structural Topic Model Browser.'' </a>.  This <a href="http://d3js.org/"> D3 </a> visualization allows users to interactively explore the relationships between topics and the covariates estimated from the stm package in R. See an example <a href="http://pages.ucsd.edu/~meroberts/stm-online-example/index.html"> here </a>.</li>
 <li>Coppola, Roberts, Stewart and Tingley. <a href="http://cran.r-project.org/web/packages/stmCorrViz/"> "stmCorrViz: A Tool for Structural Topic Model Visualizations." </a>.  This package uses <a href="http://d3js.org/"> `D3 </a> to generate an interactive hierarchical topic explorer. </li>
@@ -151,11 +154,6 @@ install_github("bstewart/stm",dependencies=TRUE)
 <p>Note that this will install all the packages suggested and required to run our package.  
 It may take a few minutes the first time, but this only needs to be done on the first use.  
 In the future you can update to the most recent development version using the same code. </p>
-
-<p>You can also grab the binaries or source files for the latest release here: (<a href="https://github.com/bstewart/stm/releases">https://github.com/bstewart/stm/releases</a>).  Then use <code>install.packages</code> with <code>repos=NULL</code> so that</p>
-
-<pre><code>install.packages(filepath, repos = NULL)
-</code></pre>
 
 <h3>
 <a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h3>
