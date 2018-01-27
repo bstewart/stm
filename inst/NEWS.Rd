@@ -1,6 +1,6 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
-\section{Version 1.3.1}{
+\section{Version 1.3.3}{
 \itemize{
 \item Multiple improvements from Yuval Dugan.  Allow topics to be scaled by vertex size in plot.topicCorr.  toLDAvis now allows renumbering of topics.
 \item Numerous documentation updates.
