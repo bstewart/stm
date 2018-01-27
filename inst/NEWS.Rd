@@ -2,6 +2,13 @@
 \title{NEWS file for the stm package}
 \section{Version 1.3.1}{
 \itemize{
+\item Multiple improvements from Yuval Dugan.  Allow topics to be scaled by vertex size in plot.topicCorr.  toLDAvis now allows renumbering of topics.
+\item Numerous documentation updates.
+\item In order to facilitate interoperability, more functions can now take quanteda and Matrix objects.  Thanks to Julia Silge for the suggestion!
+}
+}
+\section{Version 1.3.1}{
+\itemize{
 \item Fixing a problem with ngroups and adding a test to detect such problems in the future. Thanks to Igor Elbert for finding this. 
 \item Fixing a bug in K=0 where the method could fail if the perplexity was too large. It now automatically tries to reset itself.  To help with this in the future the initial dimension and perplexity values can now be set through the control options in stm.  Thanks to Mario Santoro for the bug catch and excellent replication file.
 \item Fixed a very small edge case bug with an internal function that powers prepDocuments() which would cause document sets where every single document had the same number of unique words to fail.
