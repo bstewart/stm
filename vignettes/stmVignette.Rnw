@@ -115,7 +115,7 @@ z_{d, n} | \vec{\theta}_d \sim \text{ Multinomial}(\vec{\theta}_d)
 \end{itemize}
 \end{enumerate}
 
-Our approach to estimation builds on prior work in variational inference for topic models \citep{blei2007correlated, ahmed2007tight,wang2013variational}. We develop a partially-collapsed variational Expectation-Maximization algorithm which upon convergence gives us estimates of the model parameters. Regularizing prior distributions are used for $\gamma, \kappa$, and (optionally) $\Sigma$, which help enhance interpretation and prevent overfitting. We note that within the object that \code{stm} produces the names correspond with the notation used here (i.e. the list element named \code{theta} contains $\theta$, the $N$ by $K$ matrix where $\theta_{i,j}$ denotes the proportion of document $i$ allocated to topic $j$). Further technical details are provided in \cite{stmjasa}. In this paper, we provide brief interpretations of results, and we direct readers to the companion papers \citep{nips2013, ajps,TextComparative} for complete applications.
+Our approach to estimation builds on prior work in variational inference for topic models \citep{blei2007correlated, ahmed2007tight,wang2013variational}. We develop a partially-collapsed variational Expectation-Maximization algorithm which upon convergence gives us estimates of the model parameters. Regularizing prior distributions are used for $\gamma, \kappa$, and (optionally) $\Sigma$, which help enhance interpretation and prevent overfitting. We note that within the object that \code{stm} produces the names correspond with the notation used here (i.e., the list element named \code{theta} contains $\theta$, the $N$ by $K$ matrix where $\theta_{i,j}$ denotes the proportion of document $i$ allocated to topic $j$). Further technical details are provided in \cite{stmjasa}. In this paper, we provide brief interpretations of results, and we direct readers to the companion papers \citep{nips2013, ajps,TextComparative} for complete applications.
 
 
 \begin{figure}
@@ -449,7 +449,7 @@ axis(1,at = as.numeric(monthseq) - min(as.numeric(monthseq)),
 \subsubsection{Topical content}
 
 We can also plot the influence of a topical content covariate. A topical content variable allows for the vocabulary used to talk about a particular topic to vary. First, the STM must be fit with a variable specified in the content option. In the below example, ratings serves this purpose. It is important to note that this is a completely new model, and so the actual topics may differ in both content and numbering compared to the previous example where no content covariate was used.
-
+  
 <<eval=FALSE>>=
 poliblogContent <- stm(out$documents, out$vocab, K = 20,
   prevalence =~ rating + s(day), content =~ rating,
