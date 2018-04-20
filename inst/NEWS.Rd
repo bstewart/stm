@@ -1,6 +1,6 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
-\section{Next Version}{
+\section{Version 1.3.4}{
   \itemize{
 \item Hat tip to Wouter van Atteveldt for a pull request that fixed a problem in summary.estimateEffect
     }
