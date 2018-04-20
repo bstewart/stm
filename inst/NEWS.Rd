@@ -1,7 +1,9 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
 \section{Next Version}{
+  \itemize{
 \item Hat tip to Wouter van Atteveldt for a pull request that fixed a problem in summary.estimateEffect
+    }
 }
 \section{Version 1.3.3}{
 \itemize{
