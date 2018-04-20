@@ -1,5 +1,8 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Next Version}{
+\item Hat tip to Wouter van Atteveldt for a pull request that fixed a problem in summary.estimateEffect
+}
 \section{Version 1.3.3}{
 \itemize{
 \item Multiple improvements from Yuval Dugan.  Allow topics to be scaled by vertex size in plot.topicCorr.  toLDAvis now allows renumbering of topics.
