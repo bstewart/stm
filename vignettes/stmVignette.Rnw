@@ -96,7 +96,7 @@ The generative process for each document (indexed by $d$) with vocabulary of siz
 \begin{equation}\label{eqn:dgp1}
 \vec{\theta}_d | X_d\gamma, \Sigma \sim \text{ LogisticNormal}(\mu = X_d\gamma, \Sigma)
 \end{equation}
-where $X_d$ is a $p$-by-1 vector, $\gamma$ is a $p$-by-$K-1$ matrix of coefficients and $\Sigma$ is $K-1$-by-$K-1$ covariance matrix.
+where $X_d$ is a 1-by-$p$ vector, $\gamma$ is a $p$-by-$K-1$ matrix of coefficients and $\Sigma$ is $K-1$-by-$K-1$ covariance matrix.
 \item Form the document-specific distribution over words representing each topic ($k$) using the baseline word distribution ($m$), the topic specific deviation $\kappa_k$, the covariate group deviation $\kappa_g$ and the interaction between the two $\kappa_i$.\\
 \begin{equation}\label{eqn:dgp2}
 \beta_{d,k} \propto  \text{ exp}(m + \kappa_{k} + \kappa_{g_d} + \kappa_{i = (k,g_d)})
@@ -174,7 +174,7 @@ vocab <- out$vocab
 meta  <-out$meta
 @
 
-In the next section we provide a link to a workspace with an estimated model that can be used to follow the examples in this vignette. 
+In Section \ref{sec:estimate} we provide a link to a workspace with an estimated model that can be used to follow the examples in this vignette. 
 
 \subsubsection{Using the quanteda package}
 A useful external tool for handling text processing is the \pkg{quanteda} package \citep{quanteda}, which makes it easy to import text and associated meta-data, prepare the texts for processing, and convert the documents into a document-term matrix.  In \pkg{quanteda}, documents can be added to a corpus object using the \code{corpus} constructor function, which holds both the texts and the associated covariates in the form of document-level meta-data. The \pkg{readtext} package \citep{readtext} contains very flexible tools for reading many formats of texts, such as plain text, XML, and JSON formats and for easily creating a corpus from them.  The function \code{dfm} from the \pkg{quanteda} package creates a document term matrix that can be supplied directly to the \code{stm} model fitting function. \pkg{quanteda} offers a much richer library of functions than the built-in \code{textProcessor} function and so can be particularly useful when more customization is required.
@@ -208,7 +208,7 @@ Importantly, \code{prepDocuments} will also re-index all metadata/document relat
 
 From here, researchers are ready to estimate a structural topic model.
 
-\subsection{Estimate: Estimating the structural topic model}
+\subsection{Estimate: Estimating the structural topic model} \label{sec:estimate}
 
 The data import process will output documents, vocabulary and metadata that can be used for an analysis. In this section we illustrate how to estimate the STM. Next we move to a range of functions to evaluate, understand, and visualize the fitted model object.
 
@@ -572,7 +572,7 @@ In this section, we explain how to change default settings in the \pkg{stm} pack
 \label{sec:init}
 As with most topic models, the objective function maximized by STM is multimodal.  This means that the way we choose the starting values for the variational EM algorithm can affect our final solution.  We provide four methods of initialization that are accessed using the argument \code{init.type}: Latent Dirichlet Allocation via collapsed Gibbs sampling (\code{init.type = "LDA"}); a Spectral algorithm for Latent Dirichlet Allocation (\code{init.type = "Spectral"}); random starting values (\code{init.type = "Random"}); and user-specified values (\code{init.type= "Custom"}).
 
-LDA is the default option and uses several passes of collapsed Gibbs sampling to initialize the algorithm. The exact parameters for this initialization can be set using the argument \code{control}. The spectral option initializes using a moment-based estimator for LDA due to \citet{arora2012practical}.  Finally, the random algorithm draws the initial state from a Dirichlet distribution.  The random initialization strategy is included primarily for completeness; in general, the other two strategies should be preferred.  \citet{chaptermulti} provides details on these initialization methods and provides a study of their performance.  In general, the spectral initialization outperforms LDA which in turn outperforms random initialization.
+LDA is the default option and uses several passes of collapsed Gibbs sampling to initialize the algorithm. The exact parameters for this initialization can be set using the argument \code{control}. The spectral option initializes using a moment-based estimator for LDA according to \citet{arora2012practical}.  Finally, the random algorithm draws the initial state from a Dirichlet distribution.  The random initialization strategy is included primarily for completeness; in general, the other two strategies should be preferred.  \citet{chaptermulti} provides details on these initialization methods and provides a study of their performance.  In general, the spectral initialization outperforms LDA which in turn outperforms random initialization.
 
 Each time the model is run, the random seed is saved in the output object under \code{settings$seed}.  This can be passed to the \code{seed} argument of \code{stm} to replicate the same starting values.
 
@@ -584,7 +584,7 @@ The argument \code{max.em.its} sets the maximum number of iterations.  If this t
 
 The default is to have the status of iterations print to the screen. The \code{verbose} option turns printing to the screen on and off.
 
-During the E-step, the algorithm prints one dot for every $1\%$ of the corpus it completes and announces completion along with timing information.  Printing for the M-Step depends on the algorithm being used.  For models without content covariates or other changes to the topic-word distribution, M-step estimation should be nearly instantaneous.  For models with content covariates, and the algorithm is set to print dots to indicate progress.  The exact interpretation of the dots differs with the choice of model (see the help file for more details).
+During the E-step, the algorithm prints one dot for every $1\%$ of the corpus it completes and announces completion along with timing information.  Printing for the M-Step depends on the algorithm being used.  For models without content covariates or other changes to the topic-word distribution, M-step estimation should be nearly instantaneous.  For models with content covariates, the algorithm is set to print dots to indicate progress.  The exact interpretation of the dots differs with the choice of model (see the help file for more details).
 
 By default every 5th iteration will print a report of top topic and covariate words.  The \code{reportevery} option sets how often these reports are printed.
 
