@@ -371,7 +371,7 @@ Estimating the relationship between metadata and topics is a core feature of the
 <<eval=TRUE, keep.source=TRUE, results = verbatim>>=
 out$meta$rating <- as.factor(out$meta$rating)
 prep <- estimateEffect(1:20 ~ rating + s(day), poliblogPrevFit,
-  meta = out$meta, uncertainty = "Global")
+  metadata = out$meta, uncertainty = "Global")
 summary(prep, topics=1)
 @
 
