@@ -14,7 +14,7 @@ paretosingle <- function(z) {
     
     m[i, 1] <- as.numeric(mean(unlist(z$semcoh[i])))
 
-    if (!z$exclusivity[[1]][1] == "Exclusivity not calculated for models with content covariates") {
+    if (z$exclusivity[[1]][1] == "Exclusivity not calculated for models with content covariates") {
       stop("manyTopics function not yet designed for models with content variable.")
     }
     
@@ -158,23 +158,26 @@ manyTopics <- function(documents, vocab, K, prevalence = NULL,
     netverbose = netverbose,
     M = M
   )
-
-  if (verbose & cores == 1) {
+  
+  if (verbose & cores > 1) {
     message("Progress will not be shown when using multiple cores.")
-    args$verbose <- FALSE
   }
 
   selectModel2 <- function(K, args, ...) {
-    do.call("selectModel", c(K, args, ...))  
+    do.call("selectModel", c(K, args, ...))
   }
 
   if (cores == 1) {
     models <- lapply(K, selectModel2, args)
   } else {
-    models <- parallel::mclapply(K, selectModel2, args, mc.cores = cores)
+    models <- parallel::mclapply(
+      K, selectModel2, args,
+      mc.cores = cores, mc.silent = TRUE
+    )
   }
 
   j <- sapply(models, paretosingle)
+
   out <- lapply(seq_along(models), function(x) models[[x]]$runout[[j[x]]])
   exclusivity <- lapply(seq_along(models), function(x) models[[x]]$exclusivity[[j[x]]])
   semcoh <- lapply(seq_along(models), function(x) models[[x]]$semcoh[[j[x]]])
@@ -188,3 +191,4 @@ manyTopics <- function(documents, vocab, K, prevalence = NULL,
   
   return(toreturn)
 }
+
