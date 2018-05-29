@@ -115,8 +115,7 @@ model_storage <- manyTopics(
   K = 3:4,
   prevalence = ~ treatment + s(pid_rep), 
   data = out$meta,
-  runs = 5,
-  cores = 3
+  runs = 5
 )
 
 # Please note that the way to extract a result for manyTopics is
