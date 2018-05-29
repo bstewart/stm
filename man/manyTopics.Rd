@@ -97,24 +97,40 @@ Does not work with models that have a content variable (at this point).
 \examples{
 
 \dontrun{
-
-temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
-meta<-temp$meta
-vocab<-temp$vocab
-docs<-temp$documents
-out <- prepDocuments(docs, vocab, meta)
-docs<-out$documents
-vocab<-out$vocab
-meta <-out$meta
+processed <- textProcessor(
+  documents = gadarian$open.ended.response,
+  metadata = gadarian
+)
+out <- prepDocuments(
+  documents = processed$documents,
+  vocab = processed$vocab,
+  meta = processed$meta
+)
 
 set.seed(02138)
-storage<-manyTopics(docs,vocab,K=3:4, prevalence=~treatment + s(pid_rep),data=meta, runs=10)
-#This chooses the output, a single run of STM that was selected,
-#from the runs of the 3 topic model
-t<-storage$out[[1]]
-#This chooses the output, a single run of STM that was selected,
-#from the runs of the 4 topic model
-t<-storage$out[[2]]
-#Please note that the way to extract a result for manyTopics is different from selectModel.
+
+model_storage <- manyTopics(
+  documents = out$documents,
+  vocab= out$vocab,
+  K = 3:4,
+  prevalence = ~ treatment + s(pid_rep), 
+  data = out$meta,
+  runs = 5,
+  cores = 3
+)
+
+# Please note that the way to extract a result for manyTopics is
+# different from selectModel. All the K fitted models are listed in
+# `model_storage$out` and can be extracted with `]]`. For instance, to
+# extract the first model with three topics, you can run:
+fit_k3 <- model_storage$out[[1]]
+
+# Similarly, to extract the second model object with four topics, you can
+# run:
+fit_k4 <- model_storage$out[[2]]
+
+# These extracted models are stm model objects
+class(fit_k3)
+plot(fit_k3)
 }
 }
