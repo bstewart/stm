@@ -7,7 +7,7 @@
 paretosingle(z)
 }
 \arguments{
-\item{z}{An stm model object from \code{\link{selectModels()}}.}
+\item{z}{An stm model object from \code{selectModel()}.}
 }
 \description{
 Function to choose the pareto dominant model, or randomly choose

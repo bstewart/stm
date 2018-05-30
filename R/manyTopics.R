@@ -4,7 +4,7 @@
 #' among model candidates that are not weakly dominanted by other
 #' models utility function for manyTopics.
 #' 
-#' @param z An stm model object from \code{\link{selectModels()}}.
+#' @param z An stm model object from \code{selectModel()}.
 #' 
 paretosingle <- function(z) {
   
@@ -98,6 +98,8 @@ paretosingle <- function(z) {
 #' models.
 #' @param M Number of words used to calculate semantic coherence and
 #' exclusivity.  Defaults to 10.
+#' @param cores Number of CPU cores to use for parallel
+#'   computation. Defaults to the number of cores available.
 #' @param \dots Additional options described in details of stm.
 #' @return 
 #' 
@@ -152,7 +154,7 @@ manyTopics <- function(documents, vocab, K, prevalence = NULL,
                        verbose = TRUE,  init.type = "LDA",
                        emtol = 1e-05, seed = NULL, runs = 50,
                        frexw = 0.7, net.max.em.its = 2,
-                       netverbose = FALSE, M = 10, N = 1,
+                       netverbose = FALSE, M = 10,
                        cores = parallel::detectCores(),
                        ...) {
 

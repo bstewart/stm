@@ -8,7 +8,7 @@ numbers of topics.}
 manyTopics(documents, vocab, K, prevalence = NULL, content = NULL,
   data = NULL, max.em.its = 100, verbose = TRUE, init.type = "LDA",
   emtol = 1e-05, seed = NULL, runs = 50, frexw = 0.7,
-  net.max.em.its = 2, netverbose = FALSE, M = 10, N = 1,
+  net.max.em.its = 2, netverbose = FALSE, M = 10,
   cores = parallel::detectCores(), ...)
 }
 \arguments{
@@ -70,6 +70,9 @@ models.}
 
 \item{M}{Number of words used to calculate semantic coherence and
 exclusivity.  Defaults to 10.}
+
+\item{cores}{Number of CPU cores to use for parallel
+computation. Defaults to the number of cores available.}
 
 \item{\dots}{Additional options described in details of stm.}
 }
