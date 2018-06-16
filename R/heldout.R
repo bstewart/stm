@@ -9,7 +9,7 @@
 #' example for the basic workflow.
 #' 
 #' @aliases make.heldout eval.heldout
-#' @param documents the documents to be modeled.
+#' @param documents the documents to be modeled (see \code{\link{stm}} for format).
 #' @param vocab the vocabulary item
 #' @param N number of docs to be partially held out
 #' @param proportion proportion of docs to be held out.
@@ -34,6 +34,12 @@
 make.heldout <- function(documents, vocab, N=floor(.1*length(documents)), 
                          proportion=.5, seed=NULL) {
   if(!is.null(seed)) set.seed(seed)
+  
+  # Convert the corpus to the internal STM format
+  args <- asSTMCorpus(documents, vocab)
+  documents <- args$documents
+  vocab <- args$vocab
+
   index <- sort(sample(1:length(documents), N))
   pie <- proportion
   missing <- vector(mode="list", length=N)

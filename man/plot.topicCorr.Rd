@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{topicCorr}(x, topics = NULL, vlabels = NULL, layout = NULL,
   vertex.color = "green", vertex.label.cex = 0.75,
-  vertex.label.color = "black", ...)
+  vertex.label.color = "black", vertex.size = NULL, ...)
 }
 \arguments{
 \item{x}{A topicCorr model object.}
@@ -25,6 +25,8 @@ pass an alternate algorithm you should load the \code{igraph} package first.}
 \item{vertex.label.cex}{Controls the size of the labels.}
 
 \item{vertex.label.color}{Controls the color of the labels.}
+
+\item{vertex.size}{Controls the sizes of the vertices, either NULL, a scalar or a vector of the same length as number of topics.}
 
 \item{\dots}{Additional parameters passed to \code{plot.graph.adjacency}}
 }

@@ -119,6 +119,7 @@ topicCorr <- function(model, method=c("simple", "huge"),
 #' @param vertex.color Color of the vertices.
 #' @param vertex.label.cex Controls the size of the labels.
 #' @param vertex.label.color Controls the color of the labels.
+#' @param vertex.size Controls the sizes of the vertices, either NULL, a scalar or a vector of the same length as number of topics.
 #' @param \dots Additional parameters passed to \code{plot.graph.adjacency}
 #' @seealso \code{\link{topicCorr}}
 #' @references Csardi G, Nepusz T: The igraph software package for complex
@@ -133,11 +134,12 @@ topicCorr <- function(model, method=c("simple", "huge"),
 #' cormat <- topicCorr(gadarianFit)
 #' plot(cormat)
 #' }
+#' @export plot.topicCorr
 #' @export
 plot.topicCorr <- function(x, topics=NULL,
                            vlabels=NULL, layout=NULL,
                            vertex.color="green", vertex.label.cex=.75, 
-                           vertex.label.color="black", ...){
+                           vertex.label.color="black",vertex.size=NULL, ...){
   if(!requireNamespace("igraph", quietly=TRUE)) stop("Install the igraph package to use this function.")
   if(is.null(topics)) topics <- 1:nrow(x$posadj)
   x <- x$posadj[topics, topics]
@@ -150,5 +152,5 @@ plot.topicCorr <- function(x, topics=NULL,
   igraph::V(g)$label <- vlabels
   if(is.null(layout)) layout <- igraph::layout.fruchterman.reingold
   igraph::plot.igraph(g, layout=layout, vertex.color=vertex.color, vertex.label.cex=vertex.label.cex, 
-       vertex.label.color=vertex.label.color, ...)
+       vertex.label.color=vertex.label.color, vertex.size=vertex.size, ...)
 }

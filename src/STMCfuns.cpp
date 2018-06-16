@@ -145,7 +145,8 @@ SEXP hpbcpp(SEXP eta,
    //This next bit of code is from http://arma.sourceforge.net/docs.html#logging
    //It basically keeps arma from printing errors from chol to the console.
    std::ostream nullstream(0);
-   arma::set_stream_err2(nullstream);
+   //arma::set_stream_err2(nullstream);
+   arma::set_cerr_stream(nullstream);
    
    ////
    //Invert via cholesky decomposition

@@ -53,10 +53,15 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
   }
   if(method=="difference"){
     if(types[covariateofinterest]=="character" |
-       types[covariateofinterest]=="factor") cdata <-
-  data.frame(factor(as.character(c(cov.value1, cov.value2)), levels=levels(as.factor(prep$data[[covariate]]))))
+       types[covariateofinterest]=="factor") {
+      lev <- levels(as.factor(prep$data[[covariate]]))
+      x <- c(as.character(cov.value1), as.character(cov.value2))
+      cdata <- base::data.frame(factor(x,levels=lev))
+      colnames(cdata) <- covariate 
+      rm(x,lev)
+    }
     if(types[covariateofinterest]=="numeric" |
-       types[covariateofinterest]=="integer") cdata <-  data.frame(c(cov.value1, cov.value2))
+       types[covariateofinterest]=="integer") cdata <-  base::data.frame(c(cov.value1, cov.value2))
     names(cdata) <- covariate
   }
   

@@ -120,6 +120,14 @@ estimateEffect <- function(formula,
   origcall <- match.call()
   thetatype <- match.arg(uncertainty)
   if(thetatype=="None") nsims <- 1 #override nsims for no uncertaintys
+  
+  if(!is.null(documents)) {
+    # Convert the corpus to the internal STM format
+    args <- asSTMCorpus(documents, data=metadata)
+    documents <- args$documents
+    metadata <- args$data
+  }
+  
   ##
   #Step 1: Extract the formula and do some error checking
   ##
@@ -290,7 +298,8 @@ summary.estimateEffect <- function(object, topics=NULL, nsim=500, ...) {
   }
   tables <- vector(mode="list", length=length(topics))
   for(i in seq_along(topics)) {
-    sims <- lapply(object$parameters[[i]], function(x) rmvnorm(nsim, x$est, x$vcov))
+    topic = topics[i]
+    sims <- lapply(object$parameters[[topic]], function(x) rmvnorm(nsim, x$est, x$vcov))
     sims <- do.call(rbind,sims)
     est<- colMeans(sims)
     se <- sqrt(apply(sims,2, stats::var))

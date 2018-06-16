@@ -9,7 +9,7 @@ make.heldout(documents, vocab, N = floor(0.1 * length(documents)),
   proportion = 0.5, seed = NULL)
 }
 \arguments{
-\item{documents}{the documents to be modeled.}
+\item{documents}{the documents to be modeled (see \code{\link{stm}} for format).}
 
 \item{vocab}{the vocabulary item}
 
