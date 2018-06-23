@@ -413,7 +413,8 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), control=list())  {
+                kappa.prior=c("L1", "Jeffreys"), 
+                weights=NULL, control=list())  {
   
   #Match Arguments and save the call
   init.type <- match.arg(init.type)
@@ -671,6 +672,23 @@ stm <- function(documents, vocab, K,
   }
   
   settings$call <- Call
+  
+  ###
+  # Temporarily add weights
+  # if added move somewhere better
+  ###
+  if(is.null(weights)) {
+    weights <- rep.int(1, times=length(documents))
+  } else {
+    if(!all(weights >= 0)) stop("weights must be positive")
+    
+    if(sum(weights) <= 1) {
+      #normalize and multiply out by number of documents
+      weights <- (weights/sum(weights))*length(documents)
+    }
+  }
+  settings$weights <- weights
+  
   ###
   # Finally run the actual model
   ###

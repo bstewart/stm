@@ -140,6 +140,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       suffstats <- estep(documents=documents, beta.index=betaindex,
                               update.mu=(!is.null(mu$gamma)),
                               beta$beta, lambda, mu$mu, sigma,
+                              settings$weights,
                               verbose)
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
       if(verbose) cat(msg)

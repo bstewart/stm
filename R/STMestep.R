@@ -15,7 +15,7 @@
 
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
-                       beta, lambda.old, mu, sigma, 
+                       beta, lambda.old, mu, sigma, weights,
                        verbose) {
   
   #quickly define useful constants
@@ -63,7 +63,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     
     # update sufficient statistics 
     sigma.ss <- sigma.ss + doc.results$eta$nu
-    beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    beta.ss[[aspect]][,words] <- doc.results$phis*weights[i] + beta.ss[[aspect]][,words]
     bound[i] <- doc.results$bound
     lambda[[i]] <- c(doc.results$eta$lambda)
     if(verbose && i%%ctevery==0) cat(".")
