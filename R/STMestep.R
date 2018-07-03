@@ -100,14 +100,23 @@ estepmc <- function(documents, beta.index, update.mu, #null allows for intercept
 
   groups <- base::split(seq_len(N),
                         sample(rep(seq_len(cores), length=N)))
-
   
-  
-  out <- parallel::mclapply(groups, FUN=estep_parallel_block, mc.cores=cores,
-                            documents=documents, beta.index=beta.index,
-                            lambda.old=lambda.old, mu=mu, beta=beta, siginv=siginv,
-                            sigmaentropy=sigmaentropy, update.mu=update.mu,
-                            K=K, N=N, V=V, A=A)
+  sysname <- Sys.info()["sysname"]
+  if (sysname == "Windows") {
+    cl <- parallel::makeCluster(cores)
+    out <- parallel::clusterApply(cl, groups, fun=estep_parallel_block,
+                                  documents=documents, beta.index=beta.index,
+                                  lambda.old=lambda.old, mu=mu, beta=beta, siginv=siginv,
+                                  sigmaentropy=sigmaentropy, update.mu=update.mu,
+                                  K=K, N=N, V=V, A=A)
+    parallel::stopCluster(cl)
+  } else {
+    out <- parallel::mclapply(groups, FUN=estep_parallel_block, mc.cores=cores,
+                              documents=documents, beta.index=beta.index,
+                              lambda.old=lambda.old, mu=mu, beta=beta, siginv=siginv,
+                              sigmaentropy=sigmaentropy, update.mu=update.mu,
+                              K=K, N=N, V=V, A=A)
+  }
   
   beta.ss <- out[[1]]$beta.ss
   sigma.ss <- out[[1]]$sigma.ss
