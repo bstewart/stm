@@ -137,18 +137,19 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       #####
       t1 <- proc.time()
       #run the model
-      if(settings$cores!=1) {
-        suffstats <- estepmc(documents=documents, beta.index=betaindex,
-                             update.mu=(!is.null(mu$gamma)),
-                             beta$beta, lambda, mu$mu, sigma,
-                             settings$cores,
-                             verbose)
-      } else {
-        suffstats <- estep(documents=documents, beta.index=betaindex,
-                           update.mu=(!is.null(mu$gamma)),
-                           beta$beta, lambda, mu$mu, sigma,
-                           verbose)
-      }
+      suffstats <-
+        estep(
+          documents = documents,
+          beta.index = betaindex,
+          update.mu = (!is.null(mu$gamma)),
+          beta$beta,
+          lambda,
+          mu$mu,
+          sigma,
+          verbose,
+          settings$cores
+        )
+      
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
       if(verbose) cat(msg)
       t1 <- proc.time()
