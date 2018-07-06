@@ -1,7 +1,7 @@
 #####################################
 # SERIAL
 #####################################
-estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores=1) {
+estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose) {
   
   sigma.ss <- diag(0, nrow=(K-1))
   beta.ss <- vector(mode="list", length=A)
@@ -45,10 +45,12 @@ estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, updat
 # PARALLEL
 #####################################
 combineFn <- function(R, r) {
-  R$sigma.ss <- R$sigma.ss + r$doc.results$eta$nu
-  R$beta.ss[[r$aspect]][, r$words] <- R$beta.ss[[r$aspect]][, r$words] + r$doc.results$phis
-  R$bound[r$i] <- r$doc.results$bound
-  R$lambda[[r$i]] <- c(r$doc.results$eta$lambda)
+  R$sigma.ss <- R$sigma.ss + r$sigma.ss
+  for (i in length(R$beta.ss)) {
+    R$beta.ss[[i]] =  R$beta.ss[[i]] + r$beta.ss[[i]]
+  }
+  R$bound[r$doc.ids] <- r$bound[r$doc.ids]
+  R$lambda[r$doc.ids] <- r$lambda[r$doc.ids]
   R
 }
 
@@ -66,25 +68,48 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
   
   if (verbose) cat("Starting Parallel E-Step\n")
   
-  res <- foreach (i = 1:N, .combine = combineFn, .multicombine = FALSE, .init = initt) %dopar% {
-    doc <- documents[[i]]
-    words <- doc[1,]
-    aspect <- beta.index[i]
-    init <- lambda.old[i,]
-    if (update.mu) {
-      mu.i <- mu[, i]
-    } else {
-      mu.i <- as.numeric(mu)
-    }
-    beta.i <- beta[[aspect]][, words, drop=FALSE]
-    
-    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy)
-    list(i=i, doc.results=doc.results, aspect=aspect, words=words)
+  # doc.id.groups <- base::split(seq_len(N), sample(rep(seq_len(cores), length=N)))
+  doc.id.groups <- base::split(seq_len(N), rep(seq_len(cores), length=N))
+  
+  res <- foreach (doc.ids = doc.id.groups, .combine = combineFn, .multicombine = FALSE, .init = initt) %dopar% {
+    estepParallelBlock(doc.ids, N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv)
   }
   
   lambda <- do.call(rbind, res$lambda)
   list(sigma=res$sigma.ss, beta=res$beta.ss, bound=res$bound, lambda=lambda)
 }
+
+estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv) {
+  
+  sigma.ss <- diag(0, nrow=K-1)
+  beta.ss <- vector(mode='list', length=A)
+  for(i in 1:A) {
+    beta.ss[[i]] <- matrix(0, nrow=K, ncol=V)
+  }
+  bound <- vector(length=N)
+  lambda <- vector("list", length=N)
+
+  if(!update.mu) mu.i <- as.numeric(mu)
+  
+  for (i in doc.ids) {
+    doc = documents[[i]]
+    words <- doc[1,]
+    aspect <- beta.index[i]
+    init <- lambda.old[i,]
+    if (update.mu) mu.i <- mu[, i]
+    beta.i <- beta[[aspect]][, words, drop=FALSE]
+    
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy)
+    
+    sigma.ss <- sigma.ss + doc.results$eta$nu
+    beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    bound[i] <- doc.results$bound
+    lambda[[i]] <- c(doc.results$eta$lambda)
+    
+  }
+  list(doc.ids=doc.ids, sigma.ss=sigma.ss, beta.ss=beta.ss, bound=bound, lambda=lambda)
+}
+
 #####################################
 
 estep <- function(documents, beta.index, update.mu, beta, lambda.old, mu, sigma, verbose, cores=1) {
@@ -104,6 +129,10 @@ estep <- function(documents, beta.index, update.mu, beta, lambda.old, mu, sigma,
     siginv <- chol2inv(sigobj)
   }
   
-  f <- ifelse(cores>1, estepParallel, estepSerial)
-  f(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores)
+  if (cores>1) {
+    estepParallel(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores)
+  } else {
+    estepSerial(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose)
+  }
+
 }
