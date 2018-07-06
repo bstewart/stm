@@ -63,6 +63,12 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   ############
   #Step 2: Run EM
   ############
+
+  if (settings$cores > 1) {
+    cl <- parallel::makeCluster(settings$cores)
+    doParallel::registerDoParallel(cl)
+  }
+  
   while(!stopits) {
 
     #one set of updates with groups, another without.
@@ -180,6 +186,11 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
     if(!stopits & verbose) report(convergence, ntokens=ntokens, beta, vocab,
                                        settings$topicreportevery, verbose)
   }
+  
+  if (settings$cores > 1) {
+    parallel::stopCluster(cl)
+  }
+
   #######
   #Step 3: Construct Output
   #######

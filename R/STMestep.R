@@ -66,10 +66,6 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
   
   if (verbose) cat("Starting Parallel E-Step\n")
   
-  cl <- parallel::makeCluster(cores)
-  parallel::makeCluster(cl)
-  doParallel::registerDoParallel(cl)
-  
   res <- foreach (i = 1:N, .combine = combineFn, .multicombine = FALSE, .init = initt) %dopar% {
     doc <- documents[[i]]
     words <- doc[1,]
@@ -85,8 +81,6 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
     doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy)
     list(i=i, doc.results=doc.results, aspect=aspect, words=words)
   }
-  
-  parallel::stopCluster(cl)
   
   lambda <- do.call(rbind, res$lambda)
   list(sigma=res$sigma.ss, beta=res$beta.ss, bound=res$bound, lambda=lambda)
