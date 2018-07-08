@@ -72,7 +72,7 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
   doc.id.groups <- base::split(seq_len(N), rep(seq_len(cores), length=N))
   
   res <- foreach (doc.ids = doc.id.groups, .combine = combineFn, .multicombine = FALSE, .init = initt) %dopar% {
-    estepParallelBlock(doc.ids, N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv)
+    estepParallelBlock(doc.ids, N, K, A, V, documents[doc.ids], beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv)
   }
   
   lambda <- do.call(rbind, res$lambda)
@@ -91,7 +91,7 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
 
   if(!update.mu) mu.i <- as.numeric(mu)
   
-  for (i in doc.ids) {
+  for (i in 1:length(documents)) {
     doc = documents[[i]]
     words <- doc[1,]
     aspect <- beta.index[i]
