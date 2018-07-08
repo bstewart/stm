@@ -91,8 +91,9 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
 
   if(!update.mu) mu.i <- as.numeric(mu)
   
-  for (i in 1:length(documents)) {
-    doc = documents[[i]]
+  cnt <- 1
+  for (i in doc.ids) {
+    doc = documents[[cnt]]
     words <- doc[1,]
     aspect <- beta.index[i]
     init <- lambda.old[i,]
@@ -105,6 +106,8 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
     beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     bound[i] <- doc.results$bound
     lambda[[i]] <- c(doc.results$eta$lambda)
+    
+    cnt <- cnt + 1
     
   }
   list(doc.ids=doc.ids, sigma.ss=sigma.ss, beta.ss=beta.ss, bound=bound, lambda=lambda)
