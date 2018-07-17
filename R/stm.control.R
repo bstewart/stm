@@ -64,9 +64,13 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   #Step 2: Run EM
   ############
 
-  if (settings$cores > 1) {
-    cl <- parallel::makeCluster(settings$cores)
+  cores <- settings$cores
+  if (cores==-1) cores<-parallel::detectCores()-1
+  if (cores > 1) {
+    cl <- parallel::makeCluster(cores)
     doParallel::registerDoParallel(cl)
+  } else{
+    foreach::registerDoSEQ()
   }
   
   while(!stopits) {
@@ -95,7 +99,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
         suffstats[[i]] <- estep(documents=gdocs, beta.index=gbetaindex,
                                 update.mu=(!is.null(mu$gamma)),
                                 beta$beta, glambda, gmu, sigma,
-                                verbose)
+                                verbose, cores)
         if(verbose) {
           msg <- sprintf("Completed Group %i E-Step (%d seconds). \n", i, floor((proc.time()-t1)[3]))
           cat(msg)
@@ -153,7 +157,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
           mu$mu,
           sigma,
           verbose,
-          settings$cores
+          cores
         )
       
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
@@ -187,8 +191,9 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                                        settings$topicreportevery, verbose)
   }
   
-  if (settings$cores > 1) {
+  if (cores > 1) {
     parallel::stopCluster(cl)
+    foreach::registerDoSEQ()
   }
 
   #######

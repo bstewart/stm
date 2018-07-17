@@ -131,63 +131,58 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 # @param anchor A vector of indices for rows of Q containing anchors
 # @param wprob The empirical word probabilities used to renorm the mixture weights. 
 # @param verbose If TRUE prints information as it progresses.
+# @param cores The no. of cores to employ in the optionally parallel computation of conditional probabilities of individual words.
 # @param ... Optional arguments that will be passed to the exponentiated gradient algorithm.
 # @return 
 # \item{A}{A matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
+recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, cores=1, ...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
-
+  
+  if (cores==-1) cores<-parallel::detectCores()-1
+  if (cores > 1) {
+    cl <- parallel::makeCluster(cores)
+    doParallel::registerDoParallel(cl)
+  } else{
+    foreach::registerDoSEQ()
+  }
+  
   #Qbar <- Q/rowSums(Q)
-  X <- Qbar[anchor,]
+  nAnchors <- length(anchor)
+  V <- nrow(Qbar)
+  X <- Qbar[anchor, ]
   XtX <- tcrossprod(X)
   
   #In a minute we will do quadratic programming
   #these jointly define the conditions.  First column
   #is a sum to 1 constraint.  Remainder are each parameter
   #greater than 0.
-  Amat <- cbind(1,diag(1,nrow=nrow(X)))
-  bvec <- c(1,rep(0,nrow(X)))
+  Amat <- cbind(1,diag(1, nrow=nAnchors))
+  bvec <- c(1, rep(0, nAnchors))
   
-  #Word by Word Solve For the Convex Combination
-  condprob <- vector(mode="list", length=nrow(Qbar))
-  for(i in 1:nrow(Qbar)) {
-    if(i %in% anchor) { 
-      #if its an anchor we create a dummy entry that is 1 by definition
-      vec <- rep(0, nrow(XtX))
-      vec[match(i,anchor)] <- 1
-      condprob[[i]] <- vec
-    } else {
-      y <- Qbar[i,]
-      
-      if(recoverEG) {
-        solution <- expgrad(X,y,XtX, ...)$par
-      } else {
-        #meq=1 means the sum is treated as an exact equality constraint
-        #and the remainder are >=
-        solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, 
-                                       Amat=Amat, bvec=bvec, meq=1)$solution  
-      }
-      
-      if(any(solution <= 0)) {
-        #we can get exact 0's or even slightly negative numbers from quadprog
-        #replace with machine double epsilon
-        solution[solution<=0] <- .Machine$double.eps
-      } 
-      condprob[[i]] <- solution
-    }
-    if(verbose) {
-      #if(i%%1 == 0) cat(".")
-      #if(i%%20 == 0) cat("\n")
-      #if(i%%100 == 0) cat(sprintf("Recovered %i of %i words. \n", i, nrow(Qbar)))
-      if(i%%100==0) cat(".")
-    }
+  init <- list(
+    condProb = vector(mode="list", length=V)
+  )
+  combineFn <- function(R, r) {
+    R$condProb[r$V.ids] <- r$condProb
+    R
   }
+  
+  V.groups <- base::split(seq_len(V), rep(seq_len(cores), length=V))
+  res <- foreach (V.ids = V.groups, .combine = combineFn, .multicombine = FALSE, .init = init) %dopar% {
+    recoverL2Parallel(V.ids, Qbar, nAnchors, anchor, X, XtX, Amat, bvec, recoverEG, ...)
+  }
+  
+  if (cores > 1) {
+    parallel::stopCluster(cl)
+    foreach::registerDoSEQ()
+  }
+  
   if(verbose) cat("\n")
   #Recover Beta (A in this notation)
   #  Now we have p(z|w) but we want the inverse
-  weights <- do.call(rbind, condprob)
+  weights <- do.call(rbind, res$condProb)
   A <- weights*wprob
   A <- t(A)/colSums(A)
   
@@ -196,6 +191,36 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
   #R <- t(Adag)%*%Q%*%Adag
   return(list(A=A))
   #return(list(A=A, R=R, condprob=condprob))
+}
+
+recoverL2Parallel <- function(V.ids, Qbar, nAnchors, anchorVector, X, XtX, Amat, bvec, recoverEG, ...) {
+  
+  condProb = vector(mode='list', length=length(V.ids))
+  for (i in 1:length(V.ids)) {
+    V.id = V.ids[i]
+    if (V.id %in% anchorVector) { 
+      
+      #if its an anchor we create a dummy entry that is 1 by definition
+      vec <- numeric(nAnchors)
+      vec[match(V.id, anchorVector)] <- 1
+      condProb[[i]] <- vec
+      
+    } else {
+      
+      y <- Qbar[V.id, ]
+      
+      if(recoverEG) {
+        solution <- expgrad(X, y, XtX, ...)$par
+      } else {
+        # meq=1 means the sum is treated as an exact equality constraint and the remainder are >=
+        solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, Amat=Amat, bvec=bvec, meq=1)$solution  
+      }
+      
+      solution[solution<=0] <- .Machine$double.eps
+      condProb[[i]] <- solution
+    }
+  }
+  list(V.ids=V.ids, condProb=condProb)
 }
 
 # Exponentiated Gradient with L2 Loss
