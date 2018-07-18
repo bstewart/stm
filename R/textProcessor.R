@@ -188,7 +188,7 @@ textProcessor <- function(documents, metadata=NULL,
   
   #Make a matrix
   if(verbose) cat("Creating Output... \n")
-  dtm <- tm::DocumentTermMatrix(txt, control=list(wordLengths=wordLengths))
+  dtm <- tm::DocumentTermMatrix(txt, control=list(wordLengths=wordLengths, tolower = FALSE))
   if(sparselevel!=1) {
     ntokens <- sum(dtm$v)
     V <- ncol(dtm)
