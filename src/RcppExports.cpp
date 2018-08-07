@@ -2,6 +2,7 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include <RcppArmadillo.h>
+#include <RcppEigen.h>
 #include <Rcpp.h>
 
 using namespace Rcpp;
@@ -52,11 +53,60 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lhoodcpp2
+double lhoodcpp2(Eigen::ArrayXd eta, Eigen::ArrayXXd beta, Eigen::ArrayXd doc_ct, Eigen::ArrayXd mu, Eigen::ArrayXXd siginv);
+RcppExport SEXP _stm_lhoodcpp2(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type doc_ct(doc_ctSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type siginv(siginvSEXP);
+    rcpp_result_gen = Rcpp::wrap(lhoodcpp2(eta, beta, doc_ct, mu, siginv));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gradcpp2
+Eigen::ArrayXXd gradcpp2(Eigen::ArrayXd eta, Eigen::ArrayXXd beta, Eigen::ArrayXd doc_ct, Eigen::ArrayXd mu, Eigen::ArrayXXd siginv);
+RcppExport SEXP _stm_gradcpp2(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type doc_ct(doc_ctSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type siginv(siginvSEXP);
+    rcpp_result_gen = Rcpp::wrap(gradcpp2(eta, beta, doc_ct, mu, siginv));
+    return rcpp_result_gen;
+END_RCPP
+}
+// hpbcpp2
+Rcpp::List hpbcpp2(Eigen::ArrayXd eta, Eigen::ArrayXXd beta, Eigen::ArrayXd doc_ct, Eigen::ArrayXd mu, Eigen::ArrayXXd siginv, double sigmaentropy);
+RcppExport SEXP _stm_hpbcpp2(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP, SEXP sigmaentropySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type doc_ct(doc_ctSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXd >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type siginv(siginvSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaentropy(sigmaentropySEXP);
+    rcpp_result_gen = Rcpp::wrap(hpbcpp2(eta, beta, doc_ct, mu, siginv, sigmaentropy));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stm_lhoodcpp", (DL_FUNC) &_stm_lhoodcpp, 5},
     {"_stm_gradcpp", (DL_FUNC) &_stm_gradcpp, 5},
     {"_stm_hpbcpp", (DL_FUNC) &_stm_hpbcpp, 6},
+    {"_stm_lhoodcpp2", (DL_FUNC) &_stm_lhoodcpp2, 5},
+    {"_stm_gradcpp2", (DL_FUNC) &_stm_gradcpp2, 5},
+    {"_stm_hpbcpp2", (DL_FUNC) &_stm_hpbcpp2, 6},
     {NULL, NULL, 0}
 };
 

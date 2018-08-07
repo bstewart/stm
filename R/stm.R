@@ -416,7 +416,7 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), cores=1, 
+                kappa.prior=c("L1", "Jeffreys"), cores=1, use.Eigen=FALSE,
                 control=list())  {
   
   #Match Arguments and save the call
@@ -564,7 +564,8 @@ stm <- function(documents, vocab, K,
                    covariates=list(X=xmat, betaindex=betaindex, yvarlevels=yvarlevels, formula=prevalence),
                    gamma=list(mode=match.arg(gamma.prior), prior=NULL, enet=1, ic.k=2,
                               maxits=1000),
-                   sigma=list(prior=sigma.prior),
+                   sigma=list(prior=sigma.prior, round.estep.digits=NULL),
+                   beta=list(round.estep.digits=NULL),
                    kappa=list(LDAbeta=LDAbeta, interactions=interactions, 
                               fixedintercept=TRUE, mstep=list(tol=.001, maxit=3),
                               contrast=FALSE),
@@ -573,10 +574,13 @@ stm <- function(documents, vocab, K,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
                              s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
-                             tSNE_init.dims=50, tSNE_perplexity=30), 
+                             tSNE_init.dims=50, tSNE_perplexity=30, 
+                             round.recoverL2.exp.digits=NULL),
                    seed=seed,
                    ngroups=ngroups,
-                   cores=cores)
+                   cores=cores,
+                   use.Eigen=use.Eigen
+				      )
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000
   }
@@ -615,7 +619,8 @@ stm <- function(documents, vocab, K,
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
-                  "custom.beta", "tSNE_init.dims", "tSNE_perplexity")
+                  "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
+                  "round.recoverL2.exp.digits", "round.estep.sigma.digits", "round.estep.beta.digits")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -659,6 +664,10 @@ stm <- function(documents, vocab, K,
         }
         settings$init$custom <- control[[i]]
       }
+      
+      if(i=="round.recoverL2.exp.digits")  settings$init$round.recoverL2.exp.digits <- control[[i]]
+      if(i=="round.estep.sigma.digits")  settings$sigma$round.estep.digits <- control[[i]]
+      if(i=="round.estep.beta.digits")  settings$beta$round.estep.digits <- control[[i]]
     }
   }
   

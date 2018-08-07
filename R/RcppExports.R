@@ -13,3 +13,15 @@ hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
     .Call(`_stm_hpbcpp`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
 }
 
+lhoodcpp2 <- function(eta, beta, doc_ct, mu, siginv) {
+    .Call(`_stm_lhoodcpp2`, eta, beta, doc_ct, mu, siginv)
+}
+
+gradcpp2 <- function(eta, beta, doc_ct, mu, siginv) {
+    .Call(`_stm_gradcpp2`, eta, beta, doc_ct, mu, siginv)
+}
+
+hpbcpp2 <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
+    .Call(`_stm_hpbcpp2`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
+}
+

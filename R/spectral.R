@@ -140,7 +140,7 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, cores=1
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
   
-  if (cores==-1) cores<-parallel::detectCores()-1
+  if (cores==-1) cores<-max(1, parallel::detectCores()-1)
   if (cores > 1) {
     cl <- parallel::makeCluster(cores)
     doParallel::registerDoParallel(cl)
@@ -248,7 +248,7 @@ recoverL2Parallel <- function(V.ids, Qbar, nAnchors, anchorVector, X, XtX, Amat,
 # \item{converged}{Logical indicating if it converged}
 # \item{entropy}{Entropy of the resulting weights}
 # \item{log.sse}{Log of the sum of squared error}
-expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500) {
+expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500, round.exp.digits=NULL) {
   if(is.null(alpha)) alpha <- 1/nrow(X) 
   alpha <- matrix(alpha, nrow=1, ncol=nrow(X))
   if(is.null(XtX)) XtX <- tcrossprod(X)
@@ -258,15 +258,22 @@ expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500) {
   eta <- 50
   sse.old <- Inf
   its <- 1
-  while(!converged) {
+  while (!converged) {
     #find the gradient (y'X - alpha'X'X)
     grad <- (ytX - alpha%*%XtX) #101-105
     sse <- sum(grad^2) #106, sumSquaredError
     grad <- 2*eta*grad
     maxderiv <- max(grad)    
     
+	e <- exp(grad-maxderiv)
+	
+	# The exp function gives slightly different results on different platforms
+	# The round.exp.digits arguments gives us a chance to round this result,
+	# useful for unit testing purposes
+	if (!is.null(round.exp.digits)) e <- round(e, round.exp.digits)
+	
     #update parameter 
-    alpha <- alpha*exp(grad-maxderiv)
+    alpha <- alpha*e
     #project parameter back to space
     alpha <- alpha/sum(alpha)
     

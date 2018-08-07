@@ -1,7 +1,7 @@
 #####################################
 # SERIAL
 #####################################
-estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose) {
+estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, round.estep.sigma.digits=NULL, round.estep.beta.digits=NULL, use.Eigen=FALSE) {
   
   sigma.ss <- diag(0, nrow=(K-1))
   beta.ss <- vector(mode="list", length=A)
@@ -25,7 +25,7 @@ estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, updat
     beta.i <- beta[[aspect]][,words,drop=FALSE]
     
     #infer the document
-    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy)
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy, use.Eigen=use.Eigen)
     
     # update sufficient statistics
     sigma.ss <- sigma.ss + doc.results$eta$nu
@@ -37,6 +37,10 @@ estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, updat
   if(verbose) cat("\n")
   
   lambda <- do.call(rbind, lambda)
+  
+  if (!is.null(round.estep.sigma.digits)) sigma.ss <- round(sigma.ss, round.estep.sigma.digits)
+  if (!is.null(round.estep.beta.digits)) beta.ss <- lapply(beta.ss, round, round.estep.beta.digits)
+  
   list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda)
 }
 #####################################
@@ -54,7 +58,7 @@ combineFn <- function(R, r) {
   R
 }
 
-estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores=1) {
+estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores=1, round.estep.sigma.digits=NULL, round.estep.beta.digits=NULL, use.Eigen=FALSE) {
   
   # INITIALIZATION OF COMBINED RESULTS
   beta.ss <- vector(mode="list", length=A)
@@ -72,14 +76,18 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
   doc.id.groups <- base::split(seq_len(N), rep(seq_len(cores), length=N))
   
   res <- foreach (doc.ids = doc.id.groups, .combine = combineFn, .multicombine = FALSE, .init = initt) %dopar% {
-    estepParallelBlock(doc.ids, N, K, A, V, documents[doc.ids], beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv)
+    estepParallelBlock(doc.ids, N, K, A, V, documents[doc.ids], beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, use.Eigen)
   }
   
   lambda <- do.call(rbind, res$lambda)
+  
+  if (!is.null(round.estep.sigma.digits)) res$sigma.ss <- round(res$sigma.ss, round.estep.sigma.digits)
+  if (!is.null(round.estep.beta.digits)) res$beta.ss <- lapply(res$beta.ss, round, round.estep.beta.digits)
+  
   list(sigma=res$sigma.ss, beta=res$beta.ss, bound=res$bound, lambda=lambda)
 }
 
-estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv) {
+estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, use.Eigen) {
   
   sigma.ss <- diag(0, nrow=K-1)
   beta.ss <- vector(mode='list', length=A)
@@ -100,7 +108,7 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
     if (update.mu) mu.i <- mu[, i]
     beta.i <- beta[[aspect]][, words, drop=FALSE]
     
-    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy)
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy, use.Eigen=use.Eigen)
     
     sigma.ss <- sigma.ss + doc.results$eta$nu
     beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
@@ -115,7 +123,7 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
 
 #####################################
 
-estep <- function(documents, beta.index, update.mu, beta, lambda.old, mu, sigma, verbose, cores=1) {
+estep <- function(documents, beta.index, update.mu, beta, lambda.old, mu, sigma, verbose, cores=1, round.estep.sigma.digits=NULL, round.estep.beta.digits=NULL, use.Eigen=FALSE) {
   
   V <- ncol(beta[[1]])
   K <- nrow(beta[[1]])
@@ -133,9 +141,9 @@ estep <- function(documents, beta.index, update.mu, beta, lambda.old, mu, sigma,
   }
   
   if (cores>1) {
-    estepParallel(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores)
+    estepParallel(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores, round.estep.sigma.digits, round.estep.beta.digits, use.Eigen)
   } else {
-    estepSerial(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose)
+    estepSerial(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, round.estep.sigma.digits, round.estep.beta.digits, use.Eigen)
   }
 
 }
