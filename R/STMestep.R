@@ -58,6 +58,7 @@ combineFn <- function(R, r) {
   R
 }
 
+#' @importFrom foreach foreach %dopar%
 estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores=1, round.estep.sigma.digits=NULL, round.estep.beta.digits=NULL, use.Eigen=FALSE) {
   
   # INITIALIZATION OF COMBINED RESULTS

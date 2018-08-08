@@ -339,6 +339,8 @@
 #' @param cores an integer indicating the number of cores to use. Defaults to 1.
 #' Note that when using N cores you use N times the memory which may be 
 #' prohibitive in some settings.
+#' @param use.Eigen a boolean on whether to use RcppEigen or RcppArmadillo for
+#' performance critical matrix manipulations. Default F (RcppArmadillo used)
 #' @param control a list of additional advanced parameters. See details.
 #' 
 #' @return An object of class STM 
