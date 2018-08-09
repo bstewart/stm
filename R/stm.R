@@ -339,8 +339,6 @@
 #' @param cores an integer indicating the number of cores to use. Defaults to 1.
 #' Note that when using N cores you use N times the memory which may be 
 #' prohibitive in some settings.
-#' @param use.Eigen a boolean on whether to use RcppEigen or RcppArmadillo for
-#' performance critical matrix manipulations. Default F (RcppArmadillo used)
 #' @param control a list of additional advanced parameters. See details.
 #' 
 #' @return An object of class STM 
@@ -418,7 +416,7 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), cores=1, use.Eigen=FALSE,
+                kappa.prior=c("L1", "Jeffreys"), cores=1,
                 control=list())  {
   
   #Match Arguments and save the call
@@ -580,8 +578,7 @@ stm <- function(documents, vocab, K,
                              round.recoverL2.exp.digits=NULL),
                    seed=seed,
                    ngroups=ngroups,
-                   cores=cores,
-                   use.Eigen=use.Eigen
+                   cores=cores
 				      )
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000

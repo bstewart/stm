@@ -99,7 +99,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
         suffstats[[i]] <- estep(documents=gdocs, beta.index=gbetaindex,
                                 update.mu=(!is.null(mu$gamma)),
                                 beta$beta, glambda, gmu, sigma,
-                                verbose, cores, settings$sigma$round.estep.digits, settings$beta$round.estep.digits, settings$use.Eigen)
+                                verbose, cores, settings$sigma$round.estep.digits, settings$beta$round.estep.digits)
         if(verbose) {
           msg <- sprintf("Completed Group %i E-Step (%d seconds). \n", i, floor((proc.time()-t1)[3]))
           cat(msg)
@@ -159,8 +159,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
           verbose,
           cores,
           settings$sigma$round.estep.digits,
-          settings$beta$round.estep.digits,
-          settings$use.Eigen
+          settings$beta$round.estep.digits
         )
       
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
