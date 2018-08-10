@@ -137,7 +137,7 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
                        beta, lambda.old, mu, sigma, 
-                       verbose, cores=1, round.sigma=NULL, round.beta=NULL) {
+                       verbose, cores=1, sigma.round=NULL, beta.round=NULL) {
   
   #quickly define useful constants
   V <- ncol(beta[[1]])
@@ -167,8 +167,8 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # the exact results of the summation dependent of the order of summation. For the purpose of generating reproducible numbers,
   # rounding the results to an arbitrary precision helps us achieve numerical stability.
   # This may be useful for unit-testing purposes
-  if (!is.null(round.sigma)) results$sigma <- round(results$sigma, round.sigma)
-  if (!is.null(round.beta)) results$beta <- lapply(results$beta, round, round.beta)
+  if (!is.null(sigma.round)) results$sigma <- round(results$sigma, sigma.round)
+  if (!is.null(beta.round)) results$beta <- lapply(results$beta, round, beta.round)
   
   results
 
