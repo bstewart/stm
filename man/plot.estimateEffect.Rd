@@ -4,12 +4,13 @@
 \alias{plot.estimateEffect}
 \title{Plot effect of covariates on topics}
 \usage{
-\method{plot}{estimateEffect}(x, covariate, model = NULL, topics = x$topics,
-  method = c("pointestimate", "difference", "continuous"),
-  cov.value1 = NULL, cov.value2 = NULL, moderator = NULL,
-  moderator.value = NULL, npoints = 100, nsims = 100, ci.level = 0.95,
-  xlim = NULL, ylim = NULL, xlab = "", ylab = NULL, main = "",
-  printlegend = T, labeltype = "numbers", n = 7, frexw = 0.5, add = F,
+\method{plot}{estimateEffect}(x, covariate, model = NULL,
+  topics = x$topics, method = c("pointestimate", "difference",
+  "continuous"), cov.value1 = NULL, cov.value2 = NULL,
+  moderator = NULL, moderator.value = NULL, npoints = 100,
+  nsims = 100, ci.level = 0.95, xlim = NULL, ylim = NULL,
+  xlab = "", ylab = NULL, main = "", printlegend = T,
+  labeltype = "numbers", n = 7, frexw = 0.5, add = F,
   linecol = NULL, width = 25, verbose.labels = T, family = NULL,
   custom.labels = NULL, omit.plot = FALSE, ...)
 }

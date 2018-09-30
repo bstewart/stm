@@ -244,25 +244,25 @@
 #' parameter.  This defaults to 30 and can throw an error when too high.  \code{stm} will automatically lower
 #' the parameter for you until it works, but it can also be directly set here.}
 #' 
-#' \item{\code{init.parallel}}{TODO: A logical indicating whether to parallelize the initialization phase. Defaults
+#' \item{\code{init.parallel}}{A logical indicating whether to parallelize the initialization phase. Defaults
 #' to \code{TRUE}. If \code{TRUE}, \code{cores} should be set to a value greater than 1 for this to have any effect.}
 #' 
-#' \item{\code{init.exp.round}}{TODO: The initialization phase of the model yields slightly different model
+#' \item{\code{init.exp.round}}{The initialization phase of the model yields slightly different model
 #' parameters on different architectures due to minor differences in the exponential function implementation.
 #' This numeric parameter can be set to N to round the results of this exponential function invocation to N digits.
 #' This should give consistent model results across platforms and for unit testing purposes. If used, the suggested value 
 #' for this parameter is around 9. Defaults to \code{NULL}, indicating that no rounding should take place.}
 #' 
-#' \item{\code{estep.parallel}}{TODO: A logical indicating whether to parallelize the E-Step phase. Defaults
+#' \item{\code{estep.parallel}}{A logical indicating whether to parallelize the E-Step phase. Defaults
 #' to \code{TRUE}. If \code{TRUE}, \code{cores} should be set to a value greater than 1 for this to have any effect.}
 #' 
-#' \item{\code{estep.sigma.round}}{TODO: The E-Step phase of the model yields slightly different model
+#' \item{\code{estep.sigma.round}}{The E-Step phase of the model yields slightly different model
 #' parameters if run in parallel, due to summation of limited-precision floating point numbers not being associative.
 #' This numeric parameter can be set to N to round the results of the gamma matrix to N digits.
 #' This should give consistent model results across runs for unit testing purposes. If used, the suggested value 
 #' for this parameter is around 7. Defaults to \code{NULL}, indicating that no rounding should take place.}
 #' 
-#' \item{\code{estep.beta.round}}{TODO: The E-Step phase of the model yields slightly different model
+#' \item{\code{estep.beta.round}}{The E-Step phase of the model yields slightly different model
 #' parameters if run in parallel, due to summation of limited-precision floating point numbers not being associative.
 #' This numeric parameter can be set to N to round the results of the beta matrices to N digits.
 #' This should give consistent model results across runs for unit testing purposes. If used, the suggested value 
@@ -360,7 +360,7 @@
 #' is \code{Jeffreys} which is markedly less computationally efficient but is
 #' included for backwards compatability. See details for more information on
 #' computation.
-#' @param cores TODO: an integer indicating the number of cores to use.
+#' @param cores an integer indicating the number of cores to use.
 #' Defaults to 1. A value of -1 sets the cores available for parallelization to be
 #' the total no. of detected cores - 1. Note that when using N cores you use N times the
 #'  memory which may be prohibitive in some settings.

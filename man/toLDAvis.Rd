@@ -4,9 +4,10 @@
 \alias{toLDAvis}
 \title{Wrapper to launch LDAvis topic browser.}
 \usage{
-toLDAvis(mod, docs, R = 30, plot.opts = list(xlab = "PC1", ylab = "PC2"),
-  lambda.step = 0.1, out.dir = tempfile(), open.browser = interactive(),
-  as.gist = FALSE, reorder.topics = TRUE)
+toLDAvis(mod, docs, R = 30, plot.opts = list(xlab = "PC1", ylab =
+  "PC2"), lambda.step = 0.1, out.dir = tempfile(),
+  open.browser = interactive(), as.gist = FALSE,
+  reorder.topics = TRUE)
 }
 \arguments{
 \item{mod}{STM object. Output from stm function.}
