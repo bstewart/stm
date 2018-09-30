@@ -104,7 +104,7 @@ stm.init <- function(documents, settings) {
     }
     # (3) recoverL2
     if(verbose) cat("\n\t Recovering initialization...\n \t")
-    beta <- recoverL2(Q, anchor, wprob, verbose=verbose, recoverEG=settings$init$recoverEG)$A
+    beta <- recoverL2(Q, anchor, wprob, verbose=verbose, recoverEG=settings$init$recoverEG, cores=ifelse(settings$init$parallel, settings$cores, 1), exp.round=settings$init$exp.round)$A
     
     if(!is.null(keep)) {
       #if there were zeroes, reintroduce them

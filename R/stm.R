@@ -243,6 +243,30 @@
 #' \item{\code{tSNE_perplexity}}{The \code{Rtsne} function in the \pkg{rtsne} package uses a perplexity
 #' parameter.  This defaults to 30 and can throw an error when too high.  \code{stm} will automatically lower
 #' the parameter for you until it works, but it can also be directly set here.}
+#' 
+#' \item{\code{init.parallel}}{TODO: A logical indicating whether to parallelize the initialization phase. Defaults
+#' to \code{TRUE}. If \code{TRUE}, \code{cores} should be set to a value greater than 1 for this to have any effect.}
+#' 
+#' \item{\code{init.exp.round}}{TODO: The initialization phase of the model yields slightly different model
+#' parameters on different architectures due to minor differences in the exponential function implementation.
+#' This numeric parameter can be set to N to round the results of this exponential function invocation to N digits.
+#' This should give consistent model results across platforms and for unit testing purposes. If used, the suggested value 
+#' for this parameter is around 9. Defaults to \code{NULL}, indicating that no rounding should take place.}
+#' 
+#' \item{\code{estep.parallel}}{TODO: A logical indicating whether to parallelize the E-Step phase. Defaults
+#' to \code{TRUE}. If \code{TRUE}, \code{cores} should be set to a value greater than 1 for this to have any effect.}
+#' 
+#' \item{\code{estep.sigma.round}}{TODO: The E-Step phase of the model yields slightly different model
+#' parameters if run in parallel, due to summation of limited-precision floating point numbers not being associative.
+#' This numeric parameter can be set to N to round the results of the gamma matrix to N digits.
+#' This should give consistent model results across runs for unit testing purposes. If used, the suggested value 
+#' for this parameter is around 7. Defaults to \code{NULL}, indicating that no rounding should take place.}
+#' 
+#' \item{\code{estep.beta.round}}{TODO: The E-Step phase of the model yields slightly different model
+#' parameters if run in parallel, due to summation of limited-precision floating point numbers not being associative.
+#' This numeric parameter can be set to N to round the results of the beta matrices to N digits.
+#' This should give consistent model results across runs for unit testing purposes. If used, the suggested value 
+#' for this parameter is around 8. Defaults to \code{NULL}, indicating that no rounding should take place.}
 #' }
 #' 
 #' 
@@ -336,6 +360,10 @@
 #' is \code{Jeffreys} which is markedly less computationally efficient but is
 #' included for backwards compatability. See details for more information on
 #' computation.
+#' @param cores TODO: an integer indicating the number of cores to use.
+#' Defaults to 1. A value of -1 sets the cores available for parallelization to be
+#' the total no. of detected cores - 1. Note that when using N cores you use N times the
+#'  memory which may be prohibitive in some settings.
 #' @param control a list of additional advanced parameters. See details.
 #' 
 #' @return An object of class STM 
@@ -413,7 +441,8 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), control=list())  {
+                kappa.prior=c("L1", "Jeffreys"), cores=1,
+                control=list())  {
   
   #Match Arguments and save the call
   init.type <- match.arg(init.type)
@@ -569,9 +598,13 @@ stm <- function(documents, vocab, K,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
                              s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
-                             tSNE_init.dims=50, tSNE_perplexity=30), 
+                             tSNE_init.dims=50, tSNE_perplexity=30, 
+                             parallel=T, exp.round=NULL),
+                   estep=list(parallel=T, sigma.round=NULL, beta.round=NULL),
                    seed=seed,
-                   ngroups=ngroups)
+                   ngroups=ngroups,
+                   cores=cores
+				      )
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000
   }
@@ -610,7 +643,10 @@ stm <- function(documents, vocab, K,
                   "nits", "burnin", "alpha", "eta", "contrast",
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
-                  "custom.beta", "tSNE_init.dims", "tSNE_perplexity")
+                  "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
+                  "init.parallel", "init.exp.round",
+                  "estep.parallel", "estep.sigma.round", "estep.beta.round"
+                )
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -654,6 +690,14 @@ stm <- function(documents, vocab, K,
         }
         settings$init$custom <- control[[i]]
       }
+      
+      if(i=="init.parallel")  settings$init$parallel <- control[[i]]
+      if(i=="init.exp.round")  settings$init$exp.round <- control[[i]]
+
+      if(i=="estep.parallel")  settings$estep$parallel <- control[[i]]
+      if(i=="estep.sigma.round")  settings$estep$sigma.round <- control[[i]]
+      if(i=="estep.beta.round")  settings$estep$beta.round <- control[[i]]
+      
     }
   }
   
