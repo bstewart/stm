@@ -63,6 +63,16 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   ############
   #Step 2: Run EM
   ############
+
+  cores <- ifelse(settings$estep$parallel, settings$cores, 1)
+  if (cores<0) cores<-max(1, parallel::detectCores()-1)
+  if (cores > 1) {
+    cl <- parallel::makeCluster(cores)
+    doParallel::registerDoParallel(cl)
+  } else{
+    foreach::registerDoSEQ()
+  }
+  
   while(!stopits) {
 
     #one set of updates with groups, another without.
@@ -89,7 +99,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
         suffstats[[i]] <- estep(documents=gdocs, beta.index=gbetaindex,
                                 update.mu=(!is.null(mu$gamma)),
                                 beta$beta, glambda, gmu, sigma,
-                                verbose)
+                                verbose, cores, settings$estep$sigma.round, settings$estep$beta.round)
         if(verbose) {
           msg <- sprintf("Completed Group %i E-Step (%d seconds). \n", i, floor((proc.time()-t1)[3]))
           cat(msg)
@@ -137,10 +147,22 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       #####
       t1 <- proc.time()
       #run the model
-      suffstats <- estep(documents=documents, beta.index=betaindex,
-                              update.mu=(!is.null(mu$gamma)),
-                              beta$beta, lambda, mu$mu, sigma,
-                              verbose)
+      suffstats <-
+        estep(
+          documents = documents,
+          beta.index = betaindex,
+          update.mu = (!is.null(mu$gamma)),
+          beta$beta,
+          lambda,
+          mu$mu,
+          sigma,
+          verbose,
+          cores,
+          settings$estep$sigma.round,
+          settings$estep$beta.round
+        )
+
+
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
       if(verbose) cat(msg)
       t1 <- proc.time()
@@ -171,6 +193,12 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
     if(!stopits & verbose) report(convergence, ntokens=ntokens, beta, vocab,
                                        settings$topicreportevery, verbose)
   }
+  
+  if (cores > 1) {
+    parallel::stopCluster(cl)
+    foreach::registerDoSEQ()
+  }
+
   #######
   #Step 3: Construct Output
   #######

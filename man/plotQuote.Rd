@@ -5,7 +5,8 @@
 \title{Plots strings}
 \usage{
 plotQuote(sentences, width = 30, text.cex = 1, maxwidth = NULL,
-  main = NULL, xlab = "", ylab = "", xlim = NULL, ylim = NULL, ...)
+  main = NULL, xlab = "", ylab = "", xlim = NULL, ylim = NULL,
+  ...)
 }
 \arguments{
 \item{sentences}{Vector of sentence to plot.}

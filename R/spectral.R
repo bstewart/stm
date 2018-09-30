@@ -131,63 +131,56 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 # @param anchor A vector of indices for rows of Q containing anchors
 # @param wprob The empirical word probabilities used to renorm the mixture weights. 
 # @param verbose If TRUE prints information as it progresses.
+# @param cores TODO: An integer indicating the number of cores to use.
 # @param ... Optional arguments that will be passed to the exponentiated gradient algorithm.
 # @return 
 # \item{A}{A matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
+recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, cores=1, ...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
-
+  
+  if (cores<0) cores<-max(1, parallel::detectCores()-1)
+  if (cores > 1) {
+    cl <- parallel::makeCluster(cores)
+    doParallel::registerDoParallel(cl)
+  } else{
+    foreach::registerDoSEQ()
+  }
+  
   #Qbar <- Q/rowSums(Q)
-  X <- Qbar[anchor,]
+  nAnchors <- length(anchor)
+  V <- nrow(Qbar)
+  X <- Qbar[anchor, ]
   XtX <- tcrossprod(X)
   
   #In a minute we will do quadratic programming
   #these jointly define the conditions.  First column
   #is a sum to 1 constraint.  Remainder are each parameter
   #greater than 0.
-  Amat <- cbind(1,diag(1,nrow=nrow(X)))
-  bvec <- c(1,rep(0,nrow(X)))
+  Amat <- cbind(1,diag(1, nrow=nAnchors))
+  bvec <- c(1, rep(0, nAnchors))
   
-  #Word by Word Solve For the Convex Combination
-  condprob <- vector(mode="list", length=nrow(Qbar))
-  for(i in 1:nrow(Qbar)) {
-    if(i %in% anchor) { 
-      #if its an anchor we create a dummy entry that is 1 by definition
-      vec <- rep(0, nrow(XtX))
-      vec[match(i,anchor)] <- 1
-      condprob[[i]] <- vec
-    } else {
-      y <- Qbar[i,]
-      
-      if(recoverEG) {
-        solution <- expgrad(X,y,XtX, ...)$par
-      } else {
-        #meq=1 means the sum is treated as an exact equality constraint
-        #and the remainder are >=
-        solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, 
-                                       Amat=Amat, bvec=bvec, meq=1)$solution  
-      }
-      
-      if(any(solution <= 0)) {
-        #we can get exact 0's or even slightly negative numbers from quadprog
-        #replace with machine double epsilon
-        solution[solution<=0] <- .Machine$double.eps
-      } 
-      condprob[[i]] <- solution
-    }
-    if(verbose) {
-      #if(i%%1 == 0) cat(".")
-      #if(i%%20 == 0) cat("\n")
-      #if(i%%100 == 0) cat(sprintf("Recovered %i of %i words. \n", i, nrow(Qbar)))
-      if(i%%100==0) cat(".")
-    }
+  weights <- matrix(0, nrow=V, ncol=nAnchors)
+  combineFn <- function(weights, result) {
+    weights[result$V.id, ] <- result$condProb
+    weights
   }
+  
+  # We cannot seem to use the foreach::`%dopar%` syntax directly without capturing the operator locally first
+  `%dopar%` <- foreach::`%dopar%`
+  weights <- foreach::foreach (V.id = 1:V, .combine = combineFn, .multicombine = FALSE, .init = weights) %dopar% {
+    recoverL2Parallel(V.id, Qbar[V.id,], nAnchors, anchor, X, XtX, Amat, bvec, recoverEG, ...)
+  }
+  
+  if (cores > 1) {
+    parallel::stopCluster(cl)
+    foreach::registerDoSEQ()
+  }
+  
   if(verbose) cat("\n")
   #Recover Beta (A in this notation)
   #  Now we have p(z|w) but we want the inverse
-  weights <- do.call(rbind, condprob)
   A <- weights*wprob
   A <- t(A)/colSums(A)
   
@@ -196,6 +189,30 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
   #R <- t(Adag)%*%Q%*%Adag
   return(list(A=A))
   #return(list(A=A, R=R, condprob=condprob))
+}
+
+recoverL2Parallel <- function(V.id, QbarRow, nAnchors, anchorVector, X, XtX, Amat, bvec, recoverEG, ...) {
+  
+  if (V.id %in% anchorVector) { 
+    
+    #if its an anchor we create a dummy entry that is 1 by definition
+    condProb <- numeric(nAnchors)
+    condProb[match(V.id, anchorVector)] <- 1
+
+  } else {
+    
+    if(recoverEG) {
+      condProb <- expgrad(X, QbarRow, XtX, ...)$par
+    } else {
+      # meq=1 means the sum is treated as an exact equality constraint and the remainder are >=
+      condProb <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%QbarRow, Amat=Amat, bvec=bvec, meq=1)$solution  
+    }
+    
+    condProb[condProb<=0] <- .Machine$double.eps
+  }
+  
+  list(V.id=V.id, condProb=condProb)
+
 }
 
 # Exponentiated Gradient with L2 Loss
@@ -217,13 +234,14 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
 # @param alpha An optional initialization of the parameter.  Otherwise it starts at 1/nrow(X).
 # @param tol Convergence tolerance
 # @param max.its Maximum iterations to run irrespective of tolerance
+# @param exp.round TODO: The no. of digits to round the exponential function result to. If NULL, no rounding is done.
 # @return 
 # \item{par}{Optimal weights}
 # \item{its}{Number of iterations run}
 # \item{converged}{Logical indicating if it converged}
 # \item{entropy}{Entropy of the resulting weights}
 # \item{log.sse}{Log of the sum of squared error}
-expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500) {
+expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500, exp.round=NULL) {
   if(is.null(alpha)) alpha <- 1/nrow(X) 
   alpha <- matrix(alpha, nrow=1, ncol=nrow(X))
   if(is.null(XtX)) XtX <- tcrossprod(X)
@@ -240,8 +258,15 @@ expgrad <- function(X, y, XtX=NULL, alpha=NULL, tol=1e-7, max.its=500) {
     grad <- 2*eta*grad
     maxderiv <- max(grad)    
     
+	  e <- exp(grad-maxderiv)
+	
+	  # The exp function gives slightly different results on different platforms
+	  # The exp.round argument gives us a chance to round this result,
+	  # useful for unit testing purposes
+	  if (!is.null(exp.round)) e <- round(e, exp.round)
+	
     #update parameter 
-    alpha <- alpha*exp(grad-maxderiv)
+    alpha <- alpha*e
     #project parameter back to space
     alpha <- alpha/sum(alpha)
     

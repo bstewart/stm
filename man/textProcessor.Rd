@@ -8,10 +8,11 @@
 \title{Process a vector of raw texts}
 \usage{
 textProcessor(documents, metadata = NULL, lowercase = TRUE,
-  removestopwords = TRUE, removenumbers = TRUE, removepunctuation = TRUE,
-  stem = TRUE, wordLengths = c(3, Inf), sparselevel = 1,
-  language = "en", verbose = TRUE, onlycharacter = FALSE,
-  striphtml = FALSE, customstopwords = NULL, v1 = FALSE)
+  removestopwords = TRUE, removenumbers = TRUE,
+  removepunctuation = TRUE, stem = TRUE, wordLengths = c(3, Inf),
+  sparselevel = 1, language = "en", verbose = TRUE,
+  onlycharacter = FALSE, striphtml = FALSE, customstopwords = NULL,
+  v1 = FALSE)
 }
 \arguments{
 \item{documents}{The documents to be processed.  A character vector where

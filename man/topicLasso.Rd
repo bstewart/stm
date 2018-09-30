@@ -4,11 +4,12 @@
 \alias{topicLasso}
 \title{Plot predictions using topics}
 \usage{
-topicLasso(formula, data, stmobj = NULL, subset = NULL, omit.var = NULL,
-  family = "gaussian", main = "Topic Effects on Outcome",
-  xlab = expression("Lower Outcome Higher Outcome"), labeltype = c("prob",
-  "frex", "lift", "score"), seed = 2138, xlim = c(-4, 4),
-  standardize = FALSE, nfolds = 20, ...)
+topicLasso(formula, data, stmobj = NULL, subset = NULL,
+  omit.var = NULL, family = "gaussian",
+  main = "Topic Effects on Outcome",
+  xlab = expression("Lower Outcome Higher Outcome"),
+  labeltype = c("prob", "frex", "lift", "score"), seed = 2138,
+  xlim = c(-4, 4), standardize = FALSE, nfolds = 20, ...)
 }
 \arguments{
 \item{formula}{Formula specifying the dependent variable and additional
