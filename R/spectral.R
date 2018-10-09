@@ -144,6 +144,7 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, cores=1
   if (cores > 1) {
     cl <- parallel::makeCluster(cores)
     doParallel::registerDoParallel(cl)
+    verbose <- FALSE
   } else{
     foreach::registerDoSEQ()
   }
@@ -170,7 +171,7 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, cores=1
   # We cannot seem to use the foreach::`%dopar%` syntax directly without capturing the operator locally first
   `%dopar%` <- foreach::`%dopar%`
   weights <- foreach::foreach (V.id = 1:V, .combine = combineFn, .multicombine = FALSE, .init = weights) %dopar% {
-    recoverL2Parallel(V.id, Qbar[V.id,], nAnchors, anchor, X, XtX, Amat, bvec, recoverEG, ...)
+    recoverL2Parallel(V.id, Qbar[V.id,], nAnchors, anchor, X, XtX, Amat, bvec, recoverEG, verbose, ...)
   }
   
   if (cores > 1) {
@@ -178,7 +179,7 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, cores=1
     foreach::registerDoSEQ()
   }
   
-  if(verbose) cat("\n")
+  if (verbose) cat("\n")
   #Recover Beta (A in this notation)
   #  Now we have p(z|w) but we want the inverse
   A <- weights*wprob
@@ -191,7 +192,7 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, cores=1
   #return(list(A=A, R=R, condprob=condprob))
 }
 
-recoverL2Parallel <- function(V.id, QbarRow, nAnchors, anchorVector, X, XtX, Amat, bvec, recoverEG, ...) {
+recoverL2Parallel <- function(V.id, QbarRow, nAnchors, anchorVector, X, XtX, Amat, bvec, recoverEG, verbose, ...) {
   
   if (V.id %in% anchorVector) { 
     
@@ -208,8 +209,12 @@ recoverL2Parallel <- function(V.id, QbarRow, nAnchors, anchorVector, X, XtX, Ama
       condProb <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%QbarRow, Amat=Amat, bvec=bvec, meq=1)$solution  
     }
     
+    # We can get exact 0's or even slightly negative numbers from quadprog
+    # Replace with machine double epsilon
     condProb[condProb<=0] <- .Machine$double.eps
   }
+  
+  if (verbose & V.id%%100==0) cat(".")
   
   list(V.id=V.id, condProb=condProb)
 
