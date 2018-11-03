@@ -5,7 +5,7 @@ cache: packages
 sudo: false
 warnings_are_errors: true
 r_build_args: --resave-data --compact-vignettes=gs+qpdf
-r_github_packages:
-  - r-lib/covr
+r_packages:
+  - covr
 after_success:
   - Rscript -e 'library(covr);codecov()'
