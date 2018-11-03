@@ -3,6 +3,8 @@
 \section{Version 1.3.4}{
   \itemize{
 \item Hat tip to Wouter van Atteveldt for a pull request that fixed a problem in summary.estimateEffect
+\item Thanks to Brooks Ambrose for a great catch in the spectral algorithm that should increase memory efficiency and speed during initializaiton for large vocabulary models.
+\item Thanks to Elena Savelyeva for improvents to the toLDAVis function.
     }
 }
 \section{Version 1.3.3}{
