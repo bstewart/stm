@@ -4,8 +4,9 @@
 \alias{estimateEffect}
 \title{Estimates regressions using an STM object}
 \usage{
-estimateEffect(formula, stmobj, metadata = NULL, uncertainty = c("Global",
-  "Local", "None"), documents = NULL, nsims = 25, prior = NULL)
+estimateEffect(formula, stmobj, metadata = NULL,
+  uncertainty = c("Global", "Local", "None"), documents = NULL,
+  nsims = 25, prior = NULL)
 }
 \arguments{
 \item{formula}{A formula for the regression.  It should have an integer or

@@ -16,7 +16,7 @@
 #' @param M the number of top words to consider per topic
 #' @param frexw the frex weight
 #' 
-#' @return a numeric vector containing semantic coherence for each topic
+#' @return a numeric vector containing exclusivity for each topic
 #' 
 #' @references 
 #' Mimno, D., Wallach, H. M., Talley, E., Leenders, M., & McCallum, A. (2011, July). 

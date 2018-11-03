@@ -5,7 +5,8 @@
 \alias{print.summary.estimateEffect}
 \title{Summary for estimateEffect}
 \usage{
-\method{summary}{estimateEffect}(object, topics = NULL, nsim = 500, ...)
+\method{summary}{estimateEffect}(object, topics = NULL, nsim = 500,
+  ...)
 }
 \arguments{
 \item{object}{an object of class \code{"estimateEffect"}, usually a result of a call to
