@@ -6,6 +6,6 @@ sudo: false
 warnings_are_errors: true
 r_build_args: --resave-data --compact-vignettes=gs+qpdf
 r_github_packages:
-  - jimhester/covr
+  - r-lib/covr
 after_success:
   - Rscript -e 'library(covr);codecov()'
