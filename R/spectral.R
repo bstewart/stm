@@ -17,7 +17,7 @@ gram <- function(mat) {
   #Htilde <- mat/sqrt(divisor)
   #Hhat <- diag(colSums(mat/divisor))
   #Q <- crossprod(Htilde) - Hhat
-  Q <- Matrix::crossprod(mat/sqrt(divisor)) - Matrix::diag(Matrix::colSums(mat/divisor))
+  Q <- Matrix::crossprod(mat/sqrt(divisor)) - Matrix::Diagonal(x=Matrix::colSums(mat/divisor))
   #if(min(Q)<0) Q@x[Q@x < 0 ] <- 0
   return(as.matrix(Q))
 }
