@@ -22,4 +22,4 @@ Description: The Structural Topic Model (STM) allows researchers
 License: MIT + file LICENSE
 URL: http://structuraltopicmodel.com 
 BugReports: https://github.com/bstewart/stm/issues
-RoxygenNote: 6.1.0.9000
+RoxygenNote: 6.1.0
