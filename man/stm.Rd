@@ -4,12 +4,13 @@
 \alias{stm}
 \title{Variational EM for the Structural Topic Model}
 \usage{
-stm(documents, vocab, K, prevalence = NULL, content = NULL, data = NULL,
-  init.type = c("Spectral", "LDA", "Random", "Custom"), seed = NULL,
-  max.em.its = 500, emtol = 1e-05, verbose = TRUE, reportevery = 5,
-  LDAbeta = TRUE, interactions = TRUE, ngroups = 1, model = NULL,
-  gamma.prior = c("Pooled", "L1"), sigma.prior = 0, kappa.prior = c("L1",
-  "Jeffreys"), control = list())
+stm(documents, vocab, K, prevalence = NULL, content = NULL,
+  data = NULL, init.type = c("Spectral", "LDA", "Random", "Custom"),
+  seed = NULL, max.em.its = 500, emtol = 1e-05, verbose = TRUE,
+  reportevery = 5, LDAbeta = TRUE, interactions = TRUE,
+  ngroups = 1, model = NULL, gamma.prior = c("Pooled", "L1"),
+  sigma.prior = 0, kappa.prior = c("L1", "Jeffreys"),
+  control = list())
 }
 \arguments{
 \item{documents}{The document term matrix to be modeled. These can be supplied

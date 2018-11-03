@@ -14,7 +14,7 @@ exclusivity(model, M = 10, frexw = 0.7)
 \item{frexw}{the frex weight}
 }
 \value{
-a numeric vector containing semantic coherence for each topic
+a numeric vector containing exclusivity for each topic
 }
 \description{
 Calculate an exclusivity metric for an STM model.
