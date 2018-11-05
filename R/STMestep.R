@@ -1,5 +1,5 @@
 # Serial Implementation of the E-Step
-estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose) {
+estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, use.Eigen=FALSE) {
   
   sigma.ss <- diag(0, nrow=(K-1))
   beta.ss <- vector(mode="list", length=A)
@@ -23,7 +23,7 @@ estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, updat
     beta.i <- beta[[aspect]][,words,drop=FALSE]
     
     #infer the document
-    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy)
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy, use.Eigen=use.Eigen)
     
     # update sufficient statistics
     sigma.ss <- sigma.ss + doc.results$eta$nu
@@ -40,7 +40,7 @@ estepSerial <- function(N, K, A, V, documents, beta.index, lambda.old, mu, updat
 
 
 # Parallel Implementation of the E-Step
-estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores=1) {
+estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores=1, use.Eigen=FALSE) {
   
   # INITIALIZATION OF COMBINED RESULTS
   beta.ss <- vector(mode="list", length=A)
@@ -75,7 +75,7 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
   # We cannot seem to use the foreach::`%dopar%` syntax directly without capturing the operator locally first
   `%dopar%` <- foreach::`%dopar%`
   res <- foreach::foreach (doc.ids = doc.id.groups, .combine = combineFn, .multicombine = FALSE, .init = init) %dopar% {
-    estepParallelBlock(doc.ids, N, K, A, V, documents[doc.ids], beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv)
+    estepParallelBlock(doc.ids, N, K, A, V, documents[doc.ids], beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, use.Eigen)
   }
   
   lambda <- do.call(rbind, res$lambda)
@@ -86,7 +86,7 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
 # Each estepParallelBlock is passed a non-overlapping subset of the 'documents' matrix,
 # corresponding to doc.ids, which are used to index into other data structures that are also passed in
 # The doc.ids are also part of the return values of this block so that the combine function knows what to do.
-estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv) {
+estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, use.Eigen) {
   
   sigma.ss <- diag(0, nrow=K-1)
   beta.ss <- vector(mode='list', length=A)
@@ -108,7 +108,7 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
     beta.i <- beta[[aspect]][, words, drop=FALSE]
     
     #infer the document
-    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy)
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy, use.Eigen=use.Eigen)
     
     # update sufficient statistics
     sigma.ss <- sigma.ss + doc.results$eta$nu
@@ -137,7 +137,7 @@ estepParallelBlock <- function(doc.ids, N, K, A, V, documents, beta.index, lambd
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
                        beta, lambda.old, mu, sigma, 
-                       verbose, cores=1, sigma.round=NULL, beta.round=NULL) {
+                       verbose, cores=1, sigma.round=NULL, beta.round=NULL, use.Eigen=FALSE) {
   
   #quickly define useful constants
   V <- ncol(beta[[1]])
@@ -157,9 +157,9 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   }
   
   if (cores>1) {
-    results <- estepParallel(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores)
+    results <- estepParallel(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, cores, use.Eigen)
   } else {
-    results <- estepSerial(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose)
+    results <- estepSerial(N, K, A, V, documents, beta.index, lambda.old, mu, update.mu, beta, sigmaentropy, siginv, verbose, use.Eigen)
   }
   
   # E-estep may yield slightly different results depending on whether it's run in serial or parallel,
