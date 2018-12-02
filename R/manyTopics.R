@@ -1,36 +1,44 @@
-#function to choose the pareto dominant model, or randomly choose among model candidates that are not weakly dominanted by other models
-#utility function for manyTopics
-
+#' Function to choose the pareto dominant model
+#' 
+#' Function to choose the pareto dominant model, or randomly choose
+#' among model candidates that are not weakly dominanted by other
+#' models utility function for manyTopics.
+#' 
+#' @param z An stm model object from \code{selectModel()}.
+#' 
 paretosingle <- function(z) {
   
-  m<-matrix(NA,nrow=length(z$semcoh),ncol=2)
+  m <- matrix(NA, nrow = length(z$semcoh), ncol = 2)
   
-  for(i in 1:nrow(m)){
+  for (i in 1:nrow(m)) {
     
-    m[i,1]<-as.numeric(mean(unlist(z$semcoh[i])))
-    
-    if(!z$exclusivity[[1]][1]=="Exclusivity not calculated for models with content covariates"){
-      m[i,2]<-as.numeric(mean(unlist(z$exclusivity[i])))
-    } else {
-      stop("manyTopics function not yet designed for models with content variable.") 
+    m[i, 1] <- as.numeric(mean(unlist(z$semcoh[i])))
+
+    if (z$exclusivity[[1]][1] == "Exclusivity not calculated for models with content covariates") {
+      stop("manyTopics function not yet designed for models with content variable.")
     }
+    
+    m[i, 2] <- as.numeric(mean(unlist(z$exclusivity[i])))
+    
   }
- 
-  d1max <- max(m[,1])
-  d2max <- max(m[,2])
-  weakcandidates <- m[,1]==d1max | m[,2]==d2max
-  strongcandidates <- m[,1]==d1max & m[,2]==d2max
-  s = which(strongcandidates)
-  w = which(weakcandidates)
-  if (length(s)>0) {
+  
+  d1max <- max(m[, 1])
+  d2max <- max(m[, 2])
+  weakcandidates <- m[, 1] == d1max | m[, 2] == d2max
+  strongcandidates <- m[, 1] == d1max & m[, 2] == d2max
+  s <- which(strongcandidates)
+  w <- which(weakcandidates)
+  
+  if (length(s) > 0) {
     x = s
-  }
-  else {
+  } else {
     x = w
   }
-  if (length(x)==1) {return(x)}
-  else {
-    return(sample(x,size=1))
+  
+  if (length(x) == 1) {
+    return(x)
+  } else {
+    return(sample(x, size = 1))
   }
 }
 
@@ -90,6 +98,8 @@ paretosingle <- function(z) {
 #' models.
 #' @param M Number of words used to calculate semantic coherence and
 #' exclusivity.  Defaults to 10.
+#' @param cores Number of CPU cores to use for parallel
+#'   computation. Defaults to the number of cores available.
 #' @param \dots Additional options described in details of stm.
 #' @return 
 #' 
@@ -103,49 +113,98 @@ paretosingle <- function(z) {
 #' @examples
 #' 
 #' \dontrun{
-#' 
-#' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
-#' meta<-temp$meta
-#' vocab<-temp$vocab
-#' docs<-temp$documents
-#' out <- prepDocuments(docs, vocab, meta)
-#' docs<-out$documents
-#' vocab<-out$vocab
-#' meta <-out$meta
+#' processed <- textProcessor(
+#'   documents = gadarian$open.ended.response,
+#'   metadata = gadarian
+#' )
+#' out <- prepDocuments(
+#'   documents = processed$documents,
+#'   vocab = processed$vocab,
+#'   meta = processed$meta
+#' )
 #' 
 #' set.seed(02138)
-#' storage<-manyTopics(docs,vocab,K=3:4, prevalence=~treatment + s(pid_rep),data=meta, runs=10)
-#' #This chooses the output, a single run of STM that was selected,
-#' #from the runs of the 3 topic model
-#' t<-storage$out[[1]]
-#' #This chooses the output, a single run of STM that was selected,
-#' #from the runs of the 4 topic model
-#' t<-storage$out[[2]]
-#' #Please note that the way to extract a result for manyTopics is different from selectModel.
+#' 
+#' model_storage <- manyTopics(
+#'   documents = out$documents,
+#'   vocab= out$vocab,
+#'   K = 3:4,
+#'   prevalence = ~ treatment + s(pid_rep), 
+#'   data = out$meta,
+#'   runs = 5
+#' )
+#' 
+#' # Please note that the way to extract a result for manyTopics is
+#' # different from selectModel. All the K fitted models are listed in
+#' # `model_storage$out` and can be extracted with `]]`. For instance, to
+#' # extract the first model with three topics, you can run:
+#' fit_k3 <- model_storage$out[[1]]
+#' 
+#' # Similarly, to extract the second model object with four topics, you can
+#' # run:
+#' fit_k4 <- model_storage$out[[2]]
+#' 
+#' # These extracted models are stm model objects
+#' class(fit_k3)
+#' plot(fit_k3)
 #' }
 #' @export
-manyTopics <- function(documents, vocab, K, prevalence=NULL, content=NULL, 
-                       data = NULL,max.em.its = 100, verbose = TRUE, 
-                       init.type = "LDA", 
-                       emtol = 1e-05, seed = NULL, runs = 50, 
-                       frexw = 0.7, net.max.em.its = 2, 
-                       netverbose = FALSE, M = 10,...) {
-  out<-list()
-  semcoh<-exclusivity<-list()
-  for(i in 1:length(K)) {
-    
-    models<- selectModel(documents, vocab, K[i], prevalence, content, data = data, 
-                         max.em.its = max.em.its, verbose = verbose, init.type = init.type, emtol = emtol, seed = seed, runs = runs, 
-                         frexw = frexw, net.max.em.its = net.max.em.its, netverbose = netverbose, M = M, 
-                         ...)
-    j<-paretosingle(models)
+manyTopics <- function(documents, vocab, K, prevalence = NULL,
+                       content = NULL,  data = NULL, max.em.its = 100,
+                       verbose = TRUE,  init.type = "LDA",
+                       emtol = 1e-05, seed = NULL, runs = 50,
+                       frexw = 0.7, net.max.em.its = 2,
+                       netverbose = FALSE, M = 10,
+                       cores = parallel::detectCores(),
+                       ...) {
 
-    out[[i]]<-models$runout[[j]]
-    exclusivity[[i]]<-models$exclusivity[[j]]
-    semcoh[[i]]<-models$semcoh[[j]]
-    j<-NULL
-  }
+  args <- list(
+    documents = documents,
+    vocab = vocab,
+    prevalence = prevalence,
+    content = content,
+    data = data, 
+    max.em.its = max.em.its,
+    verbose = verbose,
+    init.type = init.type,
+    emtol = emtol,
+    seed = seed,
+    runs = runs,
+    frexw = frexw,
+    net.max.em.its = net.max.em.its,
+    netverbose = netverbose,
+    M = M
+  )
   
-  toreturn<-list(out=out,exclusivity=exclusivity,semcoh=semcoh)
+  if (verbose & cores > 1) {
+    message("Progress will not be shown when using multiple cores.")
+  }
+
+  selectModel2 <- function(K, args, ...) {
+    do.call("selectModel", c(K, args, ...))
+  }
+
+  if (cores == 1) {
+    models <- lapply(K, selectModel2, args)
+  } else {
+    models <- parallel::mclapply(
+      K, selectModel2, args,
+      mc.cores = cores, mc.silent = TRUE
+    )
+  }
+
+  j <- sapply(models, paretosingle)
+  out <- lapply(seq_along(models), function(x) models[[x]]$runout[[j[x]]])
+  exclusivity <- lapply(seq_along(models), function(x) models[[x]]$exclusivity[[j[x]]])
+  semcoh <- lapply(seq_along(models), function(x) models[[x]]$semcoh[[j[x]]])
+  
+  toreturn <- list(
+    out = out,
+    exclusivity = exclusivity,
+    semcoh = semcoh
+  )
+  class(toreturn) <- "manyTopics"
+  
   return(toreturn)
 }
+
