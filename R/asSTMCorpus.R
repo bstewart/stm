@@ -75,6 +75,7 @@ asSTMCorpus.dfm <- function(documents, vocab, data = NULL, ...) {
 
 #' @method asSTMCorpus dgCMatrix
 #' @export
+#' @importFrom methods as
 #' @keywords internal
 asSTMCorpus.dgCMatrix <- function(documents, vocab, data = NULL, ...) {
   if (!missing(vocab)) {
@@ -96,7 +97,7 @@ asSTMCorpus.dgCMatrix <- function(documents, vocab, data = NULL, ...) {
   }
 
   # convert to docs-by-terms, one column per doc
-  x <- methods::as(Matrix::t(documents), "dgCMatrix")
+  x <- as(Matrix::t(documents), "dgCMatrix")
 
   # get the vocab
   vocab <- rownames(x)
