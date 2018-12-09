@@ -47,7 +47,7 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
 #' once each E-step because it is shared by all documents.  If you supply the original
 #' value to \code{sigma} it will calculate these for you.  If you are going to be using
 #' this to run a bunch of documents and speed is a concern, peek at the underlying code
-#' and do the calculation youself once and then just pass the result to the function so
+#' and do the calculation yourself once and then just pass the result to the function so
 #' it isn't repeated with every observation.  
 #' 
 #' @param document a single matrix containing the document in the \code{\link{stm}} format
@@ -70,11 +70,11 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
 #' @return a list 
 #' 
 #' \item{phis}{A K by V* matrix containing the variational distribution for each token (where V* is the number of 
-#' unique words in the given document.  They are in the order of appearence in the document. For words repeated
+#' unique words in the given document.  They are in the order of appearance in the document. For words repeated
 #' more than once the sum of the column is the number of times that token appeared.}
 #' \item{lambda}{A (K-1) by 1 matrix containing the mean of the variational distribution for eta.  This is 
 #' actually just called eta in the output of \code{\link{stm}} as it is also the point estimate.}
-#' \item{nu}{A (K-1) by (K-1) matrix containg the covariance matrix of the variational distribution for eta.
+#' \item{nu}{A (K-1) by (K-1) matrix containing the covariance matrix of the variational distribution for eta.
 #' This is also the inverse Hessian matrix.}
 #' \item{bound}{The value of the document-level contribution to the global approximate evidence lower bound.}
 #' 

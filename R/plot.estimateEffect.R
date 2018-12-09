@@ -25,7 +25,7 @@
 #frexw: frex weight if labeltype is 'frex'
 #add: make a new plot (F) or add to existing plot (T)
 #linecol: vector of line colors (should be the length of the number of
-#topics, if method="continous"
+#topics, if method="continuous"
 #verbose.labels: adds covariate information to the labels
 #width: width of labels on the plot
 #family: font family
@@ -91,7 +91,7 @@
 #' prints the highest probability words, "score", "lift", and "frex", from
 #' labeltopics (see labeltopics() for more details).  The user can also select
 #' "custom" for custom labels, which should be inputted under custom.labels.
-#' Labels appear in the legend for continous covariates.
+#' Labels appear in the legend for continuous covariates.
 #' @param xlab Character string that is x axis title.
 #' @param ylab Character string that is y axis title.
 #' @param width Number that specifies width of the character string.  Smaller

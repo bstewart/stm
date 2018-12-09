@@ -110,7 +110,7 @@ infrequently appearing words are removed.  When a term is removed from the
 vocabulary a message will print to the screen (as long as \code{verbose} has
 not been set to \code{FALSE}).  The message indicates the number of terms
 removed (that is, the number of vocabulary entries) as well as the number of
-tokens removed (appearences of individual words).  The function
+tokens removed (appearances of individual words).  The function
 \code{\link{prepDocuments}} provides additional methods to prune infrequent
 words.  In general the functionality there should be preferred.
 

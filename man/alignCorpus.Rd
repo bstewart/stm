@@ -10,7 +10,7 @@ alignCorpus(new, old.vocab, verbose = TRUE)
 \item{new}{a list (such as those produced by \code{textProcessor} or \code{prepDocuments}) 
 containing a list of documents in \code{\link{stm}} format, a character vector 
 containing the vocabulary and optional a \code{data.frame} containing meta data.
-These should be labelled \code{documents}, \code{vocab},and \code{meta} respectively.
+These should be labeled \code{documents}, \code{vocab},and \code{meta} respectively.
 This is the new set of unseen documents which will be returned with the vocab renumbered
 and all words not appearing in \code{old} removed.}
 

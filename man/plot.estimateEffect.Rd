@@ -77,7 +77,7 @@ continuous covariate.}
 prints the highest probability words, "score", "lift", and "frex", from
 labeltopics (see labeltopics() for more details).  The user can also select
 "custom" for custom labels, which should be inputted under custom.labels.
-Labels appear in the legend for continous covariates.}
+Labels appear in the legend for continuous covariates.}
 
 \item{n}{Number of words to print if "prob", "score", "lift", or "frex" is
 chosen.}

@@ -38,7 +38,7 @@
 #' \code{\link{stm}} the seed is automatically saved and returned as part of
 #' the object.  Passing the seed here will replicate the previous run.
 #' @param stmverbose Should the stm model be run with \code{verbose=TRUE}.
-#' Turning this to \code{FALSE} will surpress only the model specific printing.
+#' Turning this to \code{FALSE} will suppress only the model specific printing.
 #' An update on which model is being run will still print to the screen.
 #' @param uncertainty Which procedure should be used to approximate the
 #' measurement uncertainty in the topic proportions.  See details for more

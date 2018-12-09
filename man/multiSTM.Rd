@@ -21,7 +21,7 @@ content covariates.}
 default value of \code{NULL} this chooses the model with the largest value
 of the approximate variational bound.}
 
-\item{align.global}{A boolean parameter specifiying how to align the topics
+\item{align.global}{A boolean parameter specifying how to align the topics
 of two different STM fitted models. The alignment is performed by solving
 the linear sum assignment problem using the Hungarian algorithm. If
 \code{align.global} is set to \code{TRUE}, the Hungarian algorithm is run
@@ -32,7 +32,7 @@ being matched to a unique topic in the reference model. If
 \code{align.global} is, conversely, set to \code{FALSE}, the alignment
 problem is solved locally. Each topic in the current runout is matched to
 the one topic in the reference models that yields minimum inner product.
-This means that mutliple topics in the current runout can be matched to a
+This means that multiple topics in the current runout can be matched to a
 single topic in the reference model, and does not guarantee that all the
 topics in the reference model will be matched.}
 
@@ -56,7 +56,7 @@ uncertainty by using an approximation to the average covariance matrix
 formed using the global parameters.}
 
 \item{metadata}{A dataframe where the predictor variables in
-\code{reg.formula} can be found. It is necessary to unclude this argument if
+\code{reg.formula} can be found. It is necessary to include this argument if
 \code{reg.formula} is specified.}
 
 \item{reg.nsims}{The number of simulated draws from the variational

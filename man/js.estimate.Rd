@@ -9,7 +9,7 @@ js.estimate(prob, ct)
 \arguments{
 \item{prob}{the MLE estimate of the discrete probability distribution}
 
-\item{ct}{the count of words observed to estimate that distirbution}
+\item{ct}{the count of words observed to estimate that distribution}
 }
 \description{
 A primarily internal function used in \code{\link{calcfrex}}.

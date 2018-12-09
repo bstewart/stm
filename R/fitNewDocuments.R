@@ -17,7 +17,7 @@
 #' you do not observe the topical content covariate, use the "Average" option.} 
 #' \item{"Average"}{We use a prior that is based on the average over the documents in the training
 #' set.  This does not require the unseen documents to observe the covariates.  In a model that originally
-#' had covariates we need to adjust our estimate of the variance-covariance matrix sigma to accomodate that
+#' had covariates we need to adjust our estimate of the variance-covariance matrix sigma to accommodate that
 #' we no longer have the covariate information.  So we recalculate the variance based on what it would have
 #' been if we didn't have any covariates.  This helps avoid an edge case where the covariates are extremely
 #' influential and we don't want that strength applied to the new covariate-less setting.  In the case of 
@@ -91,11 +91,11 @@
 #' 
 #' \item{theta}{a matrix with one row per document contain the document-topic proportions at the posterior mode}
 #' \item{eta}{the mean of the variational posterior, only provided when posterior is requested. 
-#' Matrix of same dimension as theat}
+#' Matrix of same dimension as theta}
 #' \item{nu}{a list with one element per document containing the covariance matrix of the variational posterior.
 #' Only provided when posterior is requested.}
 #' \item{phis}{a list with one element per K by V' matrix containing the variational distribution for each token 
-#' (where V' is the number of unique words in the given document.  They are in the order of appearence in the document. 
+#' (where V' is the number of unique words in the given document.  They are in the order of appearance in the document. 
 #' For words repeated more than once the sum of the column is the number of times that token appeared.  This is only
 #' provided if the posterior is requested.}
 #' \item{bound}{a vector with one element per document containing the approximate variational lower bound. This is only

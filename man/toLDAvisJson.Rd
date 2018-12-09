@@ -2,7 +2,7 @@
 % Please edit documentation in R/toLDAvis.R
 \name{toLDAvisJson}
 \alias{toLDAvisJson}
-\title{Wrapper to create Json mapping for LDAvis. This can be useful in inderect render
+\title{Wrapper to create Json mapping for LDAvis. This can be useful in indirect render
 e.g. Shiny Dashboards}
 \usage{
 toLDAvisJson(mod, docs, R = 30, plot.opts = list(xlab = "PC1", ylab =

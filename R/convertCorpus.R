@@ -1,7 +1,7 @@
 #' Convert \pkg{stm} formatted documents to another format
 #' 
 #' Takes an \pkg{stm} formatted documents and vocab object and returns formats
-#' useable in other packages.
+#' usable in other packages.
 #' 
 #' We also recommend the \pkg{quanteda} and \pkg{tm} packages for text preparation
 #' etc.  The \code{convertCorpus} function is provided as a helpful utility for 

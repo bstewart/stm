@@ -31,14 +31,14 @@ Poisson Deconvolution model.  It relies on a known hierarchical structure in the
 a rather complicated estimation scheme.  We wanted a metric that would capture their core insight but
 still be fast to compute.
 
-Bischof and Airoldi consider as asummary for a word's contribution to a topic the harmonic mean of the
+Bischof and Airoldi consider as a summary for a word's contribution to a topic the harmonic mean of the
 word's rank in terms of exclusivity and frequency.  The harmonic mean is attractive here because it 
 does not allow a high rank along one of the dimensions to compensate for the lower rank in another. Thus
 words with a high score must be high along both dimensions.
 
 The formula is ' 
 \deqn{FREX = \left(\frac{w}{F} + \frac{1-w}{E}\right)^{-1}}{FREX = ((w/F) + ((1-w)/E))^-1} 
-where F is the frequency score given by the emperical CDF of the word in it's topic distribution.  Exclusivity
+where F is the frequency score given by the empirical CDF of the word in it's topic distribution.  Exclusivity
 is calculated by column-normalizing the beta matrix (thus representing the conditional probability of seeing
 the topic given the word).  Then the empirical CDF of the word is computed within the topic.  Thus words with
 high values are those where most of the mass for that word is assigned to the given topic.

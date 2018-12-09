@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2018)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: stmVignette.aux
+The style file: jss.bst
+Database file #1: extracted.bib
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Warning--can't use both volume and number fields in arora2012practical
+Warning--empty booktitle in nips2013
+You've used 67 entries,
+            3140 wiz_defined-function locations,
+            1045 strings with 18345 characters,
+and the built_in function-call counts, 61919 in all, are:
+= -- 5206
+> -- 1709
+< -- 57
++ -- 660
+- -- 569
+* -- 5069
+:= -- 8311
+add.period$ -- 291
+call.type$ -- 67
+change.case$ -- 506
+chr.to.int$ -- 65
+cite$ -- 69
+duplicate$ -- 5595
+empty$ -- 5635
+format.name$ -- 786
+if$ -- 12751
+int.to.chr$ -- 3
+int.to.str$ -- 1
+missing$ -- 814
+newline$ -- 377
+num.names$ -- 276
+pop$ -- 1851
+preamble$ -- 1
+purify$ -- 454
+quote$ -- 0
+skip$ -- 1376
+stack$ -- 0
+substring$ -- 5390
+swap$ -- 1963
+text.length$ -- 17
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 600
+warning$ -- 2
+while$ -- 495
+width$ -- 0
+write$ -- 953
+(There were 2 warnings)

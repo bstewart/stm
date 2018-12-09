@@ -13,9 +13,9 @@ manyTopics(documents, vocab, K, prevalence = NULL, content = NULL,
 \arguments{
 \item{documents}{The documents to be modeled.  Object must be a list of with
 each element corresponding to a document.  Each document is represented as
-an integer matrix w\ ith two rows, and columns equal to the number of unique
+an integer matrix with two rows, and columns equal to the number of unique
 vocabulary words in the document.  The first row contains the 1-indexed
-vocabulary entry and the sec\ ond row contains the number of times that term
+vocabulary entry and the second row contains the number of times that term
 appears.
 
 This is similar to the format in the \pkg{lda} package except that
@@ -25,7 +25,7 @@ imported using the reader function and manipulated using the
 
 \item{vocab}{Character vector specifying the words in the corpus in the
 order of the vocab indices in documents. Each term in the vocabulary index
-must appear at least\ once in the documents.  See
+must appear at least once in the documents.  See
 \code{\link{prepDocuments}} for dropping unused items in the vocabulary.}
 
 \item{K}{A vector of positive integers representing the desired number of
@@ -33,11 +33,11 @@ topics for separate runs of selectModel.}
 
 \item{prevalence}{A formula object with no response variable or a matrix
 containing topic prevalence covariates.  Use \code{s()}, \code{ns()} or
-\code{bs()} to specify smoo\ th terms. See details for more information.}
+\code{bs()} to specify smooth terms. See details for more information.}
 
 \item{content}{A formula containing a single variable, a factor variable or
 something which can be coerced to a factor indicating the category of the
-content variable fo\ r each document.}
+content variable for each document.}
 
 \item{data}{Dataset which contains prevalence and content covariates.}
 
@@ -78,7 +78,7 @@ the same form as the output from a stm model.}
 \item{semcoh}{Semantic
 coherence values for each topic within each model selected for each number
 of topics.} 
-\item{exclusivity}{Exclusivity values for each topic wihtin each
+\item{exclusivity}{Exclusivity values for each topic within each
 model selected.  Only calculated for models without a content covariate.}
 }
 \description{

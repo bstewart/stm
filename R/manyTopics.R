@@ -49,9 +49,9 @@ paretosingle <- function(z) {
 #' 
 #' @param documents The documents to be modeled.  Object must be a list of with
 #' each element corresponding to a document.  Each document is represented as
-#' an integer matrix w\ ith two rows, and columns equal to the number of unique
+#' an integer matrix with two rows, and columns equal to the number of unique
 #' vocabulary words in the document.  The first row contains the 1-indexed
-#' vocabulary entry and the sec\ ond row contains the number of times that term
+#' vocabulary entry and the second row contains the number of times that term
 #' appears.
 #' 
 #' This is similar to the format in the \pkg{lda} package except that
@@ -60,16 +60,16 @@ paretosingle <- function(z) {
 #' \code{\link{prepDocuments}}.
 #' @param vocab Character vector specifying the words in the corpus in the
 #' order of the vocab indices in documents. Each term in the vocabulary index
-#' must appear at least\ once in the documents.  See
+#' must appear at least once in the documents.  See
 #' \code{\link{prepDocuments}} for dropping unused items in the vocabulary.
 #' @param K A vector of positive integers representing the desired number of
 #' topics for separate runs of selectModel.
 #' @param prevalence A formula object with no response variable or a matrix
 #' containing topic prevalence covariates.  Use \code{s()}, \code{ns()} or
-#' \code{bs()} to specify smoo\ th terms. See details for more information.
+#' \code{bs()} to specify smooth terms. See details for more information.
 #' @param content A formula containing a single variable, a factor variable or
 #' something which can be coerced to a factor indicating the category of the
-#' content variable fo\ r each document.
+#' content variable for each document.
 #' @param runs Total number of STM runs used in the cast net stage.
 #' Approximately 15 percent of these runs will be used for running a STM until
 #' convergence.
@@ -98,7 +98,7 @@ paretosingle <- function(z) {
 #' \item{semcoh}{Semantic
 #' coherence values for each topic within each model selected for each number
 #' of topics.} 
-#' \item{exclusivity}{Exclusivity values for each topic wihtin each
+#' \item{exclusivity}{Exclusivity values for each topic within each
 #' model selected.  Only calculated for models without a content covariate.}
 #' @examples
 #' 

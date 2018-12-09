@@ -40,7 +40,7 @@ from a particular topic.  With content covariates it averages over the
 values for all levels of the content covariate weighted by the empirical
 frequency in the dataset.  The option \code{"documents"} plots the words
 which appear in documents that have a topic proportion higher than
-\code{thresh}.  Thus \code{"model"} gives a pure model based interpetation
+\code{thresh}.  Thus \code{"model"} gives a pure model based interpretation
 of the topic while \code{"documents"} gives a picture of all the words in
 documents which are highly associated with the topic.
 }

@@ -15,7 +15,7 @@ convertCorpus(documents, vocab, type = c("slam", "lda", "Matrix"))
 }
 \description{
 Takes an \pkg{stm} formatted documents and vocab object and returns formats
-useable in other packages.
+usable in other packages.
 }
 \details{
 We also recommend the \pkg{quanteda} and \pkg{tm} packages for text preparation

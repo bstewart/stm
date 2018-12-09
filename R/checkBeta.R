@@ -4,7 +4,7 @@
 #' that load onto a single topic.  
 #' 
 #' The function checks the log beta matrix for values that exceed the tolerance
-#' threshold, indicating that a word has loaded onto a single topics. The ouput
+#' threshold, indicating that a word has loaded onto a single topics. The output
 #' gives the user lists of which topics have problems, which words in which
 #' topics have problems, as well as a count of the total problems in topics and
 #' the total number of problem words.

@@ -1,6 +1,6 @@
 #' Write a .ldac file
 #' 
-#' A function for writing documents out to a .ldac formated file.
+#' A function for writing documents out to a .ldac formatted file.
 #' 
 #' This is a simple convenience function for writing out document corpora.
 #' Files can be read back into R using \code{\link{readCorpus}} or simply used

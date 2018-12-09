@@ -53,7 +53,7 @@
 \section{Version 1.2.2}{
 \itemize{
 \item A small release correcting some minor bugs.
-\item Fixed a bug in estimateEffect when a character or factor variable had 2+ levels with the same number of observtions.  Thanks to APuzyk on github for catching this.
+\item Fixed a bug in estimateEffect when a character or factor variable had 2+ levels with the same number of observtions.  Thanks to APuzyk on Github for catching this.
 \item The last release turned on a different recovery method for the spectral algorithm by default.  Changed the default back to exponential gradient as documented.  Thanks to Simone Zhang for this catch.
 \item Better defaults for some of the labeling in plot.STM
 \item Better argument matching and errors for plot.estimateEffect
@@ -70,7 +70,7 @@
 \item Thanks to help from Chris Baker we are now using roxygen for our documentation.
 \item Jeffrey Arnold fixed a small bug in toLDAVis.  Thanks!
 \item Carsten Schwemmer helped us find a bug where plot.estimateEffect() didn't work when dplyr was loaded.  This is now fixed.
-\item In making the change to roxygen we unfortunately break backwards compatability.  The package's generic functions such as plot.estimateEffect() and plot.STM() can now only be called by plot() rather than by their full name.
+\item In making the change to roxygen we unfortunately break backwards compatibility.  The package's generic functions such as plot.estimateEffect() and plot.STM() can now only be called by plot() rather than by their full name.
 \item We document and export optimizeDocument which provides access to the document level E-step.
 \item We have documented and exported several of the labeling functions including calcfrex, calcscore, calclift and js.estimate.  These are marked with keyword internal because they don't have much error checking and most users will want labelTopics anyhow.  But they can be accessed with ? and are linked from labelTopics
 \item After much popular demand we have released a fitNewDocuments() function which will calculate topic proportions for documents not used to fit the models.  There are many different options here.
@@ -95,7 +95,7 @@ exponential gradient not fully convering.  This has been confirmed by the Arora 
 }
 \section{Version 1.1.5}{
 \itemize{
-\item searchK() can now be used with content covariates thanks to github user rosemm
+\item searchK() can now be used with content covariates thanks to GitHub user rosemm
 \item added a querying function based on data.table into findThoughts()
 }
 }
@@ -190,7 +190,7 @@ exponential gradient not fully convering.  This has been confirmed by the Arora 
 }}
 \section{Version 0.6.16}{
   \itemize{
-    \item Very minor change with textProcessor() to accomodate API change in tm version 0.6
+    \item Very minor change with textProcessor() to accommodate API change in tm version 0.6
     \item New option for plot.STM() which plots the distribution of theta values.  Thanks
           to Antonio Coppola for coauthoring this component.
     \item Deprecated option "custom" in "labeltype" of plot.STM().  Now you can simply specify the

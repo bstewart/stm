@@ -29,7 +29,7 @@ topics.}
 \item{labeltype}{Determines which option of \code{"prob", "frex", "lift",
 "score"} is used for choosing the most important words.  See
 \code{\link{labelTopics}} for more detail.  Passing an argument to
-\code{custom.labels} will overide this. Note that this does not apply to
+\code{custom.labels} will override this. Note that this does not apply to
 \code{perspectives} type which always uses highest probability words.}
 
 \item{frexw}{If "frex" labeltype is used, this will be the frex weight.}
@@ -63,7 +63,7 @@ vector of length two which has the left hand side label first.}
 
 \item{topic.names}{A vector of custom topic names.  Defaults to "Topic #: ".}
 
-\item{\dots}{Additional parameters passed to ploting functions.}
+\item{\dots}{Additional parameters passed to plotting functions.}
 }
 \description{
 Produces one of four types of plots for an STM object.  The default option

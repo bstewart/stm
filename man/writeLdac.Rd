@@ -25,7 +25,7 @@ most languages.  Our documents format indexes from 1 to abide by conventions
 in \code{R}.  This option converts to the zero index by default.}
 }
 \description{
-A function for writing documents out to a .ldac formated file.
+A function for writing documents out to a .ldac formatted file.
 }
 \details{
 This is a simple convenience function for writing out document corpora.
