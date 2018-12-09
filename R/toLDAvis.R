@@ -50,7 +50,7 @@
 toLDAvis<-function(mod,docs,R=30,plot.opts=list(xlab ="PC1", ylab = "PC2"),
                     lambda.step=.1,out.dir=tempfile(),open.browser=interactive(),as.gist=FALSE,reorder.topics=TRUE){
 f <- toLDAvisJson(mod,docs,R=R,plot.opts=plot.opts,
-                  lambda.step=lambda.step, reorder.topics=reorder.topic)
+                  lambda.step=lambda.step, reorder.topics=reorder.topics)
 LDAvis::serVis(f,out.dir=out.dir,open.browser=open.browser,as.gist=as.gist,R = R)
 }
 
