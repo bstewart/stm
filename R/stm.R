@@ -268,7 +268,10 @@
 #' This should give consistent model results across runs for unit testing purposes. If used, the suggested value 
 #' for this parameter is around 8. Defaults to \code{NULL}, indicating that no rounding should take place.}
 #' }
+#' \item{\code{estep.sigma.round.each}}{TODO}
 #' 
+#' \item{\code{estep.beta.round.each}}{TODO}
+#' }
 #' 
 #' @param documents The document term matrix to be modeled. These can be supplied
 #' in the native \pkg{stm} format, a sparse term count matrix with one row
@@ -600,7 +603,7 @@ stm <- function(documents, vocab, K,
                              s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
                              tSNE_init.dims=50, tSNE_perplexity=30, 
                              parallel=T, exp.round=NULL),
-                   estep=list(parallel=T, sigma.round=NULL, beta.round=NULL),
+                   estep=list(parallel=T, sigma.round=NULL, beta.round=NULL, sigma.round.each=NULL, beta.round.each=NULL),
                    seed=seed,
                    ngroups=ngroups,
                    cores=cores,
@@ -646,7 +649,7 @@ stm <- function(documents, vocab, K,
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
                   "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
                   "init.parallel", "init.exp.round",
-                  "estep.parallel", "estep.sigma.round", "estep.beta.round"
+                  "estep.parallel", "estep.sigma.round", "estep.beta.round", "estep.sigma.round.each", "estep.beta.round.each"
                 )
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
@@ -698,7 +701,8 @@ stm <- function(documents, vocab, K,
       if(i=="estep.parallel")  settings$estep$parallel <- control[[i]]
       if(i=="estep.sigma.round")  settings$estep$sigma.round <- control[[i]]
       if(i=="estep.beta.round")  settings$estep$beta.round <- control[[i]]
-      
+      if(i=="estep.sigma.round.each")  settings$estep$sigma.round.each <- control[[i]]
+      if(i=="estep.beta.round.each")  settings$estep$beta.round.each <- control[[i]]      
     }
   }
   
