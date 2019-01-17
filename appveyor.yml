@@ -17,6 +17,7 @@ cache:
 
 environment:
   R_BUILD_ARGS: --resave-data --compact-vignettes=gs+qpdf
+  R_CHECK_ARGS: --as-cran --no-build-vignettes
 
 build_script:
   - travis-tool.sh install_deps
