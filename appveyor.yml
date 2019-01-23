@@ -17,10 +17,9 @@ cache:
 
 environment:
   R_BUILD_ARGS: --resave-data --compact-vignettes=gs+qpdf
-  # We're not using the usually recommended --as-cran for right now
-  # to avoid build errors on Appveyor
-  # see https://github.com/krlmlr/r-appveyor/issues/124
-  R_CHECK_ARGS: --no-manual
+  # https://github.com/krlmlr/r-appveyor/issues/124
+  _R_CHECK_DOC_SIZES_: FALSE
+  _R_CHECK_DOC_SIZES2_: FALSE
 
 build_script:
   - travis-tool.sh install_deps
