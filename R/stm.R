@@ -49,7 +49,7 @@
 #' it may not always work for downstream functions such as
 #' \code{\link{estimateEffect}}.
 #' 
-#' The topical convent covariates are those which affect the way in which a
+#' The topical content covariates are those which affect the way in which a
 #' topic is discussed. As currently implemented this must be a single variable
 #' which defines a discrete partition of the dataset (each document is in one
 #' and only one group).  We may relax this in the future.  While including more
@@ -89,7 +89,7 @@
 #' that the random seed plays no role in the spectral initialization as it is
 #' completely deterministic (unless using the \code{K=0} or random projection
 #' settings). When the vocab is larger than 10000 terms we use only the most
-#' frequent 10000 terms in creating the initialization.  This may case the 
+#' frequent 10000 terms in creating the initialization.  This may cause the 
 #' first step of the algorithm to have a very bad value of the objective function
 #' but it should quickly stabilize into a good place.  You can tweak the exact 
 #' number where this kicks in with the \code{maxV} argument inside control. There
