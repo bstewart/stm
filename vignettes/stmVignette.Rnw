@@ -103,7 +103,7 @@ where $X_d$ is a 1-by-$p$ vector, $\gamma$ is a $p$-by-$K-1$ matrix of coefficie
 \beta_{d,k} \propto \text{exp}(m + \kappa_{k}^{(\text{t})} + \kappa_{y_d}^{(\text{c})} + 
 \kappa_{y_d,k}^{(\text{i})})
 \end{equation}
-$m$, and each $\kappa_k^{(\text{t})}$, $\kappa_{y_d}^{(\text{c})}$ and $\kappa_{y_d,k}^{(\text{i})}$ are $V$-length vectors containing one entry per word in the vocabulary.  When no content covariate is present $\beta$ can be formed as $\beta_{d,k} \propto \text{exp}(m + \kappa_{k}^{(\text{t})})$ or simply point estimated (this latter behavior is the default). 
+$m$, and each $\kappa_k^{(\text{t})}$, $\kappa_{y_d}^{(\text{c})}$ and $\kappa_{y_d,k}^{(\text{i})}$ are $V$-length vectors containing one entry per word in the vocabulary.  When no convent covariate is present $\beta$ can be formed as $\beta_{d,k} \propto \text{exp}(m + \kappa_{k}^{(\text{t})})$ or simply point estimated (this latter behavior is the default). 
 \item For each word in the document, ($n \in 1, \dots, N_d$):
 \begin{itemize}
 \item Draw word's topic assignment based on the document-specific distribution over topics.\\

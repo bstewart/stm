@@ -1,8 +1,8 @@
 Package: stm
 Type: Package
 Title: Estimation of the Structural Topic Model
-Version: 1.3.3.9009
-Date: 2018-11-05
+Version: 1.3.3.9005
+Date: 2018-9-30
 Author: Margaret Roberts [aut, cre], 
         Brandon Stewart [aut, cre],
         Dustin Tingley [aut, cre],
@@ -10,7 +10,7 @@ Author: Margaret Roberts [aut, cre],
         Vineet Bansal [ctb]
 Maintainer: Brandon Stewart <bms4@princeton.edu>
 Depends: R (>= 3.2.2)
-LinkingTo: Rcpp, RcppArmadillo, RcppEigen
+LinkingTo: Rcpp, RcppArmadillo
 Imports: matrixStats, splines, slam, lda, quanteda, stringr, Matrix, glmnet, Rcpp (>= 0.11.3), grDevices, graphics, stats, utils, data.table, quadprog, parallel, foreach, doParallel, methods
 Suggests: igraph, SnowballC, tm (>= 0.6), huge, clue, wordcloud, KernSmooth, NLP, LDAvis, geometry, Rtsne, testthat, rsvd
 LazyData: yes

@@ -15,12 +15,6 @@ cache:
 
 # Adapt as necessary starting from here
 
-environment:
-  R_BUILD_ARGS: --resave-data --compact-vignettes=gs+qpdf
-  # https://github.com/krlmlr/r-appveyor/issues/124
-  _R_CHECK_DOC_SIZES_: FALSE
-  _R_CHECK_DOC_SIZES2_: FALSE
-
 build_script:
   - travis-tool.sh install_deps
 

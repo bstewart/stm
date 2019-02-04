@@ -49,7 +49,7 @@
 #' it may not always work for downstream functions such as
 #' \code{\link{estimateEffect}}.
 #' 
-#' The topical content covariates are those which affect the way in which a
+#' The topical convent covariates are those which affect the way in which a
 #' topic is discussed. As currently implemented this must be a single variable
 #' which defines a discrete partition of the dataset (each document is in one
 #' and only one group).  We may relax this in the future.  While including more
@@ -89,7 +89,7 @@
 #' that the random seed plays no role in the spectral initialization as it is
 #' completely deterministic (unless using the \code{K=0} or random projection
 #' settings). When the vocab is larger than 10000 terms we use only the most
-#' frequent 10000 terms in creating the initialization.  This may cause the 
+#' frequent 10000 terms in creating the initialization.  This may case the 
 #' first step of the algorithm to have a very bad value of the objective function
 #' but it should quickly stabilize into a good place.  You can tweak the exact 
 #' number where this kicks in with the \code{maxV} argument inside control. There
@@ -268,10 +268,7 @@
 #' This should give consistent model results across runs for unit testing purposes. If used, the suggested value 
 #' for this parameter is around 8. Defaults to \code{NULL}, indicating that no rounding should take place.}
 #' }
-#' \item{\code{estep.sigma.round.each}}{TODO}
 #' 
-#' \item{\code{estep.beta.round.each}}{TODO}
-#' }
 #' 
 #' @param documents The document term matrix to be modeled. These can be supplied
 #' in the native \pkg{stm} format, a sparse term count matrix with one row
@@ -444,7 +441,7 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), cores=1, use.Eigen=FALSE,
+                kappa.prior=c("L1", "Jeffreys"), cores=1,
                 control=list())  {
   
   #Match Arguments and save the call
@@ -603,11 +600,10 @@ stm <- function(documents, vocab, K,
                              s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
                              tSNE_init.dims=50, tSNE_perplexity=30, 
                              parallel=T, exp.round=NULL),
-                   estep=list(parallel=T, sigma.round=NULL, beta.round=NULL, sigma.round.each=NULL, beta.round.each=NULL),
+                   estep=list(parallel=T, sigma.round=NULL, beta.round=NULL),
                    seed=seed,
                    ngroups=ngroups,
-                   cores=cores,
-                   use.Eigen=use.Eigen
+                   cores=cores
 				      )
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000
@@ -649,7 +645,7 @@ stm <- function(documents, vocab, K,
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
                   "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
                   "init.parallel", "init.exp.round",
-                  "estep.parallel", "estep.sigma.round", "estep.beta.round", "estep.sigma.round.each", "estep.beta.round.each"
+                  "estep.parallel", "estep.sigma.round", "estep.beta.round"
                 )
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
@@ -701,8 +697,7 @@ stm <- function(documents, vocab, K,
       if(i=="estep.parallel")  settings$estep$parallel <- control[[i]]
       if(i=="estep.sigma.round")  settings$estep$sigma.round <- control[[i]]
       if(i=="estep.beta.round")  settings$estep$beta.round <- control[[i]]
-      if(i=="estep.sigma.round.each")  settings$estep$sigma.round.each <- control[[i]]
-      if(i=="estep.beta.round.each")  settings$estep$beta.round.each <- control[[i]]      
+      
     }
   }
   
