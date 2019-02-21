@@ -57,7 +57,7 @@ estepParallel <- function(N, K, A, V, documents, beta.index, lambda.old, mu, upd
   combineFn <- function(R, r) {
     # update sufficient statistics
     R$sigma.ss <- R$sigma.ss + r$sigma.ss
-    for (i in length(R$beta.ss)) {
+    for (i in 1:length(R$beta.ss)) {
       R$beta.ss[[i]] =  R$beta.ss[[i]] + r$beta.ss[[i]]
     }
     R$bound[r$doc.ids] <- r$bound[r$doc.ids]
