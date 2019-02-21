@@ -2,7 +2,7 @@
 #type: class of variable
 #data: data in which the variable exists
 outputdata <- function(type, data){
-  if(type=="character"){
+  if(type=="character"|type=="logical"){
     tab <- table(data[[names(type)]])
     mode <- names(tab)[which.max(tab)]
     return(factor(mode, levels=levels(as.factor(data[[names(type)]]))))
