@@ -54,7 +54,7 @@ f <- toLDAvisJson(mod,docs,R=R,plot.opts=plot.opts,
 LDAvis::serVis(f,out.dir=out.dir,open.browser=open.browser,as.gist=as.gist,R = R)
 }
 
-#' Wrapper to create Json mapping for LDAvis. This can be useful in inderect render
+#' Wrapper to create Json mapping for LDAvis. This can be useful in indirect render
 #' e.g. Shiny Dashboards
 #' 
 #' Tool for exploring topic/word distributions using LDAvis topic browser.

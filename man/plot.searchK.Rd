@@ -10,7 +10,7 @@
 \item{x}{A searchK object, containing the diagnostic information of an stm
 with a variety of topics.}
 
-\item{...}{additional arguments for S3 compatability.}
+\item{...}{additional arguments for S3 compatibility.}
 }
 \description{
 Takes the result of searchK and produces a set of plots for evaluating

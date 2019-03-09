@@ -32,7 +32,7 @@ Defaults to \code{NULL} which provides no subsampling.  Note that the output
 may have fewer than the number of requested documents if additional
 processing causes some of those documents to be dropped.}
 
-\item{verbose}{A logical indicating whether or not ot print details to the
+\item{verbose}{A logical indicating whether or not to print details to the
 screen.}
 }
 \value{
@@ -53,7 +53,7 @@ inspection.}
 }
 \description{
 Performs several corpus manipulations including removing words and
-renumbering word indices (to correct for zero-indexing and/or unusued words
+renumbering word indices (to correct for zero-indexing and/or unused words
 in the vocab vector).
 }
 \details{

@@ -82,7 +82,7 @@ semCoh1beta <- function(mat, M, beta){
   mat <- mat[,wordlist]
   mat$v <- ifelse(mat$v>1, 1,mat$v) #binarize
   
-  #do the cross product to get co-occurences
+  #do the cross product to get co-occurrences
   cross <- slam::tcrossprod_simple_triplet_matrix(t(mat))
   
   #create a list object with the renumbered words (so now it corresponds to the rows in the table)

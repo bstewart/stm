@@ -63,7 +63,7 @@
 #' @return \item{runout}{List of model outputs the user has to choose from.
 #' Take the same form as the output from a stm model.} \item{semcoh}{Semantic
 #' coherence values for each topic within each model in runout}
-#' \item{exclusivity}{Exclusivity values for each topic wihtin each model in
+#' \item{exclusivity}{Exclusivity values for each topic within each model in
 #' runout.  Only calculated for models without a content covariate}
 #' \item{sparsity}{Percent sparsity for the covariate and interaction kappas
 #' for models with a content covariate.} 

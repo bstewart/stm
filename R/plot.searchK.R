@@ -6,7 +6,7 @@
 #' 
 #' @param x A searchK object, containing the diagnostic information of an stm
 #' with a variety of topics.
-#' @param ...  additional arguments for S3 compatability.
+#' @param ...  additional arguments for S3 compatibility.
 #' @examples
 #' 
 #' \dontrun{

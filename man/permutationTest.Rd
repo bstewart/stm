@@ -35,7 +35,7 @@ formula of the stmobj.  This is the variable which is randomly permuted.}
 the object.  Passing the seed here will replicate the previous run.}
 
 \item{stmverbose}{Should the stm model be run with \code{verbose=TRUE}.
-Turning this to \code{FALSE} will surpress only the model specific printing.
+Turning this to \code{FALSE} will suppress only the model specific printing.
 An update on which model is being run will still print to the screen.}
 
 \item{uncertainty}{Which procedure should be used to approximate the

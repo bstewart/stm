@@ -47,7 +47,7 @@ for the returned model. These include exclusivity, semantic coherence,
 heldout likelihood, bound, lbound, and residual dispersion.
 }
 \details{
-See the vignette for interepretation of each of these measures.  Each of
+See the vignette for interpretation of each of these measures.  Each of
 these measures is also available in exported functions:
 \describe{
 \item{exclusivity}{\code{\link{exclusivity}}}

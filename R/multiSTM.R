@@ -30,7 +30,7 @@
 #' \code{mod.out} which contains the desired reference model.  When set to the
 #' default value of \code{NULL} this chooses the model with the largest value
 #' of the approximate variational bound.
-#' @param align.global A boolean parameter specifiying how to align the topics
+#' @param align.global A boolean parameter specifying how to align the topics
 #' of two different STM fitted models. The alignment is performed by solving
 #' the linear sum assignment problem using the Hungarian algorithm. If
 #' \code{align.global} is set to \code{TRUE}, the Hungarian algorithm is run
@@ -41,7 +41,7 @@
 #' \code{align.global} is, conversely, set to \code{FALSE}, the alignment
 #' problem is solved locally. Each topic in the current runout is matched to
 #' the one topic in the reference models that yields minimum inner product.
-#' This means that mutliple topics in the current runout can be matched to a
+#' This means that multiple topics in the current runout can be matched to a
 #' single topic in the reference model, and does not guarantee that all the
 #' topics in the reference model will be matched.
 #' @param mass.threshold A parameter specifying the portion of the probability
@@ -62,7 +62,7 @@
 #' uncertainty by using an approximation to the average covariance matrix
 #' formed using the global parameters.
 #' @param metadata A dataframe where the predictor variables in
-#' \code{reg.formula} can be found. It is necessary to unclude this argument if
+#' \code{reg.formula} can be found. It is necessary to include this argument if
 #' \code{reg.formula} is specified.
 #' @param reg.nsims The number of simulated draws from the variational
 #' posterior for each call of \code{estimateEffect()}. Defaults to 100.
@@ -561,7 +561,7 @@ confidence_intervals.MultimodDiagnostic <- function(obj){
 #' Plotting Method for Multimodality Diagnostic Objects
 #' 
 #' The plotting method for objects of the S3 class 'MultimodDiagnostic', which
-#' are returned by the function \code{multiSTM()}, which performes a battery of
+#' are returned by the function \code{multiSTM()}, which performs a battery of
 #' tests aimed at assessing the stability of the local modes of an STM model.
 #' 
 #' This methods generates a series of plots, which are indexed as follows. If a
@@ -585,7 +585,7 @@ confidence_intervals.MultimodDiagnostic <- function(obj){
 #' \code{obj$confidence.ratings} is non-\code{NULL}.  \item Posterior
 #' Distributions of Covariate Effect Estimates By Topic: Generates a square
 #' matrix of plots, each depicting the posterior distribution of the regression
-#' coefficients for the covariate speciefied in \code{obj$reg.parameter.index}
+#' coefficients for the covariate specified in \code{obj$reg.parameter.index}
 #' for one topic. The topics for which the plots are to be generated are
 #' specified by the \code{topics} argument. If the length of \code{topics} is
 #' not a perfect square, the plots matrix will include white space. The plots

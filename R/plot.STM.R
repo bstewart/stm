@@ -36,7 +36,7 @@
 #' @param labeltype Determines which option of \code{"prob", "frex", "lift",
 #' "score"} is used for choosing the most important words.  See
 #' \code{\link{labelTopics}} for more detail.  Passing an argument to
-#' \code{custom.labels} will overide this. Note that this does not apply to
+#' \code{custom.labels} will override this. Note that this does not apply to
 #' \code{perspectives} type which always uses highest probability words.
 #' @param frexw If "frex" labeltype is used, this will be the frex weight.
 #' @param main Title to the plot
@@ -57,7 +57,7 @@
 #' @param custom.labels A vector of custom labels if labeltype is equal to
 #' "custom".
 #' @param topic.names A vector of custom topic names.  Defaults to "Topic #: ".
-#' @param \dots Additional parameters passed to ploting functions.
+#' @param \dots Additional parameters passed to plotting functions.
 #' @seealso \code{\link{plotQuote}}, \code{\link{plot.topicCorr}}
 #' @references Roberts, Margaret E., Brandon M. Stewart, Dustin Tingley,
 #' Christopher Lucas, Jetson Leder-Luis, Shana Kushner Gadarian, Bethany

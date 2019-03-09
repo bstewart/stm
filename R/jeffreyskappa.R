@@ -40,7 +40,7 @@ jeffreysKappa <- function(beta.ss, kappa, settings) {
     
     converged.outer <- sparseagree > settings$kappa$mstep$tol
     
-    #convergence checks fo iterations
+    #convergence checks of iterations
     ifelse(outer.it==settings$kappa$mstep$maxit, converged.outer <- TRUE, outer.it <- outer.it + 1)
   }
 

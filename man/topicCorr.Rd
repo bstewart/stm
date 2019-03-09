@@ -51,7 +51,7 @@ An alternative strategy is to treat the problem as the recovery of edges in
 a high-dimensional undirected graphical model. In these settings we assume
 that observations come from a multivariate normal distribution with a sparse
 precision matrix.  The goal is to infer which elements of the precision
-matrix are non-zero corresponding to edges in a graph.  Meinhuasen and
+matrix are non-zero corresponding to edges in a graph.  Meinshausen and
 Buhlmann (2006) showed that using sparse regression methods like the LASSO
 it is possible to consistently identify edges even in very high dimensional
 settings.
@@ -60,8 +60,8 @@ Selecting the option \code{"huge"} uses the \code{huge} package by Zhao and
 Liu to estimate the graph.  We use a nonparanormal transformation of the
 topic proportions (\eqn{\theta}) which uses semiparametric Gaussian copulas
 to marginally transform the data.  This weakens the gaussian assumption of
-the subsequent procedure.  We then estimate the graph using the Meinhuasen
-and Buhlman procedure.  Model selection for the scale of the \eqn{L_1}
+the subsequent procedure.  We then estimate the graph using the Meinshausen
+and Buhlmann procedure.  Model selection for the scale of the \eqn{L_1}
 penalty is performed using the rotation information criterion (RIC) which
 estimates the optimal degree of regularization by random rotations.  Zhao
 and Lieu (2012) note that this selection approach has strong empirical

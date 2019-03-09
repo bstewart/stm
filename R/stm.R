@@ -79,9 +79,9 @@
 #' previous versions.  The old default setting which uses a Jeffreys prior is
 #' also available.
 #' 
-#' The argument \code{init.type} allows the user to specify an intialization
+#' The argument \code{init.type} allows the user to specify an initialization
 #' method. The default 
-#' choice, \code{"Spectral"}, provides a deterministic inialization using the
+#' choice, \code{"Spectral"}, provides a deterministic initialization using the
 #' spectral algorithm given in Arora et al 2014.  See Roberts, Stewart and
 #' Tingley (2016) for details and a comparison of different approaches.
 #' Particularly when the number of documents is relatively large we highly
@@ -109,7 +109,7 @@
 #' tradeoff between memory efficiency and speed.  The claim of speed here
 #' is based on the idea that increasing the number of global updates should
 #' help the model find a solution in fewer passes through the document set.
-#' However, itt is worth noting that for any particular case the model need 
+#' However, it is worth noting that for any particular case the model need 
 #' not converge faster and definitely won't converge to the same location. 
 #' This functionality should be considered somewhat experimental and we encourage
 #'  users to let us know what their experiences are like here in practice.
@@ -192,17 +192,17 @@
 #' \item{\code{nits}}{Sets the number of iterations for collapsed gibbs
 #' sampling in LDA initializations.  Defaults to 50} 
 #' \item{\code{burnin}}{Sets
-#' the burnin for collapsed gibbs sampling in LDA intializations. Defaults to
+#' the burnin for collapsed gibbs sampling in LDA initializations. Defaults to
 #' 25} 
 #' \item{\code{alpha}}{Sets the prevalence hyperparameter in collapsed
 #' gibbs sampling in LDA initializations.  Defaults to 50/K}
 #' \item{\code{eta}}{Sets the topic-word hyperparameter in collapsed gibbs
-#' sampling in LDa intializations.  Defaults to .01} 
+#' sampling in LDA initializations.  Defaults to .01} 
 #' \item{\code{contrast}}{A
 #' logical indicating whether a standard contrast coding should be used for
 #' content covariates.  Typically this should remain at the default of FALSE.}
 #' \item{\code{rp.s}}{Parameter between 0 and 1 controlling the sparsity of
-#' random projections for the spectral initailization.  Defaults to .05}
+#' random projections for the spectral initialization.  Defaults to .05}
 #' \item{\code{rp.p}}{Dimensionality of the random projections for the
 #' spectral initialization.  Defaults to 3000.}
 #' \item{\code{rp.d.group.size}}{Controls the size of blocks considered at a
@@ -237,7 +237,7 @@
 #' option we recommend that you use \code{max.em.its=0} with the model initialization set to random, inspect
 #' the returned form of \code{stmobj$beta$logbeta} and ensure that it matches your format.}
 #' \item{\code{tSNE_init.dims}}{The K=0 spectral setting uses tSNE to create a low-dimensional
-#' projection of the vocab co-occurence matrix.  tSNE starts with a PCA projection as an initialization.
+#' projection of the vocab co-occurrence matrix.  tSNE starts with a PCA projection as an initialization.
 #' We actually do the projection outside the tSNE code so we can use a randomized projection approach.
 #' We use the 50 dimensional default of the \pkg{rtsne} package.  That can be changed here.}
 #' \item{\code{tSNE_perplexity}}{The \code{Rtsne} function in the \pkg{rtsne} package uses a perplexity
@@ -334,7 +334,7 @@
 #' @param kappa.prior sets the prior estimation for the content covariate
 #' coefficients.  The default option is the \code{L1} prior.  The second option
 #' is \code{Jeffreys} which is markedly less computationally efficient but is
-#' included for backwards compatability. See details for more information on
+#' included for backwards compatibility. See details for more information on
 #' computation.
 #' @param control a list of additional advanced parameters. See details.
 #' 

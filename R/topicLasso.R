@@ -38,13 +38,13 @@
 #' explanation there.  Defaults to "gaussian"
 #' @param main Character string for the main title.
 #' @param xlab Character string giving an x-axis label.
-#' @param labeltype Type of example words to use in labelling each topic. See
+#' @param labeltype Type of example words to use in labeling each topic. See
 #' \code{\link{labelTopics}}. Defaults to "prob".
 #' @param seed The random seed for replication of the cross-validation samples.
 #' @param xlim Width of the x-axis.
 #' @param standardize Whether to standardize variables. Default is FALSE, which
 #' is different from the \pkg{glmnet} default because the topics are already
-#' standarized.  Note that glmnet standardizes the variables by default but
+#' standardized.  Note that glmnet standardizes the variables by default but
 #' then projects them back to their original scales before reporting
 #' coefficients.
 #' @param nfolds the number of cross-validation folds.  Defaults to 20.

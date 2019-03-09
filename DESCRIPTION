@@ -45,6 +45,7 @@ Suggests:
   rsvd,
   Rtsne,
   SnowballC,
+  spelling,
   testthat,
   tm (>= 0.6),
   wordcloud
@@ -54,3 +55,4 @@ License: MIT + file LICENSE
 URL: http://structuraltopicmodel.com 
 BugReports: https://github.com/bstewart/stm/issues
 RoxygenNote: 6.1.1
+Language: en-US

@@ -21,7 +21,7 @@ which to plot the posterior distribution of covariate effect estimates. If
 }
 \description{
 The plotting method for objects of the S3 class 'MultimodDiagnostic', which
-are returned by the function \code{multiSTM()}, which performes a battery of
+are returned by the function \code{multiSTM()}, which performs a battery of
 tests aimed at assessing the stability of the local modes of an STM model.
 }
 \details{
@@ -46,7 +46,7 @@ the reference model. This can only be generated if
 \code{obj$confidence.ratings} is non-\code{NULL}.  \item Posterior
 Distributions of Covariate Effect Estimates By Topic: Generates a square
 matrix of plots, each depicting the posterior distribution of the regression
-coefficients for the covariate speciefied in \code{obj$reg.parameter.index}
+coefficients for the covariate specified in \code{obj$reg.parameter.index}
 for one topic. The topics for which the plots are to be generated are
 specified by the \code{topics} argument. If the length of \code{topics} is
 not a perfect square, the plots matrix will include white space. The plots

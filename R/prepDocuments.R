@@ -1,7 +1,7 @@
 #' Prepare documents for analysis with \code{stm}
 #' 
 #' Performs several corpus manipulations including removing words and
-#' renumbering word indices (to correct for zero-indexing and/or unusued words
+#' renumbering word indices (to correct for zero-indexing and/or unused words
 #' in the vocab vector).
 #' 
 #' The default setting \code{lower.thresh=1} means that words which appear in
@@ -47,7 +47,7 @@
 #' Defaults to \code{NULL} which provides no subsampling.  Note that the output
 #' may have fewer than the number of requested documents if additional
 #' processing causes some of those documents to be dropped.
-#' @param verbose A logical indicating whether or not ot print details to the
+#' @param verbose A logical indicating whether or not to print details to the
 #' screen.
 #' @return A list containing a new documents and vocab object.
 #' \item{documents}{The new documents object for use with \code{stm}}
