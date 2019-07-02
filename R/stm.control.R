@@ -140,6 +140,9 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       suffstats <- estep(documents=documents, beta.index=betaindex,
                               update.mu=(!is.null(mu$gamma)),
                               beta$beta, lambda, mu$mu, sigma,
+                              order_sigma=settings$order$sigma, 
+                              order_beta=settings$order$beta, 
+                              randomize=settings$order$randomize,
                               verbose)
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
       if(verbose) cat(msg)
@@ -152,8 +155,25 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       mu <- opt.mu(lambda=lambda, mode=settings$gamma$mode,
                    covar=settings$covariates$X, enet=settings$gamma$enet, ic.k=settings$gamma$ic.k,
                    maxits=settings$gamma$maxits)
+      if(settings$order$sigma) {
+        sigma.ss <- Reduce('+', sigma.ss)
+      }
       sigma <- opt.sigma(nu=sigma.ss, lambda=lambda,
                          mu=mu$mu, sigprior=settings$sigma$prior)
+      if(settings$order$beta) {
+        A <- length(beta)
+        beta.ss1 <- vector(mode="list", length=A)
+        for(i in 1:A) {
+          beta.ss1[[i]] <- matrix(0, nrow=nrow(beta$beta[[1]]),ncol=ncol(beta$beta[[1]]))
+        }
+        for(i in 1:length(beta.ss)) {
+          doc <- documents[[i]]
+          words <- doc[1,]
+          aspect <- settings$covariates$betaindex[i]
+          beta.ss1[[aspect]][,words] <- beta.ss1[[aspect]][,words] + beta.ss[[i]]
+        }
+        beta.ss <- beta.ss1
+      }
       beta <- opt.beta(beta.ss, beta$kappa, settings)
       if(verbose) {
         timer <- floor((proc.time()-t1)[3])

@@ -16,6 +16,7 @@
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
                        beta, lambda.old, mu, sigma, 
+                       order_sigma, order_beta, randomize,
                        verbose) {
   
   #quickly define useful constants
@@ -25,12 +26,19 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   A <- length(beta)
   ctevery <- ifelse(N>100, floor(N/100), 1)
   if(!update.mu) mu.i <- as.numeric(mu)
-  
   # 1) Initialize Sufficient Statistics 
-  sigma.ss <- diag(0, nrow=(K-1))
-  beta.ss <- vector(mode="list", length=A)
-  for(i in 1:A) {
-    beta.ss[[i]] <- matrix(0, nrow=K,ncol=V)
+  if(order_sigma) {
+    sigma.ss <- vector(mode="list",length=N)
+  } else {
+    sigma.ss <- diag(0, nrow=(K-1))
+  }
+  if(order_beta) {
+    beta.ss <- vector(mode="list", length=N)
+  } else {
+    beta.ss <- vector(mode="list", length=A)
+    for(i in 1:A) {
+      beta.ss[[i]] <- matrix(0, nrow=K,ncol=V)
+    }
   }
   bound <- vector(length=N)
   lambda <- vector("list", length=N)
@@ -48,7 +56,12 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
   # maintaining a small dimension for the sufficient statistics.
-  for(i in 1:N) {
+  if(randomize) {
+    vec <- sample(1:N, N) 
+  } else {
+    vec <- 1:N
+  }
+  for(i in vec) {
     #update components
     doc <- documents[[i]]
     words <- doc[1,]
@@ -62,8 +75,16 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
                                   doc=doc, sigmaentropy=sigmaentropy)
     
     # update sufficient statistics 
-    sigma.ss <- sigma.ss + doc.results$eta$nu
-    beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    if(order_sigma) {
+      sigma.ss[[i]] <- doc.results$eta$nu
+    } else {
+      sigma.ss <- sigma.ss + doc.results$eta$nu
+    }
+    if(order_beta) {
+      beta.ss[[i]] <- doc.results$phis
+    } else {
+      beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    }
     bound[i] <- doc.results$bound
     lambda[[i]] <- c(doc.results$eta$lambda)
     if(verbose && i%%ctevery==0) cat(".")
