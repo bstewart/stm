@@ -156,23 +156,12 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                    covar=settings$covariates$X, enet=settings$gamma$enet, ic.k=settings$gamma$ic.k,
                    maxits=settings$gamma$maxits)
       if(settings$order$sigma) {
-        sigma.ss <- Reduce('+', sigma.ss)
+        sigma.ss <- sigma.ss[[1]] + sigma.ss[[2]]
       }
       sigma <- opt.sigma(nu=sigma.ss, lambda=lambda,
                          mu=mu$mu, sigprior=settings$sigma$prior)
       if(settings$order$beta) {
-        A <- length(beta)
-        beta.ss1 <- vector(mode="list", length=A)
-        for(i in 1:A) {
-          beta.ss1[[i]] <- matrix(0, nrow=nrow(beta$beta[[1]]),ncol=ncol(beta$beta[[1]]))
-        }
-        for(i in 1:length(beta.ss)) {
-          doc <- documents[[i]]
-          words <- doc[1,]
-          aspect <- settings$covariates$betaindex[i]
-          beta.ss1[[aspect]][,words] <- beta.ss1[[aspect]][,words] + beta.ss[[i]]
-        }
-        beta.ss <- beta.ss1
+        beta.ss <- lapply(beta.ss, function(x) x[[1]]+x[[2]])
       }
       beta <- opt.beta(beta.ss, beta$kappa, settings)
       if(verbose) {

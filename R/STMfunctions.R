@@ -5,6 +5,30 @@
 ##
 # Random Utilities
 
+#neumaier sum with matrices
+#takes a prior sum, correction matrix and a new input
+#returns the new sum and the new correction matrix
+n_mat_sum <- function(sum, c=NULL, input=NULL) {
+  #this will create a correction matrix sized to sum if one doesn't exist
+  if(is.null(c)) c <- matrix(0, nrow=nrow(sum), ncol=ncol(sum))
+  #if there is no input, just return the sum and correction
+  #(this lets you initialize the object using the same function)
+  if(is.null(input)) return(list(sum,c))
+  #(1) sum them
+  t <- sum + input
+  #(2) make a boolean matrix of which is smaller
+  smaller <- abs(sum)<abs(input)
+  #(3) it will often be the case that they are all bigger, if so skip calculations
+  if(any(smaller)) {
+    #corrections
+    c <- c + ((sum - t) + input)*!smaller + ((input - t) + sum)*smaller
+  } else {
+    #correction for all elements of sum being larger
+    c <- c + ((sum - t) + input)
+  }
+  return(list(t,c))
+}
+
 #function for collapsing a character vector to a comma separated list
 #note that we eliminate things with zero length so that we can return
 #fewer than n words and still have the lists look nice

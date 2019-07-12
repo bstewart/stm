@@ -18,7 +18,6 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
                        beta, lambda.old, mu, sigma, 
                        order_sigma, order_beta, randomize,
                        verbose) {
-  
   #quickly define useful constants
   V <- ncol(beta[[1]])
   K <- nrow(beta[[1]])
@@ -28,12 +27,15 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   if(!update.mu) mu.i <- as.numeric(mu)
   # 1) Initialize Sufficient Statistics 
   if(order_sigma) {
-    sigma.ss <- vector(mode="list",length=N)
+    sigma.ss <- n_mat_sum(diag(0, nrow=(K-1)))
   } else {
     sigma.ss <- diag(0, nrow=(K-1))
   }
   if(order_beta) {
-    beta.ss <- vector(mode="list", length=N)
+    beta.ss <- vector(mode="list", length=A)
+    for(i in 1:A) {
+      beta.ss[[i]] <- n_mat_sum(matrix(0, nrow=K,ncol=V))
+    }
   } else {
     beta.ss <- vector(mode="list", length=A)
     for(i in 1:A) {
@@ -76,12 +78,18 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     
     # update sufficient statistics 
     if(order_sigma) {
-      sigma.ss[[i]] <- doc.results$eta$nu
+      sigma.ss <- n_mat_sum(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu)
     } else {
       sigma.ss <- sigma.ss + doc.results$eta$nu
     }
     if(order_beta) {
-      beta.ss[[i]] <- doc.results$phis
+      #more efficient than this would be to stack all the C's underneath
+      #betas
+      o_beta <- n_mat_sum(beta.ss[[aspect]][[1]][,words], 
+                          beta.ss[[aspect]][[2]][,words], 
+                          doc.results$phis)
+      beta.ss[[aspect]][[1]][,words] <- o_beta[[1]]
+      beta.ss[[aspect]][[2]][,words] <- o_beta[[2]]
     } else {
       beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     }
