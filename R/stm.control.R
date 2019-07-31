@@ -189,7 +189,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   for(i in 1:length(beta$logbeta)) {
     beta$logbeta[[i]] <- safelog(beta$logbeta[[i]])
   }
-  beta$beta <- NULL
+  #beta$beta <- NULL
   lambda <- cbind(lambda,0)
   model <- list(mu=mu, sigma=sigma, beta=beta, settings=settings,
                 vocab=vocab, convergence=convergence,
