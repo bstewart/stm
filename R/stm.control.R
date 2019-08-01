@@ -55,7 +55,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                     sample(rep(seq_len(ngroups), length=length(documents))))
   }
   suffstats <- vector(mode="list", length=ngroups)
-
+  randomizations <- NULL
   if(settings$convergence$max.em.its==0) {
     stopits <- TRUE
     if(verbose) cat("Returning Initialization.")
@@ -144,6 +144,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                               order_beta=settings$order$beta, 
                               randomize=settings$order$randomize,
                               verbose)
+      randomizations <- rbind(randomizations, suffstats$vec)
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
       if(verbose) cat(msg)
       t1 <- proc.time()
@@ -198,7 +199,8 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                 #Windows specific bug that was happening with
                 #matrixStats package and large matrices 8/27
                 eta=lambda[,-ncol(lambda), drop=FALSE],
-                invsigma=solve(sigma), time=time, version=utils::packageDescription("stm")$Version)
+                invsigma=solve(sigma), time=time, version=utils::packageDescription("stm")$Version,
+                randomizations=randomizations)
   
   class(model) <- "STM"
   return(model)

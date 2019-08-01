@@ -101,5 +101,6 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   
   #4) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)
-  return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda))
+  return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda,
+              vec=vec))
 }
