@@ -55,7 +55,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                     sample(rep(seq_len(ngroups), length=length(documents))))
   }
   suffstats <- vector(mode="list", length=ngroups)
-
+  randomizations <- NULL
   if(settings$convergence$max.em.its==0) {
     stopits <- TRUE
     if(verbose) cat("Returning Initialization.")
@@ -140,7 +140,11 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       suffstats <- estep(documents=documents, beta.index=betaindex,
                               update.mu=(!is.null(mu$gamma)),
                               beta$beta, lambda, mu$mu, sigma,
+                              order_sigma=settings$order$sigma, 
+                              order_beta=settings$order$beta, 
+                              randomize=settings$order$randomize,
                               verbose)
+      randomizations <- rbind(randomizations, suffstats$vec)
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
       if(verbose) cat(msg)
       t1 <- proc.time()
@@ -152,8 +156,14 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       mu <- opt.mu(lambda=lambda, mode=settings$gamma$mode,
                    covar=settings$covariates$X, enet=settings$gamma$enet, ic.k=settings$gamma$ic.k,
                    maxits=settings$gamma$maxits)
+      if(settings$order$sigma) {
+        sigma.ss <- sigma.ss[[1]] + sigma.ss[[2]]
+      }
       sigma <- opt.sigma(nu=sigma.ss, lambda=lambda,
                          mu=mu$mu, sigprior=settings$sigma$prior)
+      if(settings$order$beta) {
+        beta.ss <- lapply(beta.ss, function(x) x[[1]]+x[[2]])
+      }
       beta <- opt.beta(beta.ss, beta$kappa, settings)
       if(verbose) {
         timer <- floor((proc.time()-t1)[3])
@@ -180,7 +190,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
   for(i in 1:length(beta$logbeta)) {
     beta$logbeta[[i]] <- safelog(beta$logbeta[[i]])
   }
-  beta$beta <- NULL
+  #beta$beta <- NULL
   lambda <- cbind(lambda,0)
   model <- list(mu=mu, sigma=sigma, beta=beta, settings=settings,
                 vocab=vocab, convergence=convergence,
@@ -189,7 +199,8 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                 #Windows specific bug that was happening with
                 #matrixStats package and large matrices 8/27
                 eta=lambda[,-ncol(lambda), drop=FALSE],
-                invsigma=solve(sigma), time=time, version=utils::packageDescription("stm")$Version)
+                invsigma=solve(sigma), time=time, version=utils::packageDescription("stm")$Version,
+                randomizations=randomizations)
   
   class(model) <- "STM"
   return(model)
