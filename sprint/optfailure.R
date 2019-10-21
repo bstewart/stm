@@ -167,7 +167,7 @@ check <- a_2
 #look at these values for mu
 check$mu$mu[c(31,95),11647]
 #nudge them up by 1e-6
-check$mu$mu[c(31,95),11647] <- check$mu$mu[c(31,95),11647] + c(1e-6,1e-6)
+check$mu$mu[c(31,95),11647] <- check$mu$mu[c(31,95),11647] + c(1e-8,1e-8)
 #and the result is completely different
 softmax0(fitme(11647,check,documents)$param)[c(1,15,99)]
 #vs.
