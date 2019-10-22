@@ -6,3 +6,9 @@ rand <- stm(poliblog5k.docs, poliblog5k.voc, K=20, prevalence=~rating, data=poli
 
 all.equal(deter, rand)
 
+li = list()
+
+for (i in seq(1:7)) {
+  li[i]<-i
+}
+print(li)
