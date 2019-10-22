@@ -572,7 +572,8 @@ stm <- function(documents, vocab, K,
                              tSNE_init.dims=50, tSNE_perplexity=30), 
                    seed=seed,
                    order=list(beta=FALSE, sigma=FALSE, randomize=FALSE),
-                   ngroups=ngroups)
+                   ngroups=ngroups,
+                   method="BFGS")
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000
   }
@@ -612,7 +613,7 @@ stm <- function(documents, vocab, K,
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
                   "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
-                  "order_beta","order_sigma","randomize")
+                  "order_beta","order_sigma","randomize", "method")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -665,6 +666,9 @@ stm <- function(documents, vocab, K,
       if(i=="randomize") {
         settings$order$randomize <- control[[i]]
       }
+      if(i=="method") {
+        settings$method <- control[[i]]
+      }
     }
   }
   
@@ -685,5 +689,5 @@ stm <- function(documents, vocab, K,
   ###
   # Finally run the actual model
   ###
-  return(stm.control(documents, vocab, settings,model))
+  return(stm.control(documents, vocab, settings, model))
 }

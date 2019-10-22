@@ -88,7 +88,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
         #run the model
         suffstats[[i]] <- estep(documents=gdocs, beta.index=gbetaindex,
                                 update.mu=(!is.null(mu$gamma)),
-                                beta$beta, glambda, gmu, sigma,
+                                beta$beta, glambda, gmu, sigma, method=settings$method,
                                 verbose)
         if(verbose) {
           msg <- sprintf("Completed Group %i E-Step (%d seconds). \n", i, floor((proc.time()-t1)[3]))
@@ -143,6 +143,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
                               order_sigma=settings$order$sigma, 
                               order_beta=settings$order$beta, 
                               randomize=settings$order$randomize,
+                              method=settings$method,
                               verbose)
       randomizations <- rbind(randomizations, suffstats$vec)
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
