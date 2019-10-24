@@ -16,7 +16,7 @@
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
                        beta, lambda.old, mu, sigma, 
-                       order_sigma, order_beta, randomize,
+                       order_sigma, order_beta, randomize, method,
                        verbose) {
   #quickly define useful constants
   V <- ncol(beta[[1]])
@@ -74,7 +74,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     
     #infer the document
     doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
-                                  doc=doc, sigmaentropy=sigmaentropy)
+                                  doc=doc, sigmaentropy=sigmaentropy, method=method)
     
     # update sufficient statistics 
     if(order_sigma) {
