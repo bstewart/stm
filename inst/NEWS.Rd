@@ -5,6 +5,7 @@
 \item Hat tip to Wouter van Atteveldt for a pull request that fixed a problem in summary.estimateEffect
 \item Thanks to Brooks Ambrose for a great catch in the spectral algorithm that should increase memory efficiency and speed during initializaiton for large vocabulary models.
 \item Thanks to Elena Savelyeva for improvents to the toLDAVis function.
+\item Added a function that allows for custom punctuation removal in textProcessor and also a flag which allows access to the broader array of unicode punctuation (ucp=TRUE).
     }
 }
 \section{Version 1.3.3}{

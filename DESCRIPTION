@@ -1,6 +1,6 @@
 Package: stm
 Title: Estimation of the Structural Topic Model
-Version: 1.3.3
+Version: 1.3.4
 Authors@R: as.person(c(
     "Margaret Roberts <meroberts@ucsd.edu> [aut]", 
     "Brandon Stewart <bms4@princeton.edu> [aut, cre]",

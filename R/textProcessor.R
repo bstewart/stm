@@ -50,6 +50,9 @@
 #' @param removenumbers Whether numbers should be removed. Defaults to TRUE.
 #' @param removepunctuation whether punctuation should be removed.  Defaults to
 #' TRUE.
+#' @param ucp When TRUE passes \code{ucp=TRUE} to \code{tm::removePunctuation} which
+#' removes a more general set of punctuation (the Unicode general category P).  Defaults
+#' to \code{FALSE}.
 #' @param stem Whether or not to stem words. Defaults to TRUE
 #' @param wordLengths From the \pkg{tm} package. An integer vector of length 2.
 #' Words shorter than the minimum word length \code{wordLengths[1]} or longer
@@ -81,6 +84,12 @@
 #' as with standard stopwords these are removed after converting everything to
 #' lower case but before removing numbers, punctuation or stemming.  Thus words
 #' to be removed should be all lower case but otherwise complete.
+#' @param custompunctuation A character vector containing any characters to be
+#' removed immediately after standard punctuation removal.  This function is
+#' primarily for easy removal of application specific punctuation not caught by
+#' the punctuation filter (although see also the \code{ucp} argument). This can
+#' in theory be used to remove any characters you don't want in the text for 
+#' some reason.  
 #' @param v1 A logical which defaults to \code{FALSE}.  If set to \code{TRUE} it
 #' will use the ordering of operations we use used in Version 1.0 of the package.
 #' @return \item{documents}{A list containing the documents in the stm format.}
@@ -109,10 +118,11 @@
 #' }
 #' @export
 textProcessor <- function(documents, metadata=NULL, 
-                          lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, removepunctuation=TRUE, stem=TRUE, 
-                          wordLengths=c(3,Inf),sparselevel=1, language="en",
+                          lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, 
+                          removepunctuation=TRUE, ucp=FALSE, 
+                          stem=TRUE, wordLengths=c(3,Inf),sparselevel=1, language="en",
                           verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
-                          customstopwords=NULL, v1=FALSE) {
+                          customstopwords=NULL, custompunctuation=NULL, v1=FALSE) {
   if(!requireNamespace("tm",quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
   if(!(utils::packageVersion("tm")>=0.6)) stop("Please install at least version 0.6 of the tm package.")
   if(stem) {
@@ -151,7 +161,12 @@ textProcessor <- function(documents, metadata=NULL,
   if(!v1) {
     if(removepunctuation){
       if(verbose) cat("Removing punctuation... \n")
-      txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE) #Remove punctuation
+      txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE,ucp=ucp) #Remove punctuation
+    }
+    if(!is.null(custompunctuation)) {
+      if(verbose) cat("Removing custom punctuation... \n")
+      txt<- tm::tm_map(txt, tm::content_transformer(function(x, pattern) gsub(pattern, "", x)), 
+                       custompunctuation)
     }
   }
   if(removestopwords){
@@ -171,8 +186,13 @@ textProcessor <- function(documents, metadata=NULL,
     #return to the v1 style of removing punctuation right before stemming
     if(removepunctuation){
       if(verbose) cat("Removing punctuation... \n")
-      txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE) #Remove punctuation
-    }    
+      txt <- tm::tm_map(txt, tm::removePunctuation, preserve_intra_word_dashes = TRUE,ucp=ucp) #Remove punctuation
+    }
+    if(!is.null(custompunctuation)) {
+      if(verbose) cat("Removing custom punctuation... \n")
+      txt<- tm::tm_map(txt, tm::content_transformer(function(x, pattern) gsub(pattern, "", x)), 
+                       custompunctuation)
+    }
   }
   
   if(stem){
