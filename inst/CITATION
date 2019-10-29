@@ -1,23 +1,20 @@
-citHeader("To cite package 'stm' in publications please use the following. Other publications related to the package are also listed below.")
-
-## R >= 2.8.0 passes package metadata to citation().
-if(!exists("meta") || is.null(meta)) meta <- packageDescription("stm")
-year <- sub("-.*", "", meta$Date)
-note <- sprintf("R package version %s", meta$Version)
-
-citEntry(entry = "Manual",
-         title = "stm: R Package for Structural Topic Models",
-         author = personList(as.person("Margaret E. Roberts"),
-                             as.person("Brandon M. Stewart"),
-                             as.person("Dustin Tingley")),                            
-         year = year,
-         note = note,
-         url = "http://www.structuraltopicmodel.com",
-
-         textVersion = 
-         sprintf("Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley 
-                  (%s). stm: R Package for Structural Topic Models.
-                  URL http://www.structuraltopicmodel.com.", year)
+bibentry(bibtype = "Article",
+  title        = "{stm}: An {R} Package for Structural Topic Models",
+  author       = c(person(given = c("Margaret", "E."),
+                          family = "Roberts",
+                          email = "meroberts@ucsd.edu"),
+                   person(given = c("Brandon", "M."),
+                          family = "Stewart",
+                          email = "bms4@princeton.edu"),
+                   person(given = "Dustin",
+                          family = "Tingley",
+                          email = "dtingley@gov.harvard.edu")),
+  journal      = "Journal of Statistical Software",
+  year         = "2019",
+  volume       = "91",
+  number       = "2",
+  pages        = "1--40",
+  doi          = "10.18637/jss.v091.i02",
+  header       = "To cite stm in publications use:"
 )
-
 

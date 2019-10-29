@@ -89,7 +89,7 @@ a stronger punctuation filter). This can in theory be used to remove any
 characters you don't want in the text for some reason. In practice what this
 function does is collapse the character vector to one string and put square
 brackets around it in order to make a pattern that can be matched and replaced
-with \code{gsub} at the punctuation removal stage.  If the custompunctuation
+with \code{gsub} at the punctuation removal stage.  If the \code{custompunctuation}
 vector is length 1 and the first element is a left square bracket, the function
 assumes that you have passed a regular expression and passes that directly
 along to \code{gsub}.}
