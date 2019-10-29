@@ -85,11 +85,17 @@
 #' lower case but before removing numbers, punctuation or stemming.  Thus words
 #' to be removed should be all lower case but otherwise complete.
 #' @param custompunctuation A character vector containing any characters to be
-#' removed immediately after standard punctuation removal.  This function is
+#' removed immediately after standard punctuation removal. This function exists 
 #' primarily for easy removal of application specific punctuation not caught by
-#' the punctuation filter (although see also the \code{ucp} argument). This can
-#' in theory be used to remove any characters you don't want in the text for 
-#' some reason.  
+#' the punctuation filter (although see also the \code{ucp} argument to turn on
+#' a stronger punctuation filter). This can in theory be used to remove any 
+#' characters you don't want in the text for some reason. In practice what this
+#' function does is collapse the character vector to one string and put square
+#' brackets around it in order to make a pattern that can be matched and replaced
+#' with \code{gsub} at the punctuation removal stage.  If the custompunctuation
+#' vector is length 1 and the first element is a left square bracket, the function
+#' assumes that you have passed a regular expression and passes that directly
+#' along to \code{gsub}.
 #' @param v1 A logical which defaults to \code{FALSE}.  If set to \code{TRUE} it
 #' will use the ordering of operations we use used in Version 1.0 of the package.
 #' @return \item{documents}{A list containing the documents in the stm format.}
@@ -116,6 +122,13 @@
 #' vocab<-out$vocab
 #' meta <-out$meta
 #' }
+#' 
+#' #Example of custom punctuation removal.
+#' docs <- c("co)rr+ec→t")
+#' textProcessor(docs,custompunctuation=c(")","+","→"),
+#'               removepunctuation = FALSE)$vocab
+#' #note that the above should now say "correct"
+#'  
 #' @export
 textProcessor <- function(documents, metadata=NULL, 
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, 
@@ -165,8 +178,18 @@ textProcessor <- function(documents, metadata=NULL,
     }
     if(!is.null(custompunctuation)) {
       if(verbose) cat("Removing custom punctuation... \n")
+      
+      if(length(custompunctuation)==1 && 
+         substr(custompunctuation,0,1)=="[") {
+        #if there is only one entry and it starts with open bracket
+        #we are going to assume its a regular expression and let it
+        #through
+        punct_pattern <- custompunctuation
+      } else {
+        punct_pattern <-sprintf("[%s]",paste0(custompunctuation,collapse=""))
+      }
       txt<- tm::tm_map(txt, tm::content_transformer(function(x, pattern) gsub(pattern, "", x)), 
-                       custompunctuation)
+                       punct_pattern)
     }
   }
   if(removestopwords){
@@ -190,8 +213,18 @@ textProcessor <- function(documents, metadata=NULL,
     }
     if(!is.null(custompunctuation)) {
       if(verbose) cat("Removing custom punctuation... \n")
+      
+      if(length(custompunctuation)==1 && 
+         substr(custompunctuation,0,1)=="[") {
+        #if there is only one entry and it starts with open bracket
+        #we are going to assume its a regular expression and let it
+        #through
+        punct_pattern <- custompunctuation
+      } else {
+        punct_pattern <-sprintf("[%s]",paste0(custompunctuation,collapse=""))
+      }
       txt<- tm::tm_map(txt, tm::content_transformer(function(x, pattern) gsub(pattern, "", x)), 
-                       custompunctuation)
+                       punct_pattern)
     }
   }
   
