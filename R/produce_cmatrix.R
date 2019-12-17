@@ -29,7 +29,7 @@ produce_cmatrix <- function(prep, covariate, method,cov.value1=NULL,
                             cov.value2=NULL, npoints=100, moderator=NULL, moderator.value=NULL){
 
   #Find type of each variable
-  types <- lapply(prep$data, class)
+  types <- lapply(prep$data, function(x) class(x)[1])
   types <- unlist(types[prep$varlist]) 
   #switched the below out.
   #types <- sapply(prep$varlist,function (x) class(prep$data[,x]))

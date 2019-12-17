@@ -71,17 +71,17 @@ labelTopics <- function (model, topics=NULL, n = 7, frexweight=.5) {
     
     for(k in 1:K) {
       out$prob[[k]] <- vocab[problabels[1:n,k]]
-      if(class(frexlabels)=="try-error") {
+      if(inherits(frexlabels,"try-error")) {
         out$frex[[k]] <- "FREX encountered an error and failed to run"
       } else {
         out$frex[[k]] <- vocab[frexlabels[1:n,k]]        
       }
-      if(class(liftlabels)=="try-error") {
+      if(inherits(liftlabels,"try-error")) {
         out$lift[[k]] <- "Lift encountered an error and failed to run"
       } else {
         out$lift[[k]] <- vocab[liftlabels[1:n,k]]        
       }  
-      if(class(scorelabels)=="try-error") {
+      if(inherits(scorelabels,"try-error")) {
         out$lift[[k]] <- "Score encountered an error and failed to run"
       } else {
         out$score[[k]] <- vocab[scorelabels[1:n,k]]        

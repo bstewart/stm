@@ -38,7 +38,7 @@ cloud <- function(stmobj, topic=NULL, type=c("model", "documents"), documents,
   if(!requireNamespace("wordcloud", quietly=TRUE)) {
     stop("wordcloud package required to use this function.")
   } else {
-    if(class(stmobj)!="STM") stop("cloud function only works for STM models.  See wordcloud package for general tools.")
+    if(!inherits(stmobj,"STM")) stop("cloud function only works for STM models.  See wordcloud package for general tools.")
     if(length(topic)>1) stop("Please only select 1 topic.")
     mod <- stmobj
     type <- match.arg(type)

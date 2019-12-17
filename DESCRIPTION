@@ -1,12 +1,11 @@
 Package: stm
 Title: Estimation of the Structural Topic Model
-Version: 1.3.4
-Authors@R: as.person(c(
-    "Margaret Roberts <meroberts@ucsd.edu> [aut]", 
-    "Brandon Stewart <bms4@princeton.edu> [aut, cre]",
-    "Dustin Tingley <dtingley@gov.harvard.edu> [aut]",
-    "Kenneth Benoit <kbenoit@lse.ac.uk> [ctb]"
-  ))
+Version: 1.3.5
+Authors@R: c(
+    person("Margaret", "Roberts", email="meroberts@ucsd.edu", role="aut"),
+    person("Brandon", "Stewart", email="bms4@princeton.edu", role=c("aut","cre")),
+    person("Dustin", "Tingley", email="dtingley@gov.harvard.edu", role="aut"),
+    person("Kenneth","Benoit", email="kbenoit@lse.ac.uk", role="ctb"))
 Description: The Structural Topic Model (STM) allows researchers 
   to estimate topic models with document-level covariates. 
   The package also includes tools for model selection, visualization,

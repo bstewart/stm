@@ -1,7 +1,13 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.3.5}{
+\itemize{
+\item A small release to correct the class() issue in preparation for R 4.0.0.  Thanks to the R core team for clear directions.
+}
+}
 \section{Version 1.3.4}{
   \itemize{
+\item A small release to coincide with JSS vignette being posted.  Larger release to come soon hopefully.
 \item Hat tip to Wouter van Atteveldt for a pull request that fixed a problem in summary.estimateEffect
 \item Thanks to Brooks Ambrose for a great catch in the spectral algorithm that should increase memory efficiency and speed during initialization for large vocabulary models.
 \item Thanks to Elena Savelyeva for improvements to the toLDAVis function.

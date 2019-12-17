@@ -19,10 +19,10 @@
 #' @export
 findTopic <- function(x, list, n=20, type=c("prob", "frex", "lift","score"), verbose=TRUE) {
   type <- match.arg(type)
-  if(class(x)=="STM") {
+  if(inherits(x,"STM")) {
     x <- sageLabels(x, n=n)
   } else {
-    if(class(x)!="sageLabels") stop("x must be an STM or sageLabels object")
+    if(!inherits(x,"sageLabels")) stop("x must be an STM or sageLabels object")
   }
   counts <- apply(x$marginal[[type]],1, function(w) sum(list%in%w))
   if(max(counts)==0) {

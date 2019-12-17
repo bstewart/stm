@@ -283,10 +283,10 @@ tsneAnchor <- function(Qbar, verbose=TRUE, init.dims=50, perplexity=30) {
   proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,
                            initial_dims=init.dims,
                            perplexity=perplexity) , silent=TRUE)
-  if(class(proj)=="try-error") {
+  if(inherits(proj,"try-error")) {
     if(attr(proj, "condition")$message=="Perplexity is too large.") {
       rate <- 1
-      while(class(proj)=="try-error" && attr(proj, "condition")$message=="Perplexity is too large.") {
+      while(inherits(proj,"try-error") && attr(proj, "condition")$message=="Perplexity is too large.") {
         rate <- rate + 1
         if(verbose) cat(sprintf("\t tSNE failed because perplexity is too large. Using perplexity=%f \n \t", perplexity/rate))
         proj <- try(Rtsne::Rtsne(Xpca, pca=FALSE, dims=3,

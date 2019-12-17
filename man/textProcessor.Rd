@@ -152,8 +152,8 @@ meta <-out$meta
 }
 
 #Example of custom punctuation removal.
-docs <- c("co)rr+ec→t")
-textProcessor(docs,custompunctuation=c(")","+","→"),
+docs <- c("co.rr?ec!t")
+textProcessor(docs,custompunctuation=c(".","?","!"),
               removepunctuation = FALSE)$vocab
 #note that the above should now say "correct"
  

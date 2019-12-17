@@ -15,7 +15,7 @@ test_that("Test that stm works on a quanteda dfm", {
                         prevalence = ~treatment + s(pid_rep),
                         data = docvars(gadarian_corpus),
                         max.em.its=2)
-    expect_identical(class(stm_from_dfm), "STM")
+    expect_true(inherits(stm_from_dfm, "STM"))
   } else {
     #basically if the version is old, just skip this test for now.
     expect_identical("STM", "STM")
@@ -37,7 +37,7 @@ if(requireNamespace("tm",quietly=TRUE) & utils::packageVersion("tm")>=0.6) {
     stm_from_stmclassic <- 
       stm(docs, vocab, 3, prevalence = ~treatment + s(pid_rep), data = meta,
           max.em.its = 2)
-    expect_identical(class(stm_from_stmclassic), "STM")
+    expect_true(inherits(stm_from_stmclassic, "STM"))
   })
 }
 ## could add an additional test to compare the two outputs

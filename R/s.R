@@ -17,7 +17,7 @@
 #' @seealso \code{\link[splines]{bs}} \code{\link[splines]{ns}}
 #' @export
 s <- function(x, df, ...) {
-  if(class(x)=="Date") {
+  if(inherits(x,"Date")) {
     warning("A Date object coerced to numeric. 
             Converting variable in advance will stop this warning in the future.
             Postprocessing tools may not work with dates.")

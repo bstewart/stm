@@ -86,7 +86,7 @@ readLdac <- function(filename) {
 
 read.dtm <- function(dtm) {
   #test for and adjust for mispecification
-  if("simple_triplet_matrix" %in% class(dtm)) {
+  if(inherits(dtm,"simple_triplet_matrix")) {
     warning("Please use the slam option.  dtm is for dense matrices.")
     read.slam(dtm)
   }
@@ -110,7 +110,7 @@ read.dtm <- function(dtm) {
 read.slam <- function(corpus) {
   #convert a simple triplet matrix to list format.
   if(!inherits(corpus, "simple_triplet_matrix")) stop("corpus is not a simple triplet matrix")
-  if ("TermDocumentMatrix" %in% class(corpus)) {
+  if (inherits(corpus,"TermDocumentMatrix")) {
     non_empty_docs <- which(slam::col_sums(corpus) != 0)
     documents <- ijv.to.doc(corpus[,non_empty_docs]$j, corpus[,non_empty_docs]$i, corpus[,non_empty_docs]$v) 
     names(documents) <- corpus[,non_empty_docs]$dimnames$Docs

@@ -37,7 +37,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   
   # 2) Precalculate common components
   sigobj <- try(chol.default(sigma), silent=TRUE)
-  if(class(sigobj)=="try-error") {
+  if(inherits(sigobj,"try-error")) {
     sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
     siginv <- solve(sigma)
   } else {
