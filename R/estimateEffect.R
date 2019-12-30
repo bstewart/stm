@@ -1,3 +1,11 @@
+#' @importFrom generics tidy
+#' @export
+generics::tidy
+
+#' @importFrom generics glance
+#' @export
+generics::glance
+
 #' Estimates regressions using an STM object
 #' 
 #' Estimates a regression where documents are the units, the outcome is the
@@ -333,4 +341,42 @@ print.summary.estimateEffect <- function(x, digits = max(3L, getOption("digits")
     cat("\n")
   }
   invisible(x)
+}
+
+#' Tidy an object produced by `stm::estimateEffect`
+#'
+#' @importFrom generics tidy
+#' @param x An object returned by the `stm::estimateEffect` function
+#' @param ... extra arguments (not used)
+#' @return A data.frame with columns for topic numbers, coefficient names,
+#' standard errors, t statistics, and p-values
+#' @export
+tidy.estimateEffect <- function(x, ...) {
+    summ <- summary(x)
+    out <- list()
+    for (i in seq_along(summ$tables)) {
+        out[[i]] <- data.frame(topic = i,
+                               term = row.names(summ$tables[[i]]),
+                               estimate = summ$tables[[i]][, 1],
+                               std.error = summ$tables[[i]][, 2],
+                               statistic = summ$tables[[i]][, 3],
+                               p.value = summ$tables[[i]][, 4])
+    }
+    out <- do.call('rbind', out)
+    row.names(out) <- NULL
+    out
+}
+
+#' Glance at an object produced by `stm::estimateEffect`
+#'
+#' @importFrom generics glance
+#' @param x An object returned by the `stm::estimateEffect` function
+#' @param ... extra arguments (not used)
+#' @return A data.frame with one column per property of the estimateEffect object
+#' @export
+glance.estimateEffect <- function(x, ...) {
+    out <- data.frame(uncertainty = 'Global',
+                      nobs = nrow(x$modelframe),
+                      ntopics = length(x$topics))
+    out
 }

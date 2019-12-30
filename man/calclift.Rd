@@ -20,7 +20,7 @@ Lift is the calculated by dividing the topic-word distribution by the empirical
 word count probability distribution.  In other words the Lift for word v in topic
 k can be calculated as:
 
-\deqn{Lift = \beta_{k,v}/(w_v/\sum_v w_v)}{Lift = \beta/wbar}
+\deqn{Lift = \beta_{k,v}/(w_v/\sum_v w_v)}{Lift = \beta/wbar} 
 
 We include this after seeing it used effectively in Matt Taddy's work including his
 excellent \pkg{maptpx} package. Definitions are given in Taddy(2012).

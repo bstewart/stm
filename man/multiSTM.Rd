@@ -5,10 +5,18 @@
 \alias{print.MultimodDiagnostic}
 \title{Analyze Stability of Local STM Mode}
 \usage{
-multiSTM(mod.out = NULL, ref.model = NULL, align.global = FALSE,
-  mass.threshold = 1, reg.formula = NULL, metadata = NULL,
-  reg.nsims = 100, reg.parameter.index = 2, verbose = TRUE,
-  from.disk = FALSE)
+multiSTM(
+  mod.out = NULL,
+  ref.model = NULL,
+  align.global = FALSE,
+  mass.threshold = 1,
+  reg.formula = NULL,
+  metadata = NULL,
+  reg.nsims = 100,
+  reg.parameter.index = 2,
+  verbose = TRUE,
+  from.disk = FALSE
+)
 }
 \arguments{
 \item{mod.out}{The output of a \code{selectModel()} run. This is a list of

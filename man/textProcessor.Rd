@@ -7,12 +7,25 @@
 \alias{summary.textProcessor}
 \title{Process a vector of raw texts}
 \usage{
-textProcessor(documents, metadata = NULL, lowercase = TRUE,
-  removestopwords = TRUE, removenumbers = TRUE,
-  removepunctuation = TRUE, ucp = FALSE, stem = TRUE,
-  wordLengths = c(3, Inf), sparselevel = 1, language = "en",
-  verbose = TRUE, onlycharacter = FALSE, striphtml = FALSE,
-  customstopwords = NULL, custompunctuation = NULL, v1 = FALSE)
+textProcessor(
+  documents,
+  metadata = NULL,
+  lowercase = TRUE,
+  removestopwords = TRUE,
+  removenumbers = TRUE,
+  removepunctuation = TRUE,
+  ucp = FALSE,
+  stem = TRUE,
+  wordLengths = c(3, Inf),
+  sparselevel = 1,
+  language = "en",
+  verbose = TRUE,
+  onlycharacter = FALSE,
+  striphtml = FALSE,
+  customstopwords = NULL,
+  custompunctuation = NULL,
+  v1 = FALSE
+)
 }
 \arguments{
 \item{documents}{The documents to be processed.  A character vector where
@@ -112,7 +125,7 @@ This function is designed to provide a convenient and quick way to process a
 relatively small volume texts for analysis with the package. It is designed
 to quickly ingest data in a simple form like a spreadsheet where each
 document sits in a single cell. If you have texts more complicated than a 
-spreadsheet, we recommend you check out the excellent \pkg{readtext} package.
+spreadsheet, we recommend you check out the excellent \pkg{readtext} package. 
 
 The processor always strips extra white space but all other processing
 options are optional.  Stemming uses the snowball stemmers and supports a

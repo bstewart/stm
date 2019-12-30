@@ -24,7 +24,7 @@ FREX attempts to find words which are both frequent in and exclusive to a topic 
 Balancing these two traits is important as frequent words are often by themselves simply functional
 words necessary to discuss any topic.  While completely exclusive words can be so rare as to not
 be informative. This accords with a long-running trend in natural language processing which is best exemplified
-by the Term frequency-Inverse document frequency metric.
+by the Term frequency-Inverse document frequency metric.  
 
 Our notion of FREX comes from a paper by Bischof and Airoldi (2012) which proposed a Hierarchical
 Poisson Deconvolution model.  It relies on a known hierarchical structure in the documents and requires

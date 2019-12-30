@@ -5,8 +5,14 @@
 \title{Wrapper to create Json mapping for LDAvis. This can be useful in indirect render
 e.g. Shiny Dashboards}
 \usage{
-toLDAvisJson(mod, docs, R = 30, plot.opts = list(xlab = "PC1", ylab =
-  "PC2"), lambda.step = 0.1, reorder.topics = TRUE)
+toLDAvisJson(
+  mod,
+  docs,
+  R = 30,
+  plot.opts = list(xlab = "PC1", ylab = "PC2"),
+  lambda.step = 0.1,
+  reorder.topics = TRUE
+)
 }
 \arguments{
 \item{mod}{STM object. Output from stm function.}

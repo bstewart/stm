@@ -4,8 +4,7 @@
 \alias{plot.STMpermute}
 \title{Plot an STM permutation test.}
 \usage{
-\method{plot}{STMpermute}(x, topic, type = c("match", "largest"),
-  xlim = NULL, ylim = NULL, ...)
+\method{plot}{STMpermute}(x, topic, type = c("match", "largest"), xlim = NULL, ylim = NULL, ...)
 }
 \arguments{
 \item{x}{Object from the output of \code{\link{permutationTest}}.}

@@ -5,9 +5,15 @@
 \title{Plots semantic coherence and exclusivity for high likelihood models
 outputted from selectModel.}
 \usage{
-plotModels(models, xlab = "Semantic Coherence", ylab = "Exclusivity",
-  labels = 1:length(models$runout), pch = NULL,
-  legend.position = "topleft", ...)
+plotModels(
+  models,
+  xlab = "Semantic Coherence",
+  ylab = "Exclusivity",
+  labels = 1:length(models$runout),
+  pch = NULL,
+  legend.position = "topleft",
+  ...
+)
 }
 \arguments{
 \item{models}{Output from selectModel.}

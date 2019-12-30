@@ -4,8 +4,12 @@
 \alias{thetaPosterior}
 \title{Draw from Theta Posterior}
 \usage{
-thetaPosterior(model, nsims = 100, type = c("Global", "Local"),
-  documents = NULL)
+thetaPosterior(
+  model,
+  nsims = 100,
+  type = c("Global", "Local"),
+  documents = NULL
+)
 }
 \arguments{
 \item{model}{An \code{STM} object created by \code{\link{stm}}}

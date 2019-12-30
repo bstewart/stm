@@ -23,7 +23,7 @@ Calculate an exclusivity metric for an STM model.
 In Roberts et al 2014 we proposed using the Mimno et al 2011 \code{\link{semanticCoherence}} metric 
 for helping with topic model selection. We found that semantic coherence alone is relatively easy to
 achieve by having only a couple of topics which all are dominated by the most common words.  Thus we
-also proposed an exclusivity measure.
+also proposed an exclusivity measure.  
 
 Our exclusivity measure includes some information on word frequency as well.  It is based on the FREX
 labeling metric (\code{\link{calcfrex}}) with the weight set to .7 in favor of exclusivity by default.

@@ -4,8 +4,16 @@
 \alias{plotTopicLoess}
 \title{Plot some effects with loess}
 \usage{
-plotTopicLoess(model, topics, covariate, span = 1.5, level = 0.95,
-  main = "", xlab = "Covariate", ylab = "Topic Proportions")
+plotTopicLoess(
+  model,
+  topics,
+  covariate,
+  span = 1.5,
+  level = 0.95,
+  main = "",
+  xlab = "Covariate",
+  ylab = "Topic Proportions"
+)
 }
 \arguments{
 \item{model}{An STM model object}

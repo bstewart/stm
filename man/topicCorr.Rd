@@ -4,8 +4,7 @@
 \alias{topicCorr}
 \title{Estimate topic correlation}
 \usage{
-topicCorr(model, method = c("simple", "huge"), cutoff = 0.01,
-  verbose = TRUE)
+topicCorr(model, method = c("simple", "huge"), cutoff = 0.01, verbose = TRUE)
 }
 \arguments{
 \item{model}{An STM object for which you want to estimate correlations

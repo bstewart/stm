@@ -20,6 +20,7 @@ LinkingTo: Rcpp, RcppArmadillo
 Imports: 
   Rcpp (>= 0.11.3),
   data.table,
+  generics,
   glmnet,
   grDevices,
   graphics,
@@ -54,5 +55,5 @@ LazyData: yes
 License: MIT + file LICENSE
 URL: http://structuraltopicmodel.com 
 BugReports: https://github.com/bstewart/stm/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Language: en-US

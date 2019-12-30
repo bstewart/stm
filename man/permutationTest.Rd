@@ -4,9 +4,18 @@
 \alias{permutationTest}
 \title{Permutation test of a binary covariate.}
 \usage{
-permutationTest(formula, stmobj, treatment, nruns = 100, documents,
-  vocab, data, seed = NULL, stmverbose = TRUE,
-  uncertainty = "Global")
+permutationTest(
+  formula,
+  stmobj,
+  treatment,
+  nruns = 100,
+  documents,
+  vocab,
+  data,
+  seed = NULL,
+  stmverbose = TRUE,
+  uncertainty = "Global"
+)
 }
 \arguments{
 \item{formula}{A formula for the prevalence component of the \code{stm}

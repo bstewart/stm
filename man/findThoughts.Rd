@@ -6,8 +6,15 @@
 \alias{plot.findThoughts}
 \title{Find Thoughts}
 \usage{
-findThoughts(model, texts = NULL, topics = NULL, n = 3,
-  thresh = NULL, where = NULL, meta = NULL)
+findThoughts(
+  model,
+  texts = NULL,
+  topics = NULL,
+  n = 3,
+  thresh = NULL,
+  where = NULL,
+  meta = NULL
+)
 }
 \arguments{
 \item{model}{Model object created by \code{stm}.}

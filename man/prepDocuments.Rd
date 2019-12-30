@@ -4,8 +4,15 @@
 \alias{prepDocuments}
 \title{Prepare documents for analysis with \code{stm}}
 \usage{
-prepDocuments(documents, vocab, meta = NULL, lower.thresh = 1,
-  upper.thresh = Inf, subsample = NULL, verbose = TRUE)
+prepDocuments(
+  documents,
+  vocab,
+  meta = NULL,
+  lower.thresh = 1,
+  upper.thresh = Inf,
+  subsample = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{documents}{List of documents. For more on the format see

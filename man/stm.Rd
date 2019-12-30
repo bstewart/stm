@@ -4,13 +4,28 @@
 \alias{stm}
 \title{Variational EM for the Structural Topic Model}
 \usage{
-stm(documents, vocab, K, prevalence = NULL, content = NULL,
-  data = NULL, init.type = c("Spectral", "LDA", "Random", "Custom"),
-  seed = NULL, max.em.its = 500, emtol = 1e-05, verbose = TRUE,
-  reportevery = 5, LDAbeta = TRUE, interactions = TRUE,
-  ngroups = 1, model = NULL, gamma.prior = c("Pooled", "L1"),
-  sigma.prior = 0, kappa.prior = c("L1", "Jeffreys"),
-  control = list())
+stm(
+  documents,
+  vocab,
+  K,
+  prevalence = NULL,
+  content = NULL,
+  data = NULL,
+  init.type = c("Spectral", "LDA", "Random", "Custom"),
+  seed = NULL,
+  max.em.its = 500,
+  emtol = 1e-05,
+  verbose = TRUE,
+  reportevery = 5,
+  LDAbeta = TRUE,
+  interactions = TRUE,
+  ngroups = 1,
+  model = NULL,
+  gamma.prior = c("Pooled", "L1"),
+  sigma.prior = 0,
+  kappa.prior = c("L1", "Jeffreys"),
+  control = list()
+)
 }
 \arguments{
 \item{documents}{The document term matrix to be modeled. These can be supplied
@@ -266,6 +281,7 @@ number of topics, etc.).  Be sure to change the \code{max.em.its} argument
 or it will simply complete one additional iteration and stop.
 
 You can pass a custom initialization of the beta model parameters to \code{stm}.
+  
 
 The \code{control} argument is a list with named components which can be
 used to specify numerous additional computational details.  Valid components
