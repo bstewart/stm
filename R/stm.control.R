@@ -88,7 +88,10 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
         #run the model
         suffstats[[i]] <- estep(documents=gdocs, beta.index=gbetaindex,
                                 update.mu=(!is.null(mu$gamma)),
-                                beta$beta, glambda, gmu, sigma,
+                                beta$beta, glambda, gmu, sigma, 
+                                summation=settings$summation,
+                                randomize=settings$randomize$docs,
+                                method=settings$method,
                                 verbose)
         if(verbose) {
           msg <- sprintf("Completed Group %i E-Step (%d seconds). \n", i, floor((proc.time()-t1)[3]))
@@ -140,9 +143,9 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       suffstats <- estep(documents=documents, beta.index=betaindex,
                               update.mu=(!is.null(mu$gamma)),
                               beta$beta, lambda, mu$mu, sigma,
-                              order_sigma=settings$order$sigma, 
-                              order_beta=settings$order$beta, 
-                              randomize=settings$order$randomize,
+                              summation=settings$summation,
+                              randomize=settings$randomize$docs,
+                              method=settings$method,
                               verbose)
       randomizations <- rbind(randomizations, suffstats$vec)
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
@@ -156,12 +159,12 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       mu <- opt.mu(lambda=lambda, mode=settings$gamma$mode,
                    covar=settings$covariates$X, enet=settings$gamma$enet, ic.k=settings$gamma$ic.k,
                    maxits=settings$gamma$maxits)
-      if(settings$order$sigma) {
+      if(!settings$summation$reg) {
         sigma.ss <- sigma.ss[[1]] + sigma.ss[[2]]
       }
       sigma <- opt.sigma(nu=sigma.ss, lambda=lambda,
                          mu=mu$mu, sigprior=settings$sigma$prior)
-      if(settings$order$beta) {
+      if(!settings$summation$reg) {
         beta.ss <- lapply(beta.ss, function(x) x[[1]]+x[[2]])
       }
       beta <- opt.beta(beta.ss, beta$kappa, settings)

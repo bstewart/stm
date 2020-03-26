@@ -52,11 +52,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// n_mat_sumcpp
+SEXP n_mat_sumcpp(SEXP sum_, SEXP c_, SEXP input_, SEXP t_);
+RcppExport SEXP _stm_n_mat_sumcpp(SEXP sum_SEXP, SEXP c_SEXP, SEXP input_SEXP, SEXP t_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sum_(sum_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type c_(c_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type input_(input_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type t_(t_SEXP);
+    rcpp_result_gen = Rcpp::wrap(n_mat_sumcpp(sum_, c_, input_, t_));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stm_lhoodcpp", (DL_FUNC) &_stm_lhoodcpp, 5},
     {"_stm_gradcpp", (DL_FUNC) &_stm_gradcpp, 5},
     {"_stm_hpbcpp", (DL_FUNC) &_stm_hpbcpp, 6},
+    {"_stm_n_mat_sumcpp", (DL_FUNC) &_stm_n_mat_sumcpp, 4},
     {NULL, NULL, 0}
 };
 

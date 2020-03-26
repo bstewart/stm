@@ -571,7 +571,9 @@ stm <- function(documents, vocab, K,
                              s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
                              tSNE_init.dims=50, tSNE_perplexity=30), 
                    seed=seed,
-                   order=list(beta=FALSE, sigma=FALSE, randomize=FALSE),
+                   randomize=list(docs=FALSE),
+                   summation=list(neum_R=FALSE, neum_cpp=FALSE, reg=TRUE),
+                   method="BFGS",
                    ngroups=ngroups)
   if(init.type=="Spectral" & V > 10000) {
     settings$init$maxV <- 10000
@@ -612,7 +614,7 @@ stm <- function(documents, vocab, K,
                   "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
                   "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
-                  "order_beta","order_sigma","randomize")
+                  "neum_sum_R","neum_sum_cpp","rand_docs","method")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -656,14 +658,19 @@ stm <- function(documents, vocab, K,
         }
         settings$init$custom <- control[[i]]
       }
-      if(i=="order_beta") {
-        settings$order$beta <- control[[i]]
+      if(i=="neum_sum_R") {
+        settings$summation$neum_R <- control[[i]]
+        settings$summation$reg <- FALSE
       }
-      if(i=="order_sigma") {
-        settings$order$sigma <- control[[i]]
+      if(i=="neum_sum_cpp") {
+        settings$summation$neum_cpp <- control[[i]]
+        settings$summation$reg <- FALSE
       }
-      if(i=="randomize") {
-        settings$order$randomize <- control[[i]]
+      if(i=="rand_docs") {
+        settings$randomize$docs <- control[[i]]
+      }
+      if(i=="method") {
+        settings$method <- control[[i]]
       }
     }
   }

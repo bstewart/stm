@@ -16,7 +16,7 @@
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
                        beta, lambda.old, mu, sigma, 
-                       order_sigma, order_beta, randomize,
+                       summation, randomize, method,
                        verbose) {
   #quickly define useful constants
   V <- ncol(beta[[1]])
@@ -26,17 +26,27 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   ctevery <- ifelse(N>100, floor(N/100), 1)
   if(!update.mu) mu.i <- as.numeric(mu)
   # 1) Initialize Sufficient Statistics 
-  if(order_sigma) {
+  if(summation$neum_R) {
     sigma.ss <- n_mat_sum(diag(0, nrow=(K-1)))
+  } else if(summation$neum_cpp) {
+    sigma.ss <- list(sum = diag(0, nrow=(K-1)), c = diag(0, nrow=(K-1)))
+    tsigma <- diag(0, nrow=(K-1))
   } else {
     sigma.ss <- diag(0, nrow=(K-1))
   }
-  if(order_beta) {
+  if(summation$neum_R) {
     beta.ss <- vector(mode="list", length=A)
     for(i in 1:A) {
       beta.ss[[i]] <- n_mat_sum(matrix(0, nrow=K,ncol=V))
     }
-  } else {
+  } else if(summation$neum_cpp) {
+    beta.ss <- vector(mode="list", length=A)
+    for(i in 1:A) {
+      beta.ss[[i]] <- list(sum = matrix(0, nrow=K,ncol=V), c = matrix(0, nrow=K,ncol=V))
+    }
+    tbeta <- matrix(0, nrow=K, ncol=V)
+  }
+  else {
     beta.ss <- vector(mode="list", length=A)
     for(i in 1:A) {
       beta.ss[[i]] <- matrix(0, nrow=K,ncol=V)
@@ -74,20 +84,29 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     
     #infer the document
     doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
-                                  doc=doc, sigmaentropy=sigmaentropy)
+                                  doc=doc, sigmaentropy=sigmaentropy, method=method)
     
     # update sufficient statistics 
-    if(order_sigma) {
+    if(summation$neum_R) {
       sigma.ss <- n_mat_sum(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu)
+    } else if(summation$neum_cpp) {
+      sigma.ss <- n_mat_sumcpp(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu, tsigma)
     } else {
       sigma.ss <- sigma.ss + doc.results$eta$nu
     }
-    if(order_beta) {
+    if(summation$neum_R) {
       #more efficient than this would be to stack all the C's underneath
       #betas
       o_beta <- n_mat_sum(beta.ss[[aspect]][[1]][,words], 
                           beta.ss[[aspect]][[2]][,words], 
                           doc.results$phis)
+      beta.ss[[aspect]][[1]][,words] <- o_beta[[1]]
+      beta.ss[[aspect]][[2]][,words] <- o_beta[[2]]
+    } else if(summation$neum_cpp) {
+      o_beta <- n_mat_sumcpp(beta.ss[[aspect]][[1]][,words], 
+                             beta.ss[[aspect]][[2]][,words], 
+                             doc.results$phis,
+                             tbeta)
       beta.ss[[aspect]][[1]][,words] <- o_beta[[1]]
       beta.ss[[aspect]][[2]][,words] <- o_beta[[2]]
     } else {

@@ -13,3 +13,7 @@ hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
     .Call(`_stm_hpbcpp`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
 }
 
+n_mat_sumcpp <- function(sum_, c_, input_, t_) {
+    .Call(`_stm_n_mat_sumcpp`, sum_, c_, input_, t_)
+}
+
