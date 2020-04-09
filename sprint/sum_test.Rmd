@@ -1,0 +1,96 @@
+---
+title: "Matrix summation benchmarks for stm"
+output: html_notebook
+---
+
+# Initialize
+```{r}
+library(stm)
+library(pryr)
+library(microbenchmark)
+
+K=100
+V=1000
+#V=2632
+N=3
+#N=5000
+A=1
+
+sigma.ss <- list(sum = diag(0.0, nrow=(K-1)), c = diag(0.0, nrow=(K-1)))
+tsigma <- diag(0.0, nrow=(K-1))
+nu <- diag(0.333, nrow = (K-1))
+
+beta.ss <- vector(mode="list", length=A)
+for(i in 1:A) {
+  beta.ss[[i]] <- list(sum = matrix(0.0, nrow=K,ncol=V), c = matrix(0.0, nrow=K,ncol=V))
+}
+tbeta <- matrix(0.0, nrow=K, ncol=V)
+phi <- matrix(0.333, nrow=K, ncol=V)
+words <- sample.int(V, V/10)
+phi <- phi[,words]
+```
+
+# Test `n_beta_sumcpp` beta memory
+```{r}
+for(i in 1:N) {
+  cat(".")
+  before <- address(beta.ss)
+  stm:::n_beta_sumcpp(beta.ss[[1]][[1]], words, beta.ss[[1]][[2]], phi, tbeta)
+  after <- address(beta.ss)
+  if(before != after) {
+    cat("\nFailure! Memory locations are different!\n")
+    break
+  }
+}
+cat("\nSuccess! Memory location hasn't changed!")
+```
+
+# Test `n_sigma_sumcpp` sigma memory
+```{r}
+for(i in 1:N) {
+  cat(".")
+  before <- address(sigma.ss)
+  stm:::n_sigma_sumcpp(sigma.ss[[1]], sigma.ss[[2]], nu, tsigma)
+  after <- address(sigma.ss)
+  if(before != after) {
+    cat("\nFailure! Memory locations are different!\n")
+    break
+  }
+}
+cat("\nSuccess! Memory location hasn't changed!")
+```
+
+
+# Test `n_beta_sumcpp` beta output
+```{r}
+for(i in 1:N) {
+  print(beta.ss[[1]]$sum)
+  stm:::n_beta_sumcpp(beta.ss[[1]][[1]], words-1, beta.ss[[1]][[2]], phi, tbeta)
+}
+print(beta.ss$sum)
+```
+
+# Test `n_sigma_sumcpp` sigma output
+```{r}
+for(i in 1:N) {
+  print(sigma.ss$sum)
+  stm:::n_sigma_sumcpp(sigma.ss[[1]], sigma.ss[[2]], nu, tsigma)
+}
+print(sigma.ss$sum)
+```
+
+# Benchmarking beta summation
+```{r}
+b1 <- beta.ss
+b2 <- beta.ss
+bb <- microbenchmark(stm:::n_beta_sumcpp_at(b1[[1]][[1]], words-1, b1[[1]][[2]], phi, tbeta),
+stm:::n_beta_sumcpp_oneloop(b1[[1]][[1]], words-1, b1[[1]][[2]], phi), times=10000)
+bb
+all.equal(b1,b2)
+```
+
+# Benchmarking beta summation
+```{r}
+microbenchmark()
+```
+

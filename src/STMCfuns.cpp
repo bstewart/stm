@@ -226,8 +226,39 @@ SEXP n_mat_sumcpp(SEXP sum_, SEXP c_, SEXP input_, SEXP t_) {
    return Rcpp::List::create(Rcpp::Named("sum") = asum, Rcpp::Named("c") = ac);
 }
 
+
+/*void n_beta_sumcpp(SEXP sum_, arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
+   
+   Rcpp::NumericMatrix sum(sum_);
+   arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
+   
+   Rcpp::NumericMatrix c(c_);
+   arma::mat ac(c.begin(), c.nrow(), c.ncol(), false);
+   
+   Rcpp::NumericMatrix input(input_);
+   arma::mat ainput(input.begin(), input.nrow(), input.ncol(), false);
+   
+   Rcpp::NumericMatrix t(t_);
+   arma::mat at(t.begin(), t.nrow(), t.ncol(), false);
+   
+   at.cols(aw) = asum.cols(aw) + ainput;
+   
+   for(arma::uword j=0; j<aw.size(); ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i) {
+         double asum_ij = asum(i,aw[j]);
+         double ainp_ij = ainput(i,j);
+         double at_ij = at(i,aw[j]);
+         int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
+         int maskl = 1-maskg;
+         ac(i,aw[j]) += maskg*((stm:::n_beta_sumcpp_loop(beta.ss[[1]][[1]], words - 1, beta.ss[[1]][[2]], phi, tbeta)	asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
+      }
+   }
+   
+   asum.cols(aw) = at.cols(aw);
+}*/
+
 // [[Rcpp::export]]
-void n_beta_sumcpp(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
+void n_beta_sumcpp_loop(SEXP sum_, arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
    
    Rcpp::NumericMatrix sum(sum_);
    arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
@@ -243,8 +274,90 @@ void n_beta_sumcpp(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
    
    for(arma::uword j=0; j<aw.size(); ++j) {
       for(arma::uword i=0; i<asum.n_rows; ++i)
-         at(i,aw[j]) = asum(i,aw[j]) + ainput(i,j);
+         at.at(i,aw[j]) = asum.at(i,aw[j]) + ainput.at(i,j);
    }
+   
+   for(arma::uword j=0; j<aw.size(); ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i) {
+         double asum_ij = asum(i,aw[j]);
+         double ainp_ij = ainput(i,j);
+         double at_ij = at(i,aw[j]);
+         int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
+         int maskl = 1-maskg;
+         ac(i,aw[j]) += maskg*((asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
+      }
+   }
+   
+   asum.cols(aw) = at.cols(aw);
+}
+
+// [[Rcpp::export]]
+void n_beta_sumcpp_at(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
+   
+   Rcpp::NumericMatrix sum(sum_);
+   arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
+   
+   Rcpp::NumericMatrix c(c_);
+   arma::mat ac(c.begin(), c.nrow(), c.ncol(), false);
+   
+   Rcpp::NumericMatrix input(input_);
+   arma::mat ainput(input.begin(), input.nrow(), input.ncol(), false);
+   
+   Rcpp::NumericMatrix t(t_);
+   arma::mat at(t.begin(), t.nrow(), t.ncol(), false);
+   
+   for(arma::uword j=0; j<aw.size(); ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i)
+         at.at(i,aw[j]) = asum.at(i,aw[j]) + ainput.at(i,j);
+   }
+   
+   for(arma::uword j=0; j<aw.size(); ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i) {
+         double asum_ij = asum.at(i,aw[j]);
+         double ainp_ij = ainput.at(i,j);
+         double at_ij = at.at(i,aw[j]);
+         
+         int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
+         int maskl = 1-maskg;
+         ac.at(i,aw[j]) += maskg*((asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
+      }
+   }
+   
+   for(arma::uword j=0; j<aw.size(); ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i)
+         asum.at(i,aw[j]) = at.at(i,aw[j]);
+   }
+}
+
+// [[Rcpp::export]]
+void n_beta_sumcpp_oneloop(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_) {
+   
+   Rcpp::NumericMatrix sum(sum_);
+   arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
+   
+   Rcpp::NumericMatrix c(c_);
+   arma::mat ac(c.begin(), c.nrow(), c.ncol(), false);
+   
+   Rcpp::NumericMatrix input(input_);
+   arma::mat ainput(input.begin(), input.nrow(), input.ncol(), false);
+   
+   for(arma::uword j=0; j<aw.size(); ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i) {
+         double asum_ij = asum.at(i,aw[j]);
+         double ainp_ij = ainput.at(i,j);
+         double at_ij = asum.at(i,aw[j]) + ainput.at(i,j);
+         int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
+         int maskl = 1-maskg;
+         ac.at(i,aw[j]) += maskg*((asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
+         asum.at(i,aw[j]) = at_ij;
+      }
+   }
+}
+
+// [[Rcpp::export]]
+void n_beta_sumcpp_arma(arma::mat& asum,  arma::uvec& aw, arma::mat& ac, arma::mat& ainput, arma::mat& at) {
+   
+   at.cols(aw) = asum.cols(aw) + ainput;
    
    for(arma::uword j=0; j<aw.size(); ++j) {
       for(arma::uword i=0; i<asum.n_rows; ++i) {
@@ -282,6 +395,25 @@ void n_sigma_sumcpp(SEXP sum_, SEXP c_, SEXP input_, SEXP t_) {
          double asum_ij = asum(i,j);
          double ainp_ij = ainput(i,j);
          double at_ij = at(i,j);
+         int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
+         int maskl = 1-maskg;
+         ac.at(i,j) += maskg*((asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
+      }
+   }
+   
+   asum = at;
+}
+
+// [[Rcpp::export]]
+void n_sigma_sumcpp_opt(arma::mat asum, arma::mat ac, arma::mat ainput, arma::mat at) {
+   
+   at = asum + ainput;
+   
+   for(arma::uword j=0; j<asum.n_cols; ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i) {
+         double asum_ij = asum.at(i,j);
+         double ainp_ij = ainput.at(i,j);
+         double at_ij = at.at(i,j);
          int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
          int maskl = 1-maskg;
          ac.at(i,j) += maskg*((asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
