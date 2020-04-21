@@ -227,6 +227,31 @@ SEXP n_mat_sumcpp(SEXP sum_, SEXP c_, SEXP input_, SEXP t_) {
 }
 
 
+// [[Rcpp::export]]
+void n_beta_sumcpp(SEXP sum_, const arma::uvec& aw, SEXP c_, SEXP input_) {
+   
+   Rcpp::NumericMatrix sum(sum_);
+   arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
+   
+   Rcpp::NumericMatrix c(c_);
+   arma::mat ac(c.begin(), c.nrow(), c.ncol(), false);
+   
+   Rcpp::NumericMatrix input(input_);
+   arma::mat ainput(input.begin(), input.nrow(), input.ncol(), false);
+   
+   for(arma::uword j=0; j<aw.size(); ++j) {
+      for(arma::uword i=0; i<asum.n_rows; ++i) {
+         double asum_ij = asum.at(i,aw[j]);
+         double ainp_ij = ainput.at(i,j);
+         double at_ij = asum.at(i,aw[j]) + ainput.at(i,j);
+         int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
+         int maskl = 1-maskg;
+         ac.at(i,aw[j]) += maskg*((asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
+         asum.at(i,aw[j]) = at_ij;
+      }
+   }
+}
+
 /*void n_beta_sumcpp(SEXP sum_, arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
    
    Rcpp::NumericMatrix sum(sum_);
@@ -258,7 +283,7 @@ SEXP n_mat_sumcpp(SEXP sum_, SEXP c_, SEXP input_, SEXP t_) {
 }*/
 
 // [[Rcpp::export]]
-void n_beta_sumcpp_loop(SEXP sum_, arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
+void n_beta_sumcpp_loop(SEXP sum_, const arma::uvec& aw, SEXP c_, SEXP input_, SEXP t_) {
    
    Rcpp::NumericMatrix sum(sum_);
    arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
@@ -292,7 +317,7 @@ void n_beta_sumcpp_loop(SEXP sum_, arma::uvec aw, SEXP c_, SEXP input_, SEXP t_)
 }
 
 // [[Rcpp::export]]
-void n_beta_sumcpp_at(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
+void n_beta_sumcpp_at(SEXP sum_,  const arma::uvec& aw, SEXP c_, SEXP input_, SEXP t_) {
    
    Rcpp::NumericMatrix sum(sum_);
    arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
@@ -330,7 +355,7 @@ void n_beta_sumcpp_at(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) 
 }
 
 // [[Rcpp::export]]
-void n_beta_sumcpp_oneloop(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_) {
+void n_beta_sumcpp_oneloop(SEXP sum_, const arma::uvec& aw, SEXP c_, SEXP input_) {
    
    Rcpp::NumericMatrix sum(sum_);
    arma::mat asum(sum.begin(), sum.nrow(), sum.ncol(), false); 
@@ -355,7 +380,7 @@ void n_beta_sumcpp_oneloop(SEXP sum_,  arma::uvec aw, SEXP c_, SEXP input_) {
 }
 
 // [[Rcpp::export]]
-void n_beta_sumcpp_arma(arma::mat& asum,  arma::uvec& aw, arma::mat& ac, arma::mat& ainput, arma::mat& at) {
+void n_beta_sumcpp_arma(arma::mat& asum,  const arma::uvec& aw, arma::mat& ac, arma::mat& ainput, arma::mat& at) {
    
    at.cols(aw) = asum.cols(aw) + ainput;
    
@@ -405,7 +430,7 @@ void n_sigma_sumcpp(SEXP sum_, SEXP c_, SEXP input_, SEXP t_) {
 }
 
 // [[Rcpp::export]]
-void n_sigma_sumcpp_opt(arma::mat asum, arma::mat ac, arma::mat ainput, arma::mat at) {
+void n_sigma_sumcpp_opt(arma::mat& asum, arma::mat& ac, arma::mat& ainput, arma::mat& at) {
    
    at = asum + ainput;
    
