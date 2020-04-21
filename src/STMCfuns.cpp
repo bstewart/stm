@@ -239,15 +239,14 @@ void n_beta_sumcpp(SEXP sum_, const arma::uvec& aw, SEXP c_, SEXP input_) {
    Rcpp::NumericMatrix input(input_);
    arma::mat ainput(input.begin(), input.nrow(), input.ncol(), false);
    
-   for(arma::uword j=0; j<aw.size(); ++j) {
+   for(arma::uword j=0; j<aw.size(); ++j) { 
+      unsigned int k = aw[j];
       for(arma::uword i=0; i<asum.n_rows; ++i) {
-         double asum_ij = asum.at(i,aw[j]);
+         double asum_ij = asum.at(i,k);
          double ainp_ij = ainput.at(i,j);
-         double at_ij = asum.at(i,aw[j]) + ainput.at(i,j);
+         double at_ij = asum.at(i,k) = asum_ij + ainp_ij;
          int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
-         int maskl = 1-maskg;
-         ac.at(i,aw[j]) += maskg*((asum_ij - at_ij) + ainp_ij) + maskl*((ainp_ij - at_ij) + asum_ij);
-         asum.at(i,aw[j]) = at_ij;
+         ac.at(i,k) += maskg*((asum_ij - at_ij) + ainp_ij) + (1-maskg)*((ainp_ij - at_ij) + asum_ij);
       }
    }
 }
