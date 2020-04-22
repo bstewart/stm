@@ -1,8 +1,6 @@
+#include <cmath>
 // [[Rcpp::depends(RcppArmadillo)]]
-
 #include "RcppArmadillo.h"
-
-// [[Rcpp::depends(RcppArmadillo)]]
 
 // [[Rcpp::export]]
 double lhoodcpp(SEXP eta,
@@ -245,7 +243,7 @@ void n_beta_sumcpp(SEXP sum_, const arma::uvec& aw, SEXP c_, SEXP input_) {
          double asum_ij = asum.at(i,k);
          double ainp_ij = ainput.at(i,j);
          double at_ij = asum.at(i,k) = asum_ij + ainp_ij;
-         int maskg = (std::abs(asum_ij) >= std::abs(ainp_ij));
+         int maskg = (fabs(asum_ij) >= fabs(ainp_ij));
          ac.at(i,k) += maskg*((asum_ij - at_ij) + ainp_ij) + (1-maskg)*((ainp_ij - at_ij) + asum_ij);
       }
    }
