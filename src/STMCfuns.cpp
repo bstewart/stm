@@ -249,6 +249,31 @@ void n_beta_sumcpp(SEXP sum_, const arma::uvec& aw, SEXP c_, SEXP input_) {
    }
 }
 
+
+// [[Rcpp::export]]
+void n_beta_comb_sumcpp(SEXP sumc_, const arma::uvec& aw, SEXP input_) {
+   
+   Rcpp::NumericMatrix sumc(sumc_);
+   arma::mat asumc(sumc.begin(), sumc.nrow(), sumc.ncol(), false); 
+   
+   Rcpp::NumericMatrix input(input_);
+   arma::mat ainput(input.begin(), input.nrow(), input.ncol(), false);
+   
+   for(arma::uword j=0; j<aw.size(); ++j) { 
+      unsigned int k = aw[j];
+      unsigned int idx =0;
+      for(arma::uword i=0; i<asumc.n_rows; i+=2) {
+         double asum_ij = asumc.at(i,k);
+         double ainp_ij = ainput.at(idx,j);
+         double at_ij = asumc.at(i,k) = asum_ij + ainp_ij;
+         int maskg = (fabs(asum_ij) >= fabs(ainp_ij));
+         asumc.at(i+1,k) += maskg*((asum_ij - at_ij) + ainp_ij) + (1-maskg)*((ainp_ij - at_ij) + asum_ij);
+         ++idx;
+      }
+   }
+}
+
+
 /*void n_beta_sumcpp(SEXP sum_, arma::uvec aw, SEXP c_, SEXP input_, SEXP t_) {
    
    Rcpp::NumericMatrix sum(sum_);

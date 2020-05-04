@@ -79,6 +79,18 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// n_beta_comb_sumcpp
+void n_beta_comb_sumcpp(SEXP sumc_, const arma::uvec& aw, SEXP input_);
+RcppExport SEXP _stm_n_beta_comb_sumcpp(SEXP sumc_SEXP, SEXP awSEXP, SEXP input_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sumc_(sumc_SEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type aw(awSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type input_(input_SEXP);
+    n_beta_comb_sumcpp(sumc_, aw, input_);
+    return R_NilValue;
+END_RCPP
+}
 // n_beta_sumcpp_loop
 void n_beta_sumcpp_loop(SEXP sum_, const arma::uvec& aw, SEXP c_, SEXP input_, SEXP t_);
 RcppExport SEXP _stm_n_beta_sumcpp_loop(SEXP sum_SEXP, SEXP awSEXP, SEXP c_SEXP, SEXP input_SEXP, SEXP t_SEXP) {
@@ -167,6 +179,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_stm_hpbcpp", (DL_FUNC) &_stm_hpbcpp, 6},
     {"_stm_n_mat_sumcpp", (DL_FUNC) &_stm_n_mat_sumcpp, 4},
     {"_stm_n_beta_sumcpp", (DL_FUNC) &_stm_n_beta_sumcpp, 4},
+    {"_stm_n_beta_comb_sumcpp", (DL_FUNC) &_stm_n_beta_comb_sumcpp, 3},
     {"_stm_n_beta_sumcpp_loop", (DL_FUNC) &_stm_n_beta_sumcpp_loop, 5},
     {"_stm_n_beta_sumcpp_at", (DL_FUNC) &_stm_n_beta_sumcpp_at, 5},
     {"_stm_n_beta_sumcpp_oneloop", (DL_FUNC) &_stm_n_beta_sumcpp_oneloop, 4},

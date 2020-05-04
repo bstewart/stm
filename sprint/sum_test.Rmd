@@ -9,8 +9,8 @@ library(stm)
 library(pryr)
 library(microbenchmark)
 
-K=100
-V=1000
+K=3
+V=4
 #V=2632
 N=3
 #N=5000
@@ -27,7 +27,9 @@ for(i in 1:A) {
 beta.ss[[1]]$sum[2,2] = 10000
 tbeta <- matrix(0.0, nrow=K, ncol=V)
 phi <- matrix(0.333, nrow=K, ncol=V)
-words <- sample.int(V, V/10)
+print(phi)
+words <- sample.int(V, V/2)
+print(words)
 phi <- phi[,words]
 ```
 
@@ -36,7 +38,7 @@ phi <- phi[,words]
 for(i in 1:N) {
   cat(".")
   before <- address(beta.ss)
-  stm:::n_beta_sumcpp(beta.ss[[1]][[1]], words, beta.ss[[1]][[2]], phi, tbeta)
+  stm:::n_beta_sumcpp(beta.ss[[1]][[1]], words, beta.ss[[1]][[2]], phi)
   after <- address(beta.ss)
   if(before != after) {
     cat("\nFailure! Memory locations are different!\n")
@@ -64,6 +66,33 @@ if(before == after) {
   cat("\nSuccess! Memory location hasn't changed!")
 }
 ```
+
+# Test `n_beta_comb_sumcpp` beta output
+
+```{r}
+# Create sumc mtx
+sumc <- matrix(0.0, nrow=2*K,ncol=V)
+for(j in 1:ncol(sumc)) {
+  sidx = 1
+  cidx = 1
+  for(k in 1:nrow(sumc)) {
+    if(k%%2==1) {
+      sumc[k,j] = beta.ss[[1]]$sum[sidx,j]
+      sidx = sidx + 1
+    } else {
+      sumc[k,j] = beta.ss[[1]]$c[cidx,j]
+      cidx = cidx + 1 
+    }
+  }
+}
+
+print(sumc)
+for(i in 1:N) {
+  stm:::n_beta_comb_sumcpp(sumc, words-1, phi)
+}
+print(sumc)
+```
+
 
 
 # Test `n_beta_sumcpp` beta output

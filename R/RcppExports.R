@@ -21,6 +21,10 @@ n_beta_sumcpp <- function(sum_, aw, c_, input_) {
     invisible(.Call(`_stm_n_beta_sumcpp`, sum_, aw, c_, input_))
 }
 
+n_beta_comb_sumcpp <- function(sumc_, aw, input_) {
+    invisible(.Call(`_stm_n_beta_comb_sumcpp`, sumc_, aw, input_))
+}
+
 n_beta_sumcpp_loop <- function(sum_, aw, c_, input_, t_) {
     invisible(.Call(`_stm_n_beta_sumcpp_loop`, sum_, aw, c_, input_, t_))
 }
