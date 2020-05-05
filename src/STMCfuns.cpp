@@ -2,6 +2,8 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include "RcppArmadillo.h"
 
+#define is_aligned(POINTER, BYTE_COUNT) (((uintptr_t)(const void *)(POINTER)) % (BYTE_COUNT) == 0)
+
 // [[Rcpp::export]]
 double lhoodcpp(SEXP eta,
                    SEXP beta,
@@ -258,17 +260,21 @@ void n_beta_comb_sumcpp(SEXP sumc_, const arma::uvec& aw, SEXP input_) {
    
    Rcpp::NumericMatrix input(input_);
    arma::mat ainput(input.begin(), input.nrow(), input.ncol(), false);
+    
+   // std::cout<<is_aligned(ainput.memptr(), 8)<<", "<<is_aligned(asumc.memptr(), 8)<<", ";
+   // if(!is_aligned(ainput.memptr(), 8) || !is_aligned(asumc.memptr(), 8))
+   //    std::cout<<"Unaligned Memory! ";
    
    for(arma::uword j=0; j<aw.size(); ++j) { 
       unsigned int k = aw[j];
       unsigned int idx =0;
       for(arma::uword i=0; i<asumc.n_rows; i+=2) {
-         double asum_ij = asumc.at(i,k);
          double ainp_ij = ainput.at(idx,j);
+         ++idx;
+         double asum_ij = asumc.at(i,k);
          double at_ij = asumc.at(i,k) = asum_ij + ainp_ij;
          int maskg = (fabs(asum_ij) >= fabs(ainp_ij));
          asumc.at(i+1,k) += maskg*((asum_ij - at_ij) + ainp_ij) + (1-maskg)*((ainp_ij - at_ij) + asum_ij);
-         ++idx;
       }
    }
 }
