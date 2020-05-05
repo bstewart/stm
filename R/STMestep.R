@@ -73,6 +73,9 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   } else {
     vec <- 1:N
   }
+  #MGY
+  sumc <- rowMergeMtx(beta.ss[[1]][[1]], beta.ss[[1]][[2]])
+  #MGY
   for(i in vec) {
     #update components
     doc <- documents[[i]]
@@ -104,7 +107,8 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
       beta.ss[[aspect]][[2]][,words] <- o_beta[[2]]
     } else if(summation$neum_cpp) {
       #n_beta_sumcpp(beta.ss[[aspect]][[1]], words-1, beta.ss[[aspect]][[2]], doc.results$phis, tbeta)
-      n_beta_sumcpp(beta.ss[[aspect]][[1]], words-1, beta.ss[[aspect]][[2]], doc.results$phis)
+      #n_beta_sumcpp(beta.ss[[aspect]][[1]], words-1, beta.ss[[aspect]][[2]], doc.results$phis)
+      n_beta_comb_sumcpp(sumc, words-1, doc.results$phis)
     } else {
       beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     }
@@ -116,6 +120,11 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   
   #4) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)
+  #MGY
+  sumc <- rowSplitMtx(sumc)
+  beta.ss[[1]][[1]] <- sumc$top
+  beta.ss[[1]][[2]] <- sumc$bottom
+  #MGY
   return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda,
               vec=vec))
 }
