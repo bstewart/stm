@@ -5,8 +5,8 @@ lhoodcpp <- function(eta, beta, doc_ct, mu, siginv) {
     .Call(`_stm_lhoodcpp`, eta, beta, doc_ct, mu, siginv)
 }
 
-gradcpp <- function(eta, beta, doc_ct, mu, siginv) {
-    .Call(`_stm_gradcpp`, eta, beta, doc_ct, mu, siginv)
+gradcpp <- function(eta, beta, doc_cts, mu, siginv) {
+    .Call(`_stm_gradcpp`, eta, beta, doc_cts, mu, siginv)
 }
 
 hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {

@@ -39,7 +39,7 @@ double lhoodcpp(SEXP eta,
 // [[Rcpp::export]]
 arma::vec gradcpp(SEXP eta,
                    SEXP beta,
-                   SEXP doc_ct,
+                   const arma::uvec& doc_cts,
                    SEXP mu,
                    SEXP siginv){
    
@@ -47,8 +47,6 @@ arma::vec gradcpp(SEXP eta,
    arma::vec etas(etav.begin(), etav.size(), false);
    Rcpp::NumericMatrix betam(beta);
    arma::mat betas(betam.begin(), betam.nrow(), betam.ncol());
-   Rcpp::NumericVector doc_ctv(doc_ct);
-   arma::vec doc_cts(doc_ctv.begin(), doc_ctv.size(), false);
    Rcpp::NumericVector muv(mu);
    arma::vec mus(muv.begin(), muv.size(), false);
    Rcpp::NumericMatrix siginvm(siginv);
