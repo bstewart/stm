@@ -474,9 +474,9 @@ stm <- function(documents, vocab, K,
       termobj <- terms(x, data=data)
       if(attr(termobj, "response")==1) stop("Response variables should not be included in prevalence formula.")
       xmat <- try(Matrix::sparse.model.matrix(termobj,data=data),silent=TRUE)
-      if(class(xmat)=="try-error") {
+      if(inherits(xmat,"try-error")) {
         xmat <- try(stats::model.matrix(termobj, data=data), silent=TRUE)
-        if(class(xmat)=="try-error") {
+        if(inherits(xmat,"try-error")) {
                  stop("Error creating model matrix.
                  This could be caused by many things including
                  explicit calls to a namespace within the formula.

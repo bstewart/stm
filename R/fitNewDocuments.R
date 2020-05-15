@@ -263,7 +263,7 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
   #####
   #precompute terms for the loop over documents
   sigobj <- try(chol.default(sigma), silent=TRUE)
-  if(class(sigobj)=="try-error") {
+  if(inherits(sigobj,"try-error")) {
     sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
     siginv <- solve(sigma)
   } else {
@@ -283,7 +283,7 @@ fitNewDocuments <- function(model=NULL, documents=NULL, newData=NULL,
     aspect <- betaindex[i]
     init <- rep(0, K-1)
     #deal with the special case of mu as a vector.
-    if(class(mu)!="numeric") {
+    if(!inherits(mu,"numeric")) {
       mu.i <- mu[,i]
     } else {
       mu.i <- mu 

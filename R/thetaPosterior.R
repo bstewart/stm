@@ -131,7 +131,7 @@ thetapost.local <- function(model, documents, nsims) {
     doc.beta <-   beta[[betaindex[i]]][,documents[[i]][1,], drop=FALSE]
     hess <- ln.hess(eta, theta, doc.beta, doc.ct, siginv)    
     nu <- try(chol2inv(chol.default(hess)),silent=TRUE)
-    if(class(nu)=="try-error") {
+    if(inherits(nu,"try-error")) {
     
       # if it failed we try tightening by taking a BFGS step
       if (NCOL(mu) == 1) mu.i <- mu else mu.i <- mu[,i]
@@ -144,7 +144,7 @@ thetapost.local <- function(model, documents, nsims) {
       theta <- softmax(c(eta,0))
       hess <- ln.hess(eta, theta, doc.beta, doc.ct, siginv) 
       nu <- try(chol2inv(chol.default(hess)),silent=TRUE)
-      if(class(nu)=="try-error") {
+      if(inherits(nu,"try-error")) {
       
         #oh man, it failed again?  Well now we try some really expensive newton optimization
         newton.out <- newton(eta, doc.ct, mu.i, siginv, doc.beta, hess, max.its=1000)
@@ -197,7 +197,7 @@ newton <- function(eta, doc.ct, mu, siginv, beta,
     theta <- expeta/sum(expeta)
     hess <- ln.hess(eta, theta, beta, doc.ct, siginv) 
     nu <- try(chol2inv(chol.default(hess)), silent=TRUE)
-    if(class(nu)!="try-error") {
+    if(!inherits(nu,"try-error")) {
       break
     } else {
       its <- its + 1

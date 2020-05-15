@@ -103,7 +103,7 @@ optimizeDocument <- function(document, eta, mu, beta, sigma=NULL,
   
   if(!is.null(sigma)) {
     sigobj <- try(chol.default(sigma), silent=TRUE)
-    if(class(sigobj)=="try-error") {
+    if(inherits(sigobj,"try-error")) {
       sigmaentropy <- (.5*determinant(sigma, logarithm=TRUE)$modulus[1])
       siginv <- solve(sigma)
     } else {

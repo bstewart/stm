@@ -87,7 +87,7 @@ prepDocuments <- function(documents, vocab, meta=NULL,
   if((is.null(documents)|is.null(vocab))){
     stop("One of your file inputs has no data")
   }
-  if(class(documents)!="list") {
+  if(!inherits(documents,"list")) {
     stop("documents must be a list in stm() format.  See ?stm() for format.  
           See ?readCorpus() for tools for converting from popular formats")
   }

@@ -82,7 +82,7 @@ findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=NULL,
   theta <- model$theta
   if(is.null(topics)) topics <- 1:ncol(theta)
   if(!is.null(texts) && length(texts)!=nrow(theta)) stop("Number of provided texts and number of documents modeled do not match")
-  if(!is.null(texts) && class(texts)=="list" && class(texts[[1]])=="matrix") stop("It looks like you are trying to pass the numeric documents object. \n The texts argument wants a vector of characters that contain the actual text of the documents.")
+  if(!is.null(texts) && inherits(texts,"list") && inherits(texts[[1]],"matrix")) stop("It looks like you are trying to pass the numeric documents object. \n The texts argument wants a vector of characters that contain the actual text of the documents.")
   #since we are allowing n to be infinity have to recode if its too high.
   if(n > nrow(theta)) n <- nrow(theta)
   if(n < 1) stop("Must request at least one returned document.")
