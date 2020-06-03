@@ -88,7 +88,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     if(summation$neum_R) {
       sigma.ss <- n_mat_sum(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu)
     } else if(summation$neum_cpp) {
-      n_sigma_comb_sumcpp(sigma.ss, doc.results$eta$nu)
+      n_sigma_sumcpp(sigma.ss, doc.results$eta$nu)
     } else {
       sigma.ss <- sigma.ss + doc.results$eta$nu
     }
@@ -101,7 +101,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
       beta.ss[[aspect]][[1]][,words] <- o_beta[[1]]
       beta.ss[[aspect]][[2]][,words] <- o_beta[[2]]
     } else if(summation$neum_cpp) {
-      n_beta_comb_sumcpp(beta.ss[[aspect]], words-1, doc.results$phis)
+      n_beta_sumcpp(beta.ss[[aspect]], words-1, doc.results$phis)
     } else {
       beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     }
