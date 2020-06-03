@@ -29,8 +29,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   if(summation$neum_R) {
     sigma.ss <- n_mat_sum(diag(0, nrow=(K-1)))
   } else if(summation$neum_cpp) {
-    sigma.ss <- list(sum = diag(0, nrow=(K-1)), c = diag(0, nrow=(K-1)))
-    tsigma <- diag(0, nrow=(K-1))
+    sigma.ss <- matrix(0, nrow=2*(K-1), ncol=K-1)
   } else {
     sigma.ss <- diag(0, nrow=(K-1))
   }
@@ -42,9 +41,8 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   } else if(summation$neum_cpp) {
     beta.ss <- vector(mode="list", length=A)
     for(i in 1:A) {
-      beta.ss[[i]] <- list(sum = matrix(0, nrow=K,ncol=V), c = matrix(0, nrow=K,ncol=V))
+      beta.ss[[i]] <- matrix(0, nrow=2*K,ncol=V)
     }
-    tbeta <- matrix(0, nrow=K, ncol=V)
   }
   else {
     beta.ss <- vector(mode="list", length=A)
@@ -73,9 +71,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   } else {
     vec <- 1:N
   }
-  #MGY
-  sumc <- rowMergeMtx(beta.ss[[1]][[1]], beta.ss[[1]][[2]])
-  #MGY
+
   for(i in vec) {
     #update components
     doc <- documents[[i]]
@@ -86,14 +82,13 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     beta.i <- beta[[aspect]][,words,drop=FALSE]
     
     #infer the document
-    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
-                                  doc=doc, sigmaentropy=sigmaentropy, method=method)
+    doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, doc=doc, sigmaentropy=sigmaentropy, method=method)
     
     # update sufficient statistics 
     if(summation$neum_R) {
       sigma.ss <- n_mat_sum(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu)
     } else if(summation$neum_cpp) {
-      n_sigma_sumcpp(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu, tsigma)
+      n_sigma_comb_sumcpp(sigma.ss, doc.results$eta$nu)
     } else {
       sigma.ss <- sigma.ss + doc.results$eta$nu
     }
@@ -106,9 +101,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
       beta.ss[[aspect]][[1]][,words] <- o_beta[[1]]
       beta.ss[[aspect]][[2]][,words] <- o_beta[[2]]
     } else if(summation$neum_cpp) {
-      #n_beta_sumcpp(beta.ss[[aspect]][[1]], words-1, beta.ss[[aspect]][[2]], doc.results$phis, tbeta)
-      #n_beta_sumcpp(beta.ss[[aspect]][[1]], words-1, beta.ss[[aspect]][[2]], doc.results$phis)
-      n_beta_comb_sumcpp(sumc, words-1, doc.results$phis)
+      n_beta_comb_sumcpp(beta.ss[[aspect]], words-1, doc.results$phis)
     } else {
       beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
     }
@@ -120,11 +113,9 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   
   #4) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)
-  #MGY
-  sumc <- rowSplitMtx(sumc)
-  beta.ss[[1]][[1]] <- sumc$top
-  beta.ss[[1]][[2]] <- sumc$bottom
-  #MGY
-  return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda,
-              vec=vec))
+  if(summation$neum_cpp) {
+    sigma.ss <- matrix((t(bdiag(rep(list(matrix(c(1,1,0,1), nrow=2, ncol=2)), as.integer(nrow(sigma.ss)/2)))) %*% sigma.ss)[-seq(0, nrow(sigma.ss), 2),], nrow=as.integer(nrow(sigma.ss)/2), ncol=ncol(sigma.ss))
+    beta.ss <- lapply(beta.ss, function(x) matrix((t(bdiag(rep(list(matrix(c(1,1,0,1), nrow=2, ncol=2)), as.integer(nrow(x)/2)))) %*% x)[-seq(0, nrow(x), 2),], nrow=as.integer(nrow(x)/2), ncol=ncol(x)))
+  }
+  return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda, vec=vec))
 }

@@ -146,6 +146,17 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// n_sigma_comb_sumcpp
+void n_sigma_comb_sumcpp(SEXP sumc_, SEXP input_);
+RcppExport SEXP _stm_n_sigma_comb_sumcpp(SEXP sumc_SEXP, SEXP input_SEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sumc_(sumc_SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type input_(input_SEXP);
+    n_sigma_comb_sumcpp(sumc_, input_);
+    return R_NilValue;
+END_RCPP
+}
 // n_sigma_sumcpp
 void n_sigma_sumcpp(SEXP sum_, SEXP c_, SEXP input_, SEXP t_);
 RcppExport SEXP _stm_n_sigma_sumcpp(SEXP sum_SEXP, SEXP c_SEXP, SEXP input_SEXP, SEXP t_SEXP) {
@@ -184,6 +195,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_stm_n_beta_sumcpp_at", (DL_FUNC) &_stm_n_beta_sumcpp_at, 5},
     {"_stm_n_beta_sumcpp_oneloop", (DL_FUNC) &_stm_n_beta_sumcpp_oneloop, 4},
     {"_stm_n_beta_sumcpp_arma", (DL_FUNC) &_stm_n_beta_sumcpp_arma, 5},
+    {"_stm_n_sigma_comb_sumcpp", (DL_FUNC) &_stm_n_sigma_comb_sumcpp, 2},
     {"_stm_n_sigma_sumcpp", (DL_FUNC) &_stm_n_sigma_sumcpp, 4},
     {"_stm_n_sigma_sumcpp_opt", (DL_FUNC) &_stm_n_sigma_sumcpp_opt, 4},
     {NULL, NULL, 0}

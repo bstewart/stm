@@ -41,6 +41,10 @@ n_beta_sumcpp_arma <- function(asum, aw, ac, ainput, at) {
     invisible(.Call(`_stm_n_beta_sumcpp_arma`, asum, aw, ac, ainput, at))
 }
 
+n_sigma_comb_sumcpp <- function(sumc_, input_) {
+    invisible(.Call(`_stm_n_sigma_comb_sumcpp`, sumc_, input_))
+}
+
 n_sigma_sumcpp <- function(sum_, c_, input_, t_) {
     invisible(.Call(`_stm_n_sigma_sumcpp`, sum_, c_, input_, t_))
 }
