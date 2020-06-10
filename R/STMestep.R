@@ -71,7 +71,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   } else {
     vec <- 1:N
   }
-
+  
   for(i in vec) {
     #update components
     doc <- documents[[i]]
@@ -114,8 +114,8 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   #4) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)
   if(summation$neum_cpp) {
-    sigma.ss <- matrix((t(bdiag(rep(list(matrix(c(1,1,0,1), nrow=2, ncol=2)), as.integer(nrow(sigma.ss)/2)))) %*% sigma.ss)[-seq(0, nrow(sigma.ss), 2),], nrow=as.integer(nrow(sigma.ss)/2), ncol=ncol(sigma.ss))
-    beta.ss <- lapply(beta.ss, function(x) matrix((t(bdiag(rep(list(matrix(c(1,1,0,1), nrow=2, ncol=2)), as.integer(nrow(x)/2)))) %*% x)[-seq(0, nrow(x), 2),], nrow=as.integer(nrow(x)/2), ncol=ncol(x)))
+    sigma.ss <- matrix((t(Matrix::bdiag(rep(list(matrix(c(1,1,0,1), nrow=2, ncol=2)), as.integer(nrow(sigma.ss)/2)))) %*% sigma.ss)[-seq(0, nrow(sigma.ss), 2),], nrow=as.integer(nrow(sigma.ss)/2), ncol=ncol(sigma.ss))
+    beta.ss <- lapply(beta.ss, function(x) matrix((t(Matrix::bdiag(rep(list(matrix(c(1,1,0,1), nrow=2, ncol=2)), as.integer(nrow(x)/2)))) %*% x)[-seq(0, nrow(x), 2),], nrow=as.integer(nrow(x)/2), ncol=ncol(x)))
   }
   return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda, vec=vec))
 }
