@@ -6,6 +6,7 @@ voc = poliblog5k.voc
 heldout <- make.heldout(docs, voc)
 
 # For dataframe
+num_topics <- numeric()
 num_iter <- numeric()
 var_bound <- numeric()
 doc_order <- character()
