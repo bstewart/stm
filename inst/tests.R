@@ -38,7 +38,7 @@ neum_sum_df <- data.frame(
   num_topics = as.numeric(num_topics),
   num_iter = as.numeric(num_iter),
   var_bound = as.numeric(var_bound),
-  doc_order = as.character(sum_type)
+  doc_order = as.character(doc_order)
 )
 
 save(neum_sum_df,file="neum_sum_df.Rda")
