@@ -13,7 +13,7 @@ doc_order <- character()
 
 ks <- 5:100
 
-cat("Summation time trials\n")
+cat("Summation stability tests\n")
 for(k in ks) {
   cat(paste("k:", k, "\n"))
   cat("deterministic run\n")
@@ -34,11 +34,11 @@ for(k in ks) {
   print(all.equal(deter$nu, rand$nu))
 }
 
-neum_sum_df <- data.frame(
+neum_sum_st_df <- data.frame(
   num_topics = as.numeric(num_topics),
   num_iter = as.numeric(num_iter),
   var_bound = as.numeric(var_bound),
   doc_order = as.character(doc_order)
 )
 
-save(neum_sum_df,file="neum_sum_df.Rda")
+save(neum_sum_st_df,file="neum_sum_st_df.Rda")
