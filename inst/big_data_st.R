@@ -5,9 +5,9 @@ library(stm)
 args = commandArgs(trailingOnly=TRUE)
 
 # Load data set settings
-prepped.docs <- readRDS("prepped_docs.rds")
+prepped.docs <- readRDS("/home/gyorgym/sociology/stm/hwaight/prepped_docs.rds")
 num_topics=105
-max_its=25
+max_its=1
 
 set.seed(08540)
 
@@ -22,7 +22,7 @@ if(args[1]=="rand" & args[2]=="neum") {
                    init.type = "Spectral",
                    verbose = FALSE,
                    control=list(method="BFGS", rand_docs=TRUE, neum_sum_cpp=TRUE))
-  save(rand_neum,file="rand_neum.Rda")
+  save(rand_neum,file="/home/gyorgym/sociology/stm/sprint/rand_neum.Rda")
 }
 
 if(args[1]=="deter" & args[2]=="neum") {
@@ -36,7 +36,7 @@ if(args[1]=="deter" & args[2]=="neum") {
                    init.type = "Spectral",
                    verbose = FALSE,
                    control=list(method="BFGS", neum_sum_cpp=TRUE))
-  save(deter_neum,file="deter_neum.Rda")
+  save(deter_neum,file="/home/gyorgym/sociology/stm/sprint/deter_neum.Rda")
 }
 
 if(args[1]=="rand" & args[2]=="reg") {
@@ -50,7 +50,7 @@ if(args[1]=="rand" & args[2]=="reg") {
                     init.type = "Spectral",
                     verbose = FALSE,
                     control=list(method="BFGS", rand_docs=TRUE))
-  save(rand_reg,file="rand_reg.Rda")
+  save(rand_reg,file="/home/gyorgym/sociology/stm/sprint/rand_reg.Rda")
 }
 
 if(args[1]=="deter" & args[2]=="reg") {
@@ -64,5 +64,5 @@ if(args[1]=="deter" & args[2]=="reg") {
                     init.type = "Spectral",
                     verbose = FALSE,
                     control=list(method="BFGS"))
-  save(deter_reg,file="deter_reg.Rda")
+  save(deter_reg,file="/home/gyorgym/sociology/stm/sprint/deter_reg.Rda")
 }
