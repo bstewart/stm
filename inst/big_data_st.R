@@ -6,7 +6,7 @@ args = commandArgs(trailingOnly=TRUE)
 
 # Load data set settings
 prepped.docs <- readRDS("/home/gyorgym/sociology/stm/hwaight/prepped_docs.rds")
-num_topics=105
+num_topics=2
 max_its=1
 
 set.seed(08540)
