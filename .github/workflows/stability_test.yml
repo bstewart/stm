@@ -12,7 +12,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-     Ubuntu:
+    Ubuntu:
         name: Generate results on the latest Ubuntu release
         runs-on: ubuntu-latest
 
