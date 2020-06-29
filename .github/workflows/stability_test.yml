@@ -53,6 +53,7 @@ jobs:
     Windows:
         name: Generate results on Windows and compare them to MacOS
         needs: MacOS
+        runs-on: windows-latest
 
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
