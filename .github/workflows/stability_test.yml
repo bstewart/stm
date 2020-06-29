@@ -45,6 +45,14 @@ jobs:
 
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+
+            - uses: actions/checkout@v2
+            - uses: r-lib/actions/setup-r@master
+            - name: Install dependencies
+              run: |
+                install.packages(c("remotes", "rcmdcheck"))
+                remotes::install_deps(dependencies = TRUE)
+              shell: Rscript {0}    
             - uses: actions/checkout@v2
  
             # Runs a single command using the runners shell
@@ -65,6 +73,13 @@ jobs:
 
         steps:
             # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - uses: actions/checkout@v2
+            - uses: r-lib/actions/setup-r@master
+            - name: Install dependencies
+              run: |
+                install.packages(c("remotes", "rcmdcheck"))
+                remotes::install_deps(dependencies = TRUE)
+              shell: Rscript {0}    
             - uses: actions/checkout@v2
 
             # Runs a single command using the runners shell
