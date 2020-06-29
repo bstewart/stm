@@ -24,7 +24,7 @@ jobs:
               run: |
                 install.packages(c("remotes", "rcmdcheck"))
                 remotes::install_deps(dependencies = TRUE)
-            shell: Rscript {0}    
+              shell: Rscript {0}    
             # Runs a single command using the runners shell
             - name: Run a one-line script
               run: echo Hello, world from Ubuntu!
