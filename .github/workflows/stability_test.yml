@@ -75,10 +75,9 @@ jobs:
         run: |
           Rscript ./inst/stab_test.R ${{ runner.os }}
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with: 
-          name: Windows
-          path: neum_Windows.Rda 
-
+#      - name: Upload test results
+#        uses: actions/upload-artifact@v2
+#        with: 
+#          path: neum_Windows.Rda 
+#
 
