@@ -24,6 +24,10 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
 
     steps:
+      - name: Manage Bazel dist
+        run: |  
+          echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+      - name: Setup R
       - uses: actions/checkout@v2
 
       - uses: r-lib/actions/setup-r@master
@@ -74,6 +78,6 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@master
         with:
-          path: ${{ github.workspace }} 
+          path: *.Rda 
 
 
