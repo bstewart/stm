@@ -41,7 +41,7 @@ jobs:
                 voc = poliblog5k.voc
                 heldout <- make.heldout(docs, voc)
                 ubuntu <- stm(heldout$documents, heldout$vocab, K=5, init.type = "Spectral", max.em.its = 100, control=list(method="BFGS", neum_sum_cpp=TRUE))
-                save(ubuntu,file="result/ubuntu.Rda")
+                save(ubuntu,file="ubuntu.Rda")
               shell: Rscript {0}    
             - name: Run stm and upload result for Ubuntu
               uses: actions/upload-artifact@v1
