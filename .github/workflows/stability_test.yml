@@ -78,6 +78,6 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@master
         with:
-          path: **.Rda 
+          path: '*.Rda' 
 
 
