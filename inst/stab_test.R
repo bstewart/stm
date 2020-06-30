@@ -5,16 +5,18 @@ library(stringr)
 # Get command line argument for operating system
 args = commandArgs(trailingOnly=TRUE)
 
-reg <- stm(poliblog5k.docs, poliblog5k.voc, K=5, init.type = "Spectral", max.em.its = 100, control=list(method="BFGS"))
+# set.seed(13)
+# reg <- stm(poliblog5k.docs, poliblog5k.voc, K=5, init.type = "Spectral", max.em.its = 100, control=list(method="BFGS"))
+# reg_file = str_c("reg_", args[1], ".Rda")
+# save(reg, file=reg_file)
 
-warnings()
-warnings_out <- warnings()
+set.seed(13)
+neum <- stm(poliblog5k.docs, poliblog5k.voc, K=5, init.type = "Random", max.em.its = 100, control=list(method="BFGS", neum_sum_cpp=TRUE))
+neum_file = str_c("neum_", args[1], ".Rda")
+save(neum, file=neum_file)
 
-reg_file = str_c("warnings_out_", args[1], ".Rda")
-save(warnings_out, file=reg_file)
-
-#neum <- stm(poliblog5k.docs, poliblog5k.voc, K=5, init.type = "Spectral", max.em.its = 100, control=list(method="BFGS", neum_sum_cpp=TRUE))
-
-#neum_file = str_c("neum_", args[1], ".Rda")
-#save(neum, file=neum_file)
+set.seed(13)
+neum <- stm(poliblog5k.docs, poliblog5k.voc, K=5, init.type = "Random", max.em.its = 1, control=list(method="BFGS", neum_sum_cpp=TRUE))
+neum_file = str_c("neum_one", args[1], ".Rda")
+save(neum, file=neum_file)
 
