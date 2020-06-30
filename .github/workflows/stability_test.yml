@@ -78,7 +78,7 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with: 
-          name: ${{ runner.os }}
-          path: ${{ github.workspace }}/*.Rda 
+          name: Windows
+          path: neum_Windows.Rda 
 
 
