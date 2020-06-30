@@ -23,13 +23,19 @@ jobs:
                 sudo apt-get install libcurl4-openssl-dev
             - uses: actions/checkout@v2
             - uses: r-lib/actions/setup-r@master
-            - name: Install dependencies
+            - name: Install R packages
               run: |
                 install.packages(c("remotes", "rcmdcheck", "devtools"))
                 remotes::install_deps(dependencies = TRUE)
+              shell: Rscript {0}    
+            - name: Build and install stm
+              run: |
                 library(devtools)
-                build()
+                build(vignettes = FALSE)
                 install()
+              shell: Rscript {0}    
+            - name: Run stm example and save output
+              run: |
                 library(stm)
                 docs = poliblog5k.docs
                 voc = poliblog5k.voc
