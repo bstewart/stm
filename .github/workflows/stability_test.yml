@@ -76,8 +76,8 @@ jobs:
           Rscript ./inst/stab_test.R ${{ runner.os }}
 
       - name: Upload test results
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
-          path: '*.Rda' 
+          path: *.Rda 
 
 
