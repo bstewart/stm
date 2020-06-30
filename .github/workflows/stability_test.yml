@@ -25,8 +25,11 @@ jobs:
             - uses: r-lib/actions/setup-r@master
             - name: Install dependencies
               run: |
-                install.packages(c("remotes", "rcmdcheck"))
+                install.packages(c("remotes", "rcmdcheck", "devtools"))
                 remotes::install_deps(dependencies = TRUE)
+                library(devtools)
+                build()
+                install()
                 library(stm)
                 docs = poliblog5k.docs
                 voc = poliblog5k.voc
