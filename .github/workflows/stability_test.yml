@@ -24,19 +24,21 @@ jobs:
       RSPM: ${{ matrix.config.rspm }}
 
     steps:
-#      - name: Manage Bazel dist
-#        if: runner.os == 'Linux'
-#        run: | 
-#          echo deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8 | sudo tee /etc/apt/sources.list.d/bazel.list
-#
-#      - name: Setup R
-      - uses: actions/checkout@v2
+      - name: Manage Bazel dist
+        if: runner.os == 'Linux'
+        run: | 
+          echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
 
-      - uses: r-lib/actions/setup-r@master
+      - name: Setup actions checkout
+        uses: actions/checkout@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
 
-      - uses: r-lib/actions/setup-pandoc@master
+      - name: Setup pandoc
+        uses: r-lib/actions/setup-pandoc@master
 
       - name: Query dependencies
         run: |
@@ -61,7 +63,7 @@ jobs:
           sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
           sudo -s eval "$sysreqs"
 
-      - name: Install dependencies
+      - name: Install R dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
@@ -73,13 +75,13 @@ jobs:
           install()
         shell: Rscript {0}
 
-      - name: Run test
+      - name: Run tests
         run: |
           Rscript ./inst/stab_test.R ${{ runner.os }}
 
-#      - name: Upload test results
-#        uses: actions/upload-artifact@v2
-#        with: 
-#          path: neum_Windows.Rda 
-#
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with: 
+          path: ${{ github.workspace }}/*.Rda
+
 
