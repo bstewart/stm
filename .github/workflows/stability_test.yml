@@ -78,6 +78,6 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with:
-          path: *.Rda 
+          path: ${{ github.workspace }}/*.Rda 
 
 
