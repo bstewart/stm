@@ -46,6 +46,8 @@ stm.init <- function(documents, settings) {
     mu <- matrix(0, nrow=(K-1),ncol=1)
     cat(paste("norm of mu: ", norm(as.matrix(mu),"f"), "\n"))
     sigma <- diag(20, nrow=(K-1))
+    cat("sigma: \n")
+    print(sigma)
     cat(paste("norm of sigma: ", norm(as.matrix(mu),"f"), "\n"))
     beta <- matrix(rgamma(V * K, .1), ncol = V)
     beta <- beta/rowSums(beta)

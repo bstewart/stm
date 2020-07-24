@@ -18,6 +18,39 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
                        beta, lambda.old, mu, sigma, 
                        summation, randomize, method,
                        verbose) {
+  cat("documents: \n")
+  print(str(documents))
+  
+  cat("beta.index: \n")
+  print(str(beta.index))
+  
+  cat("update.mu: \n")
+  print(str(update.mu))
+  
+  cat("beta: \n")
+  print(str(beta))
+  
+  cat("lambda.old: \n")
+  print(str(lambda.old))
+  
+  cat("mu: \n")
+  print(str(mu))
+  
+  cat("sigma: \n")
+  print(str(simga))
+
+  cat("summation: \n")
+  print(str(summation))
+  
+  cat("randomize: \n")
+  print(str(randomize))
+  
+  cat("method: \n")
+  print(str(method))
+  
+  cat("verbose: \n")
+  print(str(verbose))
+  
   #quickly define useful constants
   V <- ncol(beta[[1]])
   K <- nrow(beta[[1]])
@@ -62,6 +95,10 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     sigmaentropy <- sum(log(diag(sigobj)))
     siginv <- chol2inv(sigobj)
   }
+  
+  cat(paste("sigmaentropy:", sigmaentropy, "\n"))
+  cat(paste("norm of siginv: ", norm(as.matrix(siginv), "f"), "\n"))
+  
   # 3) Document Scheduling
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
