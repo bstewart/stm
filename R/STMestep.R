@@ -37,7 +37,7 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   print(str(mu))
   
   cat("sigma: \n")
-  print(str(simga))
+  print(str(sigma))
 
   cat("summation: \n")
   print(str(summation))
