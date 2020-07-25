@@ -3,13 +3,12 @@ on:
     branches:
       - sumcpp
 
-name: Stability test
+name: Cross platform stability test
 
 jobs:
-  stab_test:
-    runs-on: ${{ matrix.config.os }}
-
+  reg_neum_run:
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    runs-on: ${{ matrix.config.os }}
 
     strategy:
       fail-fast: false
@@ -77,11 +76,27 @@ jobs:
 
       - name: Run tests
         run: |
-          Rscript ./inst/stab_test.R ${{ runner.os }}
+          Rscript ./inst/reg_neum_run.R ${{ runner.os }}
 
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with: 
-          path: ${{ github.workspace }}/*.Rda
+          path: ${{ github.workspace }}/*.Rds
+
+
+  xpl_stab_test:
+    name: Check cross platform runs 
+    needs: reg_neum_run
+    runs-on: macOS-latest 
+
+    steps: 
+      - name: Download artifacts from previous job
+        uses: actions/download-artifact@v2
+        with: 
+          path: ${{ github.workspace }}/*.Rds
+        
+      - name: Run tests
+        run: |
+          Rscript ./inst/xpl_stab_test.R
 
 
