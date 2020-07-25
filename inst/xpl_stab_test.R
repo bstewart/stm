@@ -5,7 +5,7 @@ library(stringr)
 # Get command line argument for operating system
 args = commandArgs(trailingOnly=TRUE)
 
-file_names = c("reg_oneLinux.Rds", "reg_onemacOS.Rds", "reg_oneWindows.Rds", "neum_oneLinux.Rds", "neum_onemacOS.Rds", "neum_oneWindows.Rds")
+file_names = c("./artifact/reg_oneLinux.Rds", "./artifact/reg_onemacOS.Rds", "./artifact/reg_oneWindows.Rds", "./artifact/neum_oneLinux.Rds", "./artifact/neum_onemacOS.Rds", "./artifact/neum_oneWindows.Rds")
 
 for(i in 1:length(file_names)) {
   if(file_names[i] == "reg_oneLinux.Rds") {
