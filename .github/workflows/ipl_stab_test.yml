@@ -3,7 +3,7 @@ on:
     branches:
       - sumcpp
 
-name: Stability test
+name: In platform stability test
 
 jobs:
   stab_test:
@@ -77,11 +77,5 @@ jobs:
 
       - name: Run tests
         run: |
-          Rscript ./inst/stab_test.R ${{ runner.os }}
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with: 
-          path: ${{ github.workspace }}/*.Rda
-
+          Rscript ./inst/ipl_stab_test.R ${{ runner.os }}
 
