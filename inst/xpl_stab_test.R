@@ -1,6 +1,4 @@
 #!/usr/bin/env Rscript
-library(stm)
-library(stringr)
 
 # Get command line argument for operating system
 args = commandArgs(trailingOnly=TRUE)
