@@ -99,12 +99,6 @@ jobs:
       - name: Download artifacts from previous job
         uses: actions/download-artifact@v2
 
-      - name: List files
-        run: |
-          pwd
-          ls -ltr
-          cd ./artifact && ls -ltr
-
       - name: Run tests
         run: |
           Rscript ./inst/xpl_stab_test.R
