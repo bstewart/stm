@@ -44,6 +44,7 @@
 #' Additional papers at: structuraltopicmodel.com
 #' @keywords package
 #' 
+#' @import optimr
 #' @import Matrix
 #' @importFrom Rcpp evalCpp
 #' @importFrom graphics abline axis hist legend lines par plot points segments smoothScatter text title
