@@ -34,23 +34,46 @@ for(i in 1:length(file_names)) {
   }
 }
 
+
 cat(paste("Compare regular Linux with macOS:\n"))
-print(all.equal(reg_Linux, reg_macOS, tolerance=tol))
+print(all.equal(reg_Linux, reg_macOS))
 cat(paste("\n\nCompare regular Linux with Windows:\n"))
-print(all.equal(reg_Linux, reg_Windows, tolerance=tol))
+print(all.equal(reg_Linux, reg_Windows))
 cat(paste("\n\nCompare regular macOS with Windows:\n"))
-print(all.equal(reg_macOS, reg_Windows, tolerance=tol))
+print(all.equal(reg_macOS, reg_Windows))
 
 cat(paste("\n\n\nCompare Neumaier Linux with macOS:\n"))
-print(all.equal(neum_Linux, neum_macOS, tolerance=tol))
+print(all.equal(neum_Linux, neum_macOS))
 cat(paste("\n\nCompare Neumaier Linux with Windows:\n"))
-print(all.equal(neum_Linux, neum_Windows, tolerance=tol))
+print(all.equal(neum_Linux, neum_Windows))
 cat(paste("\n\nCompare Neumaier macOS with Windows:\n"))
-print(all.equal(neum_macOS, neum_Windows, tolerance=tol))
+print(all.equal(neum_macOS, neum_Windows))
 
 cat(paste("\n\n\nCompare Neumaier Linux with regular Linux:\n"))
-print(all.equal(neum_Linux, reg_Linux, tolerance=tol))
+print(all.equal(neum_Linux, reg_Linux))
 cat(paste("\n\nCompare Neumaier Windows with regular Windows:\n"))
-print(all.equal(neum_Windows, reg_Windows, tolerance=tol))
+print(all.equal(neum_Windows, reg_Windows))
 cat(paste("\n\nCompare Neumaier macOS with regular macOS:\n"))
-print(all.equal(neum_macOS, reg_macOS, tolerance=tol))
+print(all.equal(neum_macOS, reg_macOS))
+
+# 
+# cat(paste("Compare regular Linux with macOS:\n"))
+# print(all.equal(reg_Linux, reg_macOS, tolerance=tol))
+# cat(paste("\n\nCompare regular Linux with Windows:\n"))
+# print(all.equal(reg_Linux, reg_Windows, tolerance=tol))
+# cat(paste("\n\nCompare regular macOS with Windows:\n"))
+# print(all.equal(reg_macOS, reg_Windows, tolerance=tol))
+# 
+# cat(paste("\n\n\nCompare Neumaier Linux with macOS:\n"))
+# print(all.equal(neum_Linux, neum_macOS, tolerance=tol))
+# cat(paste("\n\nCompare Neumaier Linux with Windows:\n"))
+# print(all.equal(neum_Linux, neum_Windows, tolerance=tol))
+# cat(paste("\n\nCompare Neumaier macOS with Windows:\n"))
+# print(all.equal(neum_macOS, neum_Windows, tolerance=tol))
+# 
+# cat(paste("\n\n\nCompare Neumaier Linux with regular Linux:\n"))
+# print(all.equal(neum_Linux, reg_Linux, tolerance=tol))
+# cat(paste("\n\nCompare Neumaier Windows with regular Windows:\n"))
+# print(all.equal(neum_Windows, reg_Windows, tolerance=tol))
+# cat(paste("\n\nCompare Neumaier macOS with regular macOS:\n"))
+# print(all.equal(neum_macOS, reg_macOS, tolerance=tol))
