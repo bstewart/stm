@@ -20,7 +20,7 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
   #                    siginv=siginv, beta=beta)
   
   optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
-                     method="Nelder-Mead", control=list(maxit=10),
+                     method="Nelder-Mead", control=list(maxit=20),
                      doc_ct=doc.ct, mu=mu,
                      siginv=siginv, beta=beta)
   
@@ -28,6 +28,11 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
                      method=method, control=control,
                      doc_ct=doc.ct, mu=mu,
                      siginv=siginv, beta=beta)
+  # 
+  # optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
+  #                    method="Nelder-Mead", control=list(maxit=2),
+  #                    doc_ct=doc.ct, mu=mu,
+  #                    siginv=siginv, beta=beta)
   
   # optim.out <- optim(par=optim.out$par, fn=lhoodcpp, gr=gradcpp,
   #                    method="Nelder-Mead", control=list(maxit=10),
