@@ -12,16 +12,35 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
                               hpbcpp=TRUE) {
   doc.ct <- doc[2,]
   Ndoc <- sum(doc.ct)
+  
   #even at K=100, BFGS is faster than L-BFGS
   # optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
   #                    method=method, control=control,
   #                    doc_ct=doc.ct, mu=mu,
   #                    siginv=siginv, beta=beta)
   
-  optim.out <- optimr::optimr(par=eta, fn=lhoodcpp, gr=gradcpp,
+  optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
+                     method="Nelder-Mead", control=list(maxit=10),
+                     doc_ct=doc.ct, mu=mu,
+                     siginv=siginv, beta=beta)
+  
+  optim.out <- optim(par=optim.out$par, fn=lhoodcpp, gr=gradcpp,
                      method=method, control=control,
                      doc_ct=doc.ct, mu=mu,
                      siginv=siginv, beta=beta)
+  
+  # optim.out <- optimr::optimr(par=optim.out$par, fn=lhoodcpp, gr=gradcpp,
+  #                    method=method, control=control,
+  #                    doc_ct=doc.ct, mu=mu,
+  #                    siginv=siginv, beta=beta)
+
+  # mc <- data.frame(method=c("Nelder-Mead","BFGS"), maxit=c(1, 100), maxfeval= c(1000, 1000))
+  # optim.out <- optimr::polyopt(par=eta, fn=lhoodcpp, gr=gradcpp,
+  #                    methcontrol=mc, control=control,
+  #                    doc_ct=doc.ct, mu=mu,
+  #                    siginv=siginv, beta=beta)
+  
+  # print(optim.out)
   
   if(!hpbcpp) return(list(eta=list(lambda=optim.out$par)))
   
