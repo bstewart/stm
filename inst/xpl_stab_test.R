@@ -9,21 +9,27 @@ tol = 1.0e-9
 
 for(i in 1:length(file_names)) {
   if(file_names[i] == "./artifact/reg_Linux.Rds") {
+    cat(paste("Reading", file_names[i], "...\n"))
     reg_Linux <- readRDS(file_names[i])
   }
   else if(file_names[i] == "./artifact/reg_macOS.Rds") {
+    cat(paste("Reading", file_names[i], "...\n"))
     reg_macOS <- readRDS(file_names[i])
   }
   else if(file_names[i] == "./artifact/reg_Windows.Rds") {
+    cat(paste("Reading", file_names[i], "...\n"))
     reg_Windows <- readRDS(file_names[i])
   }
   else if(file_names[i] == "./artifact/neum_Linux.Rds") {
+    cat(paste("Reading", file_names[i], "...\n"))
     neum_Linux <- readRDS(file_names[i])
   }
   else if(file_names[i] == "./artifact/neum_macOS.Rds") {
+    cat(paste("Reading", file_names[i], "...\n"))
     neum_macOS <- readRDS(file_names[i])
   }
   else if(file_names[i] == "./artifact/neum_Windows.Rds") {
+    cat(paste("Reading", file_names[i], "...\n"))
     neum_Windows <- readRDS(file_names[i])
   }
 }
