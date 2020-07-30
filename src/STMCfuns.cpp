@@ -39,7 +39,7 @@ double lhoodcpp(SEXP eta,
 // [[Rcpp::export]]
 arma::vec gradcpp(SEXP eta,
                    SEXP beta,
-                   const arma::uvec& doc_cts,
+                   const arma::uvec& doc_ct,
                    SEXP mu,
                    SEXP siginv){
    
@@ -60,7 +60,7 @@ arma::vec gradcpp(SEXP eta,
     }
     
     betas.each_col() %= expeta;
-    arma::vec part1 = betas*(doc_cts/arma::trans(sum(betas,0))) - (sum(doc_cts)/sum(expeta))*expeta;
+    arma::vec part1 = betas*(doc_ct/arma::trans(sum(betas,0))) - (sum(doc_ct)/sum(expeta))*expeta;
     arma::vec part2 = siginvs*(etas - mus);
     part1.shed_row(neta);
     return part2-part1;

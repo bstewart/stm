@@ -22,17 +22,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // gradcpp
-arma::vec gradcpp(SEXP eta, SEXP beta, const arma::uvec& doc_cts, SEXP mu, SEXP siginv);
-RcppExport SEXP _stm_gradcpp(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctsSEXP, SEXP muSEXP, SEXP siginvSEXP) {
+arma::vec gradcpp(SEXP eta, SEXP beta, const arma::uvec& doc_ct, SEXP mu, SEXP siginv);
+RcppExport SEXP _stm_gradcpp(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< SEXP >::type beta(betaSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type doc_cts(doc_ctsSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type doc_ct(doc_ctSEXP);
     Rcpp::traits::input_parameter< SEXP >::type mu(muSEXP);
     Rcpp::traits::input_parameter< SEXP >::type siginv(siginvSEXP);
-    rcpp_result_gen = Rcpp::wrap(gradcpp(eta, beta, doc_cts, mu, siginv));
+    rcpp_result_gen = Rcpp::wrap(gradcpp(eta, beta, doc_ct, mu, siginv));
     return rcpp_result_gen;
 END_RCPP
 }

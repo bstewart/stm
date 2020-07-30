@@ -45,6 +45,10 @@
 #' @keywords package
 #' 
 #' @import optimr
+#' @import nloptr
+#' @import optimx
+#' @import lbfgsb3c
+#' @import ucminf
 #' @import Matrix
 #' @importFrom Rcpp evalCpp
 #' @importFrom graphics abline axis hist legend lines par plot points segments smoothScatter text title

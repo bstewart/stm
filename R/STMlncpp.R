@@ -39,10 +39,10 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
   #                    doc_ct=doc.ct, mu=mu,
   #                    siginv=siginv, beta=beta)
   
-  optim.out <- optimr::optimr(par=eta, fn=lhoodcpp, gr=gradcpp,
-                              method=method, control=control,
-                              doc_ct=doc.ct, mu=mu,
-                              siginv=siginv, beta=beta)
+  # optim.out <- optimr::optimr(par=eta, fn=lhoodcpp, gr=gradcpp,
+  #                             method=method, control=control,
+  #                             doc_ct=doc.ct, mu=mu,
+  #                             siginv=siginv, beta=beta)
 
   # mc <- data.frame(method=c("Nelder-Mead","BFGS"), maxit=c(1, 100), maxfeval= c(1000, 1000))
   # optim.out <- optimr::polyopt(par=eta, fn=lhoodcpp, gr=gradcpp,
@@ -51,7 +51,29 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
   #                    siginv=siginv, beta=beta)
   
   # print(optim.out)
-  
+  # 
+  # opts <- list("algorithm"="NLOPT_LD_TNEWTON_PRECOND_RESTART",
+  #              "xtol_rel"=1.0e-8)
+  # 
+  # optim.out <- nloptr::nloptr(x0=eta, eval_f=lhoodcpp, eval_grad_f=gradcpp, # Here optim.out$solution is the one that holds the solution vector
+  #               opts=opts, doc_ct=doc.ct, mu=mu,
+  #               siginv=siginv, beta=beta)
+  # 
+  # optim.out <- lbfgsb3c::lbfgsb3c(par=eta, fn=lhoodcpp, gr=gradcpp,
+  #                                 control=control, doc_ct=doc.ct, mu=mu,
+  #                                 siginv=siginv, beta=beta)
+
+  # optim.out <- optimx::optimx(par=eta, fn=lhoodcpp, gr=gradcpp,
+  #                             method=method, control=list(maxit=500, kkt=FALSE),
+  #                             doc_ct=doc.ct, mu=mu,
+  #                             siginv=siginv, beta=beta)
+
+  optim.out <- ucminf::ucminf(par=eta, fn=lhoodcpp, gr=gradcpp,
+                              control=list(),
+                              doc_ct=doc.ct, mu=mu,
+                              siginv=siginv, beta=beta)
+
+    
   if(!hpbcpp) return(list(eta=list(lambda=optim.out$par)))
   
   #Solve for Hessian/Phi/Bound returning the result

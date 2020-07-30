@@ -34,7 +34,11 @@ Imports:
   stats,
   stringr,
   utils,
-  optimr
+  optimr,
+  nloptr,
+  optimx,
+  lbfgsb3c,
+  ucminf
 Suggests: 
   clue,
   geometry,

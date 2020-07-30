@@ -42,6 +42,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages(c("remotes", "devtools", "stringr"))
+          install_github("https://github.com/cran/ucminf")
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
