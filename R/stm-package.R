@@ -45,9 +45,6 @@
 #' @keywords package
 #' 
 #' @import optimr
-#' @import nloptr
-#' @import optimx
-#' @import lbfgsb3c
 #' @import ucminf
 #' @import Matrix
 #' @importFrom Rcpp evalCpp

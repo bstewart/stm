@@ -44,16 +44,11 @@ stm.init <- function(documents, settings) {
   if(mode=="Random" | mode=="Custom") {
     #Random initialization or if Custom, initalize everything randomly
     mu <- matrix(0, nrow=(K-1),ncol=1)
-    cat(paste("norm of mu: ", norm(as.matrix(mu),"f"), "\n"))
     sigma <- diag(20, nrow=(K-1))
-    cat("sigma: \n")
     print(sigma)
-    cat(paste("norm of sigma: ", norm(as.matrix(sigma),"f"), "\n"))
     beta <- matrix(rgamma(V * K, .1), ncol = V)
     beta <- beta/rowSums(beta)
-    cat(paste("norm of beta: ", norm(as.matrix(beta),"f"), "\n"))
     lambda <- matrix(0, nrow=N, ncol=(K-1))
-    cat(paste("norm of lambda: ", norm(as.matrix(lambda),"f"), "\n"))
   }
   if(mode=="Spectral" | mode=="SpectralRP") {
     verbose <- settings$verbose

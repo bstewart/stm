@@ -35,9 +35,6 @@ Imports:
   stringr,
   utils,
   optimr,
-  nloptr,
-  optimx,
-  lbfgsb3c,
   ucminf
 Suggests: 
   clue,
