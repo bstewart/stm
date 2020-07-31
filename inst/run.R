@@ -5,7 +5,7 @@ library(stringr)
 # Get command line argument for operating system
 args = commandArgs(trailingOnly=TRUE)
 
-ks <- c(5, 10, 40)
+ks <- c(5, 10, 40, 60)
 s_type <- "neum"
 m_type <- "ucminf"
 

@@ -20,8 +20,6 @@ for(i in 1:num_files) {
   num_topics <- cbind(num_topics, fnmx[1,1])
   os_names <- cbind(os_names, fnmx[1,4])
 }
-print(num_topics)
-print(os_names)
 
 # Because the summation type, the method, and file extension is the same within a run we can do this
 s_type <- fnmx[1,2]
@@ -31,8 +29,6 @@ f_ext <- fnmx[1,5]
 # Remove duplicates
 num_topics <- unique(num_topics, MARGIN = 2)
 os_names <- unique(os_names, MARGIN = 2)
-print(num_topics)
-print(os_names)
 
 # Generate all pair combinations of os-s.
 comb_os <- combn(os_names, 2)
@@ -43,13 +39,11 @@ for(i in 1:length(num_topics)) {
   for(j in 1:ncol(comb_os)) {
     cat(paste("Comparing", comb_os[1,j], "vs", comb_os[2,j], "\n"))
     file_name1 <- str_c(location, num_topics[i], "_", s_type, "_", m_type, "_", comb_os[1,j], ".", f_ext)
-    print(file_name1)
     file_name2 <- str_c(location, num_topics[i], "_", s_type, "_", m_type, "_", comb_os[2,j], ".", f_ext)
-    print(file_name2)
     os1 <- readRDS(file_name1)
     os2 <- readRDS(file_name2)
     comp <- all.equal(os1, os2)
-    if(length(comp) < 2) {
+    if(length(comp) < 8) {
       cat("SUCCEEDED!!!\n")
     }
     else {
