@@ -1,92 +1,60 @@
 #!/usr/bin/env Rscript
+library(stringr)
 
-# Get command line argument for operating system
-args = commandArgs(trailingOnly=TRUE)
+# Get all the file names
+location <- "./artifact/"
+files <- list.files(path = location)
+print(files)
 
-file_names = c("./artifact/reg_Linux.Rds", "./artifact/reg_macOS.Rds", "./artifact/reg_Windows.Rds", "./artifact/neum_Linux.Rds", "./artifact/neum_macOS.Rds", "./artifact/neum_Windows.Rds")
+# Variables
+num_files <- length(files)
+os_names <- character()
+num_topics <- character()
 
-tol = 1.0e-9
+# Loop through all the file names that have naming convention: 
+# numTopics_sumType_methodType_osType.Rds
+# and extract number of topics and different operating systems
+for(i in 1:num_files) {
+  fnmx <- str_split_fixed(files[i], "_|\\.", 5)
+  print(fnmx)
+  num_topics <- cbind(num_topics, fnmx[1,1])
+  os_names <- cbind(os_names, fnmx[1,4])
+}
+print(num_topics)
+print(os_names)
 
-for(i in 1:length(file_names)) {
-  if(file_names[i] == "./artifact/reg_Linux.Rds") {
-    cat(paste("Reading", file_names[i], "...\n"))
-    reg_Linux <- readRDS(file_names[i])
-  }
-  else if(file_names[i] == "./artifact/reg_macOS.Rds") {
-    cat(paste("Reading", file_names[i], "...\n"))
-    reg_macOS <- readRDS(file_names[i])
-  }
-  else if(file_names[i] == "./artifact/reg_Windows.Rds") {
-    cat(paste("Reading", file_names[i], "...\n"))
-    reg_Windows <- readRDS(file_names[i])
-  }
-  else if(file_names[i] == "./artifact/neum_Linux.Rds") {
-    cat(paste("Reading", file_names[i], "...\n"))
-    neum_Linux <- readRDS(file_names[i])
-  }
-  else if(file_names[i] == "./artifact/neum_macOS.Rds") {
-    cat(paste("Reading", file_names[i], "...\n"))
-    neum_macOS <- readRDS(file_names[i])
-  }
-  else if(file_names[i] == "./artifact/neum_Windows.Rds") {
-    cat(paste("Reading", file_names[i], "...\n"))
-    neum_Windows <- readRDS(file_names[i])
+# Because the summation type, the method, and file extension is the same within a run we can do this
+s_type <- fnmx[1,2]
+m_type <- fnmx[1,3]
+f_ext <- fnmx[1,5]
+
+# Remove duplicates
+num_topics <- unique(num_topics, MARGIN = 2)
+os_names <- unique(os_names, MARGIN = 2)
+print(num_topics)
+print(os_names)
+
+# Generate all pair combinations of os-s.
+comb_os <- combn(os_names, 2)
+
+# Check equality for all topics and combinations of os-s for each topic
+for(i in 1:length(num_topics)) {
+  cat(paste("\n\nChecking equality for K =", num_topics[i], "\n"))
+  for(j in 1:ncol(comb_os)) {
+    cat(paste("Comparing", comb_os[1,j], "vs", comb_os[2,j], "\n"))
+    file_name1 <- str_c(location, num_topics[i], "_", s_type, "_", m_type, "_", comb_os[1,j], ".", f_ext)
+    print(file_name1)
+    file_name2 <- str_c(location, num_topics[i], "_", s_type, "_", m_type, "_", comb_os[2,j], ".", f_ext)
+    print(file_name2)
+    os1 <- readRDS(file_name1)
+    os2 <- readRDS(file_name2)
+    comp <- all.equal(os1, os2)
+    if(length(comp) < 2) {
+      cat("SUCCEEDED!!!\n")
+    }
+    else {
+      cat("FAILED!!!\n")
+    }
+    print(comp)
   }
 }
-
-
-cat(paste("Compare regular Linux with macOS:\n"))
-print(all.equal(reg_Linux, reg_macOS))
-cat(paste("reg_Linux:", max(reg_Linux$convergence$bound), "reg_macOS:", max(reg_macOS$convergence$bound), "\n"))
-    
-cat(paste("\n\nCompare regular Linux with Windows:\n"))
-print(all.equal(reg_Linux, reg_Windows))
-cat(paste("reg_Linux:", max(reg_Linux$convergence$bound), "reg_Windows:", max(reg_Windows$convergence$bound), "\n"))
-    
-cat(paste("\n\nCompare regular macOS with Windows:\n"))
-print(all.equal(reg_macOS, reg_Windows))
-cat(paste("reg_macOS:", max(reg_macOS$convergence$bound), "reg_Windows:", max(reg_Windows$convergence$bound), "\n"))
-    
-    
-cat(paste("\n\n\nCompare Neumaier Linux with macOS:\n"))
-print(all.equal(neum_Linux, neum_macOS))
-cat(paste("neum_Linux:", max(neum_Linux$convergence$bound), "neum_macOS:", max(neum_macOS$convergence$bound), "\n"))
-
-cat(paste("\n\nCompare Neumaier Linux with Windows:\n"))
-print(all.equal(neum_Linux, neum_Windows))
-cat(paste("neum_Linux:", max(neum_Linux$convergence$bound), "neum_Windows:", max(neum_Windows$convergence$bound), "\n"))
-
-cat(paste("\n\nCompare Neumaier macOS with Windows:\n"))
-print(all.equal(neum_macOS, neum_Windows))
-cat(paste("neum_macOS:", max(neum_macOS$convergence$bound), "neum_Windows:", max(neum_Windows$convergence$bound), "\n"))
-
-
-
-cat(paste("\n\n\nCompare Neumaier Linux with regular Linux:\n"))
-print(all.equal(neum_Linux, reg_Linux))
-cat(paste("\n\nCompare Neumaier Windows with regular Windows:\n"))
-print(all.equal(neum_Windows, reg_Windows))
-cat(paste("\n\nCompare Neumaier macOS with regular macOS:\n"))
-print(all.equal(neum_macOS, reg_macOS))
-
-# 
-# cat(paste("Compare regular Linux with macOS:\n"))
-# print(all.equal(reg_Linux, reg_macOS, tolerance=tol))
-# cat(paste("\n\nCompare regular Linux with Windows:\n"))
-# print(all.equal(reg_Linux, reg_Windows, tolerance=tol))
-# cat(paste("\n\nCompare regular macOS with Windows:\n"))
-# print(all.equal(reg_macOS, reg_Windows, tolerance=tol))
-# 
-# cat(paste("\n\n\nCompare Neumaier Linux with macOS:\n"))
-# print(all.equal(neum_Linux, neum_macOS, tolerance=tol))
-# cat(paste("\n\nCompare Neumaier Linux with Windows:\n"))
-# print(all.equal(neum_Linux, neum_Windows, tolerance=tol))
-# cat(paste("\n\nCompare Neumaier macOS with Windows:\n"))
-# print(all.equal(neum_macOS, neum_Windows, tolerance=tol))
-# 
-# cat(paste("\n\n\nCompare Neumaier Linux with regular Linux:\n"))
-# print(all.equal(neum_Linux, reg_Linux, tolerance=tol))
-# cat(paste("\n\nCompare Neumaier Windows with regular Windows:\n"))
-# print(all.equal(neum_Windows, reg_Windows, tolerance=tol))
-# cat(paste("\n\nCompare Neumaier macOS with regular macOS:\n"))
-# print(all.equal(neum_macOS, reg_macOS, tolerance=tol))

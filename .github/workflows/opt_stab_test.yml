@@ -77,7 +77,7 @@ jobs:
 
       - name: Run tests
         run: |
-          Rscript ./inst/reg_neum_run.R ${{ runner.os }}
+          Rscript ./inst/run.R ${{ runner.os }}
 
       - name: Upload test results
         uses: actions/upload-artifact@v2
