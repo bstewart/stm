@@ -96,6 +96,8 @@ jobs:
 
       - name: Setup R
         uses: r-lib/actions/setup-r@master
+
+      - name: Install R packages
         run: |
           install.packages("stringr")
         shell: Rscript {0}
