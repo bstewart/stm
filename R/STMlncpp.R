@@ -16,7 +16,7 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
   if(method == "ucminf") {
     maxeval = control$maxit
     optim.out <- ucminf::ucminf(par=eta, fn=lhoodcpp, gr=gradcpp,
-                                control=list(maxeval=maxeval, grtol=1.0e-8),
+                                control=list(maxeval=maxeval, grtol=1.0e-10),
                                 doc_ct=doc.ct, mu=mu,
                                 siginv=siginv, beta=beta)
   }
