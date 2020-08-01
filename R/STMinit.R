@@ -45,7 +45,6 @@ stm.init <- function(documents, settings) {
     #Random initialization or if Custom, initalize everything randomly
     mu <- matrix(0, nrow=(K-1),ncol=1)
     sigma <- diag(20, nrow=(K-1))
-    print(sigma)
     beta <- matrix(rgamma(V * K, .1), ncol = V)
     beta <- beta/rowSums(beta)
     lambda <- matrix(0, nrow=N, ncol=(K-1))
