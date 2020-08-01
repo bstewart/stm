@@ -4,7 +4,6 @@ library(stringr)
 # Get all the file names
 location <- "./artifact/"
 files <- list.files(path = location)
-print(files)
 
 # Variables
 num_files <- length(files)
@@ -16,7 +15,6 @@ num_topics <- character()
 # and extract number of topics and different operating systems
 for(i in 1:num_files) {
   fnmx <- str_split_fixed(files[i], "_|\\.", 5)
-  print(fnmx)
   num_topics <- cbind(num_topics, fnmx[1,1])
   os_names <- cbind(os_names, fnmx[1,4])
 }
@@ -43,12 +41,6 @@ for(i in 1:length(num_topics)) {
     os1 <- readRDS(file_name1)
     os2 <- readRDS(file_name2)
     comp <- all.equal(os1, os2)
-    if(length(comp) < 8) {
-      cat("SUCCEEDED!!!\n")
-    }
-    else {
-      cat("FAILED!!!\n")
-    }
     print(comp)
   }
 }

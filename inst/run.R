@@ -5,9 +5,9 @@ library(stringr)
 # Get command line argument for operating system
 args = commandArgs(trailingOnly=TRUE)
 
-ks <- c(5, 10, 40, 60)
+ks <- c(5, 10, 40, 60, 100)
 s_type <- "neum"
-m_type <- "BFGS"
+m_type <- "nlm"
 
 for(k in ks) {
   cat(paste("Running K =", k, "...\n"))
