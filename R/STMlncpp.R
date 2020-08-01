@@ -16,10 +16,17 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
   if(method == "ucminf") {
     maxeval = control$maxit
     optim.out <- ucminf::ucminf(par=eta, fn=lhoodcpp, gr=gradcpp,
-                                control=list(maxeval=maxeval),
+                                control=list(maxeval=maxeval, grtol=1.0e-8),
                                 doc_ct=doc.ct, mu=mu,
                                 siginv=siginv, beta=beta)
   }
+  # else if(method == "trust.optim") {
+  #   out <- trustOptim::trust.optim(x=eta, fn=lhoodcpp, gr=gradcpp, 
+  #                      method = "BFGS", control = list(maxit=control$maxit, report.freq=-1, report.level=-1, preconditioner=1), 
+  #                      doc_ct=doc.ct, mu=mu,
+  #                      siginv=siginv, beta=beta)
+  #   optim.out = list(par=out$solution)
+  # }
   else {
     optim.out <- optimr::optimr(par=eta, fn=lhoodcpp, gr=gradcpp,
                                 method=method, control=control,
