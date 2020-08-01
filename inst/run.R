@@ -6,7 +6,7 @@ library(stringr)
 args = commandArgs(trailingOnly=TRUE)
 
 ks <- c(5, 10, 60, 110)
-s_type <- "neum"
+s_type <- "reg"
 m_type <- "BFGS"
 
 for(k in ks) {
