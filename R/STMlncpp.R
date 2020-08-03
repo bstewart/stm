@@ -43,6 +43,45 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
          sigmaentropy=sigmaentropy)
 }
 
+# GM Test document level optimization
+optimize_doc <- function(dn, mod, documents, method="BFGS", tol=1.0e-6, control=list(maxit=500)) {
+  
+  # Get all the necessary variables
+  doc <- documents[[dn]]
+  doc.ct <- doc[2,]
+  
+  eta <- mod$eta[dn,]
+  mu <- mod$mu$mu
+  
+  sigobj <- try(chol.default(mod$sigma), silent=TRUE)
+  if(class(sigobj)=="try-error") {
+    siginv <- solve(mod$sigma)
+  } else {
+    siginv <- chol2inv(sigobj)
+  }
+  
+  words <- doc[1,]
+  aspect <- mod$settings$covariates$betaindex[dn]
+  beta <- exp(mod$beta$logbeta[[aspect]][,words,drop=FALSE])
+  
+  # Run optimization
+  if(method == "ucminf") {
+    maxeval = control$maxit
+    optim.out <- ucminf::ucminf(par=eta, fn=lhoodcpp, gr=gradcpp,
+                                control=list(maxeval=maxeval, grtol=tol),
+                                doc_ct=doc.ct, mu=mu,
+                                siginv=siginv, beta=beta)
+  }
+  else {
+    optim.out <- optimr::optimr(par=eta, fn=lhoodcpp, gr=gradcpp,
+                                method=method, control=control,
+                                doc_ct=doc.ct, mu=mu,
+                                siginv=siginv, beta=beta)
+  }
+  
+  return(list(optim.out=optim.out, eta=eta, doc.ct=doc.ct, mu=mu, siginv=siginv, beta=beta))
+}
+# GM
 
 #the external exported version
 ####
