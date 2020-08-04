@@ -32,7 +32,11 @@ jobs:
           pwd
           echo $HOME
           ls $HOME
-  
+          mkdir -p $HOME/.R
+          cd $HOME/.R
+          touch Makevars
+          echo 'CXX=g++' >> Makevars
+          echo 'CXXFLAGS=-O2 -march=native -msse2 -mfpmath=sse' >> Makevars  
 #      - name: Setup actions checkout
 #        uses: actions/checkout@v2
 #
@@ -40,6 +44,12 @@ jobs:
         uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
+
+      - name: Install package Matrix
+        run: |
+          install.packages("Matrix")
+        shell: Rscript {0}
+
 #
 #      - name: Setup pandoc
 #        uses: r-lib/actions/setup-pandoc@master
