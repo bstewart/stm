@@ -30,14 +30,16 @@ jobs:
       - name: Print directory
         run: |
           pwd
+          echo $HOME
+          ls $HOME
   
 #      - name: Setup actions checkout
 #        uses: actions/checkout@v2
 #
-#      - name: Setup R
-#        uses: r-lib/actions/setup-r@master
-#        with:
-#          r-version: ${{ matrix.config.r }}
+      - name: Setup R
+        uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.config.r }}
 #
 #      - name: Setup pandoc
 #        uses: r-lib/actions/setup-pandoc@master
