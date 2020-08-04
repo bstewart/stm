@@ -3,10 +3,10 @@ on:
     branches:
       - sumcpp
 
-name: Cross platform stability test
+name: Testing compiler flags 
 
 jobs:
-  reg_neum_run:
+  run:
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     runs-on: ${{ matrix.config.os }}
 
@@ -14,7 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
           - {os: ubuntu-16.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
 
@@ -28,6 +27,19 @@ jobs:
         run: | 
           echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
 
+      - name: Generate Makevars
+        run: |
+          mkdir -p $HOME/.R
+          pushd $HOME/.R
+          touch Makevars
+          echo 'CC=gcc' >> Makevars
+          echo 'CFLAGS=-O2 -msse2 -mfpmath=sse' >> Makevars
+          echo 'CXX=g++' >> Makevars
+          echo 'CXXFLAGS=-O2 -msse2 -mfpmath=sse -std=c++14' >> Makevars
+          echo 'FC=gfortran' >> Makevars
+          echo 'FFLAGS=-O2 -msse2 -mfpmath=sse' >> Makevars
+          cat Makevars
+          popd
       - name: Setup actions checkout
         uses: actions/checkout@v2
 
@@ -42,6 +54,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages(c("remotes", "devtools", "stringr"))
+          devtools::install_github("https://github.com/cran/ucminf")
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
         shell: Rscript {0}
 
@@ -73,34 +86,39 @@ jobs:
           build(vignettes = FALSE)
           install()
         shell: Rscript {0}
+#
+#      - name: Run tests
+#        run: |
+#          Rscript ./inst/run.R ${{ runner.os }}
+#
+#      - name: Upload test results
+#        uses: actions/upload-artifact@v2
+#        with: 
+#          path: ${{ github.workspace }}/*.Rds
 
-      - name: Run tests
-        run: |
-          Rscript ./inst/reg_neum_run.R ${{ runner.os }}
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with: 
-          path: ${{ github.workspace }}/*.Rds
-
-
-  xpl_stab_test:
-    name: Check cross platform runs 
-    needs: reg_neum_run
-    runs-on: macOS-latest 
-
-    steps: 
-      - name: Setup actions checkout
-        uses: actions/checkout@v2
-
-      - name: Setup R
-        uses: r-lib/actions/setup-r@master
-
-      - name: Download artifacts from previous job
-        uses: actions/download-artifact@v2
-
-      - name: Run tests
-        run: |
-          Rscript ./inst/xpl_stab_test.R
+#  xpl_stab_test:
+#    name: Check cross platform runs 
+#    needs: run
+#    runs-on: macOS-latest 
+#
+#    steps: 
+#      - name: Setup actions checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Setup R
+#        uses: r-lib/actions/setup-r@master
+#
+#      - name: Install R packages
+#        run: |
+#          install.packages("stringr")
+#        shell: Rscript {0}
+#
+#      - name: Download artifacts from previous job
+#        uses: actions/download-artifact@v2
+#
+#      - name: Run tests
+#        run: |
+#          Rscript ./inst/xpl_opt_test.R
 
 
