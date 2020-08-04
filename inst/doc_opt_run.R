@@ -7,8 +7,8 @@ args = commandArgs(trailingOnly=TRUE)
 
 mod <- readRDS("./inst/mod.Rds")
 method <- "ucminf"
-tol <- 1e-5
-file_name = str_c(method, "_1e-5_", args[1], ".Rds")
+tol <- 1e-7
+file_name = str_c(method, "_1e-7_", args[1], ".Rds")
 #file_name = str_c("./inst/docopt/", method, "_1e-6_", "Windows", ".Rds")
 
 doc_id <- numeric()
