@@ -44,10 +44,10 @@ for(j in 1:ncol(comb_os)) {
   
   # Search for different solutions and objective values
   for(i in 1:nrow(os1)) {
-    if(!isTRUE(all.equal(os1$sol_norm2[i], os2$sol_norm2[i], tolerance = 1.0e-15))) {
+    if(!isTRUE(all.equal(os1$sol_norm2[i], os2$sol_norm2[i], tolerance = 1.0e-11))) {
       diff_sol <- cbind(diff_sol, i)
     }
-    if(!isTRUE(all.equal(os1$obj_value[i], os2$obj_value[i], tolerance = 1.0e-15))) {
+    if(!isTRUE(all.equal(os1$obj_value[i], os2$obj_value[i], tolerance = 1.0e-11))) {
       diff_val <- cbind(diff_val, i)
     }
   }
