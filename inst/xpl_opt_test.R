@@ -39,12 +39,15 @@ for(j in 1:ncol(comb_os)) {
   os1 <- readRDS(file_name1)
   os2 <- readRDS(file_name2)
   
+  cat(paste("all.equal results for siginv_norm2:\n"))
+  print(all.equal(os1$siginv_norm2[1], os2$siginv_norm2[1], tolerance = 1.0e-15))
+  
   # Search for different solutions and objective values
   for(i in 1:nrow(os1)) {
-    if(!isTRUE(all.equal(os1$sol_norm2[i], os2$sol_norm2[i]))) {
+    if(!isTRUE(all.equal(os1$sol_norm2[i], os2$sol_norm2[i], tolerance = 1.0e-15))) {
       diff_sol <- cbind(diff_sol, i)
     }
-    if(!isTRUE(all.equal(os1$obj_value[i], os2$obj_value[i]))) {
+    if(!isTRUE(all.equal(os1$obj_value[i], os2$obj_value[i], tolerance = 1.0e-15))) {
       diff_val <- cbind(diff_val, i)
     }
   }
