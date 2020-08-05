@@ -1,0 +1,112 @@
+on:
+  push:
+    branches:
+      - sumcpp
+
+name: Cross platform stability test (default)
+
+jobs:
+  run:
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+#          - {os: windows-latest, r: 'release'}
+          - {os: macOS-latest, r: 'release'}
+          - {os: ubuntu-16.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/xenial/latest"}
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: ${{ matrix.config.rspm }}
+
+    steps:
+      - name: Manage Bazel dist
+        if: runner.os == 'Linux'
+        run: | 
+          echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+
+      - name: Setup actions checkout
+        uses: actions/checkout@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@master
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - name: Setup pandoc
+        uses: r-lib/actions/setup-pandoc@master
+
+      - name: Query dependencies
+        run: |
+          install.packages(c("remotes", "devtools", "stringr"))
+          devtools::install_github("https://github.com/cran/ucminf")
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        if: runner.os != 'Windows'
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-${{ matrix.config.r }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-1-
+
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        env:
+          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        run: |
+          Rscript -e "remotes::install_github('r-hub/sysreqs')"
+          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
+          sudo -s eval "$sysreqs"
+
+      - name: Install R dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Build and install stm
+        run: |
+          library(devtools)
+          build(vignettes = FALSE)
+          install()
+        shell: Rscript {0}
+
+      - name: Run tests
+        run: |
+          Rscript ./inst/run.R ${{ runner.os }}
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with: 
+          path: ${{ github.workspace }}/*.Rds
+
+
+  xpl_stab_test:
+    name: Check cross platform runs 
+    needs: run
+    runs-on: macOS-latest 
+
+    steps: 
+      - name: Setup actions checkout
+        uses: actions/checkout@v2
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@master
+
+      - name: Install R packages
+        run: |
+          install.packages("stringr")
+        shell: Rscript {0}
+
+      - name: Download artifacts from previous job
+        uses: actions/download-artifact@v2
+
+      - name: Run tests
+        run: |
+          Rscript ./inst/xpl_stab_test.R
+
+

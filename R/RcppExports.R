@@ -5,47 +5,19 @@ lhoodcpp <- function(eta, beta, doc_ct, mu, siginv) {
     .Call(`_stm_lhoodcpp`, eta, beta, doc_ct, mu, siginv)
 }
 
-gradcpp <- function(eta, beta, doc_cts, mu, siginv) {
-    .Call(`_stm_gradcpp`, eta, beta, doc_cts, mu, siginv)
+gradcpp <- function(eta, beta, doc_ct, mu, siginv) {
+    .Call(`_stm_gradcpp`, eta, beta, doc_ct, mu, siginv)
 }
 
 hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
     .Call(`_stm_hpbcpp`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
 }
 
-n_mat_sumcpp <- function(sum_, c_, input_, t_) {
-    .Call(`_stm_n_mat_sumcpp`, sum_, c_, input_, t_)
+n_beta_sumcpp <- function(sumc_, aw, input_) {
+    invisible(.Call(`_stm_n_beta_sumcpp`, sumc_, aw, input_))
 }
 
-n_beta_sumcpp <- function(sum_, aw, c_, input_) {
-    invisible(.Call(`_stm_n_beta_sumcpp`, sum_, aw, c_, input_))
-}
-
-n_beta_comb_sumcpp <- function(sumc_, aw, input_) {
-    invisible(.Call(`_stm_n_beta_comb_sumcpp`, sumc_, aw, input_))
-}
-
-n_beta_sumcpp_loop <- function(sum_, aw, c_, input_, t_) {
-    invisible(.Call(`_stm_n_beta_sumcpp_loop`, sum_, aw, c_, input_, t_))
-}
-
-n_beta_sumcpp_at <- function(sum_, aw, c_, input_, t_) {
-    invisible(.Call(`_stm_n_beta_sumcpp_at`, sum_, aw, c_, input_, t_))
-}
-
-n_beta_sumcpp_oneloop <- function(sum_, aw, c_, input_) {
-    invisible(.Call(`_stm_n_beta_sumcpp_oneloop`, sum_, aw, c_, input_))
-}
-
-n_beta_sumcpp_arma <- function(asum, aw, ac, ainput, at) {
-    invisible(.Call(`_stm_n_beta_sumcpp_arma`, asum, aw, ac, ainput, at))
-}
-
-n_sigma_sumcpp <- function(sum_, c_, input_, t_) {
-    invisible(.Call(`_stm_n_sigma_sumcpp`, sum_, c_, input_, t_))
-}
-
-n_sigma_sumcpp_opt <- function(asum, ac, ainput, at) {
-    invisible(.Call(`_stm_n_sigma_sumcpp_opt`, asum, ac, ainput, at))
+n_sigma_sumcpp <- function(sumc_, input_) {
+    invisible(.Call(`_stm_n_sigma_sumcpp`, sumc_, input_))
 }
 

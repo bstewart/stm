@@ -33,7 +33,9 @@ Imports:
   splines,
   stats,
   stringr,
-  utils
+  utils,
+  optimr,
+  ucminf
 Suggests: 
   clue,
   geometry,

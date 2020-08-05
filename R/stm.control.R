@@ -151,7 +151,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       msg <- sprintf("Completed E-Step (%d seconds). \n", floor((proc.time()-t1)[3]))
       if(verbose) cat(msg)
       t1 <- proc.time()
-      sigma.ss <- suffstats$sigma
+      sigma.ss <- suffstats$sigma 
       lambda <- suffstats$lambda
       beta.ss <- suffstats$beta
       bound.ss <- suffstats$bound
@@ -159,14 +159,7 @@ stm.control <- function(documents, vocab, settings, model=NULL) {
       mu <- opt.mu(lambda=lambda, mode=settings$gamma$mode,
                    covar=settings$covariates$X, enet=settings$gamma$enet, ic.k=settings$gamma$ic.k,
                    maxits=settings$gamma$maxits)
-      if(!settings$summation$reg) {
-        sigma.ss <- sigma.ss[[1]] + sigma.ss[[2]]
-      }
-      sigma <- opt.sigma(nu=sigma.ss, lambda=lambda,
-                         mu=mu$mu, sigprior=settings$sigma$prior)
-      if(!settings$summation$reg) {
-        beta.ss <- lapply(beta.ss, function(x) x[[1]]+x[[2]])
-      }
+      sigma <- opt.sigma(nu=sigma.ss, lambda=lambda, mu=mu$mu, sigprior=settings$sigma$prior)
       beta <- opt.beta(beta.ss, beta$kappa, settings)
       if(verbose) {
         timer <- floor((proc.time()-t1)[3])
