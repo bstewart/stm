@@ -111,6 +111,11 @@ jobs:
       - name: Setup R
         uses: r-lib/actions/setup-r@master
 
+      - name: Install R packages
+        run: |
+          install.packages("stringr")
+        shell: Rscript {0}
+
       - name: Download artifacts from previous job
         uses: actions/download-artifact@v2
 
