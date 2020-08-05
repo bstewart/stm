@@ -30,7 +30,7 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
   else {
     tol = 1.0e-10
     optim.out <- optimr::optimr(par=eta, fn=lhoodcpp, gr=gradcpp,
-                                method=method, control=control,
+                                method=method, control=list(maxit=500),
                                 doc_ct=doc.ct, mu=mu,
                                 siginv=siginv, beta=beta)
   }

@@ -7,7 +7,7 @@ args = commandArgs(trailingOnly=TRUE)
 
 ks <- c(5, 10, 20, 30, 40, 50, 110)
 s_type <- "neum"
-m_type <- "ucminf"
+m_type <- "BFGS"
 
 for(k in ks) {
   cat(paste("Running K =", k, "...\n"))
