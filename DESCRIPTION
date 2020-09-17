@@ -1,6 +1,6 @@
 Package: stm
 Title: Estimation of the Structural Topic Model
-Version: 1.3.5
+Version: 1.3.6
 Authors@R: c(
     person("Margaret", "Roberts", email="meroberts@ucsd.edu", role="aut"),
     person("Brandon", "Stewart", email="bms4@princeton.edu", role=c("aut","cre")),
@@ -14,7 +14,7 @@ Description: The Structural Topic Model (STM) allows researchers
   Roberts et al (2016) <doi:10.1080/01621459.2016.1141684>. Vignette
   is Roberts et al (2019) <doi:10.18637/jss.v091.i02>.
 Depends: 
-  R (>= 3.2.2), 
+  R (>= 3.5.0), 
   methods
 LinkingTo: Rcpp, RcppArmadillo
 Imports: 

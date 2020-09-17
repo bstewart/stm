@@ -235,7 +235,7 @@ poliblogPrevFit <- stm(documents = out$documents, vocab = out$vocab,
 The model is set to run for a maximum of 75 EM iterations (controlled by \code{max.em.its}) using a seed we selected (\code{seed}).  Convergence is monitored by the change in the approximate variational lower bound.  Once the bound has a small enough change between iterations, the model is considered converged. To reduce compiling time, in this paper we do not run the models and instead load a workspace with the models already estimated.\footnote{We note that due to differences across versions of the software the code above may not exactly replicate the models we use below.  We have analyzed the poliblog data in other papers including \cite{chaptermulti} and \cite{qmmr}.}
 
 <<eval=TRUE>>=
-load(url("http://goo.gl/VPdxlS"))
+load(url("https://www.princeton.edu/~bms4/VignetteObjects.RData"))
 @
 
 \subsection{Evaluate: Model selection and search}

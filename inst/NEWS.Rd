@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.3.6}{
+\itemize{
+\item Another very small release to address a concern with file download speeds.
+}
+}
 \section{Version 1.3.5}{
 \itemize{
 \item A small release to correct the class() issue in preparation for R 4.0.0.  Thanks to the R core team for clear directions.
