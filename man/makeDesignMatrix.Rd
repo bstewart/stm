@@ -4,8 +4,7 @@
 \alias{makeDesignMatrix}
 \title{Make a Design Matrix}
 \usage{
-makeDesignMatrix(formula, origData, newData, test = TRUE,
-  sparse = TRUE)
+makeDesignMatrix(formula, origData, newData, test = TRUE, sparse = TRUE)
 }
 \arguments{
 \item{formula}{the formula describing the design matrix.  Any responses will be deleted}

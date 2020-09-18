@@ -5,7 +5,8 @@
 \alias{gadarian}
 \alias{gadarianFit}
 \title{Gadarian and Albertson data}
-\format{A data frame with 351 observations on the following 3 variables.
+\format{
+A data frame with 351 observations on the following 3 variables.
 \describe{ 
 \item{\code{MetaID}}{A numeric vector containing identification
 numbers; not used for analysis} 
@@ -15,7 +16,8 @@ indicating treatment condition}
 party identification} 
 \item{\code{open.ended.response}}{A character vector
 of the subject's open ended response} 
-}}
+}
+}
 \source{
 Gadarian, Shana Kushner, and Bethany Albertson. "Anxiety,
 immigration, and the search for information." Political Psychology 35.2

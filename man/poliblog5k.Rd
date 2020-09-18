@@ -7,7 +7,8 @@
 \alias{poliblog5k.voc}
 \alias{poliblog5k.meta}
 \title{CMU 2008 Political Blog Corpus}
-\format{A data frame with 5000 observations on the following 4 variables.
+\format{
+A data frame with 5000 observations on the following 4 variables.
 \describe{ 
 \item{\code{rating}}{a factor variable giving the partisan
 affiliation of the blog (based on who they supported for president)}
@@ -18,7 +19,8 @@ name of the blog. They are: American Thinker (at), Digby (db), Hot Air (ha),
 Michelle Malkin (mm), Think Progress (tp), Talking Points Memo (tpm)}
 \item{\code{text}}{the first 50 characters (rounded to the nearest full
 word).} 
-}}
+}
+}
 \source{
 Jacob Eisenstein and Eric Xing (2010) "The CMU 2008 Political Blog
 Corpus." Technical Report Carnegie Mellon University.

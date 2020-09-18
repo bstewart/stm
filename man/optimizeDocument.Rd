@@ -4,9 +4,18 @@
 \alias{optimizeDocument}
 \title{Optimize Document}
 \usage{
-optimizeDocument(document, eta, mu, beta, sigma = NULL,
-  sigmainv = NULL, sigmaentropy = NULL, method = "BFGS",
-  control = list(maxit = 500), posterior = TRUE)
+optimizeDocument(
+  document,
+  eta,
+  mu,
+  beta,
+  sigma = NULL,
+  sigmainv = NULL,
+  sigmaentropy = NULL,
+  method = "BFGS",
+  control = list(maxit = 500),
+  posterior = TRUE
+)
 }
 \arguments{
 \item{document}{a single matrix containing the document in the \code{\link{stm}} format}

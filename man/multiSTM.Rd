@@ -5,10 +5,18 @@
 \alias{print.MultimodDiagnostic}
 \title{Analyze Stability of Local STM Mode}
 \usage{
-multiSTM(mod.out = NULL, ref.model = NULL, align.global = FALSE,
-  mass.threshold = 1, reg.formula = NULL, metadata = NULL,
-  reg.nsims = 100, reg.parameter.index = 2, verbose = TRUE,
-  from.disk = FALSE)
+multiSTM(
+  mod.out = NULL,
+  ref.model = NULL,
+  align.global = FALSE,
+  mass.threshold = 1,
+  reg.formula = NULL,
+  metadata = NULL,
+  reg.nsims = 100,
+  reg.parameter.index = 2,
+  verbose = TRUE,
+  from.disk = FALSE
+)
 }
 \arguments{
 \item{mod.out}{The output of a \code{selectModel()} run. This is a list of
@@ -175,19 +183,10 @@ mod.out <- selectModel(docs, vocab, K=3,
 out <- multiSTM(from.disk=T, mass.threshold = .75, 
                 reg.formula = ~ treatment,
                 metadata = gadarian)
-
-# One more example using Poliblog data
-load(url("http://goo.gl/91KbfS"))
-meta <- poliblogPrevFit$settings$covariates$X
-out <- multiSTM(poliblogSelect, mass.threshold=.75, 
-                reg.formula= ~ ratingLiberal,
-                metadata=meta)
-
-plot(out, 1:4)
 }
 }
 \references{
-Roberts, M., Stewart, B., & Tingley, D. (Forthcoming).
+Roberts, M., Stewart, B., & Tingley, D. (2016).
 "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data
 Analytics in Social Science, Government, and Industry." New York: Cambridge
 University Press.

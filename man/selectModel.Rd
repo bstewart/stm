@@ -4,11 +4,27 @@
 \alias{selectModel}
 \title{Assists the user in selecting the best STM model.}
 \usage{
-selectModel(documents, vocab, K, prevalence = NULL, content = NULL,
-  data = NULL, max.em.its = 100, verbose = TRUE, init.type = "LDA",
-  emtol = 1e-05, seed = NULL, runs = 50, frexw = 0.7,
-  net.max.em.its = 2, netverbose = FALSE, M = 10, N = NULL,
-  to.disk = F, ...)
+selectModel(
+  documents,
+  vocab,
+  K,
+  prevalence = NULL,
+  content = NULL,
+  data = NULL,
+  max.em.its = 100,
+  verbose = TRUE,
+  init.type = "LDA",
+  emtol = 1e-05,
+  seed = NULL,
+  runs = 50,
+  frexw = 0.7,
+  net.max.em.its = 2,
+  netverbose = FALSE,
+  M = 10,
+  N = NULL,
+  to.disk = F,
+  ...
+)
 }
 \arguments{
 \item{documents}{The documents to be modeled.  Object must be a list of with

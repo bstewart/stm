@@ -4,9 +4,17 @@
 \alias{plot.topicCorr}
 \title{Plot a topic correlation graph}
 \usage{
-\method{plot}{topicCorr}(x, topics = NULL, vlabels = NULL,
-  layout = NULL, vertex.color = "green", vertex.label.cex = 0.75,
-  vertex.label.color = "black", vertex.size = NULL, ...)
+\method{plot}{topicCorr}(
+  x,
+  topics = NULL,
+  vlabels = NULL,
+  layout = NULL,
+  vertex.color = "green",
+  vertex.label.cex = 0.75,
+  vertex.label.color = "black",
+  vertex.size = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A topicCorr model object.}

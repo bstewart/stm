@@ -55,7 +55,6 @@ Natural Language Processing (pp. 262-272). Association for Computational Linguis
 
 Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian, S., Albertson, B., et al. (2014). 
 "Structural topic models for open ended survey responses." American Journal of Political Science, 58(4), 1064-1082.
- http://goo.gl/0x0tHJ
 }
 \seealso{
 \code{\link{searchK}} \code{\link{plot.searchK}} \code{\link{exclusivity}}

@@ -4,8 +4,13 @@
 \alias{findTopic}
 \title{Find topics that contain user specified words.}
 \usage{
-findTopic(x, list, n = 20, type = c("prob", "frex", "lift", "score"),
-  verbose = TRUE)
+findTopic(
+  x,
+  list,
+  n = 20,
+  type = c("prob", "frex", "lift", "score"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{The STM model object to be searched. May also be the output from

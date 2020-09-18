@@ -4,8 +4,15 @@
 \alias{cloud}
 \title{Plot a wordcloud}
 \usage{
-cloud(stmobj, topic = NULL, type = c("model", "documents"), documents,
-  thresh = 0.9, max.words = 100, ...)
+cloud(
+  stmobj,
+  topic = NULL,
+  type = c("model", "documents"),
+  documents,
+  thresh = 0.9,
+  max.words = 100,
+  ...
+)
 }
 \arguments{
 \item{stmobj}{The STM model object to be used in making the word cloud.}

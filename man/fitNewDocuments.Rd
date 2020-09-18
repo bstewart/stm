@@ -4,12 +4,21 @@
 \alias{fitNewDocuments}
 \title{Fit New Documents}
 \usage{
-fitNewDocuments(model = NULL, documents = NULL, newData = NULL,
-  origData = NULL, prevalence = NULL, betaIndex = NULL,
+fitNewDocuments(
+  model = NULL,
+  documents = NULL,
+  newData = NULL,
+  origData = NULL,
+  prevalence = NULL,
+  betaIndex = NULL,
   prevalencePrior = c("Average", "Covariate", "None"),
-  contentPrior = c("Average", "Covariate"), returnPosterior = FALSE,
-  returnPriors = FALSE, designMatrix = NULL, test = TRUE,
-  verbose = TRUE)
+  contentPrior = c("Average", "Covariate"),
+  returnPosterior = FALSE,
+  returnPriors = FALSE,
+  designMatrix = NULL,
+  test = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{model}{the originally fit STM object.}
@@ -115,7 +124,7 @@ By default the function returns only the MAP estimate of the normalized document
 theta.  By selecting \code{returnPrior=TRUE} you can get the various model parameters used to complete
 the fit.  By selecting \code{returnPosterior=TRUE} you can get the full variational posterior.  Please
 note that the full variational posterior is very memory intensive.  For a sense of scale it requires an
-extra \eqn{K^2 + K \times (V'+1) + 1} doubles per document where V' is the number of unique tokens in the document.
+extra \eqn{K^2 + K \times (V'+1) + 1} doubles per document where V' is the number of unique tokens in the document. 
 
 \strong{Testing:} Getting the prevalence covariates right in the unseen documents can be tricky.  However
 as long as you leave \code{test} set to \code{TRUE} the code will automatically run a test to make sure
@@ -129,7 +138,7 @@ The columns need to match the ordering of the design matrix for the original \co
 The design matrix in an stm model called \code{stmobj} can be found in \code{stmobj$settings$covariates$X} 
 which can in turn be used to check that you have formatted your result correctly. If you are going to 
 try this we recommend that you read the documentation for \code{\link{makeDesignMatrix}} to understand
-some of the challenges involved.
+some of the challenges involved.  
 
 If you want even more fine-grained control we recommend you directly use the 
 optimization function \code{\link{optimizeDocument}}

@@ -119,7 +119,7 @@ estimateEffect <- function(formula,
                      nsims=25, prior=NULL) {
   origcall <- match.call()
   thetatype <- match.arg(uncertainty)
-  if(thetatype=="None") nsims <- 1 #override nsims for no uncertaintys
+  if(thetatype=="None") nsims <- 1 #override nsims for no uncertainty
   
   if(!is.null(documents)) {
     # Convert the corpus to the internal STM format
@@ -143,7 +143,9 @@ estimateEffect <- function(formula,
     K <- eval(parse(text=response))
     if(!(posint(K) && max(K)<=stmobj$settings$dim$K)) stop("Topics specified as response in formula must be a set of positive integers equal to or less than the number of topics in the model.")   
     #now we reconstruct the formula removing the response
-    formula <- as.formula(as.character(formula)[c(1,3)])
+    formula <- formula(paste(as.character(formula)[c(1,3)], collapse = " "))
+      #the above used to be the below code but the use got deprecated.
+      #as.formula(as.character(formula)[c(1,3)])
     termobj <- terms(formula, data=metadata)
   } else {
     K <- 1:stmobj$settings$dim$K

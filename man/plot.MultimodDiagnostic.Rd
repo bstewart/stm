@@ -123,17 +123,6 @@ out <- multiSTM(mod.out, mass.threshold = .75,
 
 plot(out)
 plot(out, 1)
-
-# One more example using Poliblog data
-
-load(url("http://goo.gl/91KbfS"))
-meta <- poliblogPrevFit$settings$covariates$X
-out <- multiSTM(poliblogSelect, mass.threshold=.75, 
-                reg.formula= ~ ratingLiberal,
-                metadata=meta)
-
-plot(out, ind=(1:4), topics=1)
-plot(out, 16)
 }
 }
 \references{

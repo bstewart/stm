@@ -5,9 +5,18 @@
 \title{Computes diagnostic values for models with different values of K (number of
 topics).}
 \usage{
-searchK(documents, vocab, K, init.type = "Spectral", N = floor(0.1 *
-  length(documents)), proportion = 0.5, heldout.seed = NULL, M = 10,
-  cores = 1, ...)
+searchK(
+  documents,
+  vocab,
+  K,
+  init.type = "Spectral",
+  N = floor(0.1 * length(documents)),
+  proportion = 0.5,
+  heldout.seed = NULL,
+  M = 10,
+  cores = 1,
+  ...
+)
 }
 \arguments{
 \item{documents}{The documents to be used for the stm model}

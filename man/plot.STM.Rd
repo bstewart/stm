@@ -4,12 +4,26 @@
 \alias{plot.STM}
 \title{Functions for plotting STM objects}
 \usage{
-\method{plot}{STM}(x, type = c("summary", "labels", "perspectives",
-  "hist"), n = NULL, topics = NULL, labeltype = c("prob", "frex",
-  "lift", "score"), frexw = 0.5, main = NULL, xlim = NULL,
-  ylim = NULL, xlab = NULL, family = "", width = 80,
-  covarlevels = NULL, plabels = NULL, text.cex = 1,
-  custom.labels = NULL, topic.names = NULL, ...)
+\method{plot}{STM}(
+  x,
+  type = c("summary", "labels", "perspectives", "hist"),
+  n = NULL,
+  topics = NULL,
+  labeltype = c("prob", "frex", "lift", "score"),
+  frexw = 0.5,
+  main = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  xlab = NULL,
+  family = "",
+  width = 80,
+  covarlevels = NULL,
+  plabels = NULL,
+  text.cex = 1,
+  custom.labels = NULL,
+  topic.names = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{Model output from stm.}

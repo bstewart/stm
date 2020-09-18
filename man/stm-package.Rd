@@ -34,12 +34,12 @@ Pre-Fit Models and Data: \code{\link{gadarian}} \code{\link{gadarianFit}}
 Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013)
 "The structural topic model and applied social science." In Advances in
 Neural Information Processing Systems Workshop on Topic Models: Computation,
-Application, and Evaluation. http://goo.gl/uHkXAQ
+Application, and Evaluation.
 
 Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian,
 S., Albertson, B., Albertson, B. and Rand, D. (2014). "Structural topic
 models for open ended survey responses." American Journal of Political
-Science http://goo.gl/0x0tHJ
+Science.
 
 Additional papers at: structuraltopicmodel.com
 }

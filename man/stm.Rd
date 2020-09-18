@@ -4,13 +4,28 @@
 \alias{stm}
 \title{Variational EM for the Structural Topic Model}
 \usage{
-stm(documents, vocab, K, prevalence = NULL, content = NULL,
-  data = NULL, init.type = c("Spectral", "LDA", "Random", "Custom"),
-  seed = NULL, max.em.its = 500, emtol = 1e-05, verbose = TRUE,
-  reportevery = 5, LDAbeta = TRUE, interactions = TRUE,
-  ngroups = 1, model = NULL, gamma.prior = c("Pooled", "L1"),
-  sigma.prior = 0, kappa.prior = c("L1", "Jeffreys"),
-  control = list())
+stm(
+  documents,
+  vocab,
+  K,
+  prevalence = NULL,
+  content = NULL,
+  data = NULL,
+  init.type = c("Spectral", "LDA", "Random", "Custom"),
+  seed = NULL,
+  max.em.its = 500,
+  emtol = 1e-05,
+  verbose = TRUE,
+  reportevery = 5,
+  LDAbeta = TRUE,
+  interactions = TRUE,
+  ngroups = 1,
+  model = NULL,
+  gamma.prior = c("Pooled", "L1"),
+  sigma.prior = 0,
+  kappa.prior = c("L1", "Jeffreys"),
+  control = list()
+)
 }
 \arguments{
 \item{documents}{The document term matrix to be modeled. These can be supplied
@@ -266,6 +281,7 @@ number of topics, etc.).  Be sure to change the \code{max.em.its} argument
 or it will simply complete one additional iteration and stop.
 
 You can pass a custom initialization of the beta model parameters to \code{stm}.
+  
 
 The \code{control} argument is a list with named components which can be
 used to specify numerous additional computational details.  Valid components
@@ -421,7 +437,7 @@ mod.out2 <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep),
 Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013)
 "The structural topic model and applied social science." In Advances in
 Neural Information Processing Systems Workshop on Topic Models: Computation,
-Application, and Evaluation. http://goo.gl/uHkXAQ
+Application, and Evaluation. 
 
 Roberts M., Stewart, B. and Airoldi, E. (2016) "A model of text for
 experimentation in the social sciences" Journal of the American Statistical
@@ -430,7 +446,6 @@ Association.
 Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian,
 S., Albertson, B., et al. (2014). Structural topic models for open ended
 survey responses. American Journal of Political Science, 58(4), 1064-1082.
-http://goo.gl/0x0tHJ
 
 Roberts, M., Stewart, B., & Tingley, D. (2016). "Navigating the Local
 Modes of Big Data: The Case of Topic Models. In Data Analytics in Social

@@ -5,8 +5,7 @@
 \alias{print.summary.estimateEffect}
 \title{Summary for estimateEffect}
 \usage{
-\method{summary}{estimateEffect}(object, topics = NULL, nsim = 500,
-  ...)
+\method{summary}{estimateEffect}(object, topics = NULL, nsim = 500, ...)
 }
 \arguments{
 \item{object}{an object of class \code{"estimateEffect"}, usually a result of a call to
@@ -28,7 +27,7 @@ This function along with \code{\link{print.summary.estimateEffect}} creates
 regression tables that look like typically summaries you see in R.  In general
 we recommend that you use non-linearities such as splines via function like
 \code{\link{s}} and in those circumstances the tables are not particularly
-interpretable.
+interpretable.  
 
 Confidence intervals are calculated by using draws from the covariance matrix
 of each simulation to estimate the standard error.  Then a t-distribution approximation

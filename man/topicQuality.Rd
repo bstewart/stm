@@ -4,8 +4,15 @@
 \alias{topicQuality}
 \title{Plots semantic coherence and exclusivity for each topic.}
 \usage{
-topicQuality(model, documents, xlab = "Semantic Coherence",
-  ylab = "Exclusivity", labels = 1:ncol(model$theta), M = 10, ...)
+topicQuality(
+  model,
+  documents,
+  xlab = "Semantic Coherence",
+  ylab = "Exclusivity",
+  labels = 1:ncol(model$theta),
+  M = 10,
+  ...
+)
 }
 \arguments{
 \item{model}{Output from stm, or a selected model from selectModel.}
