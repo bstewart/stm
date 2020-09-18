@@ -362,7 +362,7 @@
 #' Roberts, M., Stewart, B., Tingley, D., and Airoldi, E. (2013)
 #' "The structural topic model and applied social science." In Advances in
 #' Neural Information Processing Systems Workshop on Topic Models: Computation,
-#' Application, and Evaluation. http://goo.gl/uHkXAQ
+#' Application, and Evaluation. 
 #' 
 #' Roberts M., Stewart, B. and Airoldi, E. (2016) "A model of text for
 #' experimentation in the social sciences" Journal of the American Statistical
@@ -371,7 +371,6 @@
 #' Roberts, M., Stewart, B., Tingley, D., Lucas, C., Leder-Luis, J., Gadarian,
 #' S., Albertson, B., et al. (2014). Structural topic models for open ended
 #' survey responses. American Journal of Political Science, 58(4), 1064-1082.
-#' http://goo.gl/0x0tHJ
 #' 
 #' Roberts, M., Stewart, B., & Tingley, D. (2016). "Navigating the Local
 #' Modes of Big Data: The Case of Topic Models. In Data Analytics in Social
