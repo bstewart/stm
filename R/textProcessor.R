@@ -97,7 +97,7 @@
 #' assumes that you have passed a regular expression and passes that directly
 #' along to \code{gsub}.
 #' @param v1 A logical which defaults to \code{FALSE}.  If set to \code{TRUE} it
-#' will use the ordering of operations we use used in Version 1.0 of the package.
+#' will use the ordering of operations we used in Version 1.0 of the package.
 #' @return \item{documents}{A list containing the documents in the stm format.}
 #' \item{vocab }{Character vector of vocabulary.} \item{meta}{Data frame or
 #' matrix containing the user-supplied metadata for the retained documents.}
@@ -241,7 +241,7 @@ textProcessor <- function(documents, metadata=NULL,
   
   #Make a matrix
   if(verbose) cat("Creating Output... \n")
-  dtm <- tm::DocumentTermMatrix(txt, control=list(wordLengths=wordLengths))
+  dtm <- tm::DocumentTermMatrix(txt, control=list(wordLengths=wordLengths, tolower = FALSE))
   if(sparselevel!=1) {
     ntokens <- sum(dtm$v)
     V <- ncol(dtm)
