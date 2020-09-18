@@ -299,9 +299,9 @@ summary.estimateEffect <- function(object, topics=NULL, nsim=500, ...) {
     stop("Some topics specified with the topics argument are not available in this estimateEffect object.")
   }
   tables <- vector(mode="list", length=length(topics))
-  for(i in seq_along(topics)) {
-    topic = topics[i]
-    sims <- lapply(object$parameters[[topic]], function(x) rmvnorm(nsim, x$est, x$vcov))
+  for(i in 1:length(topics)) {
+    topic <- topics[i]
+    sims <- lapply(object$parameters[[which(object$topics==topic)]], function(x) rmvnorm(nsim, x$est, x$vcov))
     sims <- do.call(rbind,sims)
     est<- colMeans(sims)
     se <- sqrt(apply(sims,2, stats::var))

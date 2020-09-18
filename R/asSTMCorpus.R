@@ -124,6 +124,6 @@ asSTMCorpus.dgCMatrix <- function(documents, vocab, data = NULL, ...) {
 #' @export
 #' @keywords internal
 asSTMCorpus.dgTMatrix <- function(documents, vocab, data = NULL, ...) {
-    documents <- methods::as("dgCMatrix", documents)
+    documents <- methods::as(documents,"dgCMatrix")
     asSTMCorpus.dgCMatrix(documents, vocab, data, ...)
 }
