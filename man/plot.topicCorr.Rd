@@ -49,7 +49,7 @@ Essentially a thin wrapper around the plotting functionality in the
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 #This function becomes more useful with larger numbers of topics.
 #it is demonstrated here with a small model simply to show how the syntax works.

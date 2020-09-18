@@ -9,7 +9,7 @@
 #' @param ...  additional arguments for S3 compatibility.
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' K<-c(5,10,15) 
 #' temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)

@@ -36,7 +36,7 @@
 #' https://github.com/cpsievert/LDAvis
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' mod <- stm(poliblog5k.docs, poliblog5k.voc, K=25,
 #'            prevalence=~rating, data=poliblog5k.meta,
@@ -84,7 +84,7 @@ LDAvis::serVis(f,out.dir=out.dir,open.browser=open.browser,as.gist=as.gist,R = R
 #' https://github.com/cpsievert/LDAvis
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' mod <- stm(poliblog5k.docs, poliblog5k.voc, K=25,
 #'            prevalence=~rating, data=poliblog5k.meta,

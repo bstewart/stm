@@ -84,7 +84,7 @@ NULL
 #' Journal of Political Science 58, no 4 (2014): 1064-1082.
 #' @keywords datasets
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' 
 #' head(gadarian)
 #' #Process the data for analysis.
@@ -139,7 +139,7 @@ NULL
 #' @keywords datasets
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' data(poliblog5k)
 #' head(poliblog5k.meta)

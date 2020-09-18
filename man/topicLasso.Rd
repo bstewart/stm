@@ -90,7 +90,7 @@ families.
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 #Load the poliblog data
 data(poliblog5k)

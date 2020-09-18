@@ -406,7 +406,7 @@ the parameter for you until it works, but it can also be directly set here.}
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 #An example using the Gadarian data.  From Raw text to fitted model using 
 #textProcessor() which leverages the tm Package

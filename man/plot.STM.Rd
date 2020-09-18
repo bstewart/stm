@@ -105,7 +105,7 @@ estimates of the document-topic loadings across all documents.  The median
 is also denoted by a dashed red line.
 }
 \examples{
-\dontrun{
+\donttest{
 
 #Examples with the Gadarian Data
 plot(gadarianFit)

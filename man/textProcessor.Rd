@@ -150,7 +150,7 @@ possible.
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 head(gadarian)
 #Process the data for analysis.

@@ -37,7 +37,7 @@ Convert a set of document term counts and associated metadata to
 the form required for processing by the \code{\link{stm}} function.
 }
 \examples{
-\dontrun{
+\donttest{
 library(quanteda)
 gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
 gadarian_dfm <- dfm(gadarian_corpus, 

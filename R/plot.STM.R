@@ -65,7 +65,7 @@
 #' Survey Responses." American Journal of Political Science 58, no 4 (2014):
 #' 1064-1082.
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' 
 #' #Examples with the Gadarian Data
 #' plot(gadarianFit)

@@ -164,7 +164,7 @@ confidence intervals.  See \code{\link{estimateEffect}}.
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 prep <- estimateEffect(1:3 ~ treatment, gadarianFit, gadarian)
 plot(prep, "treatment", model=gadarianFit,
@@ -181,7 +181,7 @@ method="difference",cov.value1=1,cov.value2=0)
 # invalid 'times' value, then you likely have not done this.
 
 #Example of binary times binary interaction
-gadarian$binaryvar <- sample(c(0,1), nrow(gadarian), replace=T)
+gadarian$binaryvar <- sample(c(0,1), nrow(gadarian), replace=TRUE)
 temp <- textProcessor(gadarian$open.ended.response,metadata=gadarian)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
 stm1 <- stm(out$documents, out$vocab, 3, prevalence=~treatment*binaryvar,

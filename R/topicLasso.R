@@ -56,7 +56,7 @@
 #' Journal of statistical software 33.1 (2010): 1.
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' #Load the poliblog data
 #' data(poliblog5k)

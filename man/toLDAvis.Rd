@@ -61,7 +61,7 @@ or download from CRAN. Note: LDAvis may renumber the topics.
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 mod <- stm(poliblog5k.docs, poliblog5k.voc, K=25,
            prevalence=~rating, data=poliblog5k.meta,

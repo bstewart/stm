@@ -127,7 +127,7 @@ topicCorr <- function(model, method=c("simple", "huge"),
 #' http://igraph.sf.net
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' #This function becomes more useful with larger numbers of topics.
 #' #it is demonstrated here with a small model simply to show how the syntax works.

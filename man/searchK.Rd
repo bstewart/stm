@@ -80,7 +80,7 @@ this to be substantially more stable.
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 K<-c(5,10,15) 
 temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)

@@ -377,7 +377,7 @@
 #' Science, Government, and Industry." New York: Cambridge University Press.
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' #An example using the Gadarian data.  From Raw text to fitted model using 
 #' #textProcessor() which leverages the tm Package

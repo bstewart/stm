@@ -109,7 +109,7 @@
 #' Infrastructure in R. \emph{Journal of Statistical Software} 25(5): 1-54.
 #' @examples
 #' 
-#' \dontrun{
+#' \donttest{
 #' 
 #' head(gadarian)
 #' #Process the data for analysis.

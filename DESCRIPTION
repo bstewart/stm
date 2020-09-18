@@ -52,7 +52,7 @@ Suggests:
 Encoding: UTF-8
 LazyData: yes
 License: MIT + file LICENSE
-URL: http://structuraltopicmodel.com 
+URL: http://www.structuraltopicmodel.com/
 BugReports: https://github.com/bstewart/stm/issues
 RoxygenNote: 7.1.1
 Language: en-US

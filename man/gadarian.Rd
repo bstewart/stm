@@ -36,7 +36,7 @@ immigration. The control condition just had subjects write about
 immigration.
 }
 \examples{
-\dontrun{
+\donttest{
 
 head(gadarian)
 #Process the data for analysis.

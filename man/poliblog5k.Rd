@@ -47,7 +47,7 @@ Malkin are single-author blogs; the others have multiple authors."
 }
 \examples{
 
-\dontrun{
+\donttest{
 
 data(poliblog5k)
 head(poliblog5k.meta)

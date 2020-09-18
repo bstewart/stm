@@ -20,7 +20,7 @@
 #' @param ...  Other parameters passed to the plot function
 #' @seealso \code{\link{findThoughts}}
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' 
 #' thoughts <- findThoughts(gadarianFit,texts=gadarian$open.ended.response,
 #' topics=c(1), n=3)$docs[[1]]

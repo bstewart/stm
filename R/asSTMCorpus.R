@@ -30,7 +30,7 @@
 #' @seealso \code{\link{prepDocuments}}, \code{\link{stm}}
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(quanteda)
 #' gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
 #' gadarian_dfm <- dfm(gadarian_corpus, 
