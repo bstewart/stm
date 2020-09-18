@@ -128,7 +128,7 @@
 #' University), Dustin Tingley (Harvard University)
 #' @seealso \code{\link{plot.MultimodDiagnostic}} \code{\link{selectModel}}
 #' \code{\link{estimateEffect}}
-#' @references Roberts, M., Stewart, B., & Tingley, D. (Forthcoming).
+#' @references Roberts, M., Stewart, B., & Tingley, D. (2016).
 #' "Navigating the Local Modes of Big Data: The Case of Topic Models. In Data
 #' Analytics in Social Science, Government, and Industry." New York: Cambridge
 #' University Press.
@@ -165,15 +165,6 @@
 #' out <- multiSTM(from.disk=T, mass.threshold = .75, 
 #'                 reg.formula = ~ treatment,
 #'                 metadata = gadarian)
-#' 
-#' # One more example using Poliblog data
-#' load(url("http://goo.gl/91KbfS"))
-#' meta <- poliblogPrevFit$settings$covariates$X
-#' out <- multiSTM(poliblogSelect, mass.threshold=.75, 
-#'                 reg.formula= ~ ratingLiberal,
-#'                 metadata=meta)
-#' 
-#' plot(out, 1:4)
 #' }
 #' @export
 multiSTM <- function(mod.out=NULL, ref.model=NULL, 
