@@ -206,7 +206,7 @@ plot.STM <- function(x,
     } else {
       if(length(covarlevels)>2) stop("More than two covariate levels specified.")
       if(length(covarlevels)==1) covarlevels <- rep(covarlevels,2)
-      covlabels <-  model$seetings$covariates$yvarlevels
+      covlabels <-  model$settings$covariates$yvarlevels
       if(is.character(covarlevels)) {
         covarlevels <- pmatch(covarlevels, model$settings$covariates$yvarlevels)
         if(any(is.na(covarlevels))) stop("Unrecognized covariate levels")
