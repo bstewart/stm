@@ -113,8 +113,9 @@ optimizeDocument <- function(document, eta, mu, beta, sigma=NULL,
   } else {
     siginv <- sigmainv #just renaming otherwise
   }
-  if(any(beta < 0)) stop("Some entries of beta are negative.  Are you sure you
-                         didn't pass the logged version of beta?")
+  #removing this check because it can get excessively expensive
+  #if(any(beta < 0)) stop("Some entries of beta are negative.  Are you sure you
+  #                       didn't pass the logged version of beta?")
   
   beta <- beta[,document[1,], drop=FALSE]
   out <- logisticnormalcpp(eta, mu, siginv, beta, document, sigmaentropy,
