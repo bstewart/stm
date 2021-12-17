@@ -16,8 +16,8 @@
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
                        beta, lambda.old, mu, sigma, 
+                       summation, randomize, method,
                        verbose) {
-  
   #quickly define useful constants
   V <- ncol(beta[[1]])
   K <- nrow(beta[[1]])
@@ -25,12 +25,32 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   A <- length(beta)
   ctevery <- ifelse(N>100, floor(N/100), 1)
   if(!update.mu) mu.i <- as.numeric(mu)
-  
   # 1) Initialize Sufficient Statistics 
-  sigma.ss <- diag(0, nrow=(K-1))
-  beta.ss <- vector(mode="list", length=A)
-  for(i in 1:A) {
-    beta.ss[[i]] <- matrix(0, nrow=K,ncol=V)
+  if(summation$neum_R) {
+    sigma.ss <- n_mat_sum(diag(0, nrow=(K-1)))
+  } else if(summation$neum_cpp) {
+    sigma.ss <- list(sum = diag(0, nrow=(K-1)), c = diag(0, nrow=(K-1)))
+    tsigma <- diag(0, nrow=(K-1))
+  } else {
+    sigma.ss <- diag(0, nrow=(K-1))
+  }
+  if(summation$neum_R) {
+    beta.ss <- vector(mode="list", length=A)
+    for(i in 1:A) {
+      beta.ss[[i]] <- n_mat_sum(matrix(0, nrow=K,ncol=V))
+    }
+  } else if(summation$neum_cpp) {
+    beta.ss <- vector(mode="list", length=A)
+    for(i in 1:A) {
+      beta.ss[[i]] <- list(sum = matrix(0, nrow=K,ncol=V), c = matrix(0, nrow=K,ncol=V))
+    }
+    tbeta <- matrix(0, nrow=K, ncol=V)
+  }
+  else {
+    beta.ss <- vector(mode="list", length=A)
+    for(i in 1:A) {
+      beta.ss[[i]] <- matrix(0, nrow=K,ncol=V)
+    }
   }
   bound <- vector(length=N)
   lambda <- vector("list", length=N)
@@ -48,7 +68,15 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # For right now we are just doing everything in serial.
   # the challenge with multicore is efficient scheduling while
   # maintaining a small dimension for the sufficient statistics.
-  for(i in 1:N) {
+  if(randomize) {
+    vec <- sample(1:N, N) 
+  } else {
+    vec <- 1:N
+  }
+  #MGY
+  sumc <- rowMergeMtx(beta.ss[[1]][[1]], beta.ss[[1]][[2]])
+  #MGY
+  for(i in vec) {
     #update components
     doc <- documents[[i]]
     words <- doc[1,]
@@ -59,11 +87,31 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     
     #infer the document
     doc.results <- logisticnormalcpp(eta=init, mu=mu.i, siginv=siginv, beta=beta.i, 
-                                  doc=doc, sigmaentropy=sigmaentropy)
+                                  doc=doc, sigmaentropy=sigmaentropy, method=method)
     
     # update sufficient statistics 
-    sigma.ss <- sigma.ss + doc.results$eta$nu
-    beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    if(summation$neum_R) {
+      sigma.ss <- n_mat_sum(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu)
+    } else if(summation$neum_cpp) {
+      n_sigma_sumcpp(sigma.ss[[1]], sigma.ss[[2]], doc.results$eta$nu, tsigma)
+    } else {
+      sigma.ss <- sigma.ss + doc.results$eta$nu
+    }
+    if(summation$neum_R) {
+      #more efficient than this would be to stack all the C's underneath
+      #betas
+      o_beta <- n_mat_sum(beta.ss[[aspect]][[1]][,words], 
+                          beta.ss[[aspect]][[2]][,words], 
+                          doc.results$phis)
+      beta.ss[[aspect]][[1]][,words] <- o_beta[[1]]
+      beta.ss[[aspect]][[2]][,words] <- o_beta[[2]]
+    } else if(summation$neum_cpp) {
+      #n_beta_sumcpp(beta.ss[[aspect]][[1]], words-1, beta.ss[[aspect]][[2]], doc.results$phis, tbeta)
+      #n_beta_sumcpp(beta.ss[[aspect]][[1]], words-1, beta.ss[[aspect]][[2]], doc.results$phis)
+      n_beta_comb_sumcpp(sumc, words-1, doc.results$phis)
+    } else {
+      beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    }
     bound[i] <- doc.results$bound
     lambda[[i]] <- c(doc.results$eta$lambda)
     if(verbose && i%%ctevery==0) cat(".")
@@ -72,5 +120,11 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   
   #4) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)
-  return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda))
+  #MGY
+  sumc <- rowSplitMtx(sumc)
+  beta.ss[[1]][[1]] <- sumc$top
+  beta.ss[[1]][[2]] <- sumc$bottom
+  #MGY
+  return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda,
+              vec=vec))
 }

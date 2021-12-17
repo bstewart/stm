@@ -8,7 +8,7 @@
 #12/31/2016 added the hpbcpp argument so I can opt not to call it
 #inside fitNewDocuments
 logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy, 
-                              method="BFGS", control=list(maxit=500),
+                              method, control=list(maxit=500),
                               hpbcpp=TRUE) {
   doc.ct <- doc[2,]
   Ndoc <- sum(doc.ct)
