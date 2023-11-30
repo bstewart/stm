@@ -6,9 +6,7 @@ test_that("Test that stm works on a quanteda dfm", {
   require(quanteda)
   if(utils::compareVersion(as.character(utils::packageVersion("quanteda")), "0.9.9-31") >= 0) {
     gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
-    gadarian_dfm <- dfm(gadarian_corpus, 
-                        remove = stopwords("english"),
-                        stem = TRUE)
+    gadarian_dfm <- dfm(tokens(gadarian_corpus))
     set.seed(10012) # NYU :-)
     stm_from_dfm <- stm(gadarian_dfm,
                         K = 3,
@@ -22,7 +20,7 @@ test_that("Test that stm works on a quanteda dfm", {
   }
 })
 
-if(requireNamespace("tm",quietly=TRUE) & utils::packageVersion("tm")>=0.6) {
+if(requireNamespace("tm",quietly=TRUE) & utils::packageVersion("tm")>="0.6") {
   test_that("Test that stm works on a classic stm object structure", {
     temp <- textProcessor(documents = gadarian$open.ended.response,
                           metadata = gadarian)

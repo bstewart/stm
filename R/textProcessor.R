@@ -137,7 +137,7 @@ textProcessor <- function(documents, metadata=NULL,
                           verbose=TRUE, onlycharacter=FALSE,striphtml=FALSE,
                           customstopwords=NULL, custompunctuation=NULL, v1=FALSE) {
   if(!requireNamespace("tm",quietly=TRUE)) stop("Please install tm package to use this function. You will also need SnowballC if stemming.")
-  if(!(utils::packageVersion("tm")>=0.6)) stop("Please install at least version 0.6 of the tm package.")
+  if(!(utils::packageVersion("tm")>="0.6")) stop("Please install at least version 0.6 of the tm package.")
   if(stem) {
     if(!requireNamespace("SnowballC", quietly=TRUE)) stop("Please install SnowballC to use stemming.")
   }

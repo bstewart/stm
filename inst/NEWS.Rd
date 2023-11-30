@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.3.7}{
+\itemize{
+\item A very small update to flag an issue with RcppArmadillo flagged and fixed by Dirk Eddelbuettel long ago. Thank you Dirk!
+\item A very small update to fix invalid numeric inputs made by Kurt Hornick. Thank you Kurt!
+\item also a small bug fix from ADernild.  Thank you!
+}
+}
 \section{Version 1.3.6}{
 \itemize{
 \item Another very small release to address a concern with file download speeds.
