@@ -108,5 +108,5 @@ if(any(phi==0)){
 vocab <- mod$vocab
 doc.length <- as.integer(unlist(lapply(docs, function(x) sum(x[2,]))))
 term.frequency <- mod$settings$dim$wcounts$x
-LDAvis::createJSON(plot.opts = plot.opts,phi=phi,theta=theta,doc.length=doc.length,vocab=vocab,term.frequency=term.frequency,lambda.step=lambda.step,reorder.topics=reorder.topics)
+LDAvis::createJSON(plot.opts = plot.opts,phi=phi,theta=theta,doc.length=doc.length,vocab=vocab,term.frequency=term.frequency,lambda.step=lambda.step,reorder.topics=reorder.topics,R=R)
 }
