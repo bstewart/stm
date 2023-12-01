@@ -374,7 +374,7 @@ initialization.}
 number of words to be used in the initialization.  It uses the most frequent words
 first and then they are reintroduced following initialization.  This allows spectral
 to be used with a large V.}
-\item{\code{recoverEG}}{Set to code{TRUE} by default.  If set to \code{FALSE}
+\item{\code{recoverEG}}{Set to \code{TRUE} by default.  If set to \code{FALSE}
  will solve the recovery problem in the Spectral algorithm using a downhill simplex
  method.  See https://github.com/bstewart/stm/issues/133 for more discussion.}
 \item{\code{allow.neg.change}}{A logical indicating whether the algorithm is allowed
