@@ -39,7 +39,7 @@ equal to the number of documents in the stmobj.}
 from the plot.  Note this does not exclude them from the calculation, only
 the plot.}
 
-\item{family}{The family parameter used in \code{\link{glmnet}}.  See
+\item{family}{The family parameter used in \code{\link[glmnet]{glmnet}}.  See
 explanation there.  Defaults to "gaussian"}
 
 \item{main}{Character string for the main title.}
@@ -72,7 +72,7 @@ as predictors.  This function is experimental (see below).
 \details{
 This function is used for estimating the most important topical predictors
 of an arbitrary outcome.  The idea is to run an L1 regularized regression
-using \code{\link{cv.glmnet}} in the \pkg{glmnet} package where the
+using \code{\link[glmnet]{cv.glmnet}} in the \pkg{glmnet} package where the
 document-level dependent variable is chosen by the user and the predictors
 are the document-topic proportions in the \code{\link{stm}} model along with
 any other variables of interest.

@@ -6,7 +6,7 @@
 #' 
 #' This function is used for estimating the most important topical predictors
 #' of an arbitrary outcome.  The idea is to run an L1 regularized regression
-#' using \code{\link{cv.glmnet}} in the \pkg{glmnet} package where the
+#' using \code{\link[glmnet]{cv.glmnet}} in the \pkg{glmnet} package where the
 #' document-level dependent variable is chosen by the user and the predictors
 #' are the document-topic proportions in the \code{\link{stm}} model along with
 #' any other variables of interest.
@@ -34,7 +34,7 @@
 #' @param omit.var Pass a character vector of variable names to be excluded
 #' from the plot.  Note this does not exclude them from the calculation, only
 #' the plot.
-#' @param family The family parameter used in \code{\link{glmnet}}.  See
+#' @param family The family parameter used in \code{\link[glmnet]{glmnet}}.  See
 #' explanation there.  Defaults to "gaussian"
 #' @param main Character string for the main title.
 #' @param xlab Character string giving an x-axis label.

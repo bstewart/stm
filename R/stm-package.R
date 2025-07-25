@@ -26,7 +26,6 @@
 #' 
 #' 
 #' @name stm-package
-#' @docType package
 #' @author Author: Margaret E. Roberts, Brandon M. Stewart and Dustin Tingley
 #' 
 #' Maintainer: Brandon Stewart <bms4@@princeton.edu>
@@ -49,7 +48,7 @@
 #' @importFrom graphics abline axis hist legend lines par plot points segments smoothScatter text title
 #' @importFrom stats aggregate as.formula coef cor cov lm loess median model.frame model.response model.matrix na.omit optim optimize pchisq predict quantile rbinom rgamma rnorm runif terms
 #' @useDynLib stm, .registration = TRUE
-NULL
+"_PACKAGE"
 
 #' Gadarian and Albertson data
 #' 

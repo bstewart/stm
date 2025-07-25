@@ -54,5 +54,5 @@ LazyData: yes
 License: MIT + file LICENSE
 URL: http://www.structuraltopicmodel.com/
 BugReports: https://github.com/bstewart/stm/issues
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Language: en-US
