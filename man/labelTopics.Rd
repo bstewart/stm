@@ -45,8 +45,8 @@ use a James-Stein type shrinkage estimator of the distribution
 internal function \code{\link{calcfrex}} and \code{\link{js.estimate}}.
 
 Score and Lift are measures provided in two other popular text mining
-packages. For more information on type Score, see the R package
-\code{\link{lda}} or the internal function \code{\link{calcscore}}.  
+packages. For more information on type Score, see the R function
+\code{\link[lda]{top.topic.words}} or the internal function \code{\link{calcscore}}.  
 For more information on type Lift, see the R package \code{maptpx}
 or or the internal function \code{\link{calclift}}.
 }
