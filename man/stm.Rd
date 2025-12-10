@@ -122,7 +122,7 @@ argument you can restart an existing model.  See details for more info.}
 covariate model.  The default \code{Pooled} options uses Normal prior
 distributions with a topic-level pooled variance which is given a moderately
 regularizing half-cauchy(1,1) prior.  The alternative \code{L1} uses
-\code{glmnet} to estimate a grouped penalty between L1-L2.  If your code is running
+\pkg{glmnet} to estimate a grouped penalty between L1-L2.  If your code is running
 slowly immediately after "Completed E-Step" appears, you may want to switch to the 
 \code{L1} option. See details below.}
 
@@ -219,7 +219,7 @@ higher dimensional space of words in dictionary (which tend to be in the
 thousands) as opposed to topics.
 
 In addition to the default priors for prevalence, we also make use of the
-\code{glmnet} package to allow for penalties between the L1 and L2 norm.  In
+\pkg{glmnet} package to allow for penalties between the L1 and L2 norm.  In
 these settings we estimate a regularization path and then select the optimal
 shrinkage parameter using a user-tuneable information criterion.  By default
 selecting the \code{L1} option will apply the L1 penalty selecting the
@@ -317,7 +317,7 @@ most terms have approximately zero probability with some terms with high
 probability.} 
 \item{\code{kappa.enet}}{When using the L1 mode for content
 covariates this controls the elastic net mixing parameter.  See the argument
-\code{alpha} in \code{glmnet}.  Value must be between 1 and 0 where 1 is the
+\code{alpha} in \pkg{glmnet}.  Value must be between 1 and 0 where 1 is the
 lasso penalty (the default) and 0 is the ridge penalty.  The closer the
 parameter is to zero the less sparse the solution will tend to be.}
 \item{\code{gamma.enet}}{Controls the elastic net mixing parameter for the
@@ -374,6 +374,11 @@ initialization.}
 number of words to be used in the initialization.  It uses the most frequent words
 first and then they are reintroduced following initialization.  This allows spectral
 to be used with a large V.}
+\item{\code{spectral.method}}{Method for spectral initialization: \code{"cpp"} (default,
+optimized C++ implementation), \code{"R"} (original R implementation),
+or \code{"auto"} (automatically selects based on vocabulary size). Only used when \code{init.type="Spectral"}.
+The C++ version provides 2-4x speedup and produces numerically equivalent results to the R version.
+The "auto" setting uses C++ for vocabularies larger than 3000 words and R otherwise.}
 \item{\code{recoverEG}}{Set to \code{TRUE} by default.  If set to \code{FALSE}
  will solve the recovery problem in the Spectral algorithm using a downhill simplex
  method.  See https://github.com/bstewart/stm/issues/133 for more discussion.}
@@ -413,19 +418,31 @@ the parameter for you until it works, but it can also be directly set here.}
 temp<-textProcessor(documents=gadarian$open.ended.response,metadata=gadarian)
 out <- prepDocuments(temp$documents, temp$vocab, temp$meta)
 set.seed(02138)
+#max.em.its set very low to speed package compile time.
+#remove to run to convergence.
 mod.out <- stm(out$documents, out$vocab, 3, 
-               prevalence=~treatment + s(pid_rep), data=out$meta)
+               prevalence=~treatment + s(pid_rep), data=out$meta,
+               max.em.its=5)
 
-#The same example using quanteda instead of tm via textProcessor()
-#Note this example works with quanteda version 0.9.9-31 and later
-require(quanteda)
-gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
-gadarian_dfm <- dfm(gadarian_corpus, 
-                     remove = stopwords("english"),
-                     stem = TRUE)
-stm_from_dfm <- stm(gadarian_dfm, K = 3, prevalence = ~treatment + s(pid_rep),
-                    data = docvars(gadarian_corpus))
-                     
+# The same example using quanteda (v3+), via textProcessor()-equivalent steps
+if (requireNamespace("quanteda", quietly = TRUE)) {
+  corp <- quanteda::corpus(gadarian, text_field = "open.ended.response")
+  toks <- quanteda::tokens(corp, remove_punct = TRUE)
+  toks <- quanteda::tokens_remove(toks, pattern = quanteda::stopwords("en"))
+  toks <- quanteda::tokens_wordstem(toks)
+  gadarian_dfm <- quanteda::dfm(toks)
+
+# max.em.its set very low to speed package compile time.
+# remove to run to convergence.
+  stm_from_dfm <- stm(
+    gadarian_dfm,
+    K = 3,
+    prevalence = ~ treatment + s(pid_rep),
+    data = quanteda::docvars(corp),
+    max.em.its = 5
+  )
+ }
+#'                      
 #An example of restarting a model
 mod.out <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
                data=out$meta, max.em.its=5)

@@ -57,11 +57,61 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fastAnchorCpp
+Rcpp::List fastAnchorCpp(arma::mat Qbar, int K, double tol, bool verbose);
+RcppExport SEXP _stm_fastAnchorCpp(SEXP QbarSEXP, SEXP KSEXP, SEXP tolSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type Qbar(QbarSEXP);
+    Rcpp::traits::input_parameter< int >::type K(KSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastAnchorCpp(Qbar, K, tol, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// expgradCpp
+arma::vec expgradCpp(const arma::mat& X, const arma::vec& y, const arma::mat& XtX, double eta, int maxiter, double rtol);
+RcppExport SEXP _stm_expgradCpp(SEXP XSEXP, SEXP ySEXP, SEXP XtXSEXP, SEXP etaSEXP, SEXP maxiterSEXP, SEXP rtolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type XtX(XtXSEXP);
+    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< double >::type rtol(rtolSEXP);
+    rcpp_result_gen = Rcpp::wrap(expgradCpp(X, y, XtX, eta, maxiter, rtol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// recoverL2Cpp
+arma::mat recoverL2Cpp(const arma::mat& Qbar, const arma::uvec& anchors, const arma::vec& p_w, double eta, int maxiter, double rtol, bool verbose);
+RcppExport SEXP _stm_recoverL2Cpp(SEXP QbarSEXP, SEXP anchorsSEXP, SEXP p_wSEXP, SEXP etaSEXP, SEXP maxiterSEXP, SEXP rtolSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type Qbar(QbarSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type anchors(anchorsSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type p_w(p_wSEXP);
+    Rcpp::traits::input_parameter< double >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< double >::type rtol(rtolSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(recoverL2Cpp(Qbar, anchors, p_w, eta, maxiter, rtol, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stm_lhoodcpp", (DL_FUNC) &_stm_lhoodcpp, 5},
     {"_stm_gradcpp", (DL_FUNC) &_stm_gradcpp, 5},
     {"_stm_hpbcpp", (DL_FUNC) &_stm_hpbcpp, 6},
+    {"_stm_fastAnchorCpp", (DL_FUNC) &_stm_fastAnchorCpp, 4},
+    {"_stm_expgradCpp", (DL_FUNC) &_stm_expgradCpp, 6},
+    {"_stm_recoverL2Cpp", (DL_FUNC) &_stm_recoverL2Cpp, 7},
     {NULL, NULL, 0}
 };
 

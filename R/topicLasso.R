@@ -73,11 +73,12 @@
 #' }
 #' @export
 topicLasso <- function(formula, data, stmobj=NULL, subset=NULL,
-                      omit.var=NULL, family="gaussian", 
-                      main="Topic Effects on Outcome", 
+                      omit.var=NULL, family="gaussian",
+                      main="Topic Effects on Outcome",
                       xlab=expression("Lower Outcome Higher Outcome"),
                       labeltype=c("prob", "frex", "lift", "score"),seed=02138,
                       xlim=c(-4,4), standardize=FALSE, nfolds=20, ...) {
+  check_theta_computed(stmobj, "topicLasso")
 
   X <- model.matrix(formula, data)
   pvarnames <- colnames(X)

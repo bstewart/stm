@@ -34,7 +34,7 @@
 #'   topicQuality(model=gadarianFit, documents=docs)
 #' }
 #' @export
-topicQuality <- function(model, documents, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:ncol(model$theta), M=10,...){
+topicQuality <- function(model, documents, xlab="Semantic Coherence", ylab="Exclusivity", labels=1:model$settings$dim$K, M=10,...){
   # Convert the corpus to the internal STM format
   args <- asSTMCorpus(documents)
   documents <- args$documents

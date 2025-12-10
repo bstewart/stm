@@ -138,7 +138,6 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
-
   #Qbar <- Q/rowSums(Q)
   X <- Qbar[anchor,]
   XtX <- tcrossprod(X)

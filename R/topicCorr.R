@@ -75,8 +75,9 @@
 #' N. Meinshausen and P. Buhlmann. High-dimensional Graphs and Variable
 #' Selection with the Lasso. The Annals of Statistics, 2006.
 #' @export
-topicCorr <- function(model, method=c("simple", "huge"), 
+topicCorr <- function(model, method=c("simple", "huge"),
                       cutoff=.01, verbose = TRUE) {
+  check_theta_computed(model, "topicCorr")
   method <- match.arg(method)
   out <- list()
   if(method=="simple") {

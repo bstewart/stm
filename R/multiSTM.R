@@ -215,8 +215,10 @@ multiSTM <- function(mod.out=NULL, ref.model=NULL,
   } else {
     glob.max <- ref.model #don't love this nomenclature but keeping it for consistency -bs
   }
+
   # Load reference objects
   ref.mod <- mod.out$runout[[glob.max]]
+  check_theta_computed(ref.mod, "multiSTM")
   ref.beta <- exp(ref.mod$beta$logbeta[[1]])
   ref.theta <- exp(ref.mod$theta)
   ref.thoughts <- findThoughts(ref.mod, n=10)

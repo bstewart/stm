@@ -33,9 +33,10 @@
 #' \donttest{
 #' library(quanteda)
 #' gadarian_corpus <- corpus(gadarian, text_field = "open.ended.response")
-#' gadarian_dfm <- dfm(gadarian_corpus, 
-#'                      remove = stopwords("english"),
-#'                      stem = TRUE)
+#' toks <- tokens(gadarian_corpus, remove_punct = TRUE)
+#' toks <- tokens_remove(toks, pattern = stopwords("en"))  
+#' toks <- tokens_wordstem(toks)
+#' gadarian_dfm <- dfm(toks)
 #' asSTMCorpus(gadarian_dfm)
 #' }
 #' @export

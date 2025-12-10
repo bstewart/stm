@@ -53,7 +53,8 @@
 #' checkResiduals(mod.out, docs)
 #' @export
 checkResiduals <- function(stmobj, documents, tol=.01) {
-  
+  check_theta_computed(stmobj, "checkResiduals")
+
   # Convert the corpus to the internal STM format
   args <- asSTMCorpus(documents)
   documents <- args$documents

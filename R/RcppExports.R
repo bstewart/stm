@@ -13,3 +13,15 @@ hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
     .Call(`_stm_hpbcpp`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
 }
 
+fastAnchorCpp <- function(Qbar, K, tol = 1e-3, verbose = TRUE) {
+    .Call(`_stm_fastAnchorCpp`, Qbar, K, tol, verbose)
+}
+
+expgradCpp <- function(X, y, XtX, eta = 50.0, maxiter = 500L, rtol = 1e-7) {
+    .Call(`_stm_expgradCpp`, X, y, XtX, eta, maxiter, rtol)
+}
+
+recoverL2Cpp <- function(Qbar, anchors, p_w, eta = 50.0, maxiter = 500L, rtol = 1e-7, verbose = TRUE) {
+    .Call(`_stm_recoverL2Cpp`, Qbar, anchors, p_w, eta, maxiter, rtol, verbose)
+}
+

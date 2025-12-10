@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.3.8}{
+\itemize{
+\item A very small update for CRAN.  Thanks to github user chainsawriot for getting this going.
+}
+}
 \section{Version 1.3.7}{
 \itemize{
 \item A very small update to flag an issue with RcppArmadillo flagged and fixed by Dirk Eddelbuettel long ago. Thank you Dirk!

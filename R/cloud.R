@@ -42,10 +42,16 @@ cloud <- function(stmobj, topic=NULL, type=c("model", "documents"), documents,
     if(length(topic)>1) stop("Please only select 1 topic.")
     mod <- stmobj
     type <- match.arg(type)
+
+    # Check theta for documents type
+    if(type == "documents") {
+      check_theta_computed(mod, "cloud")
+    }
+
     vocab <- mod$vocab
     #if they didn't specify a topic overwrite the choice to documents
     if(is.null(topic)) type <- "documents"
-    
+
     if(type=="model") {
       #Here we are interested in the model parameters
       if(length(mod$beta$logbeta)==1) {

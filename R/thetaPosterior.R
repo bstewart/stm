@@ -56,6 +56,7 @@
 #' draws <- thetaPosterior(gadarianFit, nsims = 100)
 #' @export
 thetaPosterior <- function(model, nsims=100, type=c("Global", "Local"), documents=NULL) {
+  check_theta_computed(model, "thetaPosterior")
   type <- match.arg(type)
   if(type=="Local" & is.null(documents)) stop("Documents must be provided to perform local theta uncertainty calculations.")
   switch(type,

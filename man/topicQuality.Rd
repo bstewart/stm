@@ -9,7 +9,7 @@ topicQuality(
   documents,
   xlab = "Semantic Coherence",
   ylab = "Exclusivity",
-  labels = 1:ncol(model$theta),
+  labels = 1:model$settings$dim$K,
   M = 10,
   ...
 )

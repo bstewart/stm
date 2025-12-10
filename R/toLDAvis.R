@@ -98,6 +98,7 @@ LDAvis::serVis(f,out.dir=out.dir,open.browser=open.browser,as.gist=as.gist,R = R
 toLDAvisJson<-function(mod,docs,R=30,plot.opts=list(xlab ="PC1", ylab = "PC2"),
                    lambda.step=.1, reorder.topics=TRUE){
 if(!requireNamespace("LDAvis",quietly=TRUE)) stop("Please install LDAvis package to use this function. You will also need servr.")
+check_theta_computed(mod, "toLDAvisJson")
 theta<-mod$theta
 if(length(mod$beta$logbeta)>1) stop("This function does not yet allow content covariates.")
 phi <- exp(mod$beta$logbeta[[1]])

@@ -4,17 +4,20 @@
 # (2) returning beta as well as mu, sigma, lambda etc.
 
 stm.init <- function(documents, settings) {
-  
+
   K <- settings$dim$K
   V <- settings$dim$V
   A <- settings$dim$A
   N <- settings$dim$N
   mode <- settings$init$mode
-  nits <- settings$init$nits 
-  alpha <- settings$init$alpha 
-  eta <- settings$init$eta 
-  burnin <- settings$init$burnin 
+  nits <- settings$init$nits
+  alpha <- settings$init$alpha
+  eta <- settings$init$eta
+  burnin <- settings$init$burnin
   maxV <- settings$init$maxV
+
+  # Get spectral method (default to "cpp" for better performance)
+  spectral.method <- if(is.null(settings$init$spectral.method)) "cpp" else settings$init$spectral.method
     
   #Different Modes
   if(mode=="LDA") {
@@ -37,13 +40,43 @@ stm.init <- function(documents, settings) {
     lambda <- log(theta) - log(theta[,K]) #get the log-space version
     lambda <- lambda[,-K, drop=FALSE] #drop off the last column
     rm(theta) #clear out theta
-    mu <- colMeans(lambda) #make a globally shared mean
-    mu <- matrix(mu, ncol=1)
+
+    # Initialize mu (and gamma if prevalence covariates present)
+    if(!is.null(settings$prevalence)) {
+      # With covariates: regress lambda on X to initialize gamma
+      X <- settings$prevalence$X
+      gamma <- matrix(NA, nrow=ncol(X), ncol=K-1)
+      for(k in 1:(K-1)) {
+        # Simple OLS for initialization
+        gamma[,k] <- tryCatch({
+          as.numeric(solve(crossprod(X), crossprod(X, lambda[,k])))
+        }, error = function(e) {
+          # If singular, use ridge regression
+          as.numeric(solve(crossprod(X) + diag(0.01, ncol(X)), crossprod(X, lambda[,k])))
+        })
+      }
+      mu <- t(X %*% gamma)  # K-1 × N matrix
+    } else {
+      # No covariates: use global mean
+      gamma <- NULL
+      mu <- colMeans(lambda) #make a globally shared mean
+      mu <- matrix(mu, ncol=1)
+    }
     sigma <- cov(lambda)    
   }
   if(mode=="Random" | mode=="Custom") {
     #Random initialization or if Custom, initalize everything randomly
-    mu <- matrix(0, nrow=(K-1),ncol=1)
+    if(!is.null(settings$prevalence)) {
+      # With covariates: initialize gamma randomly, compute mu
+      X <- settings$prevalence$X
+      gamma <- matrix(rnorm(ncol(X) * (K-1), mean=0, sd=0.1),
+                      nrow=ncol(X), ncol=K-1)
+      mu <- t(X %*% gamma)  # K-1 × N matrix
+    } else {
+      # No covariates: use zero mean
+      gamma <- NULL
+      mu <- matrix(0, nrow=(K-1),ncol=1)
+    }
     sigma <- diag(20, nrow=(K-1))
     beta <- matrix(rgamma(V * K, .1), ncol = V)
     beta <- beta/rowSums(beta)
@@ -92,19 +125,35 @@ stm.init <- function(documents, settings) {
     
     
     # (2) anchor words
+    # Auto-select spectral method based on vocabulary size
+    if(spectral.method == "auto") {
+      spectral.method <- if(V > 3000) "cpp" else "R"
+      if(verbose && spectral.method == "cpp") {
+        cat(sprintf("\t Auto-selected C++ method (V=%d)\n", V))
+      }
+    }
+
     if(K!=0) {
       if(verbose) cat("\t Finding anchor words...\n \t")
-      anchor <- fastAnchor(Q, K=K, verbose=verbose)
+      if(spectral.method == "cpp") {
+        anchor <- fastAnchor.cpp(Q, K=K, verbose=verbose)
+      } else {
+        anchor <- fastAnchor(Q, K=K, verbose=verbose)
+      }
     } else {
       if(verbose) cat("\t Finding anchor words...\n \t")
-      anchor <- tsneAnchor(Q, verbose=verbose, 
+      anchor <- tsneAnchor(Q, verbose=verbose,
                            init.dims=settings$init$tSNE_init.dims,
                            perplexity=settings$init$tSNE_perplexity) #run the Lee and Mimno (2014) algorithm
       K <- length(anchor) # update K
     }
     # (3) recoverL2
     if(verbose) cat("\n\t Recovering initialization...\n \t")
-    beta <- recoverL2(Q, anchor, wprob, verbose=verbose, recoverEG=settings$init$recoverEG)$A
+    if(spectral.method == "cpp") {
+      beta <- recoverL2.cpp(Q, anchor, wprob, verbose=verbose)$A
+    } else {
+      beta <- recoverL2(Q, anchor, wprob, verbose=verbose, recoverEG=settings$init$recoverEG)$A
+    }
     
     if(!is.null(keep)) {
       #if there were zeroes, reintroduce them
@@ -118,14 +167,28 @@ stm.init <- function(documents, settings) {
     }
     
     # (4) generate other parameters
-    mu <- matrix(0, nrow=(K-1),ncol=1)
+    if(!is.null(settings$prevalence)) {
+      if(verbose) cat("  Initializing with prevalence covariates...\n")
+      # With covariates: initialize gamma randomly, compute mu
+      X <- settings$prevalence$X
+      gamma <- matrix(rnorm(ncol(X) * (K-1), mean=0, sd=0.1),
+                      nrow=ncol(X), ncol=K-1)
+      mu <- t(X %*% gamma)  # K-1 × N matrix
+      if(verbose) cat(sprintf("  Mu: %d x %d, Gamma: %d x %d\n",
+                              nrow(mu), ncol(mu), nrow(gamma), ncol(gamma)))
+    } else {
+      # No covariates: use zero mean
+      if(verbose) cat("  Initializing without covariates (CTM mode)...\n")
+      gamma <- NULL
+      mu <- matrix(0, nrow=(K-1),ncol=1)
+    }
     sigma <- diag(20, nrow=(K-1))
     lambda <- matrix(0, nrow=N, ncol=(K-1))
     if(verbose) cat("Initialization complete.\n")
   }
   #turn beta into a list and assign it for each aspect
   beta <- rep(list(beta),A)
-  model <- list(mu=mu, sigma=sigma, beta=beta, lambda=lambda)
+  model <- list(mu=mu, sigma=sigma, beta=beta, lambda=lambda, gamma=gamma)
   #initialize the kappa vectors
   if(!settings$kappa$LDAbeta) {
     model$kappa <- kappa.init(documents, K, V, A, interactions=settings$kappa$interactions)
@@ -148,6 +211,7 @@ stm.init <- function(documents, settings) {
 ###
 # Kappa initialization
 ###
+#' @keywords internal
 kappa.init <- function(documents, K, V, A, interactions) {
   kappa.out <- list()
   #Calculate the baseline log-probability (m)

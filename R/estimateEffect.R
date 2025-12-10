@@ -196,8 +196,10 @@ estimateEffect <- function(formula,
   storage <- vector(mode="list", length=length(K))
   for(i in 1:nsims) {
     # 3a) simulate theta
-    if(thetatype=="None") thetasims <- stmobj$theta
-    else {
+    if(thetatype=="None") {
+      check_theta_computed(stmobj, "estimateEffect")
+      thetasims <- stmobj$theta
+    } else {
       thetasims <- thetaPosterior(stmobj, nsims=1, type=thetatype, documents=documents)
       thetasims <- do.call(rbind, thetasims)
     }
