@@ -12,6 +12,7 @@
 \item Added comprehensive test suite (\code{test-svi-theta-optional.R}) with 5 test cases covering NULL theta behavior, error messages, and theta computation via \code{update_svi_theta()}.
 \item \strong{Migration Guide:} Users with existing code using \code{stm_svi(..., compute_final_theta=FALSE)} should either: (1) set \code{compute_final_theta=TRUE} to maintain previous behavior, or (2) call \code{model <- update_svi_theta(model, documents)} before using theta-dependent functions.
 \item \strong{Bug Fix:} Fixed Issue #285 where \code{estimateEffect()} failed to resolve variable references when called inside \code{foreach} loops. The function now correctly uses the formula's environment to evaluate topic specifications, enabling use in parallel computing contexts. Added comprehensive test suite (\code{test-estimateEffect-foreach.R}) with 6 test cases. Thanks to github user coolsteed for reporting this issue!
+\item \strong{Improvements to findThoughts():} Enhanced error messages to show exact document counts and common causes when text/document mismatch occurs (addresses Issue #244). Added deterministic tie-breaking when multiple documents have identical theta values, ensuring reproducible results (addresses Issue #143). Documentation updated to explain tie-breaking behavior.
 }
 }
 \section{Version 1.3.8}{

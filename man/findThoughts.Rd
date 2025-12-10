@@ -56,6 +56,10 @@ tokens assigned to the topic under the model). Setting the \code{thresh}
 argument allows the user to specify a minimal value of theta for returned
 documents. Returns document indices and top thoughts.
 
+When multiple documents have identical theta values for a topic (ties),
+documents with lower indices are returned first. This ensures deterministic
+and reproducible results.
+
 Sometimes you may want to find thoughts which have more conditions than simply 
 a minimum threshold.  For example, you may want to grab all documents which satisfy
 certain conditions on the metadata or other topics.  You can supply a query in the

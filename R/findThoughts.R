@@ -1,14 +1,18 @@
 #' Find Thoughts
-#' 
+#'
 #' Outputs most representative documents for a particular topic. Use this in
 #' order to get a better sense of the content of actual documents with a high
 #' topical content.
-#' 
+#'
 #' Returns the top \code{n} documents ranked by the MAP estimate of the topic's
 #' theta value (which captures the modal estimate of the proportion of word
 #' tokens assigned to the topic under the model). Setting the \code{thresh}
 #' argument allows the user to specify a minimal value of theta for returned
 #' documents. Returns document indices and top thoughts.
+#'
+#' When multiple documents have identical theta values for a topic (ties),
+#' documents with lower indices are returned first. This ensures deterministic
+#' and reproducible results.
 #' 
 #' Sometimes you may want to find thoughts which have more conditions than simply 
 #' a minimum threshold.  For example, you may want to grab all documents which satisfy
@@ -84,7 +88,20 @@ findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=NULL,
 
   theta <- model$theta
   if(is.null(topics)) topics <- 1:ncol(theta)
-  if(!is.null(texts) && length(texts)!=nrow(theta)) stop("Number of provided texts and number of documents modeled do not match")
+  if(!is.null(texts) && length(texts)!=nrow(theta)) {
+    stop(sprintf(
+      paste0("Number of provided texts and number of documents modeled do not match.\n\n",
+             "  Texts provided: %d\n",
+             "  Documents in model: %d\n\n",
+             "Common causes:\n",
+             "  1. Documents were removed during prepDocuments() due to thresholds\n",
+             "  2. You subset the texts but not the model, or vice versa\n",
+             "  3. The texts are in a different order than the documents\n\n",
+             "Solution: Ensure your texts vector corresponds exactly to the documents\n",
+             "that were actually used in the model after any preprocessing steps."),
+      length(texts), nrow(theta)
+    ))
+  }
   if(!is.null(texts) && inherits(texts,"list") && inherits(texts[[1]],"matrix")) stop("It looks like you are trying to pass the numeric documents object. \n The texts argument wants a vector of characters that contain the actual text of the documents.")
   #since we are allowing n to be infinity have to recode if its too high.
   if(n > nrow(theta)) n <- nrow(theta)
@@ -117,7 +134,8 @@ findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=NULL,
     for(i in 1:length(topics)) {
       k <- topics[i]
       #grab the values and the rank
-      index <- order(theta[,k], decreasing=TRUE)[1:n]
+      #Use document index as tie-breaker for deterministic ordering
+      index <- order(theta[,k], -seq_len(nrow(theta)), decreasing=TRUE)[1:n]
       val <- sort(theta[,k], decreasing=TRUE)[1:n]
       #subset to those values which meet the threshold
       index <- index[which(val>=thresh)]
