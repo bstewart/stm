@@ -121,6 +121,14 @@ distribution rather than something constrained to the range between 0 and 1.
 If a continuous variable goes above 0 or 1 within the range of the data it
 may indicate that a more flexible non-linear specification is needed (such
 as using a spline or a spline with greater degrees of freedom).
+
+When using \code{estimateEffect()} inside \code{foreach} loops or other
+non-standard evaluation contexts, the formula's environment is used to
+resolve variable references. This allows you to use variables for topic
+specifications even in complex execution contexts. If you encounter errors
+about undefined variables, you can either hardcode topic numbers directly
+(e.g., \code{estimateEffect(1:5 ~ ...)}), or use \code{.export} in foreach
+to explicitly export variables (e.g., \code{foreach(..., .export='topics')}).
 }
 \examples{
 

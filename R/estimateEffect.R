@@ -62,7 +62,15 @@
 #' If a continuous variable goes above 0 or 1 within the range of the data it
 #' may indicate that a more flexible non-linear specification is needed (such
 #' as using a spline or a spline with greater degrees of freedom).
-#' 
+#'
+#' When using \code{estimateEffect()} inside \code{foreach} loops or other
+#' non-standard evaluation contexts, the formula's environment is used to
+#' resolve variable references. This allows you to use variables for topic
+#' specifications even in complex execution contexts. If you encounter errors
+#' about undefined variables, you can either hardcode topic numbers directly
+#' (e.g., \code{estimateEffect(1:5 ~ ...)}), or use \code{.export} in foreach
+#' to explicitly export variables (e.g., \code{foreach(..., .export='topics')}).
+#'
 #' @param formula A formula for the regression.  It should have an integer or
 #' vector of numbers on the left-hand side and an equation with covariates on
 #' the right hand side.  See Details for more information.
@@ -140,7 +148,25 @@ estimateEffect <- function(formula,
     # dv ~ iv
     # into:  c("~", "dv", "iv")
     response <- as.character(formula)[2] #second object is the response in this cases
-    K <- eval(parse(text=response))
+
+    # Use formula's environment for evaluation to support foreach loops
+    formula_env <- environment(formula)
+    if(is.null(formula_env)) {
+      # Fallback for formulas created with as.formula() or similar
+      formula_env <- parent.frame()
+    }
+
+    K <- tryCatch(
+      eval(parse(text=response), envir=formula_env),
+      error = function(e) {
+        stop(paste0(
+          sprintf("Could not evaluate topic specification '%s': %s\n\n", response, conditionMessage(e)),
+          "When using estimateEffect() inside foreach loops or similar contexts, try:\n",
+          "  1. Hardcode topic numbers directly: estimateEffect(1:5 ~ ...)\n",
+          "  2. Use .export in foreach to export variables: foreach(..., .export='topics')"
+        ))
+      }
+    )
     if(!(posint(K) && max(K)<=stmobj$settings$dim$K)) stop("Topics specified as response in formula must be a set of positive integers equal to or less than the number of topics in the model.")   
     #now we reconstruct the formula removing the response
     formula <- formula(paste(as.character(formula)[c(1,3)], collapse = " "))
@@ -158,7 +184,13 @@ estimateEffect <- function(formula,
   } else {
     templist <- list()
     for(i in 1:length(varlist)) {
-      templist[[i]] <- get(varlist[i])
+      # Try to get variable from formula environment first, fallback to parent frame
+      templist[[i]] <- tryCatch(
+        get(varlist[i], envir=formula_env),
+        error = function(e) {
+          get(varlist[i], envir=parent.frame())
+        }
+      )
     }
     data <- data.frame(templist)
     names(data) <- varlist

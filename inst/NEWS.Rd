@@ -1,5 +1,19 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.4.0}{
+\itemize{
+\item \strong{Major Enhancement to stm_svi():} Added optional theta computation to prevent silent failures with inaccurate document-topic proportions. When \code{compute_final_theta=FALSE}, models now return \code{theta=NULL} instead of potentially incorrect approximate values for documents never sampled during training. This makes the speed/accuracy tradeoff explicit and safe.
+\item \strong{Breaking Change:} Models fit with \code{stm_svi(..., compute_final_theta=FALSE)} will now have \code{theta=NULL}. Previously, they returned approximate theta values that could be silently incorrect for unseen documents (uniform distribution for documents with lambda=0).
+\item Added \code{check_theta_computed()} utility function that provides clear, actionable error messages when downstream functions require theta but it hasn't been computed.
+\item Added defensive theta checks to 12 functions: \code{findThoughts()}, \code{make.dt()}, \code{plot.STM()}, \code{topicCorr()}, \code{eval.heldout()}, \code{toLDAvisJson()}, \code{cloud()}, \code{checkResiduals()}, \code{topicLasso()}, \code{multiSTM()}, \code{thetaPosterior()}, and \code{estimateEffect()}. All now provide helpful error messages directing users to \code{update_svi_theta()} when theta is missing.
+\item Modified \code{topicQuality()} to use \code{settings$dim$K} instead of \code{ncol(theta)}, allowing it to work without theta being computed.
+\item Enhanced documentation for \code{stm_svi()} and \code{update_svi_theta()} to clearly explain the compute_final_theta parameter and its implications.
+\item Added \code{convergence$theta_computed} flag to track whether theta has been computed for a model.
+\item Added comprehensive test suite (\code{test-svi-theta-optional.R}) with 5 test cases covering NULL theta behavior, error messages, and theta computation via \code{update_svi_theta()}.
+\item \strong{Migration Guide:} Users with existing code using \code{stm_svi(..., compute_final_theta=FALSE)} should either: (1) set \code{compute_final_theta=TRUE} to maintain previous behavior, or (2) call \code{model <- update_svi_theta(model, documents)} before using theta-dependent functions.
+\item \strong{Bug Fix:} Fixed Issue #285 where \code{estimateEffect()} failed to resolve variable references when called inside \code{foreach} loops. The function now correctly uses the formula's environment to evaluate topic specifications, enabling use in parallel computing contexts. Added comprehensive test suite (\code{test-estimateEffect-foreach.R}) with 6 test cases. Thanks to github user coolsteed for reporting this issue!
+}
+}
 \section{Version 1.3.8}{
 \itemize{
 \item A very small update for CRAN.  Thanks to github user chainsawriot for getting this going.
