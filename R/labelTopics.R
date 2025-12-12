@@ -1,8 +1,14 @@
 #' Label topics
-#' 
+#'
 #' Generate a set of words describing each topic from a fitted STM object.
 #' Uses a variety of labeling algorithms (see details).
-#' 
+#'
+#' When content covariates are included in the model, the behavior changes:
+#' instead of returning probability-based word lists, the function returns
+#' kappa parameters which capture word deviations from the baseline distribution.
+#' For marginal (averaged across covariates) word probabilities and FREX scores,
+#' use \code{\link{sageLabels}} instead.
+#'
 #' Four different types of word weightings are printed with label topics.
 #' 
 #' Highest Prob: are the words within each topic with the highest probability
@@ -18,10 +24,30 @@
 #' 
 #' Score and Lift are measures provided in two other popular text mining
 #' packages. For more information on type Score, see the R function
-#' \code{\link[lda]{top.topic.words}} or the internal function \code{\link{calcscore}}.  
+#' \code{\link[lda]{top.topic.words}} or the internal function \code{\link{calcscore}}.
 #' For more information on type Lift, see the R package \code{maptpx}
 #' or or the internal function \code{\link{calclift}}.
-#' 
+#'
+#' \strong{Understanding Different Labeling Methods:}
+#'
+#' The package provides different functions for labeling topics depending on your
+#' model specification and goals:
+#'
+#' \itemize{
+#'   \item \strong{labelTopics()}: For models without content covariates, returns
+#'   probability-based word lists (Highest Prob, FREX, Lift, Score). For models
+#'   WITH content covariates, returns kappa parameters showing word deviations
+#'   from baseline. This is covariate-conditional labeling.
+#'
+#'   \item \strong{sageLabels()}: Provides marginal (averaged across covariates)
+#'   word probabilities and FREX scores. Use this when you want to see overall
+#'   topic characterization independent of content covariates.
+#'
+#'   \item Different plots use different approaches: \code{plot.STM(type="labels")}
+#'   averages beta across covariate levels, while \code{plot.STM(type="perspectives")}
+#'   shows covariate-specific words.
+#' }
+#'
 #' @aliases labelTopics print.labelTopics
 #' @param model An \code{STM} model object.
 #' @param topics A vector of numbers indicating the topics to include.  Default

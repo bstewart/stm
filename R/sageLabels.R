@@ -100,9 +100,18 @@ sageLabels <- function(model, n=7) {
 }
 
 #' @method print sageLabels
+#' @param topics Optional vector of topic numbers to display. If NULL (default),
+#' all topics are printed.
 #' @export
-print.sageLabels <- function(x, ...) {
-  topicnums <- 1:x$K
+print.sageLabels <- function(x, topics=NULL, ...) {
+  if(is.null(topics)) {
+    topicnums <- 1:x$K
+  } else {
+    if(!all(topics %in% 1:x$K)) {
+      stop(sprintf("Invalid topic numbers. Topics must be between 1 and %d", x$K))
+    }
+    topicnums <- topics
+  }
   
   #copying old stuff below
   for(i in topicnums) {
