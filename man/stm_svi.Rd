@@ -184,11 +184,7 @@ out <- prepDocuments(poliblog5k.docs, poliblog5k.voc, poliblog5k.meta)
 model_svi <- stm_svi(
   documents = out$documents,
   vocab = out$vocab,
-  K = 20,
-  batch_size = 128,
-  max_epochs = 50,
-  lr = 0.01,
-  verbose = TRUE
+  K = 20
 )
 
 # Use like regular STM

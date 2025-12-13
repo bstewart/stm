@@ -128,7 +128,13 @@
 #' textProcessor(docs,custompunctuation=c(".","?","!"),
 #'               removepunctuation = FALSE)$vocab
 #' #note that the above should now say "correct"
-#'  
+#'
+#' #Example of custom stopwords removal.
+#' docs <- c("the climate change report is about national assessment")
+#' textProcessor(docs, customstopwords = c("climate", "change", "national"),
+#'               removestopwords = FALSE)$vocab
+#' #note that "climate", "change", and "national" will be removed
+#'
 #' @export
 textProcessor <- function(documents, metadata=NULL, 
                           lowercase=TRUE, removestopwords=TRUE, removenumbers=TRUE, 
@@ -197,6 +203,19 @@ textProcessor <- function(documents, metadata=NULL,
     txt <- tm::tm_map(txt, tm::removeWords, tm::stopwords(language)) #Remove stopwords
   }
   if(!is.null(customstopwords)) {
+    # Validate customstopwords input
+    if(!is.character(customstopwords)) {
+      stop("customstopwords must be a character vector, e.g., c('word1', 'word2')")
+    }
+    # Detect comma-separated string and auto-parse with warning
+    if(length(customstopwords) == 1 && grepl(",", customstopwords)) {
+      parsed <- trimws(unlist(strsplit(customstopwords, ",")))
+      warning("customstopwords appears to be a comma-separated string. ",
+              "Converting to character vector. ",
+              "Preferred format: c('", paste(parsed[1:min(3, length(parsed))], collapse="', '"),
+              if(length(parsed) > 3) "', ..." else "'", ")")
+      customstopwords <- parsed
+    }
     if(verbose) cat("Remove Custom Stopwords...\n")
     txt <- tm::tm_map(txt, tm::removeWords, customstopwords)
   }

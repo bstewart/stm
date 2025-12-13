@@ -169,7 +169,13 @@ docs <- c("co.rr?ec!t")
 textProcessor(docs,custompunctuation=c(".","?","!"),
               removepunctuation = FALSE)$vocab
 #note that the above should now say "correct"
- 
+
+#Example of custom stopwords removal.
+docs <- c("the climate change report is about national assessment")
+textProcessor(docs, customstopwords = c("climate", "change", "national"),
+              removestopwords = FALSE)$vocab
+#note that "climate", "change", and "national" will be removed
+
 }
 \references{
 Ingo Feinerer and Kurt Hornik (2013). tm: Text Mining Package. R
