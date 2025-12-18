@@ -38,10 +38,13 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
     # Skip mu gradient - will be updated via gamma
     grad_mu <- NULL
   } else {
-    # For CTM case (no covariates): gradient is scaled mean difference
+    # For CTM case (no covariates): gradient is scaled sum difference
     # The sufficient statistic is lambda (document-level variational parameters)
-    # Gradient of ELBO w.r.t. mu: sum_d (lambda_d - mu)
-    grad_mu <- scale_factor * (colMeans(suffstats$lambda) - as.numeric(mu))
+    # Gradient of ELBO w.r.t. mu: sum_d (lambda_d - mu) = sum_d lambda_d - N * mu
+    # Mini-batch estimate: (N/B) * sum_batch lambda - N * mu
+    # NOTE: Use colSums (not colMeans) to get the sum, then scale by N/B
+    batch_lambda_sum <- colSums(suffstats$lambda)
+    grad_mu <- scale_factor * batch_lambda_sum - N * as.numeric(mu)
     grad_mu <- matrix(grad_mu, nrow=nrow(mu), ncol=ncol(mu))
   }
 
@@ -58,30 +61,34 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
                             as.numeric(mu), FUN="-")
   }
 
-  # Empirical covariance from batch
-  empirical_cov <- crossprod(lambda_centered) / batch_size
+  # Empirical covariance from batch (keep as SUM, not mean)
+  # crossprod gives sum over batch documents
+  empirical_cov <- crossprod(lambda_centered)
 
   # Posterior variance from E-step (nu term)
-  # suffstats$sigma is the sum of document-level posterior variances
-  scaled_sigma_ss <- suffstats$sigma / batch_size
+  # suffstats$sigma is the sum of document-level posterior variances (keep as sum)
+  sigma_ss_sum <- suffstats$sigma
 
   # Natural gradient for covariance (uses inverse)
   # Gradient of ELBO w.r.t. sigma:
   # -0.5 * N * sigma^-1 + 0.5 * sum_n [(lambda_n - mu)(lambda_n - mu)' + nu_n] * sigma^-1
+  # For mini-batch: (N/B) * 0.5 * siginv * sum_batch[S] * siginv - 0.5 * N * siginv
+  # NOTE: The data term scales by N/B, but the prior term (-N/2 * siginv) is constant
   siginv <- solve(sigma)
   grad_sigma <- scale_factor * 0.5 * siginv %*%
-                (empirical_cov + scaled_sigma_ss) %*% siginv
-  grad_sigma <- grad_sigma - 0.5 * scale_factor * siginv
+                (empirical_cov + sigma_ss_sum) %*% siginv
+  grad_sigma <- grad_sigma - 0.5 * N * siginv
 
   # Make symmetric (can lose symmetry due to numerical issues)
   grad_sigma <- (grad_sigma + t(grad_sigma)) / 2
 
   # Apply sigma prior (regularization toward diagonal)
+  # This is a regularization term, not data-dependent, so use N not N/B
   if(settings$sigma$prior > 0) {
     sigma_diag <- diag(diag(sigma))
     # Prior gradient pulls sigma toward diagonal
     grad_sigma <- grad_sigma -
-                  settings$sigma$prior * scale_factor * (sigma - sigma_diag)
+                  settings$sigma$prior * N * (sigma - sigma_diag)
   }
 
   # --- Gradient for beta (topic-word distributions) ---
@@ -103,6 +110,17 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
     # The second term enforces that sum_v beta_kv = 1
     grad_log_beta[[a]] <- scaled_counts -
                           beta[[a]] * rowSums(scaled_counts)
+  }
+
+  # Normalize gradients to O(1) scale for stable optimization with Adam
+  # Without this, gradients are O(N) which causes huge effective step sizes
+  # (e.g., lr=0.01 with N=93000 gives effective step of 930!)
+  if(!is.null(grad_mu)) {
+    grad_mu <- grad_mu / N
+  }
+  grad_sigma <- grad_sigma / N
+  for(a in 1:length(grad_log_beta)) {
+    grad_log_beta[[a]] <- grad_log_beta[[a]] / N
   }
 
   return(list(mu=grad_mu, sigma=grad_sigma, log_beta=grad_log_beta))

@@ -146,8 +146,17 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     }
 
     # --- Adam optimizer step ---
+    # Apply learning rate decay to prevent late-stage instability
+    # Without decay, constant LR causes parameters to drift as noise dominates
+    # Use power-law decay following Robbins-Monro / Hoffman et al. (2013):
+    #   lr_t = lr * (tau + 1) / (tau + t)^kappa
+    # This satisfies convergence conditions: sum(lr_t) = inf, sum(lr_t^2) < inf
+    lr_kappa <- if(!is.null(settings$svi$lr_kappa)) settings$svi$lr_kappa else 0.6
+    lr_tau <- if(!is.null(settings$svi$lr_tau)) settings$svi$lr_tau else 10
+    lr_decayed <- lr * (lr_tau + 1) / (lr_tau + iter)^lr_kappa
+
     adam_state <- adam_update_step(
-      adam_state, gradients, lr, iter,
+      adam_state, gradients, lr_decayed, iter,
       adam_beta1, adam_beta2, adam_epsilon
     )
 
