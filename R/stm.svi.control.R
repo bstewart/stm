@@ -153,12 +153,14 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
 
     # --- Apply parameter updates ---
     # Update mu (skip if NULL - prevalence covariates case)
+    # Use gradient ASCENT (addition) for ELBO maximization
     if(!is.null(adam_state$update_mu)) {
-      mu <- mu - adam_state$update_mu
+      mu <- mu + adam_state$update_mu
     }
 
     # Update sigma
-    sigma <- sigma - adam_state$update_sigma
+    # Use gradient ASCENT (addition) for ELBO maximization
+    sigma <- sigma + adam_state$update_sigma
     sigma <- ensure_sigma_pd(sigma)  # Project back to PD cone if needed
 
     # Update beta (beta is a list of matrices)
