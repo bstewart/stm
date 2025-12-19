@@ -53,8 +53,12 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
   # When mu is document-specific (prevalence covariates), we can't use simple centering
   # Instead, skip centering for now (will be handled during periodic gamma updates)
   if(!is.null(settings$prevalence)) {
-    # For document-specific mu, don't center (approximation)
-    lambda_centered <- suffstats$lambda
+    # For document-specific mu, center by per-doc mu when available
+    if(is.matrix(mu) && ncol(mu) == nrow(suffstats$lambda)) {
+      lambda_centered <- suffstats$lambda - t(mu)
+    } else {
+      lambda_centered <- suffstats$lambda
+    }
   } else {
     # For global mu, center normally
     lambda_centered <- sweep(suffstats$lambda, 2,

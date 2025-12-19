@@ -122,6 +122,17 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
 #'   detection. If NULL (default), adapts to batch_size (larger window for smaller
 #'   batches provides more smoothing). Typical range: 5-20.
 #' @param eval_every Compute full ELBO every N iterations (NULL = never, expensive)
+#' @param early_stop Early stopping criterion: "train" (training ELBO only),
+#'   "holdout" (holdout ELBO only), or "both" (require both to plateau). If NULL,
+#'   defaults to "train" when no holdout is used and "both" when holdout is enabled.
+#' @param improvement_tol Relative improvement threshold for ELBO convergence.
+#'   Default 1e-4. Applied to per-token windowed ELBO.
+#' @param holdout_patience Patience for holdout ELBO (defaults to patience).
+#' @param eval_holdout_size Size of fixed holdout chunk to exclude from training
+#'   and use for periodic ELBO evaluation. NULL disables holdout evaluation.
+#' @param eval_holdout_every Compute holdout ELBO every N iterations. If NULL and
+#'   eval_holdout_size is set, defaults to reportevery.
+#' @param eval_holdout_seed Random seed for holdout selection (NULL uses main seed)
 #' @param compute_final_theta Perform final E-step on all documents after convergence
 #'   to compute accurate theta. If NULL (default), automatically set to TRUE for
 #'   N < 10,000 and FALSE for N >= 10,000.
@@ -232,6 +243,12 @@ stm_svi <- function(documents, vocab, K,
                     patience=NULL,
                     convergence_window=NULL,
                     eval_every=NULL,
+                    early_stop=NULL,
+                    improvement_tol=1e-4,
+                    holdout_patience=NULL,
+                    eval_holdout_size=NULL,
+                    eval_holdout_every=NULL,
+                    eval_holdout_seed=NULL,
                     compute_final_theta=NULL,
                     gamma_update_every=NULL,
                     verbose=TRUE,
@@ -376,6 +393,45 @@ stm_svi <- function(documents, vocab, K,
     stop("patience must be a positive integer")
   }
 
+  if(is.null(early_stop)) {
+    early_stop <- if(is.null(eval_holdout_size)) "train" else "both"
+  }
+  if(!early_stop %in% c("train", "holdout", "both")) {
+    stop("early_stop must be one of: \"train\", \"holdout\", \"both\"")
+  }
+  if(early_stop != "train" && is.null(eval_holdout_size)) {
+    stop("early_stop uses holdout but eval_holdout_size is NULL")
+  }
+
+  if(!is.numeric(improvement_tol) || improvement_tol <= 0) {
+    stop("improvement_tol must be a positive number")
+  }
+
+  if(is.null(holdout_patience)) {
+    holdout_patience <- patience
+  }
+  if(!is.numeric(holdout_patience) || holdout_patience < 1) {
+    stop("holdout_patience must be a positive integer")
+  }
+
+  if(!is.null(eval_holdout_size)) {
+    if(!is.numeric(eval_holdout_size) || eval_holdout_size < 1) {
+      stop("eval_holdout_size must be a positive integer")
+    }
+    if(eval_holdout_size >= N) {
+      stop("eval_holdout_size must be smaller than the number of documents")
+    }
+  }
+
+  if(!is.null(eval_holdout_every) &&
+     (!is.numeric(eval_holdout_every) || eval_holdout_every < 1)) {
+    stop("eval_holdout_every must be a positive integer")
+  }
+
+  if(!is.null(eval_holdout_size) && is.null(eval_holdout_every)) {
+    eval_holdout_every <- reportevery
+  }
+
   # --- Process prevalence covariates ---
   if(!is.null(prevalence)) {
     # Use makeTopMatrix to process formula
@@ -514,6 +570,12 @@ stm_svi <- function(documents, vocab, K,
       patience = patience,
       convergence_window = convergence_window,
       eval_every = eval_every,
+      early_stop = early_stop,
+      improvement_tol = improvement_tol,
+      holdout_patience = holdout_patience,
+      eval_holdout_size = eval_holdout_size,
+      eval_holdout_every = eval_holdout_every,
+      eval_holdout_seed = eval_holdout_seed,
       compute_final_theta = compute_final_theta
     ),
 
@@ -538,6 +600,11 @@ stm_svi <- function(documents, vocab, K,
     cat(sprintf("Batch size: %d, Learning rate: %.4f\n", batch_size, lr))
     cat(sprintf("Max epochs: %d, Patience: %d\n", max_epochs, patience))
     cat(sprintf("Initialization: %s\n", init.type))
+    cat(sprintf("Early stop: %s\n", early_stop))
+    if(!is.null(eval_holdout_size)) {
+      cat(sprintf("Holdout eval: %d docs every %d iters\n",
+                  eval_holdout_size, eval_holdout_every))
+    }
     if(!is.null(covariates)) {
       cat(sprintf("Prevalence: %d covariates (mode=%s, update every %d iters)\n",
                   ncol(covariates$X)-1, gamma.prior, gamma_update_every))

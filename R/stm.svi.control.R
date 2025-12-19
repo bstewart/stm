@@ -69,12 +69,53 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     }
   } else {
     # Resume from previous model
-    mu <- model$mu
+    mu <- if(!is.null(model$mu$mu)) model$mu$mu else model$mu
     sigma <- model$sigma
-    beta <- model$beta
+    if(!is.null(model$beta$logbeta)) {
+      beta <- lapply(model$beta$logbeta, exp)
+    } else if(!is.null(model$beta$beta)) {
+      beta <- model$beta$beta
+    } else {
+      stop("Cannot extract beta from model for SVI resume")
+    }
     lambda <- model$eta  # eta contains lambda
-    gamma <- if(!is.null(model$gamma)) model$gamma else NULL
+    gamma <- if(!is.null(model$mu$gamma)) model$mu$gamma else NULL
   }
+
+  # --- Holdout setup (optional) ---
+  holdout_idx <- integer(0)
+  holdout_tokens <- NULL
+  if(!is.null(settings$svi$eval_holdout_size)) {
+    holdout_size <- as.integer(settings$svi$eval_holdout_size)
+    holdout_seed <- settings$svi$eval_holdout_seed
+    if(!is.null(holdout_seed)) {
+      has_seed <- exists(".Random.seed", envir=.GlobalEnv)
+      if(has_seed) old_seed <- .Random.seed
+      set.seed(holdout_seed)
+      holdout_idx <- sample(1:N, holdout_size, replace=FALSE)
+      if(has_seed) {
+        .Random.seed <<- old_seed
+      } else {
+        rm(.Random.seed, envir=.GlobalEnv)
+      }
+    } else {
+      holdout_idx <- sample(1:N, holdout_size, replace=FALSE)
+    }
+  }
+
+  train_idx <- setdiff(1:N, holdout_idx)
+  N_train <- length(train_idx)
+
+  if(length(holdout_idx) > 0 && verbose) {
+    cat(sprintf("Using %d holdout documents for ELBO monitoring\n", length(holdout_idx)))
+  }
+  if(length(holdout_idx) > 0) {
+    holdout_tokens <- sum(vapply(documents[holdout_idx], function(x) sum(x[2, ]),
+                                 numeric(1)))
+  }
+  train_tokens <- sum(vapply(documents[train_idx], function(x) sum(x[2, ]),
+                             numeric(1)))
+  settings$svi$train_tokens <- train_tokens
 
   # --- Step 2: Initialize Adam optimizer state ---
   if(verbose) cat("Initializing Adam optimizer...\n")
@@ -90,19 +131,23 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
   settings$vocab <- vocab  # Store vocab in settings for reporting
 
   # --- Step 4: Main SVI loop ---
+  if(batch_size > N_train) {
+    batch_size <- N_train
+  }
+
   if(verbose) {
     cat(sprintf("Beginning Stochastic Variational Inference (batch_size=%d, lr=%.4f)\n",
                batch_size, lr))
-    cat(sprintf("  Documents: %d, Vocabulary: %d, Topics: %d\n", N, V, K))
+    cat(sprintf("  Documents: %d, Vocabulary: %d, Topics: %d\n", N_train, V, K))
     cat(sprintf("  Max epochs: %d (~%d iterations), Patience: %d\n",
-               settings$svi$max_epochs, ceiling(N / batch_size) * settings$svi$max_epochs,
+               settings$svi$max_epochs, ceiling(N_train / batch_size) * settings$svi$max_epochs,
                settings$svi$patience))
   }
 
   iter <- 1
   while(!convergence$stopits) {
     # --- Sample mini-batch ---
-    batch_idx <- sample(1:N, min(batch_size, N), replace=FALSE)
+    batch_idx <- sample(train_idx, min(batch_size, N_train), replace=FALSE)
     batch_docs <- documents[batch_idx]
 
     # --- Extract document-specific mu if covariates present ---
@@ -134,8 +179,9 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     })
 
     # --- Convert sufficient statistics to gradients ---
+    grad_mu_input <- if(!is.null(settings$prevalence)) mu_batch else mu
     gradients <- compute_svi_gradients(
-      suffstats, N, batch_size, mu, sigma, beta, settings
+      suffstats, N_train, batch_size, grad_mu_input, sigma, beta, settings
     )
 
     # Check for numerical issues
@@ -181,7 +227,7 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
 
     # --- Convergence check ---
     convergence <- svi_convergence_check(
-      sum(suffstats$bound), convergence, batch_size, N, settings
+      sum(suffstats$bound), convergence, batch_size, N_train, settings
     )
 
     # --- Periodic gamma update (if covariates present) ---
@@ -249,6 +295,135 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     settings$beta_current <- beta
 
     report_svi_progress(iter, convergence, settings)
+
+    # --- Periodic holdout ELBO evaluation ---
+    holdout_every <- settings$svi$eval_holdout_every
+    if(length(holdout_idx) > 0 && !is.null(holdout_every) &&
+       iter %% holdout_every == 0) {
+      estep_fn <- if(exists("estep", mode="function")) estep else stm:::estep
+      update_mu_holdout <- !is.null(settings$prevalence)
+      mu_holdout <- if(update_mu_holdout) mu[, holdout_idx, drop=FALSE] else mu
+      holdout_suffstats <- estep_fn(
+        documents = documents[holdout_idx],
+        beta.index = betaindex[holdout_idx],
+        update.mu = update_mu_holdout,
+        beta = beta,
+        lambda.old = lambda[holdout_idx, , drop=FALSE],
+        mu = mu_holdout,
+        sigma = sigma,
+        verbose = FALSE
+      )
+
+      lambda[holdout_idx, ] <- holdout_suffstats$lambda
+      holdout_bound <- sum(holdout_suffstats$bound)
+      holdout_per_token <- if(!is.null(holdout_tokens) && holdout_tokens > 0) {
+        holdout_bound / holdout_tokens
+      } else {
+        NA_real_
+      }
+      convergence$holdout_bound_history <- c(convergence$holdout_bound_history,
+                                             holdout_per_token)
+
+      if(verbose) {
+        if(is.na(holdout_per_token)) {
+          cat(sprintf("  Holdout ELBO: %.2f\n", holdout_bound))
+        } else {
+          cat(sprintf("  Holdout ELBO (per token): %.4f\n", holdout_per_token))
+        }
+      }
+
+      # Update holdout window and patience
+      window_size <- if(!is.null(settings$svi$convergence_window)) {
+        settings$svi$convergence_window
+      } else {
+        10
+      }
+      if(length(convergence$holdout_bound_history) >= window_size &&
+         !is.na(holdout_per_token)) {
+        recent <- tail(convergence$holdout_bound_history, window_size)
+        window_mean <- mean(recent, na.rm=TRUE)
+        if(!is.finite(window_mean)) {
+          next
+        }
+        convergence$holdout_window <- c(convergence$holdout_window, window_mean)
+
+        improvement_tol <- if(!is.null(settings$svi$improvement_tol)) {
+          settings$svi$improvement_tol
+        } else {
+          1e-4
+        }
+        if(!is.finite(improvement_tol)) {
+          improvement_tol <- 1e-4
+        }
+        if(!is.finite(convergence$holdout_best)) {
+          convergence$holdout_best <- -Inf
+        }
+        improvement_threshold <- improvement_tol * max(1, abs(convergence$holdout_best))
+        if(!is.finite(improvement_threshold)) {
+          improvement_threshold <- 0
+        }
+
+        if(!is.finite(convergence$holdout_best)) {
+          improved <- is.finite(window_mean)
+        } else {
+          improved <- isTRUE(
+            is.finite(window_mean) && is.finite(improvement_threshold) &&
+            window_mean > convergence$holdout_best + improvement_threshold
+          )
+        }
+        if(improved) {
+          convergence$holdout_best <- window_mean
+          convergence$holdout_patience_counter <- 0
+        } else {
+          convergence$holdout_patience_counter <- convergence$holdout_patience_counter + 1
+        }
+
+        holdout_patience <- if(!is.null(settings$svi$holdout_patience)) {
+          settings$svi$holdout_patience
+        } else {
+          settings$svi$patience
+        }
+        if(!is.finite(holdout_patience)) {
+          holdout_patience <- settings$svi$patience
+        }
+        holdout_patience_iters <- holdout_patience
+        if(!is.null(holdout_every)) {
+          holdout_patience_iters <- holdout_patience / holdout_every
+        }
+        if(verbose) {
+          cat(sprintf(
+            "  Holdout window mean: %.4f (best: %.4f, tol: %.4g, patience: %.0f/%.0f)\n",
+            window_mean,
+            convergence$holdout_best,
+            improvement_threshold,
+            convergence$holdout_patience_counter,
+            holdout_patience_iters
+          ))
+        }
+        if(convergence$holdout_patience_counter >= holdout_patience_iters) {
+          convergence$holdout_stop <- TRUE
+          if(settings$svi$early_stop == "holdout") {
+            convergence$converged <- TRUE
+            convergence$stopits <- TRUE
+            if(verbose) {
+              cat(sprintf("\nConverged: holdout no improvement for %d evals (%.1f epochs)\n",
+                         holdout_patience, convergence$epoch))
+              cat(sprintf("Final holdout ELBO (per token): %.4f\n", window_mean))
+            }
+          }
+        }
+      }
+
+      if(settings$svi$early_stop == "both" &&
+         convergence$train_stop && convergence$holdout_stop) {
+        convergence$converged <- TRUE
+        convergence$stopits <- TRUE
+        if(verbose) {
+          cat(sprintf("\nConverged: train and holdout plateaued (%.1f epochs)\n",
+                     convergence$epoch))
+        }
+      }
+    }
 
     # --- Periodic full ELBO evaluation (optional, expensive) ---
     eval_every <- settings$svi$eval_every
@@ -333,6 +508,7 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
   }
 
   # --- Step 6: Construct output STM object ---
+  settings$svi$holdout_idx <- holdout_idx
   if(verbose) {
     if(convergence$converged) {
       cat("Model Converged \n")
@@ -367,6 +543,8 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     convergence = list(
       bound = convergence$bound_history,
       bound_window = convergence$bound_window,
+      holdout_bound = convergence$holdout_bound_history,
+      holdout_window = convergence$holdout_window,
       its = convergence$its,
       converged = convergence$converged,
       theta_computed = !is.null(theta)  # Track theta availability

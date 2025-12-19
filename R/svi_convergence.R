@@ -15,10 +15,16 @@
 #' @keywords internal
 initialize_svi_convergence <- function(settings) {
   list(
-    bound_history = numeric(0),      # All mini-batch bounds (scaled)
-    bound_window = numeric(0),       # Windowed averages
+    bound_history = numeric(0),      # Per-token mini-batch bounds (scaled)
+    bound_window = numeric(0),       # Windowed per-token averages
+    holdout_bound_history = numeric(0), # Holdout per-token ELBO history
+    holdout_window = numeric(0),     # Holdout windowed per-token averages
     best_window = -Inf,              # Best windowed ELBO seen
     patience_counter = 0,            # Iterations without improvement
+    train_stop = FALSE,              # Should stop based on training?
+    holdout_best = -Inf,             # Best holdout windowed ELBO
+    holdout_patience_counter = 0,    # Holdout patience counter
+    holdout_stop = FALSE,            # Should stop based on holdout?
     its = 0,                         # Total iterations
     epoch = 0,                       # Current epoch (approximate)
     converged = FALSE,               # Did we converge?
@@ -43,9 +49,22 @@ initialize_svi_convergence <- function(settings) {
 #' @keywords internal
 svi_convergence_check <- function(batch_elbo, convergence,
                                   batch_size, N, settings) {
-  # Scale bound to full-data equivalent
+  # Scale bound to full-data equivalent and normalize by tokens
   # This makes bounds comparable across different batch sizes
   scaled_bound <- batch_elbo * (N / batch_size)
+  train_tokens <- if(!is.null(settings$svi$train_tokens)) {
+    settings$svi$train_tokens
+  } else if(!is.null(settings$dim$wcounts$x)) {
+    sum(settings$dim$wcounts$x)
+  } else {
+    N
+  }
+  scaled_bound <- scaled_bound / train_tokens
+
+  if(!is.finite(scaled_bound)) {
+    warning("Non-finite ELBO encountered; skipping convergence update for this iteration.")
+    scaled_bound <- NA_real_
+  }
 
   # Add to history
   convergence$bound_history <- c(convergence$bound_history, scaled_bound)
@@ -63,16 +82,44 @@ svi_convergence_check <- function(batch_elbo, convergence,
 
   if(length(convergence$bound_history) >= window_size) {
     recent <- tail(convergence$bound_history, window_size)
-    window_mean <- mean(recent)
-    window_var <- var(recent)
+    if(all(!is.finite(recent))) {
+      return(convergence)
+    }
+    window_mean <- mean(recent, na.rm=TRUE)
+    window_var <- var(recent, na.rm=TRUE)
+    if(!is.finite(window_mean)) {
+      return(convergence)
+    }
 
     convergence$bound_window <- c(convergence$bound_window, window_mean)
 
     # Check for improvement
     # We consider it an improvement if window_mean increases by at least
     # a small amount (to avoid stopping on numerical noise)
-    improvement_threshold <- 1e-3
-    if(window_mean > convergence$best_window + improvement_threshold) {
+    improvement_tol <- if(!is.null(settings$svi$improvement_tol)) {
+      settings$svi$improvement_tol
+    } else {
+      1e-4
+    }
+    if(!is.finite(improvement_tol)) {
+      improvement_tol <- 1e-4
+    }
+    if(!is.finite(convergence$best_window)) {
+      convergence$best_window <- -Inf
+    }
+    improvement_threshold <- improvement_tol * max(1, abs(convergence$best_window))
+    if(!is.finite(improvement_threshold)) {
+      improvement_threshold <- 0
+    }
+    if(!is.finite(convergence$best_window)) {
+      improved <- is.finite(window_mean)
+    } else {
+      improved <- isTRUE(
+        is.finite(window_mean) && is.finite(improvement_threshold) &&
+        window_mean > convergence$best_window + improvement_threshold
+      )
+    }
+    if(improved) {
       convergence$best_window <- window_mean
       convergence$patience_counter <- 0
     } else {
@@ -85,14 +132,25 @@ svi_convergence_check <- function(batch_elbo, convergence,
     } else {
       20
     }
+    if(!is.finite(patience)) {
+      patience <- 20
+    }
 
     if(convergence$patience_counter >= patience) {
-      convergence$converged <- TRUE
-      convergence$stopits <- TRUE
-      if(settings$verbose) {
-        cat(sprintf("\nConverged: no improvement for %d iterations (%.1f epochs)\n",
-                   patience, convergence$epoch))
-        cat(sprintf("Final windowed ELBO: %.2f\n", window_mean))
+      convergence$train_stop <- TRUE
+      early_stop <- if(!is.null(settings$svi$early_stop)) {
+        settings$svi$early_stop
+      } else {
+        "train"
+      }
+      if(early_stop == "train") {
+        convergence$converged <- TRUE
+        convergence$stopits <- TRUE
+        if(settings$verbose) {
+          cat(sprintf("\nConverged: no improvement for %d iterations (%.1f epochs)\n",
+                     patience, convergence$epoch))
+          cat(sprintf("Final windowed ELBO (per token): %.4f\n", window_mean))
+        }
       }
     }
   }
@@ -142,22 +200,17 @@ report_svi_progress <- function(iter, convergence, settings) {
   windowed_elbo <- ifelse(length(convergence$bound_window) > 0,
                           tail(convergence$bound_window, 1), NA)
 
-  # Compute per-word bound (comparable to standard stm)
-  ntokens <- sum(settings$dim$wcounts$x)
-  tokenll <- recent_elbo / ntokens
-
   # During warm-up (first few iterations before window fills)
   if(iter <= settings$svi$convergence_window) {
     msg <- sprintf("Completing Iteration %d (approx. per word bound = %.3f) \n",
-                   iter, tokenll)
+                   iter, recent_elbo)
   } else {
     # After warm-up: show windowed bound and convergence info
-    window_tokenll <- windowed_elbo / ntokens
     patience <- convergence$patience_counter
     max_patience <- ifelse(is.null(settings$svi$patience), 20, settings$svi$patience)
 
     msg <- sprintf("Completing Iteration %d (approx. per word bound = %.3f, patience = %d/%d) \n",
-                   iter, window_tokenll, patience, max_patience)
+                   iter, windowed_elbo, patience, max_patience)
   }
 
   cat(msg)
@@ -197,10 +250,12 @@ report_svi_progress <- function(iter, convergence, settings) {
 compute_full_elbo <- function(documents, mu, sigma, beta, lambda,
                               betaindex, settings) {
   # Run E-step on full dataset (no updates, just compute bound)
-  suffstats <- estep(
+  update_mu <- !is.null(settings$prevalence)
+  estep_fn <- if(exists("estep", mode="function")) estep else stm:::estep
+  suffstats <- estep_fn(
     documents = documents,
     beta.index = betaindex,
-    update.mu = FALSE,
+    update.mu = update_mu,
     beta = beta,
     lambda.old = lambda,
     mu = mu,

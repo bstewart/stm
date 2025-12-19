@@ -184,8 +184,12 @@ update_svi_theta <- function(model, documents=NULL, cores=NULL, verbose=TRUE) {
     betaindex <- rep(1, length(documents))
   }
 
-  # Use current eta as warm start
+  # Use current eta as warm start (fallback to zeros if not available)
   lambda_init <- model$eta
+  if(is.null(lambda_init)) {
+    K <- model$settings$dim$K
+    lambda_init <- matrix(0, nrow=length(documents), ncol=K - 1)
+  }
 
   # Determine parallel chunks
   N <- length(documents)
@@ -197,7 +201,7 @@ update_svi_theta <- function(model, documents=NULL, cores=NULL, verbose=TRUE) {
     cat("Updating theta via final E-step\n")
     cat("==========================================\n")
     cat(sprintf("Documents: %d\n", length(documents)))
-    cat(sprintf("Topics: %d\n", ncol(model$theta)))
+    cat(sprintf("Topics: %d\n", model$settings$dim$K))
     if(parallel_chunks > 1) {
       cat(sprintf("Using %d parallel chunks\n", parallel_chunks))
     }
