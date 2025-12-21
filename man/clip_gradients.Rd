@@ -7,7 +7,7 @@
 clip_gradients(gradients, clip_value = 5)
 }
 \arguments{
-\item{gradients}{List of gradients (mu, sigma, log_beta)}
+\item{gradients}{List of gradients (mu, sigma, log_beta, gamma)}
 
 \item{clip_value}{Maximum absolute value for gradient elements}
 }

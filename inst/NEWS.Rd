@@ -2,6 +2,10 @@
 \title{NEWS file for the stm package}
 \section{Version 1.4.0}{
 \itemize{
+\item \strong{SVI Improvements:} Gamma updates for \code{stm_svi()} now use per-mini-batch Adam updates and exclude holdout documents when holdout evaluation is enabled, reducing validation leakage.
+\item \strong{SVI Improvements:} \code{stm_svi()} now defaults \code{eval_holdout_size} to 1000 when N >= 10,000 (unless set explicitly).
+\item \strong{SVI Improvements:} \code{stm_svi()} now processes \code{control} options in line with \code{stm()} for initialization and priors.
+\item \strong{SVI Documentation:} Documented prevalence covariate support, clarified \code{max_iters} behavior, and added a \code{max.em.its} alias for compatibility.
 \item \strong{Major Enhancement to stm_svi():} Added optional theta computation to prevent silent failures with inaccurate document-topic proportions. When \code{compute_final_theta=FALSE}, models now return \code{theta=NULL} instead of potentially incorrect approximate values for documents never sampled during training. This makes the speed/accuracy tradeoff explicit and safe.
 \item \strong{Breaking Change:} Models fit with \code{stm_svi(..., compute_final_theta=FALSE)} will now have \code{theta=NULL}. Previously, they returned approximate theta values that could be silently incorrect for unseen documents (uniform distribution for documents with lambda=0).
 \item Added \code{check_theta_computed()} utility function that provides clear, actionable error messages when downstream functions require theta but it hasn't been computed.
@@ -294,4 +298,3 @@ exponential gradient not fully convering.  This has been confirmed by the Arora 
     \item This is a beta release and we may change some of the API before
     submission to CRAN. 
 }}
-

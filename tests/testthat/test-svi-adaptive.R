@@ -49,7 +49,7 @@ test_that("Adaptive defaults for medium corpus with prevalence", {
 
   # Should have set gamma_update_every for prevalence
   expect_true(!is.null(model$settings$svi$gamma_update_every))
-  expect_true(model$settings$svi$gamma_update_every >= 5)
+  expect_equal(model$settings$svi$gamma_update_every, 1)
 
   # Batch size should scale with K (4*50 = 200)
   expect_true(model$settings$svi$batch_size >= 150 &&
@@ -90,12 +90,12 @@ test_that("Adaptive defaults scale appropriately with K", {
 
   # Test with K=10
   model_k10 <- suppressWarnings(
-    stm_svi(docs, vocab, K=10, verbose=FALSE, max.em.its=3)
+    stm_svi(docs, vocab, K=10, verbose=FALSE, max_iters=3)
   )
 
   # Test with K=50
   model_k50 <- suppressWarnings(
-    stm_svi(docs, vocab, K=50, verbose=FALSE, max.em.its=3)
+    stm_svi(docs, vocab, K=50, verbose=FALSE, max_iters=3)
   )
 
   # Batch size should increase with K (4*K base)
@@ -116,7 +116,7 @@ test_that("Batch size validation works correctly", {
 
   # Adaptive should not exceed N
   model <- suppressWarnings(
-    stm_svi(docs, vocab, K=20, verbose=FALSE, max.em.its=3)
+    stm_svi(docs, vocab, K=20, verbose=FALSE, max_iters=3)
   )
 
   expect_true(model$settings$svi$batch_size <= 100)
@@ -141,7 +141,7 @@ test_that("Compute_svi_defaults produces valid outputs", {
   # With prevalence
   defaults_prev <- stm:::compute_svi_defaults(N=5000, K=50, V=2000, has_prevalence=TRUE)
   expect_true(!is.null(defaults_prev$gamma_update_every))
-  expect_true(defaults_prev$gamma_update_every >= 5 && defaults_prev$gamma_update_every <= 100)
+  expect_equal(defaults_prev$gamma_update_every, 1)
 
   # Without prevalence
   expect_true(is.null(defaults$gamma_update_every))

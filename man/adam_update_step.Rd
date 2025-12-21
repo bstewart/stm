@@ -17,7 +17,7 @@ adam_update_step(
 \arguments{
 \item{adam_state}{List containing Adam optimizer state (first/second moments)}
 
-\item{gradients}{List of gradients for mu, sigma, and beta parameters}
+\item{gradients}{List of gradients for mu, sigma, beta, and gamma parameters}
 
 \item{lr}{Learning rate (step size)}
 

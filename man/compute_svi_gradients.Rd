@@ -4,7 +4,17 @@
 \alias{compute_svi_gradients}
 \title{Compute SVI Gradients from Sufficient Statistics}
 \usage{
-compute_svi_gradients(suffstats, N, batch_size, mu, sigma, beta, settings)
+compute_svi_gradients(
+  suffstats,
+  N,
+  batch_size,
+  mu,
+  sigma,
+  beta,
+  settings,
+  X = NULL,
+  gamma = NULL
+)
 }
 \arguments{
 \item{suffstats}{Sufficient statistics from E-step (lambda, sigma.ss, beta.ss, bound)}
@@ -13,16 +23,20 @@ compute_svi_gradients(suffstats, N, batch_size, mu, sigma, beta, settings)
 
 \item{batch_size}{Number of documents in current mini-batch}
 
-\item{mu}{List with $mu matrix of prevalence parameters}
+\item{mu}{Mu matrix for the current batch or global mu}
 
 \item{sigma}{Covariance matrix}
 
 \item{beta}{List with $beta list of topic-word distributions}
 
 \item{settings}{Settings list from stm}
+
+\item{X}{Batch-level prevalence design matrix (optional)}
+
+\item{gamma}{Prevalence regression coefficients (optional)}
 }
 \value{
-List of gradients (mu, sigma, log_beta)
+List of gradients (mu, sigma, log_beta, gamma)
 }
 \description{
 Converts E-step sufficient statistics to properly scaled gradients

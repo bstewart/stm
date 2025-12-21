@@ -57,14 +57,10 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
       # Initialize gamma with small random values
       gamma <- matrix(rnorm(ncol(X) * (K-1), mean=0, sd=0.1),
                       nrow=ncol(X), ncol=K-1)
-      # Compute document-specific mu from gamma
-      # X might be sparse, so ensure result is dense matrix
-      mu_temp <- as.matrix(X %*% gamma)  # N × (K-1)
-      mu <- t(mu_temp)  # (K-1) × N matrix
 
       if(verbose) {
-        cat(sprintf("  Gamma: %d x %d, Mu: %d x %d\n",
-                    nrow(gamma), ncol(gamma), nrow(mu), ncol(mu)))
+        cat(sprintf("  Gamma: %d x %d\n",
+                    nrow(gamma), ncol(gamma)))
       }
     }
   } else {
@@ -80,6 +76,15 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     }
     lambda <- model$eta  # eta contains lambda
     gamma <- if(!is.null(model$mu$gamma)) model$mu$gamma else NULL
+    if(!is.null(settings$prevalence) && is.null(gamma)) {
+      stop("Cannot resume SVI with prevalence covariates without gamma")
+    }
+  }
+
+  if(!is.null(settings$prevalence)) {
+    X <- settings$prevalence$X
+  } else {
+    X <- NULL
   }
 
   # --- Holdout setup (optional) ---
@@ -120,7 +125,9 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
   # --- Step 2: Initialize Adam optimizer state ---
   if(verbose) cat("Initializing Adam optimizer...\n")
   has_prevalence <- !is.null(settings$prevalence)
-  adam_state <- initialize_adam_state(mu, sigma, beta, has_prevalence=has_prevalence)
+  adam_state <- initialize_adam_state(mu, sigma, beta,
+                                      gamma=gamma,
+                                      has_prevalence=has_prevalence)
 
   # --- Step 3: Initialize convergence tracking ---
   convergence <- initialize_svi_convergence(settings)
@@ -152,9 +159,11 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
 
     # --- Extract document-specific mu if covariates present ---
     if(!is.null(settings$prevalence)) {
-      mu_batch <- mu[, batch_idx, drop=FALSE]  # (K-1) × batch_size
+      X_batch <- X[batch_idx, , drop=FALSE]
+      mu_batch <- t(as.matrix(X_batch %*% gamma))  # (K-1) × batch_size
       update_mu_flag <- TRUE
     } else {
+      X_batch <- NULL
       mu_batch <- mu  # Scalar or (K-1) × 1 matrix
       update_mu_flag <- FALSE
     }
@@ -180,8 +189,13 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
 
     # --- Convert sufficient statistics to gradients ---
     grad_mu_input <- if(!is.null(settings$prevalence)) mu_batch else mu
+    update_gamma_now <- !is.null(settings$prevalence) &&
+      (is.null(settings$gamma$update_every) ||
+       iter %% settings$gamma$update_every == 0)
+    X_gamma <- if(update_gamma_now) X_batch else NULL
     gradients <- compute_svi_gradients(
-      suffstats, N_train, batch_size, grad_mu_input, sigma, beta, settings
+      suffstats, N_train, batch_size, grad_mu_input, sigma, beta, settings,
+      X = X_gamma, gamma = gamma
     )
 
     # Check for numerical issues
@@ -213,6 +227,11 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
       mu <- mu + adam_state$update_mu
     }
 
+    # Update gamma (prevalence regression)
+    if(!is.null(adam_state$update_gamma)) {
+      gamma <- gamma + adam_state$update_gamma
+    }
+
     # Update sigma
     # Use gradient ASCENT (addition) for ELBO maximization
     sigma <- sigma + adam_state$update_sigma
@@ -230,66 +249,6 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
       sum(suffstats$bound), convergence, batch_size, N_train, settings
     )
 
-    # --- Periodic gamma update (if covariates present) ---
-    if(!is.null(settings$prevalence) &&
-       iter %% settings$gamma$update_every == 0) {
-
-      if(verbose) {
-        cat(sprintf("  [Iteration %d: Updating gamma coefficients]\n", iter))
-      }
-
-      # Perform full E-step to get current lambda for all documents
-      full_suffstats <- tryCatch({
-        estep_fn(
-          documents = documents,
-          beta.index = betaindex,
-          update.mu = TRUE,
-          beta = beta,
-          lambda.old = lambda,
-          mu = mu,
-          sigma = sigma,
-          verbose = FALSE
-        )
-      }, error = function(e) {
-        cat(sprintf("Warning: Full E-step failed during gamma update at iteration %d\n", iter))
-        cat(conditionMessage(e), "\n")
-        return(NULL)
-      })
-
-      if(!is.null(full_suffstats)) {
-        # Update lambda
-        lambda <- full_suffstats$lambda
-
-        # Update gamma via regression
-        opt.mu_fn <- if(exists("opt.mu", mode="function")) opt.mu else stm:::opt.mu
-
-        mu_result <- tryCatch({
-          opt.mu_fn(
-            lambda = lambda,
-            mode = settings$gamma$mode,
-            covar = settings$prevalence$X,
-            enet = settings$gamma$enet,
-            ic.k = settings$gamma$ic.k,
-            maxits = settings$gamma$maxits
-          )
-        }, error = function(e) {
-          cat(sprintf("Warning: opt.mu failed at iteration %d\n", iter))
-          cat(conditionMessage(e), "\n")
-          return(NULL)
-        })
-
-        if(!is.null(mu_result)) {
-          # Update mu and gamma
-          mu <- mu_result$mu  # (K-1) × N matrix
-          gamma <- mu_result$gamma  # (P+1) × (K-1) matrix
-
-          if(verbose) {
-            cat(sprintf("    Gamma updated (mode=%s)\n", settings$gamma$mode))
-          }
-        }
-      }
-    }
-
     # --- Report progress ---
     # Update beta reference for reporting
     settings$beta_current <- beta
@@ -302,7 +261,12 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
        iter %% holdout_every == 0) {
       estep_fn <- if(exists("estep", mode="function")) estep else stm:::estep
       update_mu_holdout <- !is.null(settings$prevalence)
-      mu_holdout <- if(update_mu_holdout) mu[, holdout_idx, drop=FALSE] else mu
+      if(update_mu_holdout) {
+        X_holdout <- X[holdout_idx, , drop=FALSE]
+        mu_holdout <- t(as.matrix(X_holdout %*% gamma))
+      } else {
+        mu_holdout <- mu
+      }
       holdout_suffstats <- estep_fn(
         documents = documents[holdout_idx],
         beta.index = betaindex[holdout_idx],
@@ -429,7 +393,11 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     eval_every <- settings$svi$eval_every
     if(!is.null(eval_every) && iter %% eval_every == 0) {
       if(verbose) cat("  Computing full ELBO...")
-      full_elbo <- compute_full_elbo(documents, mu, sigma, beta, lambda,
+      mu_full <- mu
+      if(!is.null(settings$prevalence)) {
+        mu_full <- t(as.matrix(X %*% gamma))
+      }
+      full_elbo <- compute_full_elbo(documents, mu_full, sigma, beta, lambda,
                                      betaindex, settings)
       if(verbose) cat(sprintf(" %.2f\n", full_elbo))
     }
@@ -443,37 +411,13 @@ stm.svi.control <- function(documents, vocab, settings, model=NULL) {
     }
   }
 
+  if(!is.null(settings$prevalence)) {
+    mu <- t(as.matrix(X %*% gamma))
+  }
+
   # --- Step 5: Compute final theta ---
   if(settings$svi$compute_final_theta) {
     if(verbose) cat("\nPerforming final E-step on all documents...\n")
-
-    # Final gamma update if covariates present
-    if(!is.null(settings$prevalence)) {
-      if(verbose) cat("  Performing final gamma update...\n")
-
-      opt.mu_fn <- if(exists("opt.mu", mode="function")) opt.mu else stm:::opt.mu
-
-      mu_result <- tryCatch({
-        opt.mu_fn(
-          lambda = lambda,
-          mode = settings$gamma$mode,
-          covar = settings$prevalence$X,
-          enet = settings$gamma$enet,
-          ic.k = settings$gamma$ic.k,
-          maxits = settings$gamma$maxits
-        )
-      }, error = function(e) {
-        cat("Warning: Final gamma update failed, using last gamma values\n")
-        cat(conditionMessage(e), "\n")
-        NULL
-      })
-
-      if(!is.null(mu_result)) {
-        mu <- mu_result$mu
-        gamma <- mu_result$gamma
-        if(verbose) cat("  Final gamma update complete.\n")
-      }
-    }
 
     # Perform complete E-step with final parameters (serial in stm_svi context)
     final_result <- perform_final_estep(

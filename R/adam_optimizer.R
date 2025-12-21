@@ -8,7 +8,7 @@
 #' Performs one step of Adam optimization on model parameters.
 #'
 #' @param adam_state List containing Adam optimizer state (first/second moments)
-#' @param gradients List of gradients for mu, sigma, and beta parameters
+#' @param gradients List of gradients for mu, sigma, beta, and gamma parameters
 #' @param lr Learning rate (step size)
 #' @param iter Current iteration number (for bias correction)
 #' @param beta1 Exponential decay rate for first moment (default: 0.9)
@@ -38,6 +38,21 @@ adam_update_step <- function(adam_state, gradients, lr, iter,
   } else {
     # No gradient - don't update
     adam_state$update_mu <- NULL
+  }
+
+  # --- Update gamma parameters (prevalence regression) ---
+  if(!is.null(gradients$gamma)) {
+    adam_state$m_gamma <- beta1 * adam_state$m_gamma +
+                          (1 - beta1) * gradients$gamma
+    adam_state$v_gamma <- beta2 * adam_state$v_gamma +
+                          (1 - beta2) * gradients$gamma^2
+
+    m_gamma_hat <- adam_state$m_gamma / (1 - beta1^iter)
+    v_gamma_hat <- adam_state$v_gamma / (1 - beta2^iter)
+
+    adam_state$update_gamma <- lr * m_gamma_hat / (sqrt(v_gamma_hat) + eps)
+  } else {
+    adam_state$update_gamma <- NULL
   }
 
   # --- Update sigma parameters ---
@@ -146,12 +161,13 @@ ensure_sigma_pd <- function(sigma) {
 #' @param mu List with $mu matrix (prevalence parameters)
 #' @param sigma Covariance matrix
 #' @param beta List with $beta list of topic-word matrices
+#' @param gamma Prevalence regression coefficients (optional)
 #' @param has_prevalence If TRUE, skip mu initialization (gamma updated separately)
 #'
 #' @return adam_state list with initialized moments
 #'
 #' @keywords internal
-initialize_adam_state <- function(mu, sigma, beta, has_prevalence=FALSE) {
+initialize_adam_state <- function(mu, sigma, beta, gamma=NULL, has_prevalence=FALSE) {
   # When prevalence covariates are present, skip mu Adam state (gamma updated separately)
   if(has_prevalence) {
     m_mu <- NULL
@@ -160,11 +176,22 @@ initialize_adam_state <- function(mu, sigma, beta, has_prevalence=FALSE) {
     m_mu <- matrix(0, nrow=nrow(mu), ncol=ncol(mu))
     v_mu <- matrix(0, nrow=nrow(mu), ncol=ncol(mu))
   }
+  if(has_prevalence && !is.null(gamma)) {
+    m_gamma <- matrix(0, nrow=nrow(gamma), ncol=ncol(gamma))
+    v_gamma <- matrix(0, nrow=nrow(gamma), ncol=ncol(gamma))
+  } else {
+    m_gamma <- NULL
+    v_gamma <- NULL
+  }
 
   list(
     # Mu parameters (prevalence) - NULL if has_prevalence=TRUE
     m_mu = m_mu,
     v_mu = v_mu,
+
+    # Gamma parameters (prevalence regression)
+    m_gamma = m_gamma,
+    v_gamma = v_gamma,
 
     # Sigma parameters (covariance)
     m_sigma = matrix(0, nrow=nrow(sigma), ncol=ncol(sigma)),
@@ -180,6 +207,7 @@ initialize_adam_state <- function(mu, sigma, beta, has_prevalence=FALSE) {
     # Placeholders for updates (will be filled by adam_update_step)
     update_mu = NULL,
     update_sigma = NULL,
-    update_beta = NULL
+    update_beta = NULL,
+    update_gamma = NULL
   )
 }

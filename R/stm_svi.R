@@ -57,18 +57,8 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
   patience <- max(10, min(50, patience))
 
   # 6. Gamma update frequency (for prevalence covariates)
-  if(has_prevalence) {
-    if(N < 5000) {
-      gamma_update_every <- max(5, ceiling(iters_per_epoch * 0.5))
-    } else if(N < 50000) {
-      gamma_update_every <- max(10, ceiling(iters_per_epoch))
-    } else {
-      gamma_update_every <- ceiling(iters_per_epoch * 2)
-    }
-    gamma_update_every <- max(5, min(100, gamma_update_every))
-  } else {
-    gamma_update_every <- NULL
-  }
+  # With minibatch gamma updates, default to updating every iteration
+  gamma_update_every <- if(has_prevalence) 1 else NULL
 
   return(list(
     batch_size = batch_size,
@@ -97,10 +87,11 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
 #' @param documents The document term matrix in STM format (list of matrices)
 #' @param vocab Character vector of vocabulary terms
 #' @param K Number of topics (must be >= 2)
-#' @param prevalence Prevalence covariate formula (NOT YET SUPPORTED in prototype)
+#' @param prevalence Prevalence covariate formula (supported)
 #' @param content Content covariate formula (NOT YET SUPPORTED in prototype)
 #' @param data Data frame with covariates
-#' @param init.type Initialization method: "Spectral" (default), "LDA", or "Random"
+#' @param init.type Initialization method: "Spectral" (default), "LDA", "Random",
+#'   or "Custom"
 #' @param seed Random seed for reproducibility
 #' @param batch_size Mini-batch size for stochastic updates. If NULL (default),
 #'   automatically determined based on K and N (typically scales as 4×K, adjusted
@@ -108,7 +99,9 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
 #' @param max_epochs Maximum number of passes through the data. If NULL (default),
 #'   automatically targets 500-1000 total iterations based on N. Small corpora
 #'   need more epochs; large corpora need fewer.
-#' @param max_iters Alternative to max_epochs: maximum iterations (NULL by default)
+#' @param max_iters Maximum number of iterations (NULL by default). Training
+#'   stops when either max_iters or max_epochs is reached (earliest limit).
+#' @param max.em.its Deprecated alias for max_iters (for stm() compatibility)
 #' @param lr Learning rate for Adam optimizer. If NULL (default), automatically
 #'   determined based on N/batch_size gradient scaling and K (typically 0.005-0.02).
 #'   Larger values converge faster but may be unstable.
@@ -130,6 +123,7 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
 #' @param holdout_patience Patience for holdout ELBO (defaults to patience).
 #' @param eval_holdout_size Size of fixed holdout chunk to exclude from training
 #'   and use for periodic ELBO evaluation. NULL disables holdout evaluation.
+#'   Defaults to 1000 when N >= 10,000.
 #' @param eval_holdout_every Compute holdout ELBO every N iterations. If NULL and
 #'   eval_holdout_size is set, defaults to reportevery.
 #' @param eval_holdout_seed Random seed for holdout selection (NULL uses main seed)
@@ -145,19 +139,20 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
 #'   Set to TRUE to always perform final E-step (slower but provides complete model),
 #'   or FALSE to skip (faster, saves memory, but theta must be computed separately).
 #' @param gamma_update_every How often to update gamma coefficients when using prevalence
-#'   covariates (in iterations). If NULL (default), automatically adapts to corpus size:
-#'   more frequent for small N (cheap), less frequent for large N (expensive). Gamma is
-#'   updated by regressing lambda on covariates. Larger values = less frequent updates
-#'   (faster but potentially less accurate).
+#'   covariates (in iterations). If NULL (default), updates every iteration. Gamma is
+#'   updated via Adam on mini-batch gradients from the prevalence regression. Larger
+#'   values = less frequent updates (faster but potentially less accurate). When
+#'   holdout evaluation is enabled, gamma updates use training documents only.
 #' @param verbose Print progress information
 #' @param reportevery Report progress every N iterations
 #' @param LDAbeta Use LDA-style beta (default: TRUE, required for prototype)
-#' @param gamma.prior Prior for prevalence regression: "Pooled" (default, Bayesian
-#'   regression with half-Cauchy priors) or "L1" (L1-regularized via glmnet).
-#'   Only used when prevalence covariates are specified. Note: L1 mode is
-#'   experimental; Pooled mode is recommended for most applications.
+#' @param gamma.prior Prevalence regression mode: "Pooled" (default) or "L1".
+#'   In \code{stm_svi}, gamma is updated via Adam on mini-batch gradients; these
+#'   modes are retained for compatibility and stored in the model but do not
+#'   invoke the full VB/glmnet solvers used by \code{stm()}.
 #' @param sigma.prior Strength of regularization toward diagonal covariance (0-1)
-#' @param control Additional control parameters (list)
+#' @param control Additional control parameters (list). Mirrors stm() control
+#'   options for initialization and priors.
 #' @param model Optional pre-fit STM model to resume from
 #'
 #' @return An STM object with additional $svi=TRUE flag
@@ -196,8 +191,8 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
 #'     to avoid premature stopping.
 #'   \item \strong{convergence_window}: Smoothing window for ELBO, larger for
 #'     smaller batches to reduce noise in convergence detection.
-#'   \item \strong{gamma_update_every}: Adapts to corpus size. More frequent for
-#'     small N (cheap gamma updates), less frequent for large N (expensive).
+#'   \item \strong{gamma_update_every}: Defaults to 1 for per-mini-batch updates.
+#'     Increase to reduce update frequency if needed.
 #' }
 #'
 #' These defaults work well for most applications. Manual tuning may improve
@@ -231,11 +226,12 @@ compute_svi_defaults <- function(N, K, V, has_prevalence) {
 #' @export
 stm_svi <- function(documents, vocab, K,
                     prevalence=NULL, content=NULL, data=NULL,
-                    init.type=c("Spectral", "LDA", "Random"),
+                    init.type=c("Spectral", "LDA", "Random", "Custom"),
                     seed=NULL,
                     batch_size=NULL,
                     max_epochs=NULL,
                     max_iters=NULL,
+                    max.em.its=NULL,
                     lr=NULL,
                     adam_beta1=0.9,
                     adam_beta2=0.999,
@@ -263,6 +259,18 @@ stm_svi <- function(documents, vocab, K,
   init.type <- match.arg(init.type)
   gamma.prior <- match.arg(gamma.prior)
   Call <- match.call()
+
+  if(!is.null(max.em.its)) {
+    if(!is.numeric(max.em.its) || max.em.its < 1) {
+      stop("max.em.its must be a positive number")
+    }
+    if(!is.null(max_iters)) {
+      warning("Both max_iters and max.em.its supplied; using the smaller value.")
+      max_iters <- min(max_iters, max.em.its)
+    } else {
+      max_iters <- max.em.its
+    }
+  }
 
   # Convert corpus to internal STM format
   args <- asSTMCorpus(documents, vocab, data)
@@ -358,6 +366,10 @@ stm_svi <- function(documents, vocab, K,
   if(is.null(gamma_update_every) && !is.null(prevalence)) {
     gamma_update_every <- defaults$gamma_update_every
   }
+  if(!is.null(gamma_update_every) &&
+     (!is.numeric(gamma_update_every) || gamma_update_every < 1)) {
+    stop("gamma_update_every must be a positive number")
+  }
 
   # Validation: batch_size can't exceed N
   if(batch_size > N) {
@@ -388,9 +400,19 @@ stm_svi <- function(documents, vocab, K,
   if(!is.null(max_epochs) && (!is.numeric(max_epochs) || max_epochs < 1)) {
     stop("max_epochs must be a positive number")
   }
+  if(!is.null(max_iters) && (!is.numeric(max_iters) || max_iters < 1)) {
+    stop("max_iters must be a positive number")
+  }
 
   if(!is.numeric(patience) || patience < 1) {
     stop("patience must be a positive integer")
+  }
+
+  if(is.null(eval_holdout_size) && N >= 10000) {
+    eval_holdout_size <- 1000
+    if(verbose) {
+      cat("Auto-setting eval_holdout_size=1000 (N>=10000)\n")
+    }
   }
 
   if(is.null(early_stop)) {
@@ -555,7 +577,8 @@ stm_svi <- function(documents, vocab, K,
       d.group.size = 2000,
       recoverEG = TRUE,
       tSNE_init.dims = 50,
-      tSNE_perplexity = 30
+      tSNE_perplexity = 30,
+      spectral.method = "cpp"
     ),
 
     # SVI-specific settings
@@ -590,6 +613,74 @@ stm_svi <- function(documents, vocab, K,
     settings$init$maxV <- 10000
   }
 
+  if(settings$gamma$mode == "L1") {
+    if(is.null(settings$covariates$X) || ncol(settings$covariates$X) <= 2) {
+      stop("Cannot use L1 penalization in prevalence model with 2 or fewer covariates.")
+    }
+  }
+
+  # --- Process control arguments (mirrors stm()) ---
+  legalargs <- c(
+    "tau.maxit", "tau.tol",
+    "fixedintercept", "kappa.mstepmaxit", "kappa.msteptol",
+    "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
+    "gamma.ic.k",
+    "nits", "burnin", "alpha", "eta", "contrast",
+    "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
+    "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
+    "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
+    "spectral.method"
+  )
+  if(length(control)) {
+    indx <- pmatch(names(control), legalargs, nomatch=0L)
+    if(any(indx == 0L)) {
+      stop(gettextf("Argument %s not matched", names(control)[indx == 0L]),
+           domain = NA)
+    }
+    fullnames <- legalargs[indx]
+    for(i in fullnames) {
+      if(i == "tau.maxit") settings$tau$maxit <- control[[i]]
+      if(i == "tau.tol") settings$tau$tol <- control[[i]]
+      if(i == "fixedintercept") settings$kappa$fixedintercept <- control[[i]]
+      if(i == "kappa.enet") settings$tau$enet <- control[[i]]
+      if(i == "kappa.mstepmaxit") settings$kappa$mstep$maxit <- control[[i]]
+      if(i == "kappa.msteptol") settings$kappa$mstep$tol <- control[[i]]
+      if(i == "nlambda") settings$tau$nlambda <- control[[i]]
+      if(i == "lambda.min.ratio") settings$tau$lambda.min.ratio <- control[[i]]
+      if(i == "ic.k") settings$tau$ic.k <- control[[i]]
+      if(i == "gamma.enet") settings$gamma$enet <- control[[i]]
+      if(i == "gamma.ic.k") settings$gamma$ic.k <- control[[i]]
+      if(i == "nits") settings$init$nits <- control[[i]]
+      if(i == "burnin") settings$init$burnin <- control[[i]]
+      if(i == "alpha") settings$init$alpha <- control[[i]]
+      if(i == "eta") settings$init$eta <- control[[i]]
+      if(i == "contrast") settings$kappa$contrast <- control[[i]]
+      if(i == "rp.s") settings$init$s <- control[[i]]
+      if(i == "rp.p") settings$init$p <- control[[i]]
+      if(i == "rp.d.group.size") settings$init$d.group.size <- control[[i]]
+      if(i == "SpectralRP" && control[[i]]) settings$init$mode <- "SpectralRP"
+      if(i == "recoverEG" && !control[[i]]) settings$init$recoverEG <- control[[i]]
+      if(i == "maxV" && control[[i]]) {
+        settings$init$maxV <- control[[i]]
+        if(settings$init$maxV > V) stop("maxV cannot be larger than the vocabulary")
+      }
+      if(i == "tSNE_init.dims" && control[[i]]) settings$init$tSNE_init.dims <- control[[i]]
+      if(i == "tSNE_perplexity" && control[[i]]) settings$init$tSNE_perplexity <- control[[i]]
+      if(i == "spectral.method") {
+        settings$init$spectral.method <- match.arg(control[[i]], c("cpp", "R", "auto"))
+      }
+      if(i == "gamma.maxits") settings$gamma$maxits <- control[[i]]
+      if(i == "allow.neg.change") settings$convergence$allow.neg.change <- control[[i]]
+      if(i == "custom.beta") {
+        if(settings$init$mode != "Custom") {
+          warning("Custom beta supplied, setting init argument to Custom.")
+          settings$init$mode <- "Custom"
+        }
+        settings$init$custom <- control[[i]]
+      }
+    }
+  }
+
   # --- Print startup message ---
   if(verbose) {
     cat("\n")
@@ -599,7 +690,7 @@ stm_svi <- function(documents, vocab, K,
     cat(sprintf("Documents: %d, Vocabulary: %d, Topics: %d\n", N, V, K))
     cat(sprintf("Batch size: %d, Learning rate: %.4f\n", batch_size, lr))
     cat(sprintf("Max epochs: %d, Patience: %d\n", max_epochs, patience))
-    cat(sprintf("Initialization: %s\n", init.type))
+    cat(sprintf("Initialization: %s\n", settings$init$mode))
     cat(sprintf("Early stop: %s\n", early_stop))
     if(!is.null(eval_holdout_size)) {
       cat(sprintf("Holdout eval: %d docs every %d iters\n",

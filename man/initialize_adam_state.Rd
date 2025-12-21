@@ -4,7 +4,7 @@
 \alias{initialize_adam_state}
 \title{Initialize Adam Optimizer State}
 \usage{
-initialize_adam_state(mu, sigma, beta, has_prevalence = FALSE)
+initialize_adam_state(mu, sigma, beta, gamma = NULL, has_prevalence = FALSE)
 }
 \arguments{
 \item{mu}{List with $mu matrix (prevalence parameters)}
@@ -12,6 +12,8 @@ initialize_adam_state(mu, sigma, beta, has_prevalence = FALSE)
 \item{sigma}{Covariance matrix}
 
 \item{beta}{List with $beta list of topic-word matrices}
+
+\item{gamma}{Prevalence regression coefficients (optional)}
 
 \item{has_prevalence}{If TRUE, skip mu initialization (gamma updated separately)}
 }

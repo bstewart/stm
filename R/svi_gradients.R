@@ -18,12 +18,15 @@
 #' @param sigma Covariance matrix
 #' @param beta List with $beta list of topic-word distributions
 #' @param settings Settings list from stm
+#' @param X Batch-level prevalence design matrix (optional)
+#' @param gamma Prevalence regression coefficients (optional)
 #'
 #' @return List of gradients (mu, sigma, log_beta)
 #'
 #' @keywords internal
 compute_svi_gradients <- function(suffstats, N, batch_size,
-                                  mu, sigma, beta, settings) {
+                                  mu, sigma, beta, settings,
+                                  X=NULL, gamma=NULL) {
   # Critical scaling factor: converts mini-batch stats to full-data gradient estimates
   scale_factor <- N / batch_size
 
@@ -31,12 +34,20 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
   Kminus1 <- K - 1
 
   # --- Gradient for mu (prevalence parameters) ---
-  # NOTE: When prevalence covariates are present (mu is N×K-1), we skip gradient computation
-  # because mu = X %*% gamma and gamma is updated separately via opt.mu()
+  # NOTE: When prevalence covariates are present (mu is N×K-1), we skip mu gradients
+  # because mu = X %*% gamma and gamma is updated separately via Adam
   # Only compute gradients for CTM case (no covariates, mu is scalar/global)
   if(!is.null(settings$prevalence)) {
     # Skip mu gradient - will be updated via gamma
     grad_mu <- NULL
+    grad_gamma <- NULL
+    if(!is.null(X)) {
+      # For prevalence covariates: gradient wrt gamma from minibatch residuals
+      # residuals is B × (K-1), X is B × P, gamma gradient is P × (K-1)
+      residuals <- suffstats$lambda - t(mu)
+      grad_gamma <- scale_factor * crossprod(X, residuals)
+      grad_gamma <- as.matrix(grad_gamma)
+    }
   } else {
     # For CTM case (no covariates): gradient is scaled sum difference
     # The sufficient statistic is lambda (document-level variational parameters)
@@ -46,12 +57,12 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
     batch_lambda_sum <- colSums(suffstats$lambda)
     grad_mu <- scale_factor * batch_lambda_sum - N * as.numeric(mu)
     grad_mu <- matrix(grad_mu, nrow=nrow(mu), ncol=ncol(mu))
+    grad_gamma <- NULL
   }
 
   # --- Gradient for sigma (covariance matrix) ---
   # Center lambda around mu
-  # When mu is document-specific (prevalence covariates), we can't use simple centering
-  # Instead, skip centering for now (will be handled during periodic gamma updates)
+  # When mu is document-specific (prevalence covariates), use per-doc mu if available
   if(!is.null(settings$prevalence)) {
     # For document-specific mu, center by per-doc mu when available
     if(is.matrix(mu) && ncol(mu) == nrow(suffstats$lambda)) {
@@ -122,12 +133,15 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
   if(!is.null(grad_mu)) {
     grad_mu <- grad_mu / N
   }
+  if(!is.null(grad_gamma)) {
+    grad_gamma <- grad_gamma / N
+  }
   grad_sigma <- grad_sigma / N
   for(a in 1:length(grad_log_beta)) {
     grad_log_beta[[a]] <- grad_log_beta[[a]] / N
   }
 
-  return(list(mu=grad_mu, sigma=grad_sigma, log_beta=grad_log_beta))
+  return(list(mu=grad_mu, sigma=grad_sigma, log_beta=grad_log_beta, gamma=grad_gamma))
 }
 
 #' Clip Gradients to Prevent Divergence
@@ -142,8 +156,13 @@ compute_svi_gradients <- function(suffstats, N, batch_size,
 #'
 #' @keywords internal
 clip_gradients <- function(gradients, clip_value=5.0) {
-  gradients$mu <- pmin(pmax(gradients$mu, -clip_value), clip_value)
+  if(!is.null(gradients$mu)) {
+    gradients$mu <- pmin(pmax(gradients$mu, -clip_value), clip_value)
+  }
   gradients$sigma <- pmin(pmax(gradients$sigma, -clip_value), clip_value)
+  if(!is.null(gradients$gamma)) {
+    gradients$gamma <- pmin(pmax(gradients$gamma, -clip_value), clip_value)
+  }
 
   for(a in 1:length(gradients$log_beta)) {
     gradients$log_beta[[a]] <- pmin(pmax(gradients$log_beta[[a]],
@@ -179,6 +198,13 @@ check_gradients <- function(gradients, iter, stop_on_error=TRUE) {
   if(any(is.na(gradients$sigma)) || any(is.infinite(gradients$sigma))) {
     has_nan <- TRUE
     msg <- paste0(msg, "  Gradient for sigma contains NaN or Inf\n")
+  }
+
+  # Check gamma
+  if(!is.null(gradients$gamma) &&
+     (any(is.na(gradients$gamma)) || any(is.infinite(gradients$gamma)))) {
+    has_nan <- TRUE
+    msg <- paste0(msg, "  Gradient for gamma contains NaN or Inf\n")
   }
 
   # Check beta

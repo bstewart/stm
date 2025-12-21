@@ -11,11 +11,12 @@ stm_svi(
   prevalence = NULL,
   content = NULL,
   data = NULL,
-  init.type = c("Spectral", "LDA", "Random"),
+  init.type = c("Spectral", "LDA", "Random", "Custom"),
   seed = NULL,
   batch_size = NULL,
   max_epochs = NULL,
   max_iters = NULL,
+  max.em.its = NULL,
   lr = NULL,
   adam_beta1 = 0.9,
   adam_beta2 = 0.999,
@@ -23,6 +24,12 @@ stm_svi(
   patience = NULL,
   convergence_window = NULL,
   eval_every = NULL,
+  early_stop = NULL,
+  improvement_tol = 1e-04,
+  holdout_patience = NULL,
+  eval_holdout_size = NULL,
+  eval_holdout_every = NULL,
+  eval_holdout_seed = NULL,
   compute_final_theta = NULL,
   gamma_update_every = NULL,
   verbose = TRUE,
@@ -41,13 +48,14 @@ stm_svi(
 
 \item{K}{Number of topics (must be >= 2)}
 
-\item{prevalence}{Prevalence covariate formula (NOT YET SUPPORTED in prototype)}
+\item{prevalence}{Prevalence covariate formula (supported)}
 
 \item{content}{Content covariate formula (NOT YET SUPPORTED in prototype)}
 
 \item{data}{Data frame with covariates}
 
-\item{init.type}{Initialization method: "Spectral" (default), "LDA", or "Random"}
+\item{init.type}{Initialization method: "Spectral" (default), "LDA", "Random",
+or "Custom"}
 
 \item{seed}{Random seed for reproducibility}
 
@@ -59,7 +67,10 @@ for corpus size). Reasonable range: 32-1024.}
 automatically targets 500-1000 total iterations based on N. Small corpora
 need more epochs; large corpora need fewer.}
 
-\item{max_iters}{Alternative to max_epochs: maximum iterations (NULL by default)}
+\item{max_iters}{Maximum number of iterations (NULL by default). Training
+stops when either max_iters or max_epochs is reached (earliest limit).}
+
+\item{max.em.its}{Deprecated alias for max_iters (for stm() compatibility)}
 
 \item{lr}{Learning rate for Adam optimizer. If NULL (default), automatically
 determined based on N/batch_size gradient scaling and K (typically 0.005-0.02).
@@ -81,6 +92,24 @@ batches provides more smoothing). Typical range: 5-20.}
 
 \item{eval_every}{Compute full ELBO every N iterations (NULL = never, expensive)}
 
+\item{early_stop}{Early stopping criterion: "train" (training ELBO only),
+"holdout" (holdout ELBO only), or "both" (require both to plateau). If NULL,
+defaults to "train" when no holdout is used and "both" when holdout is enabled.}
+
+\item{improvement_tol}{Relative improvement threshold for ELBO convergence.
+Default 1e-4. Applied to per-token windowed ELBO.}
+
+\item{holdout_patience}{Patience for holdout ELBO (defaults to patience).}
+
+\item{eval_holdout_size}{Size of fixed holdout chunk to exclude from training
+and use for periodic ELBO evaluation. NULL disables holdout evaluation.
+Defaults to 1000 when N >= 10,000.}
+
+\item{eval_holdout_every}{Compute holdout ELBO every N iterations. If NULL and
+eval_holdout_size is set, defaults to reportevery.}
+
+\item{eval_holdout_seed}{Random seed for holdout selection (NULL uses main seed)}
+
 \item{compute_final_theta}{Perform final E-step on all documents after convergence
   to compute accurate theta. If NULL (default), automatically set to TRUE for
   N < 10,000 and FALSE for N >= 10,000.
@@ -94,10 +123,10 @@ batches provides more smoothing). Typical range: 5-20.}
   or FALSE to skip (faster, saves memory, but theta must be computed separately).}
 
 \item{gamma_update_every}{How often to update gamma coefficients when using prevalence
-covariates (in iterations). If NULL (default), automatically adapts to corpus size:
-more frequent for small N (cheap), less frequent for large N (expensive). Gamma is
-updated by regressing lambda on covariates. Larger values = less frequent updates
-(faster but potentially less accurate).}
+covariates (in iterations). If NULL (default), updates every iteration. Gamma is
+updated via Adam on mini-batch gradients from the prevalence regression. Larger
+values = less frequent updates (faster but potentially less accurate). When
+holdout evaluation is enabled, gamma updates use training documents only.}
 
 \item{verbose}{Print progress information}
 
@@ -105,14 +134,15 @@ updated by regressing lambda on covariates. Larger values = less frequent update
 
 \item{LDAbeta}{Use LDA-style beta (default: TRUE, required for prototype)}
 
-\item{gamma.prior}{Prior for prevalence regression: "Pooled" (default, Bayesian
-regression with half-Cauchy priors) or "L1" (L1-regularized via glmnet).
-Only used when prevalence covariates are specified. Note: L1 mode is
-experimental; Pooled mode is recommended for most applications.}
+\item{gamma.prior}{Prevalence regression mode: "Pooled" (default) or "L1".
+In \code{stm_svi}, gamma is updated via Adam on mini-batch gradients; these
+modes are retained for compatibility and stored in the model but do not
+invoke the full VB/glmnet solvers used by \code{stm()}.}
 
 \item{sigma.prior}{Strength of regularization toward diagonal covariance (0-1)}
 
-\item{control}{Additional control parameters (list)}
+\item{control}{Additional control parameters (list). Mirrors stm() control
+options for initialization and priors.}
 
 \item{model}{Optional pre-fit STM model to resume from}
 }
@@ -165,8 +195,8 @@ selected based on corpus characteristics:
     to avoid premature stopping.
   \item \strong{convergence_window}: Smoothing window for ELBO, larger for
     smaller batches to reduce noise in convergence detection.
-  \item \strong{gamma_update_every}: Adapts to corpus size. More frequent for
-    small N (cheap gamma updates), less frequent for large N (expensive).
+  \item \strong{gamma_update_every}: Defaults to 1 for per-mini-batch updates.
+    Increase to reduce update frequency if needed.
 }
 
 These defaults work well for most applications. Manual tuning may improve
