@@ -26,8 +26,6 @@ The package currently includes functionality to:
 
 ### Other Resources
 
-Have a large text corpus or need a language we don't provide support for?  See our sister project [txtorg](http://txtorg.org)
-
 See other materials at www.structuraltopicmodel.com
 
 ### Installation Instructions
