@@ -99,6 +99,7 @@ make.heldout <- function(documents, vocab, N=floor(.1*length(documents)),
 
 #' @export
 eval.heldout <- function(model, missing) {
+  check.theta.computed(model, "eval.heldout()")
   heldout <- vector(length=length(missing$index))
   ntokens <- vector(length=length(missing$index))
   beta <- lapply(model$beta$logbeta, exp)

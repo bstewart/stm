@@ -79,6 +79,7 @@
 findThoughts <- function(model, texts=NULL, topics=NULL, n=3, thresh=NULL,
                          where=NULL, meta=NULL) {
 #Grab up to n texts which are above the threshold
+  check.theta.computed(model, "findThoughts()")
   theta <- model$theta
   if(is.null(topics)) topics <- 1:ncol(theta)
   if(!is.null(texts) && length(texts)!=nrow(theta)) stop("Number of provided texts and number of documents modeled do not match")
@@ -183,6 +184,7 @@ plot.findThoughts <- function(x, sentences=NULL, ...) {
 #' 
 #' @export
 make.dt <- function(model, meta=NULL) {
+  check.theta.computed(model, "make.dt()")
   theta <- model$theta
   colnames(theta) <- sprintf("Topic%i", 1:ncol(theta))
   if(is.null(meta)) {
@@ -191,5 +193,4 @@ make.dt <- function(model, meta=NULL) {
     return(data.table::data.table(docnum=1:nrow(theta),theta, meta))
   }
 }
-
 

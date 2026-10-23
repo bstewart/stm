@@ -37,10 +37,13 @@ you do not need to supply \code{sigmainv} or \code{sigmaentropy}.  See below.}
 \item{sigmaentropy}{the entropy term calculated from sigma.  If you supplied \code{sigma} you do not
 need to supply this.  See below.}
 
-\item{method}{the method passed to \code{\link{optim}}.  Uses "BFGS" by default.}
+\item{method}{optimization method. The default "BFGS" uses a specialized
+compiled implementation; other methods are passed to \code{\link{optim}}.}
 
-\item{control}{the control argument passed to \code{\link{optim}}.  Sets the maximum number of observations
-to 500 but can be used to set other aspects of the optimization per the instructions in \code{\link{optim}}}
+\item{control}{optimizer control list. The compiled BFGS path supports
+\code{maxit}, \code{reltol}, and \code{abstol}; requesting other controls
+uses \code{\link{optim}} for compatibility. The default maximum number of
+iterations is 500.}
 
 \item{posterior}{should the full posterior be returned?  If TRUE (as it is by default) returns the full 
 variational posterior.  Otherwise just returns the point estimate.}

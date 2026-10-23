@@ -119,6 +119,7 @@ estimateEffect <- function(formula,
                      nsims=25, prior=NULL) {
   origcall <- match.call()
   thetatype <- match.arg(uncertainty)
+  check.theta.computed(stmobj, "estimateEffect()")
   if(thetatype=="None") nsims <- 1 #override nsims for no uncertainty
   
   if(!is.null(documents)) {

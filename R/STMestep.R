@@ -16,7 +16,7 @@
 #Let's start by assuming its one beta and we may have arbitrarily subset the number of docs.
 estep <- function(documents, beta.index, update.mu, #null allows for intercept only model  
                        beta, lambda.old, mu, sigma, 
-                       verbose) {
+                       verbose, compact=FALSE) {
   
   #quickly define useful constants
   V <- ncol(beta[[1]])
@@ -29,8 +29,18 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   # 1) Initialize Sufficient Statistics 
   sigma.ss <- diag(0, nrow=(K-1))
   beta.ss <- vector(mode="list", length=A)
+  beta.words <- NULL
+  if(compact) {
+    beta.words <- sort(unique(unlist(lapply(documents, function(x) x[1,]),
+                                     use.names=FALSE)))
+    word.lookup <- integer(V)
+    word.lookup[beta.words] <- seq_along(beta.words)
+    beta.V <- length(beta.words)
+  } else {
+    beta.V <- V
+  }
   for(i in 1:A) {
-    beta.ss[[i]] <- matrix(0, nrow=K,ncol=V)
+    beta.ss[[i]] <- matrix(0, nrow=K,ncol=beta.V)
   }
   bound <- vector(length=N)
   lambda <- vector("list", length=N)
@@ -63,7 +73,9 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
     
     # update sufficient statistics 
     sigma.ss <- sigma.ss + doc.results$eta$nu
-    beta.ss[[aspect]][,words] <- doc.results$phis + beta.ss[[aspect]][,words]
+    beta.columns <- if(compact) word.lookup[words] else words
+    beta.ss[[aspect]][,beta.columns] <-
+      doc.results$phis + beta.ss[[aspect]][,beta.columns,drop=FALSE]
     bound[i] <- doc.results$bound
     lambda[[i]] <- c(doc.results$eta$lambda)
     if(verbose && i%%ctevery==0) cat(".")
@@ -72,5 +84,48 @@ estep <- function(documents, beta.index, update.mu, #null allows for intercept o
   
   #4) Combine and Return Sufficient Statistics
   lambda <- do.call(rbind, lambda)
-  return(list(sigma=sigma.ss, beta=beta.ss, bound=bound, lambda=lambda))
+  return(list(sigma=sigma.ss, beta=beta.ss, beta.words=beta.words,
+              bound=bound, lambda=lambda))
+}
+
+
+# Document-mode pass used to materialize theta after incremental fitting.  The
+# default theta-only path skips responsibilities, Hessian inverses, sufficient
+# statistics, and bound terms.  Setting return.bound=TRUE computes the exact
+# posterior terms needed to report a fresh variational bound as well.
+estep.lambda <- function(documents, beta.index, update.mu,
+                         beta, lambda.old, mu, sigma, verbose,
+                         return.bound=FALSE) {
+  N <- length(documents)
+  ctevery <- ifelse(N > 100, floor(N/100), 1)
+  if(!update.mu) mu.i <- as.numeric(mu)
+
+  sigobj <- try(chol.default(sigma), silent=TRUE)
+  if(inherits(sigobj, "try-error")) {
+    siginv <- solve(sigma)
+    sigmaentropy <- .5 * determinant(sigma, logarithm=TRUE)$modulus[1]
+  } else {
+    siginv <- chol2inv(sigobj)
+    sigmaentropy <- sum(log(diag(sigobj)))
+  }
+
+  lambda <- matrix(0, nrow=N, ncol=nrow(sigma))
+  bound <- if(return.bound) numeric(N) else NULL
+  for(i in seq_len(N)) {
+    doc <- documents[[i]]
+    words <- doc[1,]
+    if(update.mu) mu.i <- mu[,i]
+    result <- logisticnormalcpp(
+      eta=lambda.old[i,], mu=mu.i, siginv=siginv,
+      beta=beta[[beta.index[i]]][,words,drop=FALSE], doc=doc,
+      sigmaentropy=if(return.bound) sigmaentropy else 0,
+      hpbcpp=return.bound
+    )
+    lambda[i,] <- c(result$eta$lambda)
+    if(return.bound) bound[i] <- result$bound
+    if(verbose && i %% ctevery == 0) cat(".")
+  }
+  if(verbose) cat("\n")
+  if(return.bound) return(list(lambda=lambda, bound=bound))
+  lambda
 }

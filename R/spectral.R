@@ -22,59 +22,6 @@ gram <- function(mat) {
   return(as.matrix(Q))
 }
 
-gram.rp <- function(mat, s=.05, p=3000, d.group.size=2000, verbose=TRUE) {
-  # s is the sparsity level
-  # p is the number of projections
-  # d.group.size is the size of the groups of documents analyzed.
-  
-  #first, figure out how many items are necessary to produce the correct sparsity level
-  n.items <- ceiling(s*p)
-  #construct a projection matrix out of a triplet representation
-  triplet <- vector(mode="list", length=ncol(mat))
-  for(i in 1:ncol(mat)) {
-    index <- sample(size=n.items, x=1:p, replace=FALSE)
-    values <- sample(size=length(index), x=c(-1, 1), replace=TRUE)
-    triplet[[i]] <- cbind(i, index, values)
-  }
-  triplet <- do.call(rbind,triplet)
-  proj <- sparseMatrix(i=triplet[,1], j=triplet[,2], x=triplet[,3])
-  rm(triplet)
-  
-  #now we do the projection.
-  # the basic strategy is to do the computation in blocks of documents
-  # I tried various methods of doing one document at a time but they 
-  # were all too slow.
-  D <- nrow(mat)
-  groups <- ceiling(D/d.group.size)
-  Qnorm <- rep(0, ncol(mat))
-  #iterate over blocks adding to total
-  if(verbose) cat("\t")
-  for(i in 1:groups) {
-    smat <- mat[((i-1)*d.group.size + 1):min(i*d.group.size, D),]
-    #not positive about next two lines.
-    rsums <- rowSums(smat)
-    divisor <- rsums*(rsums-1)
-    #divide through
-    smatd <- smat/divisor
-    #update the piece that we will ultimately normalize with
-    Qnorm <- Qnorm + colSums(smatd*(rsums - 1 - smatd))
-    #calculate for the bit below
-    Htilde <- colSums(smatd)*proj
-    rm(smatd) #clear out a copy we don't need
-    smat <- smat/sqrt(divisor)
-    
-    if(i>1) {
-      Q <- Q + t(smat)%*%(smat%*%proj) - Htilde
-    } else {
-      #if its the first 
-      Q <- t(smat)%*%(smat%*%proj) - Htilde
-    }
-    if(verbose) cat(".")
-  }
-  if(verbose) cat("\n")
-  return(as.matrix(Q/Qnorm))
-}
-
 # Find Anchor Words
 #
 # Take a gram matrix Q and returns K anchors.
@@ -134,10 +81,21 @@ fastAnchor <- function(Qbar, K, verbose=TRUE) {
 # @param ... Optional arguments that will be passed to the exponentiated gradient algorithm.
 # @return 
 # \item{A}{A matrix of dimension K by V.  This is acturally the transpose of A in Arora et al. and the matrix we call beta.}
-recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
+recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, tol=1e-7, max.its=500, exact=FALSE) {
   #NB: I've edited the script to remove some of the calculations by commenting them
   #out.  This allows us to store only one copy of Q which is more memory efficient.
   #documentation for other pieces is below.
+
+  if(recoverEG) {
+    #Exponentiated gradient for every word at once in compiled code.  This is the
+    #same algorithm as expgrad() below; words for which the fixed-step iteration
+    #does not converge are solved exactly (see recoverL2Cpp).
+    recovered <- recoverL2Cpp(Qbar, as.integer(anchor), as.numeric(wprob),
+                              tolerance=tol, maximum_iterations=as.integer(max.its),
+                              exact_only=isTRUE(exact))
+    report.recovery(recovered, verbose)
+    return(list(A=recovered$A))
+  }
 
   #Qbar <- Q/rowSums(Q)
   X <- Qbar[anchor,]
@@ -160,15 +118,10 @@ recoverL2 <- function(Qbar, anchor, wprob, verbose=TRUE, recoverEG=TRUE, ...) {
       condprob[[i]] <- vec
     } else {
       y <- Qbar[i,]
-      
-      if(recoverEG) {
-        solution <- expgrad(X,y,XtX, ...)$par
-      } else {
-        #meq=1 means the sum is treated as an exact equality constraint
-        #and the remainder are >=
-        solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, 
-                                       Amat=Amat, bvec=bvec, meq=1)$solution  
-      }
+      #meq=1 means the sum is treated as an exact equality constraint
+      #and the remainder are >=
+      solution <- quadprog::solve.QP(Dmat=XtX, dvec=X%*%y, 
+                                     Amat=Amat, bvec=bvec, meq=1)$solution  
       
       if(any(solution <= 0)) {
         #we can get exact 0's or even slightly negative numbers from quadprog

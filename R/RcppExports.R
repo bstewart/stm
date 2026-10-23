@@ -9,7 +9,39 @@ gradcpp <- function(eta, beta, doc_ct, mu, siginv) {
     .Call(`_stm_gradcpp`, eta, beta, doc_ct, mu, siginv)
 }
 
+gradcpp_nocopy <- function(eta, beta, doc_ct, mu, siginv) {
+    .Call(`_stm_gradcpp_nocopy`, eta, beta, doc_ct, mu, siginv)
+}
+
+optimizecpp <- function(eta, beta, doc_ct, mu, siginv, control) {
+    .Call(`_stm_optimizecpp`, eta, beta, doc_ct, mu, siginv, control)
+}
+
 hpbcpp <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
     .Call(`_stm_hpbcpp`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
+}
+
+hpbcpp_nocopy <- function(eta, beta, doc_ct, mu, siginv, sigmaentropy) {
+    .Call(`_stm_hpbcpp_nocopy`, eta, beta, doc_ct, mu, siginv, sigmaentropy)
+}
+
+spectralProjectionCpp <- function(documents, vocabulary_size, projection_dimension, projection_sparsity = 0.05, seed = 1L) {
+    .Call(`_stm_spectralProjectionCpp`, documents, vocabulary_size, projection_dimension, projection_sparsity, seed)
+}
+
+spectralGramCpp <- function(documents, vocabulary_size, keep = NULL) {
+    .Call(`_stm_spectralGramCpp`, documents, vocabulary_size, keep)
+}
+
+fastAnchorCpp <- function(qbar_sexp, topics) {
+    .Call(`_stm_fastAnchorCpp`, qbar_sexp, topics)
+}
+
+recoverL2Cpp <- function(qbar_sexp, anchors, word_probability, tolerance = 1e-7, maximum_iterations = 500L, exact_only = FALSE) {
+    .Call(`_stm_recoverL2Cpp`, qbar_sexp, anchors, word_probability, tolerance, maximum_iterations, exact_only)
+}
+
+recoverL2OriginalCpp <- function(documents, vocabulary_size, anchors, row_normalizer, word_probability, tolerance = 1e-7, maximum_iterations = 500L, exact_only = FALSE) {
+    .Call(`_stm_recoverL2OriginalCpp`, documents, vocabulary_size, anchors, row_normalizer, word_probability, tolerance, maximum_iterations, exact_only)
 }
 

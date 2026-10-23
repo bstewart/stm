@@ -87,12 +87,22 @@
 #' Particularly when the number of documents is relatively large we highly
 #' recommend the Spectral algorithm which often performs extremely well.  Note
 #' that the random seed plays no role in the spectral initialization as it is
-#' completely deterministic (unless using the \code{K=0} or random projection
-#' settings). When the vocab is larger than 10000 terms we use only the most
-#' frequent 10000 terms in creating the initialization.  This may case the 
+#' completely deterministic (unless using the \code{K=0} setting). When the
+#' vocab is larger than 10000 terms we use only the most
+#' frequent 10000 terms in creating the initialization.  This may cause the 
 #' first step of the algorithm to have a very bad value of the objective function
 #' but it should quickly stabilize into a good place.  You can tweak the exact 
-#' number where this kicks in with the \code{maxV} argument inside control. There
+#' number where this kicks in with the \code{maxV} argument inside control. 
+#' Since version 1.4.0 the spectral initialization is computed in compiled code
+#' and is several times faster, but it produces the same initialization as
+#' earlier versions (up to floating point error) except for the small
+#' number of recovery problems where the previous exponentiated-gradient solver
+#' failed to converge; those are now solved exactly (see \code{recover.tol}).
+#' For very large vocabularies, \code{control=list(SpectralRP=TRUE)} selects the
+#' anchor words from a sparse random sketch of the word co-occurrence matrix
+#' instead of forming the full matrix; this is much faster and uses far less
+#' memory, but the anchors (and hence the initialization) can differ from the
+#' exact version. There
 #' appear to be some cases where numerical instability in the Spectral algorithm
 #' can cause differences across machines (particularly Windows machines for some reason).
 #' It should always give exactly the same answer for a given machine but if you are
@@ -113,6 +123,66 @@
 #' not converge faster and definitely won't converge to the same location. 
 #' This functionality should be considered somewhat experimental and we encourage
 #'  users to let us know what their experiences are like here in practice.
+#'
+#' Setting \code{inference="Incremental"} uses incremental (memoized) variational
+#' EM in the sense of Neal and Hinton (1998), which generalizes the
+#' \code{ngroups} option above.  The corpus is split into fixed document blocks
+#' (shuffled once).  A first pass through all blocks fills a cache of per-block
+#' sufficient statistics at the initial parameter values, after which each block
+#' is revisited in a fresh random order every epoch: its stale contribution is
+#' subtracted from the cache, its refreshed contribution is added, and the same
+#' M-step as batch inference (topic-word distributions, prevalence regression
+#' and topic covariance) is run.  Because the cache always sums exact statistics
+#' over every document there is no learning rate to tune, and global parameters
+#' are updated many times per pass through the data.  On large corpora this
+#' typically reaches a given value of the approximate bound in less time than
+#' batch EM; the two methods will not converge to the same local optimum.
+#' Convergence is declared when the relative change in the cached bound stays
+#' below \code{emtol} for \code{incremental.patience} consecutive epochs after
+#' \code{incremental.min.epochs}, where "epoch" means one pass over all blocks.
+#' \code{max.em.its}, if specified, caps the number of epochs.
+#'
+#' Two aspects differ from batch models.  First, the per-epoch
+#' \code{convergence$bound} sums block bounds that were computed at different
+#' global parameter values during the epoch, so it is an approximate diagnostic
+#' rather than the bound at the final parameters.  For corpora of at least
+#' 10,000 documents a fixed subset of 1,000 documents (\code{incremental.eval.size})
+#' is therefore re-evaluated at the current parameters once per epoch and
+#' recorded in \code{convergence$eval.bound}; these documents remain part of the
+#' training data.  Second, by default a final exact pass over all documents at
+#' the fitted global parameters is run only for corpora with fewer than 10,000
+#' documents.  That pass produces \code{theta} and \code{eta} (and a fresh
+#' \code{convergence$final.bound}).  For larger corpora \code{theta} is
+#' \code{NULL} after fitting; run \code{\link{updateTheta}} to compute it when it
+#' is needed (functions such as \code{\link{estimateEffect}} will say so), or set
+#' \code{control=list(incremental.final.theta=TRUE)}.  Incremental inference
+#' currently supports the standard topic-word updates with either no prevalence
+#' covariates or the default pooled prevalence prior; content covariates,
+#' \code{LDAbeta=FALSE} and \code{gamma.prior="L1"} use batch inference.
+#'
+#' Setting \code{inference="Stochastic"} adds a stochastic phase before the
+#' incremental method.  Documents are visited in shuffled minibatches
+#' (\code{stochastic.batch.size} documents); after each minibatch its expected
+#' sufficient statistics are scaled up to the size of the corpus and blended
+#' into running estimates with the Robbins-Monro step size
+#' \eqn{\rho_t = (t + \tau)^{-\kappa}}, and the usual M-step is applied to the
+#' running estimates.  This is online EM (Cappe and Moulines 2009), which for
+#' these M-steps coincides with the natural-gradient update of stochastic
+#' variational inference (Hoffman et al. 2013).  The phase stops when the
+#' bound of each minibatch stops improving relative to its value on the
+#' previous pass (\code{stochastic.tol}) or after \code{stochastic.max.epochs}
+#' passes.  The minibatch statistics from the final pass then seed the
+#' incremental method's cache, which refines the solution to a stationary point
+#' of the exact objective using the \code{incremental.*} settings (so the same
+#' convergence criterion as batch inference applies to the result).  The
+#' stochastic phase reaches a good region of the parameter space in one or two
+#' passes over the data, so the method is most useful for large corpora; for
+#' corpora of a few thousand documents the incremental method on its own is
+#' about as fast.  Setting \code{control=list(stochastic.finish=FALSE)} returns
+#' the stochastic solution directly, which is several times faster still but
+#' only an approximate optimum (in our tests roughly 0.05-0.1\% below the batch
+#' bound).  The same model restrictions as the incremental method
+#' apply, and restarting with \code{model} is not supported.
 #' 
 #' Models can now be restarted by passing an \code{STM} object to the argument
 #' \code{model}.  This is particularly useful if you run a model to the maximum
@@ -201,16 +271,33 @@
 #' \item{\code{contrast}}{A
 #' logical indicating whether a standard contrast coding should be used for
 #' content covariates.  Typically this should remain at the default of FALSE.}
-#' \item{\code{rp.s}}{Parameter between 0 and 1 controlling the sparsity of
-#' random projections for the spectral initialization.  Defaults to .05}
-#' \item{\code{rp.p}}{Dimensionality of the random projections for the
-#' spectral initialization.  Defaults to 3000.}
-#' \item{\code{rp.d.group.size}}{Controls the size of blocks considered at a
-#' time when computing the random projections for the spectral initialization.
-#' Defaults to 2000.} 
 #' \item{\code{SpectralRP}}{A logical which when
-#' \code{TRUE} turns on the experimental random projections spectral
-#' initialization.} 
+#' \code{TRUE} turns on the random projection spectral
+#' initialization: anchor words are selected from a sparse random sketch of the
+#' row-normalized word co-occurrence matrix so the dense V by V matrix is never
+#' formed, and the topic-word distributions are then recovered exactly for those
+#' anchors.  Defaults to \code{FALSE}.  Useful when the vocabulary is very large;
+#' the resulting anchors can differ from the exact initialization.  \code{maxV}
+#' is ignored when this option is used.}
+#' \item{\code{rp.p}}{Dimensionality of the random sketch used when
+#' \code{SpectralRP=TRUE}.  Defaults to 1024 and is raised to the number of
+#' topics when necessary.  Larger values reproduce the exact anchors more faithfully.}
+#' \item{\code{rp.s}}{Parameter between 0 and 1 controlling the sparsity of
+#' the random sketch used when \code{SpectralRP=TRUE}.  Defaults to .05}
+#' \item{\code{rp.seed}}{Integer seed for the deterministic sparse random
+#' sketch used when \code{SpectralRP=TRUE}. Defaults to 9. This is separate from
+#' the model's random seed, so the initialization does not depend on \code{seed}.}
+#' \item{\code{rp.d.group.size}}{No longer used; accepted for backward compatibility.}
+#' \item{\code{recover.tol}}{Convergence tolerance for the exponentiated-gradient
+#' solver in the recovery step of the spectral initialization. Defaults to
+#' \code{1e-7}.  Words whose recovery problem has not converged after 500
+#' iterations are solved exactly with a projected-gradient method.}
+#' \item{\code{recover.exact}}{A logical, \code{FALSE} by default.  If
+#' \code{TRUE} every recovery problem in the spectral initialization is solved
+#' exactly (the constrained least-squares optimum) rather than by
+#' exponentiated gradient.  This is slightly faster and fully reproducible, but
+#' gives sparser word-topic weights than the exponentiated-gradient solution
+#' that earlier versions used, so the initialization differs from theirs.}
 #' \item{\code{maxV}}{For spectral initializations this will set the maximum
 #' number of words to be used in the initialization.  It uses the most frequent words
 #' first and then they are reintroduced following initialization.  This allows spectral
@@ -226,6 +313,68 @@
 #' now this triggers convergence but the final approximate bound might go higher if you
 #' are willing to wait it out. The logic of the default setting is that a negative change
 #' in the bound usually means it is barely moving at all.}
+#' \item{\code{incremental.batch.size}}{Number of documents per block with
+#' \code{inference="Incremental"}.  By default the largest of 128, eight times
+#' the number of topics, and the size that gives at most 12 blocks, increased if
+#' needed to respect \code{incremental.max.cache.mb}.}
+#' \item{\code{incremental.max.epochs}}{Maximum number of passes over the
+#' corpus.  Defaults to between 60 (fewer than 1,000 documents) and 20 (20,000 or
+#' more).  An explicitly supplied \code{max.em.its} overrides this.}
+#' \item{\code{incremental.min.epochs}}{Minimum number of passes before
+#' convergence can be declared. Defaults to 3.}
+#' \item{\code{incremental.patience}}{Number of consecutive epochs with a
+#' relative bound change below \code{emtol} required for convergence. Defaults to 2.}
+#' \item{\code{incremental.final.theta}}{Whether to run a final exact
+#' document pass at the fitted global parameters to compute \code{theta}.
+#' Defaults to \code{TRUE} for fewer than 10,000 documents and \code{FALSE}
+#' otherwise; see \code{\link{updateTheta}}.}
+#' \item{\code{incremental.seed}}{Seed used for block membership and block
+#' order.  By default derived deterministically from \code{seed}.}
+#' \item{\code{incremental.gamma.update.every}}{Number of block updates between
+#' refits of the pooled prevalence regression. Defaults to one pass over the corpus.}
+#' \item{\code{incremental.max.cache.mb}}{Memory budget (in MB) for the cache
+#' of block statistics, used to choose the default block size. Defaults to 256.}
+#' \item{\code{incremental.eval.size}}{Number of documents in a fixed subset
+#' that is re-evaluated at the current parameters once per epoch to give a
+#' fresh bound diagnostic (\code{convergence$eval.bound}).  These documents
+#' remain in the training data.  Defaults to 1,000 for corpora with at least
+#' 10,000 documents and 0 otherwise.}
+#' \item{\code{incremental.eval.every}}{Number of epochs between evaluations
+#' of that subset. Defaults to 1 when the subset is enabled.}
+#' \item{\code{incremental.early.stop}}{Which bound must stabilize for
+#' convergence: \code{"cache"} (the memoized bound), \code{"evaluation"} (the
+#' fresh subset bound) or \code{"both"}.  Defaults to \code{"both"} when an
+#' evaluation subset is in use and \code{"cache"} otherwise.}
+#' \item{\code{incremental.full.eval.every}}{Optional number of epochs between
+#' fresh bound evaluations over the full corpus (\code{convergence$full.bound}).
+#' Off by default because each evaluation costs a complete E-step.}
+#' \item{\code{incremental.progressive.fill}}{Logical, \code{TRUE} by default.
+#' During the first pass that fills the cache, also update the global
+#' parameters after every block, with blocks not yet visited contributing the
+#' statistics implied by the starting values.  Set to \code{FALSE} to fill the
+#' cache with a plain E-step at the starting values instead.}
+#' \item{\code{stochastic.batch.size}}{Documents per minibatch in the
+#' stochastic phase of \code{inference="Stochastic"}.  Defaults to at least 20
+#' minibatches per pass with between 64 and 256 documents each.  The incremental
+#' phase reuses these minibatches as its blocks when they fit in
+#' \code{incremental.max.cache.mb}.}
+#' \item{\code{stochastic.kappa}, \code{stochastic.tau}}{Forgetting rate and
+#' delay of the step size \eqn{(t + \tau)^{-\kappa}}.  Defaults 0.7 and 50, a
+#' deliberately gentle schedule (first step 0.064): larger early steps are
+#' faster at first but tend to leave the basin of the spectral initialization
+#' and end at a slightly worse optimum.  \code{kappa} must lie in (0.5, 1].}
+#' \item{\code{stochastic.max.epochs}}{Maximum number of stochastic passes
+#' over the corpus. Defaults to 3.}
+#' \item{\code{stochastic.tol}}{The stochastic phase ends when the average
+#' per-token bound gain of the minibatches since their previous visit is below
+#' this fraction of the bound for two consecutive checkpoints (four per pass).
+#' Defaults to 0.002.}
+#' \item{\code{stochastic.finish}}{Logical, \code{TRUE} by default: refine the
+#' stochastic solution with the incremental method.  \code{FALSE} returns the
+#' stochastic solution (with the final theta pass governed by
+#' \code{incremental.final.theta}).}
+#' \item{\code{stochastic.seed}}{Seed for minibatch membership and order.  By
+#' default derived from \code{seed}.}
 #' \item{\code{custom.beta}}{If \code{init.type="Custom"} you can pass your own initialization
 #' of the topic-word distributions beta to use as an initialization.  Please note that this takes
 #' some care to be sure that it is provided in exactly the right format.  The number of topics and
@@ -297,7 +446,8 @@
 #' it uses on every run so that any result can be exactly reproduced.  When
 #' attempting to reproduce a result with that seed, it should be specified
 #' here.
-#' @param max.em.its The maximum number of EM iterations.  If convergence has
+#' @param max.em.its The maximum number of EM iterations (or passes over the
+#' corpus with \code{inference="Incremental"}).  If convergence has
 #' not been met at this point, a message will be printed.  If you set this to 
 #' 0 it will return the initialization.
 #' @param emtol Convergence tolerance.  EM stops when the relative change in
@@ -318,6 +468,12 @@
 #' latent topics.  Setting it to \code{FALSE} reduces to a model with no
 #' interactive effects.
 #' @param ngroups Number of groups for memoized inference.  See details below.
+#' @param inference The global inference algorithm.  \code{"Batch"} (the
+#' default) is the standard variational EM used in all previous versions.
+#' \code{"Incremental"} updates the global parameters after every block of
+#' documents using cached sufficient statistics.  \code{"Stochastic"} first
+#' runs stochastic variational inference on minibatches and then refines the
+#' result with the incremental method; intended for large corpora.  See details.
 #' @param model A prefit model object.  By passing an \code{stm} object to this
 #' argument you can restart an existing model.  See details for more info.
 #' @param gamma.prior sets the prior estimation method for the prevalence
@@ -375,6 +531,17 @@
 #' Roberts, M., Stewart, B., & Tingley, D. (2016). "Navigating the Local
 #' Modes of Big Data: The Case of Topic Models. In Data Analytics in Social
 #' Science, Government, and Industry." New York: Cambridge University Press.
+#' 
+#' Neal, R. M. and Hinton, G. E. (1998). "A view of the EM algorithm that
+#' justifies incremental, sparse, and other variants." In Learning in Graphical
+#' Models, 355-368. Kluwer.
+#' 
+#' Cappe, O. and Moulines, E. (2009). "On-line expectation-maximization
+#' algorithm for latent data models." Journal of the Royal Statistical Society
+#' Series B, 71(3), 593-613.
+#' 
+#' Hoffman, M. D., Blei, D. M., Wang, C. and Paisley, J. (2013). "Stochastic
+#' variational inference." Journal of Machine Learning Research, 14, 1303-1347.
 #' @examples
 #' 
 #' \donttest{
@@ -414,6 +581,11 @@
 #'                data=out$meta, max.em.its=5)
 #' mod.out2 <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
 #'                 data=out$meta, model=mod.out, max.em.its=10)
+#' 
+#' #Incremental inference updates the global parameters after every block of
+#' #documents.  It is intended for large corpora; this just illustrates the API.
+#' mod.inc <- stm(out$documents, out$vocab, 3, prevalence=~treatment + s(pid_rep), 
+#'                data=out$meta, inference="Incremental", max.em.its=5)
 #' }
 #' @export
 stm <- function(documents, vocab, K,
@@ -424,10 +596,13 @@ stm <- function(documents, vocab, K,
                 LDAbeta=TRUE, interactions=TRUE,
                 ngroups=1, model=NULL,
                 gamma.prior=c("Pooled", "L1"), sigma.prior=0,
-                kappa.prior=c("L1", "Jeffreys"), control=list())  {
+                kappa.prior=c("L1", "Jeffreys"), control=list(),
+                inference=c("Batch", "Incremental", "Stochastic"))  {
   
   #Match Arguments and save the call
+  max.em.its.missing <- missing(max.em.its)
   init.type <- match.arg(init.type)
+  inference <- match.arg(inference)
   Call <- match.call()
 
   # Convert the corpus to the internal STM format
@@ -555,7 +730,10 @@ stm <- function(documents, vocab, K,
   if(!is.logical(LDAbeta)) stop("LDAbeta must be logical")
   if(!is.logical(interactions)) stop("Interactions variable must be logical")
   if(sigma.prior < 0 | sigma.prior > 1) stop("sigma.prior must be between 0 and 1")
-  if(!is.null(model)) {
+  if(!is.null(model) && inference == "Stochastic") {
+    stop("Restarting is not supported with inference='Stochastic'; restart the fitted model with inference='Incremental' instead")
+  }
+  if(!is.null(model) && inference == "Batch") {
     if(max.em.its <= model$convergence$its) stop("when restarting a model, max.em.its represents the total iterations of the model 
                                                  and thus must be greater than the length of the original run")
   }
@@ -579,14 +757,24 @@ stm <- function(documents, vocab, K,
                             enet=1,nlambda=250, lambda.min.ratio=.001, ic.k=2,
                             maxit=1e4),
                    init=list(mode=init.type, nits=50, burnin=25, alpha=(50/K), eta=.01,
-                             s=.05, p=3000, d.group.size=2000, recoverEG=TRUE,
+                             s=.05, p=1024, d.group.size=2000, recoverEG=TRUE,
+                             projected=FALSE, rp.seed=9L, recover.tol=1e-7,
+                             recover.exact=FALSE,
                              tSNE_init.dims=50, tSNE_perplexity=30), 
                    seed=seed,
-                   ngroups=ngroups)
-  if(init.type=="Spectral" & V > 10000) {
-    settings$init$maxV <- 10000
-  }
-  
+                   ngroups=ngroups,
+                   inference=inference,
+                   incremental=list(batch.size=NULL,
+                                   max.epochs=if(max.em.its.missing) NULL else max.em.its,
+                                   min.epochs=NULL, patience=NULL,
+                                   final.theta=NULL, seed=NULL,
+                                   gamma.update.every=NULL,
+                                   max.cache.mb=256, eval.size=NULL,
+                                   eval.every=NULL, early.stop=NULL,
+                                   full.eval.every=NULL, progressive.fill=NULL),
+                   stochastic=list(batch.size=NULL, kappa=NULL, tau=NULL,
+                                   max.epochs=NULL, tol=NULL, finish=NULL,
+                                   seed=NULL))
   if(settings$gamma$mode=="L1") {
     #if(!require(glmnet) | !require(Matrix)) stop("To use L1 penalization please install glmnet and Matrix")
     if(ncol(xmat)<=2) stop("Cannot use L1 penalization in prevalence model with 2 or fewer covariates.")
@@ -619,9 +807,20 @@ stm <- function(documents, vocab, K,
                   "kappa.enet", "nlambda", "lambda.min.ratio", "ic.k", "gamma.enet",
                   "gamma.ic.k",
                   "nits", "burnin", "alpha", "eta", "contrast",
-                  "rp.s", "rp.p", "rp.d.group.size", "SpectralRP",
+                  "rp.s", "rp.p", "rp.d.group.size", "rp.seed",
+                  "recover.tol", "recover.exact", "SpectralRP",
                   "recoverEG", "maxV", "gamma.maxits", "allow.neg.change",
-                  "custom.beta", "tSNE_init.dims", "tSNE_perplexity")
+                  "custom.beta", "tSNE_init.dims", "tSNE_perplexity",
+                  "incremental.batch.size", "incremental.max.epochs",
+                  "incremental.min.epochs", "incremental.patience",
+                  "incremental.final.theta", "incremental.seed",
+                  "incremental.gamma.update.every",
+                  "incremental.max.cache.mb", "incremental.eval.size",
+                  "incremental.eval.every", "incremental.early.stop",
+                  "incremental.full.eval.every", "incremental.progressive.fill",
+                  "stochastic.batch.size", "stochastic.kappa", "stochastic.tau",
+                  "stochastic.max.epochs", "stochastic.tol",
+                  "stochastic.finish", "stochastic.seed")
   if (length(control)) {
     indx <- pmatch(names(control), legalargs, nomatch=0L)
     if (any(indx==0L))
@@ -648,7 +847,10 @@ stm <- function(documents, vocab, K,
       if(i=="rp.s")  settings$init$s <- control[[i]]
       if(i=="rp.p")  settings$init$p <- control[[i]]
       if(i=="rp.d.group.size")  settings$init$d.group.size <- control[[i]]
-      if(i=="SpectralRP" && control[[i]]) settings$init$mode <- "SpectralRP" #override to allow spectral rp mode
+      if(i=="rp.seed") settings$init$rp.seed <- as.integer(control[[i]])
+      if(i=="recover.tol") settings$init$recover.tol <- control[[i]]
+      if(i=="recover.exact") settings$init$recover.exact <- isTRUE(control[[i]])
+      if(i=="SpectralRP") settings$init$projected <- isTRUE(control[[i]])
       if(i=="recoverEG" && !control[[i]]) settings$init$recoverEG <- control[[i]]
       if(i=="maxV" && control[[i]]) {
         settings$init$maxV <- control[[i]]
@@ -658,6 +860,26 @@ stm <- function(documents, vocab, K,
       if(i=="tSNE_perplexity" && control[[i]]) settings$init$tSNE_perplexity <- control[[i]]
       if(i=="gamma.maxits") settings$gamma$maxits <- control[[i]]
       if(i=="allow.neg.change") settings$convergence$allow.neg.change <- control[[i]]
+      if(i=="incremental.batch.size") settings$incremental$batch.size <- control[[i]]
+      if(i=="incremental.max.epochs") settings$incremental$max.epochs <- control[[i]]
+      if(i=="incremental.min.epochs") settings$incremental$min.epochs <- control[[i]]
+      if(i=="incremental.patience") settings$incremental$patience <- control[[i]]
+      if(i=="incremental.final.theta") settings$incremental$final.theta <- control[[i]]
+      if(i=="incremental.seed") settings$incremental$seed <- control[[i]]
+      if(i=="incremental.gamma.update.every") settings$incremental$gamma.update.every <- control[[i]]
+      if(i=="incremental.max.cache.mb") settings$incremental$max.cache.mb <- control[[i]]
+      if(i=="incremental.eval.size") settings$incremental$eval.size <- control[[i]]
+      if(i=="incremental.eval.every") settings$incremental$eval.every <- control[[i]]
+      if(i=="incremental.early.stop") settings$incremental$early.stop <- control[[i]]
+      if(i=="incremental.full.eval.every") settings$incremental$full.eval.every <- control[[i]]
+      if(i=="incremental.progressive.fill") settings$incremental$progressive.fill <- isTRUE(control[[i]])
+      if(i=="stochastic.batch.size") settings$stochastic$batch.size <- control[[i]]
+      if(i=="stochastic.kappa") settings$stochastic$kappa <- control[[i]]
+      if(i=="stochastic.tau") settings$stochastic$tau <- control[[i]]
+      if(i=="stochastic.max.epochs") settings$stochastic$max.epochs <- control[[i]]
+      if(i=="stochastic.tol") settings$stochastic$tol <- control[[i]]
+      if(i=="stochastic.finish") settings$stochastic$finish <- control[[i]]
+      if(i=="stochastic.seed") settings$stochastic$seed <- control[[i]]
       if(i=="custom.beta") {
         if(settings$init$mode!="Custom") {
           warning("Custom beta supplied, setting init argument to Custom.")
@@ -666,6 +888,11 @@ stm <- function(documents, vocab, K,
         settings$init$custom <- control[[i]]
       }
     }
+  }
+
+  if(init.type=="Spectral" && !settings$init$projected && V > 10000 &&
+     is.null(settings$init$maxV)) {
+    settings$init$maxV <- 10000
   }
   
   ###
@@ -680,10 +907,133 @@ stm <- function(documents, vocab, K,
     #otherwise just use the provided seed.
     set.seed(settings$seed)
   }
+
+  if(inference %in% c("Incremental", "Stochastic")) {
+    if(!is.null(content) || !settings$kappa$LDAbeta) {
+      stop(inference, " inference currently supports LDAbeta=TRUE without content covariates")
+    }
+    if(settings$gamma$mode == "L1") {
+      stop(inference, " inference currently supports the default pooled prevalence prior, not gamma.prior='L1'")
+    }
+    if(ngroups != 1) {
+      stop("Use either inference='", inference, "' or ngroups>1, not both")
+    }
+    if(K == 0) stop("K=0 is not supported with ", tolower(inference), " inference")
+    if(!is.numeric(settings$incremental$max.cache.mb) ||
+       length(settings$incremental$max.cache.mb) != 1 ||
+       settings$incremental$max.cache.mb <= 0) {
+      stop("incremental.max.cache.mb must be a positive number")
+    }
+    defaults <- incremental.defaults(
+      N=N, K=K, V=V,
+      max.cache.mb=settings$incremental$max.cache.mb,
+      batch.size=settings$incremental$batch.size
+    )
+    for(name in c("batch.size", "max.epochs", "min.epochs", "patience",
+                  "final.theta", "eval.size", "eval.every", "early.stop",
+                  "full.eval.every", "progressive.fill")) {
+      if(is.null(settings$incremental[[name]]))
+        settings$incremental[[name]] <- defaults[[name]]
+    }
+    if(is.null(settings$incremental$seed))
+      settings$incremental$seed <- as.integer((settings$seed + 104729) %% .Machine$integer.max)
+    if(is.null(settings$incremental$gamma.update.every))
+      settings$incremental$gamma.update.every <-
+        as.integer(ceiling(N/settings$incremental$batch.size))
+
+    integer.controls <- c("batch.size", "max.epochs", "min.epochs",
+                          "patience", "gamma.update.every")
+    for(name in integer.controls) {
+      value <- settings$incremental[[name]]
+      if(!is.numeric(value) || length(value) != 1 || !is.finite(value) ||
+         value < if(name == "max.epochs") 0 else 1) {
+        stop(sprintf("incremental.%s has an invalid value", name))
+      }
+      settings$incremental[[name]] <- as.integer(value)
+    }
+    incremental.seed <- settings$incremental$seed
+    if(!is.numeric(incremental.seed) || length(incremental.seed) != 1 ||
+       !is.finite(incremental.seed) || incremental.seed < 0 ||
+       incremental.seed > .Machine$integer.max) {
+      stop("incremental.seed must be a non-negative integer-sized number")
+    }
+    settings$incremental$seed <- as.integer(incremental.seed)
+    #the evaluation subset and its patience are derived, not user-facing
+    settings$incremental$eval.seed <- incremental.seed.offset(
+      settings$incremental$seed, 130363)
+    settings$incremental$eval.patience <- settings$incremental$patience
+    settings$incremental$batch.size <- min(N, settings$incremental$batch.size)
+    eval.size <- settings$incremental$eval.size
+    if(!is.numeric(eval.size) || length(eval.size) != 1 ||
+       !is.finite(eval.size) || eval.size < 0) {
+      stop("incremental.eval.size must be a non-negative integer")
+    }
+    settings$incremental$eval.size <- min(N, as.integer(eval.size))
+    for(name in c("eval.every", "full.eval.every")) {
+      value <- settings$incremental[[name]]
+      if(!is.null(value)) {
+        if(!is.numeric(value) || length(value) != 1 || !is.finite(value) ||
+           value < 1) {
+          stop(sprintf("incremental.%s must be a positive integer", name))
+        }
+        settings$incremental[[name]] <- as.integer(value)
+      }
+    }
+    if(settings$incremental$eval.size > 0 &&
+       is.null(settings$incremental$eval.every)) {
+      settings$incremental$eval.every <- 1L
+    }
+    settings$incremental$early.stop <- match.arg(
+      settings$incremental$early.stop, c("cache", "evaluation", "both")
+    )
+    if(settings$incremental$eval.size == 0 &&
+       settings$incremental$early.stop != "cache") {
+      stop("incremental.early.stop requires incremental.eval.size > 0")
+    }
+    if(!is.logical(settings$incremental$final.theta) ||
+       length(settings$incremental$final.theta) != 1) {
+      stop("incremental.final.theta must be TRUE or FALSE")
+    }
+    settings$incremental$defaults <- defaults
+  }
+  if(inference == "Stochastic") {
+    defaults <- stochastic.defaults(N=N, K=K, V=V)
+    for(name in c("batch.size", "kappa", "tau", "max.epochs", "tol", "finish",
+                  "checkpoints", "min.checkpoints", "patience")) {
+      if(is.null(settings$stochastic[[name]]))
+        settings$stochastic[[name]] <- defaults[[name]]
+    }
+    if(is.null(settings$stochastic$seed))
+      settings$stochastic$seed <- as.integer((settings$seed + 7919) %% .Machine$integer.max)
+    sc <- settings$stochastic
+    if(!is.numeric(sc$batch.size) || length(sc$batch.size) != 1 || !is.finite(sc$batch.size) || sc$batch.size < 1)
+      stop("stochastic.batch.size must be a positive integer")
+    settings$stochastic$batch.size <- min(N, as.integer(ceiling(sc$batch.size)))
+    if(!is.numeric(sc$kappa) || length(sc$kappa) != 1 || sc$kappa <= 0.5 || sc$kappa > 1)
+      stop("stochastic.kappa must be in (0.5, 1]")
+    if(!is.numeric(sc$tau) || length(sc$tau) != 1 || sc$tau < 0)
+      stop("stochastic.tau must be non-negative")
+    if(!is.numeric(sc$max.epochs) || length(sc$max.epochs) != 1 || sc$max.epochs < 0)
+      stop("stochastic.max.epochs must be a non-negative integer")
+    settings$stochastic$max.epochs <- as.integer(sc$max.epochs)
+    if(!is.numeric(sc$tol) || length(sc$tol) != 1 || sc$tol < 0)
+      stop("stochastic.tol must be non-negative")
+    if(!is.logical(sc$finish) || length(sc$finish) != 1)
+      stop("stochastic.finish must be TRUE or FALSE")
+    if(!is.numeric(sc$seed) || length(sc$seed) != 1 || !is.finite(sc$seed) || sc$seed < 0)
+      stop("stochastic.seed must be a non-negative integer-sized number")
+    settings$stochastic$seed <- as.integer(sc$seed)
+  }
   
   settings$call <- Call
   ###
   # Finally run the actual model
   ###
+  if(inference == "Incremental") {
+    return(incremental.control(documents, vocab, settings, model))
+  }
+  if(inference == "Stochastic") {
+    return(stochastic.control(documents, vocab, settings))
+  }
   return(stm.control(documents, vocab, settings,model))
 }

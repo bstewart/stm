@@ -11,19 +11,30 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
                               method="BFGS", control=list(maxit=500),
                               hpbcpp=TRUE) {
   doc.ct <- doc[2,]
-  Ndoc <- sum(doc.ct)
-  #even at K=100, BFGS is faster than L-BFGS
-  optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
-                     method=method, control=control,
-                     doc_ct=doc.ct, mu=mu,
-                     siginv=siginv, beta=beta)
+  # The compiled path preserves the default BFGS objective and stopping
+  # controls while sharing objective/gradient intermediates. Fall back to
+  # optim() when callers request another method or optimizer features that
+  # the specialized implementation does not support.
+  supported.control <- c("maxit", "reltol", "abstol")
+  use.compiled <- identical(method, "BFGS") &&
+    all(names(control) %in% supported.control)
+  if(use.compiled) {
+    optim.out <- optimizecpp(eta=eta, beta=beta, doc_ct=doc.ct, mu=mu,
+                             siginv=siginv, control=control)
+  } else {
+    #even at K=100, BFGS is faster than L-BFGS
+    optim.out <- optim(par=eta, fn=lhoodcpp, gr=gradcpp,
+                       method=method, control=control,
+                       doc_ct=doc.ct, mu=mu,
+                       siginv=siginv, beta=beta)
+  }
   
   if(!hpbcpp) return(list(eta=list(lambda=optim.out$par)))
   
   #Solve for Hessian/Phi/Bound returning the result
-  hpbcpp(optim.out$par, doc_ct=doc.ct, mu=mu,
-         siginv=siginv, beta=beta,
-         sigmaentropy=sigmaentropy)
+  hpbcpp_nocopy(optim.out$par, doc_ct=doc.ct, mu=mu,
+                siginv=siginv, beta=beta,
+                sigmaentropy=sigmaentropy)
 }
 
 
@@ -62,9 +73,12 @@ logisticnormalcpp <- function(eta, mu, siginv, beta, doc, sigmaentropy,
 #' \code{sigma} you do not need to supply this. See below.
 #' @param sigmaentropy the entropy term calculated from sigma.  If you supplied \code{sigma} you do not
 #' need to supply this.  See below.
-#' @param method the method passed to \code{\link{optim}}.  Uses "BFGS" by default.
-#' @param control the control argument passed to \code{\link{optim}}.  Sets the maximum number of observations
-#' to 500 but can be used to set other aspects of the optimization per the instructions in \code{\link{optim}}
+#' @param method optimization method. The default "BFGS" uses a specialized
+#' compiled implementation; other methods are passed to \code{\link{optim}}.
+#' @param control optimizer control list. The compiled BFGS path supports
+#' \code{maxit}, \code{reltol}, and \code{abstol}; requesting other controls
+#' uses \code{\link{optim}} for compatibility. The default maximum number of
+#' iterations is 500.
 #' @param posterior should the full posterior be returned?  If TRUE (as it is by default) returns the full 
 #' variational posterior.  Otherwise just returns the point estimate.
 #' @return a list 
@@ -122,6 +136,3 @@ optimizeDocument <- function(document, eta, mu, beta, sigma=NULL,
   toReturn <- list(lambda=out$eta$lambda, phi=out$phi, nu=out$eta$nu, bound=out$bound)
   return(toReturn)
 }
-
-
- 

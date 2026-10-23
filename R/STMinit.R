@@ -15,6 +15,7 @@ stm.init <- function(documents, settings) {
   eta <- settings$init$eta 
   burnin <- settings$init$burnin 
   maxV <- settings$init$maxV
+  recoverEG <- settings$init$recoverEG
     
   #Different Modes
   if(mode=="LDA") {
@@ -52,71 +53,96 @@ stm.init <- function(documents, settings) {
   if(mode=="Spectral" | mode=="SpectralRP") {
     verbose <- settings$verbose
     if(K >= V) stop("Spectral initialization cannot be used for the overcomplete case (K greater than or equal to number of words in vocab)")
-    # (1) Prep the Gram matrix
-    if(verbose) cat("\t Calculating the gram matrix...\n")
-    docs <- doc.to.ijv(documents)
-    mat <- Matrix::sparseMatrix(docs$i,docs$j, x=docs$v)
-    rm(docs)
-    wprob <- Matrix::colSums(mat)
-    wprob <- wprob/sum(wprob)
-    if(mode=="Spectral") {
+    recover.tol <- settings$init$recover.tol
+    if(is.null(recover.tol)) recover.tol <- 1e-7
+    recover.exact <- isTRUE(settings$init$recover.exact)
+
+    # Optional sketch for anchor selection (control = list(SpectralRP = TRUE)).
+    # The sketch only chooses the anchors; recovery always uses exact kernels
+    # from the unprojected moment.  It is intended for large vocabularies where
+    # the dense V by V moment is slow or does not fit in memory.
+    projected <- isTRUE(settings$init$projected)
+    sketch.dim <- if(K == 0) settings$init$p else max(settings$init$p, K)
+    if(projected && (K == 0 || !recoverEG || V <= sketch.dim)) {
+      if(verbose) cat("\t The projected sketch requires K > 0, recoverEG = TRUE and a vocabulary larger than rp.p; using the exact moment instead.\n")
+      projected <- FALSE
+    }
+
+    if(projected) {
+      if(!is.null(maxV) && verbose) cat("\t maxV is ignored with the projected sketch, which never forms the dense moment.\n")
+      if(verbose) cat(sprintf("\t Calculating a %i-dimensional spectral sketch...\n", sketch.dim))
+      sketch <- spectralProjectionCpp(
+        documents=documents, vocabulary_size=V,
+        projection_dimension=sketch.dim,
+        projection_sparsity=settings$init$s,
+        seed=settings$init$rp.seed)
+      valid <- sketch$row_normalizer > 0
+      if(sum(valid) <= K) stop("Too few nonzero moment rows for spectral initialization")
+
+      if(verbose) cat("\t Finding anchor words...\n")
+      anchor.reduced <- fastAnchorCpp(sketch$Qbar[valid,,drop=FALSE], K)
+      anchor <- which(valid)[anchor.reduced]
+
+      if(verbose) cat("\t Recovering initialization in the original moment space...\n")
+      recovered <- recoverL2OriginalCpp(
+        documents=documents, vocabulary_size=V, anchors=anchor,
+        row_normalizer=sketch$row_normalizer,
+        word_probability=sketch$wprob,
+        tolerance=recover.tol, maximum_iterations=500L,
+        exact_only=recover.exact)
+      beta <- recovered$A
+      report.recovery(recovered, verbose)
+
+      if(any(!valid)) {
+        beta <- beta + .001/V
+        beta <- beta/rowSums(beta)
+      }
+    } else {
+      # Exact moment, computed natively.  This reproduces the legacy R
+      # implementation (gram(), fastAnchor(), recoverL2()) including the
+      # frequency truncation requested through maxV.
       keep <- NULL
       if(!is.null(maxV)) {
         if(verbose) cat(sprintf("\t Using only %i most frequent terms during initialization...\n", maxV))
-        keep <- order(wprob, decreasing=TRUE)[1:maxV]
-        mat <- mat[,keep]
-        wprob <- wprob[keep]
+        wcount <- settings$dim$wcounts$x #token counts in vocabulary order
+        keep <- order(wcount, decreasing=TRUE)[1:maxV]
       }
-      Q <- gram(mat)
-      #verify that there are no zeroes
-      Qsums <- rowSums(Q)
-      
-      if(any(Qsums==0)) {
-        #if there are zeroes, we want to remove them for just the anchor word procedure.
-        temp.remove <- which(Qsums==0)
-        if(is.null(keep)) {
-         keep <- which(Qsums!=0)
-        } else {
-         keep <- keep[which(Qsums!=0)]
-        }
-        Q <- Q[-temp.remove,-temp.remove]
-        Qsums <- Qsums[-temp.remove]
-        wprob <- wprob[-temp.remove]
+      if(verbose) cat("\t Calculating the gram matrix...\n")
+      moment <- spectralGramCpp(documents, V, keep=keep)
+      Qsums <- rowSums(moment$Q)
+      valid <- Qsums > 0
+      if(sum(valid) <= max(K, 1)) stop("Too few nonzero moment rows for spectral initialization")
+      Q <- moment$Q[valid,valid,drop=FALSE]/Qsums[valid]
+      index <- if(is.null(keep)) which(valid) else keep[valid]
+      wprob <- moment$wprob[index]
+      rm(moment)
+
+      if(verbose) cat("\t Finding anchor words...\n \t")
+      if(K!=0) {
+        anchor <- fastAnchorCpp(Q, K)
+      } else {
+        anchor <- tsneAnchor(Q, verbose=verbose,
+                             init.dims=settings$init$tSNE_init.dims,
+                             perplexity=settings$init$tSNE_perplexity) #run the Lee and Mimno (2014) algorithm
+        K <- length(anchor) # update K
       }
-      Q <- Q/Qsums
-    } else {
-      keep <- NULL #we have to set this because it is referenced later.
-      Q <- gram.rp(mat, s=settings$init$s, p=settings$init$p, 
-                   d.group.size=settings$init$d.group.size, verbose=verbose)
+      if(verbose) cat("\n\t Recovering initialization...\n \t")
+      beta <- recoverL2(Q, anchor, wprob, verbose=verbose,
+                        recoverEG=recoverEG, tol=recover.tol,
+                        exact=recover.exact)$A
+
+      if(!is.null(keep) || any(!valid)) {
+        #if there were zeroes (or a truncated vocabulary), reintroduce them
+        #add in a little noise here. essentially summed over the vocab
+        #it should only be .1% of the total.
+        beta.new <- matrix(0, nrow=K, ncol=V)
+        beta.new[,index] <- beta
+        beta.new <- beta.new + .001/V
+        beta <- beta.new/rowSums(beta.new)
+        rm(beta.new)
+      }
     }
-    
-    
-    # (2) anchor words
-    if(K!=0) {
-      if(verbose) cat("\t Finding anchor words...\n \t")
-      anchor <- fastAnchor(Q, K=K, verbose=verbose)
-    } else {
-      if(verbose) cat("\t Finding anchor words...\n \t")
-      anchor <- tsneAnchor(Q, verbose=verbose, 
-                           init.dims=settings$init$tSNE_init.dims,
-                           perplexity=settings$init$tSNE_perplexity) #run the Lee and Mimno (2014) algorithm
-      K <- length(anchor) # update K
-    }
-    # (3) recoverL2
-    if(verbose) cat("\n\t Recovering initialization...\n \t")
-    beta <- recoverL2(Q, anchor, wprob, verbose=verbose, recoverEG=settings$init$recoverEG)$A
-    
-    if(!is.null(keep)) {
-      #if there were zeroes, reintroduce them
-      #add in a little noise here. essentially summed over the vocab
-      #it should only be .1% of the total.
-      beta.new <- matrix(0, nrow=K, ncol=V)
-      beta.new[,keep] <- beta
-      beta.new <- beta.new + .001/V
-      beta <- beta.new/rowSums(beta.new)  
-      rm(beta.new)
-    }
-    
+
     # (4) generate other parameters
     mu <- matrix(0, nrow=(K-1),ncol=1)
     sigma <- diag(20, nrow=(K-1))
@@ -143,6 +169,19 @@ stm.init <- function(documents, settings) {
   }
   
   return(model)
+}
+
+# Report how the recovery step finished.
+report.recovery <- function(recovered, verbose) {
+  if(!verbose) return(invisible(NULL))
+  nfallback <- sum(recovered$fallback)
+  if(nfallback == length(recovered$fallback)) {
+    cat("\t Recovery problems solved exactly (recover.exact=TRUE).\n")
+  } else if(nfallback > 0) {
+    cat(sprintf("\t %i of %i recovery problems used the exact simplex solver after exponentiated gradient did not converge.\n",
+                nfallback, length(recovered$fallback)))
+  }
+  invisible(NULL)
 }
 
 ###

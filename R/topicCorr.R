@@ -77,6 +77,7 @@
 #' @export
 topicCorr <- function(model, method=c("simple", "huge"), 
                       cutoff=.01, verbose = TRUE) {
+  check.theta.computed(model, "topicCorr()")
   method <- match.arg(method)
   out <- list()
   if(method=="simple") {

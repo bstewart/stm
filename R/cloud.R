@@ -45,6 +45,9 @@ cloud <- function(stmobj, topic=NULL, type=c("model", "documents"), documents,
     vocab <- mod$vocab
     #if they didn't specify a topic overwrite the choice to documents
     if(is.null(topic)) type <- "documents"
+    if(type == "documents" && !is.null(topic)) {
+      check.theta.computed(mod, "cloud() with type='documents'")
+    }
     
     if(type=="model") {
       #Here we are interested in the model parameters

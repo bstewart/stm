@@ -41,6 +41,37 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gradcpp_nocopy
+arma::vec gradcpp_nocopy(SEXP eta, SEXP beta, SEXP doc_ct, SEXP mu, SEXP siginv);
+RcppExport SEXP _stm_gradcpp_nocopy(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type doc_ct(doc_ctSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type siginv(siginvSEXP);
+    rcpp_result_gen = Rcpp::wrap(gradcpp_nocopy(eta, beta, doc_ct, mu, siginv));
+    return rcpp_result_gen;
+END_RCPP
+}
+// optimizecpp
+Rcpp::List optimizecpp(SEXP eta, SEXP beta, SEXP doc_ct, SEXP mu, SEXP siginv, Rcpp::List control);
+RcppExport SEXP _stm_optimizecpp(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP, SEXP controlSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type doc_ct(doc_ctSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type siginv(siginvSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type control(controlSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimizecpp(eta, beta, doc_ct, mu, siginv, control));
+    return rcpp_result_gen;
+END_RCPP
+}
 // hpbcpp
 SEXP hpbcpp(SEXP eta, SEXP beta, SEXP doc_ct, SEXP mu, SEXP siginv, SEXP sigmaentropy);
 RcppExport SEXP _stm_hpbcpp(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP, SEXP sigmaentropySEXP) {
@@ -57,11 +88,109 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// hpbcpp_nocopy
+SEXP hpbcpp_nocopy(SEXP eta, SEXP beta, SEXP doc_ct, SEXP mu, SEXP siginv, SEXP sigmaentropy);
+RcppExport SEXP _stm_hpbcpp_nocopy(SEXP etaSEXP, SEXP betaSEXP, SEXP doc_ctSEXP, SEXP muSEXP, SEXP siginvSEXP, SEXP sigmaentropySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type doc_ct(doc_ctSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type siginv(siginvSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sigmaentropy(sigmaentropySEXP);
+    rcpp_result_gen = Rcpp::wrap(hpbcpp_nocopy(eta, beta, doc_ct, mu, siginv, sigmaentropy));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectralProjectionCpp
+Rcpp::List spectralProjectionCpp(Rcpp::List documents, int vocabulary_size, int projection_dimension, double projection_sparsity, int seed);
+RcppExport SEXP _stm_spectralProjectionCpp(SEXP documentsSEXP, SEXP vocabulary_sizeSEXP, SEXP projection_dimensionSEXP, SEXP projection_sparsitySEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type documents(documentsSEXP);
+    Rcpp::traits::input_parameter< int >::type vocabulary_size(vocabulary_sizeSEXP);
+    Rcpp::traits::input_parameter< int >::type projection_dimension(projection_dimensionSEXP);
+    Rcpp::traits::input_parameter< double >::type projection_sparsity(projection_sparsitySEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectralProjectionCpp(documents, vocabulary_size, projection_dimension, projection_sparsity, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spectralGramCpp
+Rcpp::List spectralGramCpp(Rcpp::List documents, int vocabulary_size, Rcpp::Nullable<Rcpp::IntegerVector> keep);
+RcppExport SEXP _stm_spectralGramCpp(SEXP documentsSEXP, SEXP vocabulary_sizeSEXP, SEXP keepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type documents(documentsSEXP);
+    Rcpp::traits::input_parameter< int >::type vocabulary_size(vocabulary_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::IntegerVector> >::type keep(keepSEXP);
+    rcpp_result_gen = Rcpp::wrap(spectralGramCpp(documents, vocabulary_size, keep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// fastAnchorCpp
+Rcpp::IntegerVector fastAnchorCpp(SEXP qbar_sexp, int topics);
+RcppExport SEXP _stm_fastAnchorCpp(SEXP qbar_sexpSEXP, SEXP topicsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type qbar_sexp(qbar_sexpSEXP);
+    Rcpp::traits::input_parameter< int >::type topics(topicsSEXP);
+    rcpp_result_gen = Rcpp::wrap(fastAnchorCpp(qbar_sexp, topics));
+    return rcpp_result_gen;
+END_RCPP
+}
+// recoverL2Cpp
+Rcpp::List recoverL2Cpp(SEXP qbar_sexp, Rcpp::IntegerVector anchors, Rcpp::NumericVector word_probability, double tolerance, int maximum_iterations, bool exact_only);
+RcppExport SEXP _stm_recoverL2Cpp(SEXP qbar_sexpSEXP, SEXP anchorsSEXP, SEXP word_probabilitySEXP, SEXP toleranceSEXP, SEXP maximum_iterationsSEXP, SEXP exact_onlySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type qbar_sexp(qbar_sexpSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type anchors(anchorsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type word_probability(word_probabilitySEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type maximum_iterations(maximum_iterationsSEXP);
+    Rcpp::traits::input_parameter< bool >::type exact_only(exact_onlySEXP);
+    rcpp_result_gen = Rcpp::wrap(recoverL2Cpp(qbar_sexp, anchors, word_probability, tolerance, maximum_iterations, exact_only));
+    return rcpp_result_gen;
+END_RCPP
+}
+// recoverL2OriginalCpp
+Rcpp::List recoverL2OriginalCpp(Rcpp::List documents, int vocabulary_size, Rcpp::IntegerVector anchors, Rcpp::NumericVector row_normalizer, Rcpp::NumericVector word_probability, double tolerance, int maximum_iterations, bool exact_only);
+RcppExport SEXP _stm_recoverL2OriginalCpp(SEXP documentsSEXP, SEXP vocabulary_sizeSEXP, SEXP anchorsSEXP, SEXP row_normalizerSEXP, SEXP word_probabilitySEXP, SEXP toleranceSEXP, SEXP maximum_iterationsSEXP, SEXP exact_onlySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type documents(documentsSEXP);
+    Rcpp::traits::input_parameter< int >::type vocabulary_size(vocabulary_sizeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type anchors(anchorsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type row_normalizer(row_normalizerSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type word_probability(word_probabilitySEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type maximum_iterations(maximum_iterationsSEXP);
+    Rcpp::traits::input_parameter< bool >::type exact_only(exact_onlySEXP);
+    rcpp_result_gen = Rcpp::wrap(recoverL2OriginalCpp(documents, vocabulary_size, anchors, row_normalizer, word_probability, tolerance, maximum_iterations, exact_only));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stm_lhoodcpp", (DL_FUNC) &_stm_lhoodcpp, 5},
     {"_stm_gradcpp", (DL_FUNC) &_stm_gradcpp, 5},
+    {"_stm_gradcpp_nocopy", (DL_FUNC) &_stm_gradcpp_nocopy, 5},
+    {"_stm_optimizecpp", (DL_FUNC) &_stm_optimizecpp, 6},
     {"_stm_hpbcpp", (DL_FUNC) &_stm_hpbcpp, 6},
+    {"_stm_hpbcpp_nocopy", (DL_FUNC) &_stm_hpbcpp_nocopy, 6},
+    {"_stm_spectralProjectionCpp", (DL_FUNC) &_stm_spectralProjectionCpp, 5},
+    {"_stm_spectralGramCpp", (DL_FUNC) &_stm_spectralGramCpp, 3},
+    {"_stm_fastAnchorCpp", (DL_FUNC) &_stm_fastAnchorCpp, 2},
+    {"_stm_recoverL2Cpp", (DL_FUNC) &_stm_recoverL2Cpp, 6},
+    {"_stm_recoverL2OriginalCpp", (DL_FUNC) &_stm_recoverL2OriginalCpp, 8},
     {NULL, NULL, 0}
 };
 

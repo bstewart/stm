@@ -4,3 +4,6 @@
 ^\.Rproj\.user$
 ^\.travis\.yml$
 ^README\.md$
+^benchmarks$
+^vignettes/stmVignette\.Rnw$
+^tests/testthat/testthat-problems\.rds$

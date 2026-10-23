@@ -87,6 +87,9 @@ plot.STM <- function(x,
                      ...){
   model <- x
   type <- match.arg(type)
+  if(type %in% c("summary", "hist")) {
+    check.theta.computed(model, "plot.STM() with type='summary' or 'hist'")
+  }
   
   contentcov <- length(model$beta$logbeta)!=1
   if(contentcov & !missing(labeltype)) stop("Cannot specify label type for content covariate models.")
