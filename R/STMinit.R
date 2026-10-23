@@ -148,6 +148,7 @@ stm.init <- function(documents, settings) {
 ###
 # Kappa initialization
 ###
+#' @keywords internal
 kappa.init <- function(documents, K, V, A, interactions) {
   kappa.out <- list()
   #Calculate the baseline log-probability (m)

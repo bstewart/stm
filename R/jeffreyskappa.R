@@ -130,6 +130,7 @@ opt.kappak <- function(i, kappa, beta.ss, taumode, tautol, taumaxit, taufixedpri
 #(2) the token counts with their appropriate denominator
 #(3) the penalty
 #it returns a scalar
+#' @keywords internal
 kappa.obj <- function(kappa.param, kappa.other, c.k, bigC.k, gaussprec) {
   
   #(1) Kappa vector times counts
@@ -149,6 +150,7 @@ kappa.obj <- function(kappa.param, kappa.other, c.k, bigC.k, gaussprec) {
 #the gradient has a similar interpretation:
 #it is the difference of the observed counts and expected counts
 #minus the penalty on kappa (divergence from zero, scaled by precision)
+#' @keywords internal
 kappa.gradient <- function(kappa.param, kappa.other, c.k, bigC.k, gaussprec) {
   
   denom.kappas  <- sweep(kappa.other, MARGIN=2, exp(kappa.param), FUN="*")

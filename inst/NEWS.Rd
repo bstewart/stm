@@ -1,5 +1,16 @@
 \name{NEWS}
 \title{NEWS file for the stm package}
+\section{Version 1.3.9}{
+\itemize{
+\item The vignette is now shipped as a static PDF (the published JSS article, Roberts, Stewart and Tingley 2019) via R.rsp. Previously the vignette was rebuilt during checks and downloaded fitted model objects from GitHub, which could fail when the resource was unavailable, violating CRAN's policy on Internet resources. The executable Rnw source remains in the GitHub repository.
+\item Fixed URLs without a scheme in the vignette and switched the package URL to https.
+}
+}
+\section{Version 1.3.8}{
+\itemize{
+\item A very small update for CRAN.  Thanks to github user chainsawriot for getting this going.
+}
+}
 \section{Version 1.3.7}{
 \itemize{
 \item A very small update to flag an issue with RcppArmadillo flagged and fixed by Dirk Eddelbuettel long ago. Thank you Dirk!
